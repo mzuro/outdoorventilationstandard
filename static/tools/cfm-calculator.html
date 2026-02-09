@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFM Sizing Calculator — Outdoor Ventilation Standard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #FAFAFA;
+    color: #222;
+    line-height: 1.6;
+    padding: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #666; margin-bottom: 24px; }
+  .calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 640px) {
+    .calculator-grid { grid-template-columns: 1fr; }
+  }
+  .input-panel {
+    background: white;
+    border: 1px solid #DDD;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .input-panel h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #EEE;
+  }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    background: white;
+    color: #222;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+  .field select:focus {
+    outline: none;
+    border-color: #4488CC;
+    box-shadow: 0 0 0 3px rgba(68,136,204,0.15);
+  }
+  .field-hint {
+    font-size: 10px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* Results panel */
+  .results-panel {
+    background: white;
+    border: 1px solid #DDD;
+    border-radius: 8px;
+    padding: 20px;
+    grid-column: 1 / -1;
+  }
+  .results-panel h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #EEE;
+  }
+  .result-primary {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .result-cfm {
+    font-size: 42px;
+    font-weight: 700;
+    color: #2266AA;
+    line-height: 1;
+  }
+  .result-unit {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+  }
+  .result-label {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  .result-recommended {
+    background: #E8F0FE;
+    border: 1px solid #B0CCE8;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  .result-recommended .rec-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #2266AA;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .result-recommended .rec-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a5599;
+  }
+  .result-recommended .rec-note {
+    font-size: 11px;
+    color: #4477AA;
+    margin-top: 4px;
+  }
+
+  /* Breakdown table */
+  .breakdown { margin-bottom: 20px; }
+  .breakdown h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .breakdown-table th {
+    text-align: left;
+    padding: 6px 10px;
+    background: #F5F5F5;
+    border: 1px solid #E0E0E0;
+    font-weight: 500;
+    color: #555;
+  }
+  .breakdown-table td {
+    padding: 6px 10px;
+    border: 1px solid #E0E0E0;
+    color: #333;
+  }
+  .breakdown-table td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .breakdown-table tr.highlight td {
+    background: #E8F0FE;
+    font-weight: 600;
+  }
+
+  /* Comparison bar */
+  .comparison-section { margin-bottom: 20px; }
+  .comparison-section h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .comparison-bars { display: flex; flex-direction: column; gap: 6px; }
+  .comp-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .comp-bar-label {
+    width: 110px;
+    text-align: right;
+    color: #666;
+    flex-shrink: 0;
+  }
+  .comp-bar-track {
+    flex: 1;
+    height: 20px;
+    background: #F0F0F0;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .comp-bar-value {
+    width: 70px;
+    text-align: right;
+    color: #333;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  /* Physics explanation */
+  .physics-section {
+    background: #F8F9FA;
+    border: 1px solid #E8E8E8;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .physics-section h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .physics-section p {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .physics-section p:last-child { margin-bottom: 0; }
+  .physics-section code {
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 11px;
+    background: #E8E8E8;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  /* Warning */
+  .warning-severe {
+    background: #FFF3E0;
+    border: 1px solid #FFB74D;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #E65100;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .warning-severe.visible { display: block; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    font-size: 9px;
+    color: #AAA;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #EEE;
+  }
+  .footer a { color: #AAA; text-decoration: none; }
+  .footer a:hover { color: #888; text-decoration: underline; }
+
+  /* Height comparison mini-chart */
+  .height-chart { margin-bottom: 16px; }
+  .height-chart h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .height-bars { display: flex; align-items: flex-end; gap: 4px; height: 100px; }
+  .height-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .height-bar-val {
+    font-size: 9px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .height-bar {
+    width: 100%;
+    max-width: 48px;
+    border-radius: 3px 3px 0 0;
+    transition: height 0.4s ease, background 0.3s ease;
+  }
+  .height-bar-label {
+    font-size: 9px;
+    color: #666;
+    margin-top: 3px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Outdoor CFM Sizing Calculator</h1>
+<p class="subtitle">Physics-based exhaust airflow sizing for outdoor cooking ventilation — OVS-RB-008</p>
+
+<div class="calculator-grid">
+  <div class="input-panel">
+    <h2>Cooking Source</h2>
+    <div class="field">
+      <label>Source Type</label>
+      <select id="sourceType">
+        <optgroup label="Gas Grill">
+          <option value="gas_small">Gas Grill — Small (25,000 BTU)</option>
+          <option value="gas_medium" selected>Gas Grill — Medium (40,000 BTU)</option>
+          <option value="gas_large">Gas Grill — Large (60,000 BTU)</option>
+          <option value="gas_high">Gas Grill — High-Output (80,000 BTU)</option>
+        </optgroup>
+        <optgroup label="Charcoal">
+          <option value="charcoal_kettle">Charcoal Kettle (15,000 BTU)</option>
+          <option value="charcoal_high">Charcoal Kettle High (30,000 BTU)</option>
+          <option value="charcoal_kamado">Charcoal Kamado (25,000 BTU)</option>
+        </optgroup>
+        <optgroup label="Wood-Fired">
+          <option value="wood">Wood-Fired (40,000 BTU)</option>
+          <option value="wood_large">Wood-Fired Large (70,000 BTU)</option>
+        </optgroup>
+        <optgroup label="Pellet Smoker">
+          <option value="pellet_low">Pellet Smoker — Low (8,000 BTU)</option>
+          <option value="pellet_med">Pellet Smoker — Medium (18,000 BTU)</option>
+          <option value="pellet_high">Pellet Smoker — High (30,000 BTU)</option>
+        </optgroup>
+      </select>
+      <div class="field-hint" id="sourceHint">Q<sub>c</sub> = 8.2 kW convective heat release</div>
+    </div>
+  </div>
+
+  <div class="input-panel">
+    <h2>Installation</h2>
+    <div class="field">
+      <label>Hood Mounting Height</label>
+      <select id="mountHeight">
+        <option value="0.457">18 inches (46 cm)</option>
+        <option value="0.610">24 inches (61 cm)</option>
+        <option value="0.762" selected>30 inches (76 cm)</option>
+        <option value="0.914">36 inches (91 cm)</option>
+        <option value="1.219">48 inches (122 cm)</option>
+      </select>
+      <div class="field-hint">Lower mounting = better capture, less CFM required</div>
+    </div>
+    <div class="field">
+      <label>Wind Exposure Class</label>
+      <select id="windClass">
+        <option value="sheltered">Sheltered — enclosed patio, courtyard (&lt;3 mph)</option>
+        <option value="moderate" selected>Moderate — partial screening, covered porch (3-7 mph)</option>
+        <option value="exposed_panels">Exposed with side panels (7-12 mph)</option>
+        <option value="exposed_none">Exposed without panels (7-12 mph)</option>
+        <option value="severe">Severe — fully open, rooftop (&gt;12 mph)</option>
+      </select>
+      <div class="field-hint" id="windHint">K<sub>CFM</sub> = 3.68 (F<sub>inf</sub>=2.0 × F<sub>wind</sub>=1.6 × F<sub>safety</sub>=1.15)</div>
+    </div>
+  </div>
+
+  <div class="results-panel" id="resultsPanel">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<div class="footer">
+  OVS-RB-008 | <a href="https://outdoorventilationstandard.com">outdoorventilationstandard.com</a>
+  <br>Methodology: Heskestad plume correlation, Morton-Taylor-Turner entrainment theory
+  <br>This tool provides physics-based estimates. It does not constitute engineering design advice.
+</div>
+
+<script>
+const SOURCES = {
+  gas_small:       { name: 'Gas Grill — Small',    btu: 25000, qc: 5.1,  chi: 0.70 },
+  gas_medium:      { name: 'Gas Grill — Medium',   btu: 40000, qc: 8.2,  chi: 0.70 },
+  gas_large:       { name: 'Gas Grill — Large',    btu: 60000, qc: 12.3, chi: 0.70 },
+  gas_high:        { name: 'Gas Grill — High-Output', btu: 80000, qc: 16.4, chi: 0.70 },
+  charcoal_kettle: { name: 'Charcoal Kettle',      btu: 15000, qc: 1.8,  chi: 0.40 },
+  charcoal_high:   { name: 'Charcoal Kettle High',  btu: 30000, qc: 3.5,  chi: 0.40 },
+  charcoal_kamado: { name: 'Charcoal Kamado',       btu: 25000, qc: 3.3,  chi: 0.45 },
+  wood:            { name: 'Wood-Fired',            btu: 40000, qc: 7.6,  chi: 0.65 },
+  wood_large:      { name: 'Wood-Fired Large',      btu: 70000, qc: 13.3, chi: 0.65 },
+  pellet_low:      { name: 'Pellet Smoker — Low',   btu: 8000,  qc: 1.5,  chi: 0.65 },
+  pellet_med:      { name: 'Pellet Smoker — Medium', btu: 18000, qc: 3.4,  chi: 0.65 },
+  pellet_high:     { name: 'Pellet Smoker — High',  btu: 30000, qc: 5.7,  chi: 0.65 }
+};
+
+const WIND = {
+  sheltered:      { name: 'Sheltered',            f_inf: 2.0, f_wind: 1.3, f_safety: 1.15, desc: '<3 mph, enclosed patio' },
+  moderate:       { name: 'Moderate',             f_inf: 2.0, f_wind: 1.6, f_safety: 1.15, desc: '3-7 mph, partial screening' },
+  exposed_panels: { name: 'Exposed (with panels)', f_inf: 2.0, f_wind: 1.8, f_safety: 1.15, desc: '7-12 mph, side panels installed' },
+  exposed_none:   { name: 'Exposed (no panels)',  f_inf: 2.0, f_wind: 2.5, f_safety: 1.15, desc: '7-12 mph, no wind shielding' },
+  severe:         { name: 'Severe',               f_inf: null, f_wind: null, f_safety: null, desc: '>12 mph, conventional capture impractical' }
+};
+
+const HEIGHTS = [
+  { m: 0.457, label: '18"' },
+  { m: 0.610, label: '24"' },
+  { m: 0.762, label: '30"' },
+  { m: 0.914, label: '36"' },
+  { m: 1.219, label: '48"' }
+];
+
+const RHO_PLUME = 1.10;
+
+function calcBarePlumeCFM(qc, z) {
+  const m_dot = 0.071 * Math.pow(qc, 1/3) * Math.pow(z, 5/3) + 0.0018 * qc;
+  return (m_dot / RHO_PLUME) * 2119;
+}
+
+function calcKCFM(windKey) {
+  const w = WIND[windKey];
+  if (!w.f_inf) return null;
+  return w.f_inf * w.f_wind * w.f_safety;
+}
+
+function calcRequiredCFM(qc, z, windKey) {
+  const k = calcKCFM(windKey);
+  if (k === null) return null;
+  return calcBarePlumeCFM(qc, z) * k;
+}
+
+function recommendedBlower(cfm) {
+  const steps = [300, 400, 600, 900, 1200, 1500, 2000, 2500, 3000];
+  for (const s of steps) {
+    if (s >= cfm * 1.15) return s;
+  }
+  return Math.ceil(cfm * 1.2 / 100) * 100;
+}
+
+function indoorCFMBaseline(btu) {
+  return btu / 100;
+}
+
+function update() {
+  const srcKey = document.getElementById('sourceType').value;
+  const z = parseFloat(document.getElementById('mountHeight').value);
+  const windKey = document.getElementById('windClass').value;
+
+  const src = SOURCES[srcKey];
+  const wind = WIND[windKey];
+
+  // Update hints
+  document.getElementById('sourceHint').innerHTML =
+    'Q<sub>c</sub> = ' + src.qc + ' kW convective heat release (' + src.btu.toLocaleString() + ' BTU/hr &times; &chi;<sub>c</sub>=' + src.chi + ')';
+
+  if (wind.f_inf) {
+    const k = (wind.f_inf * wind.f_wind * wind.f_safety).toFixed(2);
+    document.getElementById('windHint').innerHTML =
+      'K<sub>CFM</sub> = ' + k + ' (F<sub>inf</sub>=' + wind.f_inf + ' &times; F<sub>wind</sub>=' + wind.f_wind + ' &times; F<sub>safety</sub>=' + wind.f_safety + ')';
+  } else {
+    document.getElementById('windHint').innerHTML = 'Conventional hood capture is impractical at this exposure level. Enclosure required.';
+  }
+
+  const panel = document.getElementById('resultsPanel');
+
+  // Severe wind — show warning only
+  if (windKey === 'severe') {
+    panel.innerHTML = `
+      <h2>Results</h2>
+      <div class="warning-severe visible">
+        <strong>Severe Wind Exposure (&gt;12 mph)</strong><br>
+        Conventional canopy hood capture is impractical at sustained wind speeds above 12 mph.
+        At these velocities, the buoyant cooking plume is fully deflected beyond any practical hood geometry,
+        and no reasonable exhaust rate can compensate. Physical enclosure (walls on three or more sides
+        plus overhead structure) is required before ventilation can be effective.
+        <br><br>
+        <strong>Recommendation:</strong> Install windbreak walls or relocate the cooking station to a sheltered area
+        before specifying a ventilation hood. See RB-006 and RB-009 for wind mitigation strategies.
+      </div>`;
+    return;
+  }
+
+  const bareCFM = calcBarePlumeCFM(src.qc, z);
+  const kCFM = calcKCFM(windKey);
+  const requiredCFM = Math.round(bareCFM * kCFM);
+  const recBlower = recommendedBlower(requiredCFM);
+  const margin = Math.round((recBlower / requiredCFM - 1) * 100);
+  const indoorCFM = indoorCFMBaseline(src.btu);
+  const outdoorFactor = (requiredCFM / indoorCFM).toFixed(1);
+
+  // Height comparison
+  const heightCFMs = HEIGHTS.map(h => ({
+    label: h.label,
+    cfm: Math.round(calcBarePlumeCFM(src.qc, h.m) * kCFM),
+    z: h.m,
+    selected: Math.abs(h.m - z) < 0.001
+  }));
+  const maxHeightCFM = Math.max(...heightCFMs.map(h => h.cfm));
+
+  // Comparison across wind classes
+  const windComps = ['sheltered', 'moderate', 'exposed_panels', 'exposed_none']
+    .map(wk => ({
+      label: WIND[wk].name,
+      cfm: Math.round(calcBarePlumeCFM(src.qc, z) * calcKCFM(wk)),
+      selected: wk === windKey
+    }));
+  const maxWindCFM = Math.max(...windComps.map(w => w.cfm));
+
+  // Mounting height in inches for display
+  const zInches = Math.round(z / 0.0254);
+
+  panel.innerHTML = `
+    <h2>Results</h2>
+
+    ${windKey === 'exposed_none' ? `
+    <div class="warning-severe visible">
+      <strong>Side panels strongly recommended.</strong> Without physical wind shielding at this exposure level,
+      capture efficiency is limited to approximately 60% even at the elevated CFM shown below.
+      Adding side panels reduces the required CFM by 28% and significantly improves capture reliability.
+      See RB-009 for side panel specifications.
+    </div>` : ''}
+
+    <div class="result-primary">
+      <span class="result-cfm">${requiredCFM.toLocaleString()}</span>
+      <span class="result-unit">CFM minimum</span>
+    </div>
+    <div class="result-label">
+      ${src.name} at ${zInches}" mounting height, ${wind.name} exposure
+    </div>
+
+    <div class="result-recommended">
+      <div class="rec-label">Recommended Blower Specification</div>
+      <div class="rec-value">${recBlower.toLocaleString()} CFM</div>
+      <div class="rec-note">${margin}% margin above minimum — accounts for filter resistance and system losses</div>
+    </div>
+
+    <div class="breakdown">
+      <h3>Calculation Breakdown</h3>
+      <table class="breakdown-table">
+        <tr><th>Parameter</th><th>Value</th><th>Source</th></tr>
+        <tr><td>Total heat release rate</td><td class="num">${src.btu.toLocaleString()} BTU/hr</td><td>RB-001 Table 3.1</td></tr>
+        <tr><td>Convective fraction (&chi;<sub>c</sub>)</td><td class="num">${src.chi}</td><td>RB-001 Table 3.1</td></tr>
+        <tr><td>Convective heat release (Q<sub>c</sub>)</td><td class="num">${src.qc} kW</td><td>RB-001 Table 3.1</td></tr>
+        <tr><td>Mounting height (z)</td><td class="num">${z.toFixed(3)} m (${zInches}")</td><td>User input</td></tr>
+        <tr><td>Bare plume mass flow</td><td class="num">${Math.round(bareCFM)} CFM</td><td>Heskestad correlation</td></tr>
+        <tr><td>Infiltration factor (F<sub>inf</sub>)</td><td class="num">${wind.f_inf}</td><td>RB-003 / RB-005</td></tr>
+        <tr><td>Wind correction (F<sub>wind</sub>)</td><td class="num">${wind.f_wind}</td><td>RB-006</td></tr>
+        <tr><td>Safety factor (F<sub>safety</sub>)</td><td class="num">${wind.f_safety}</td><td>RB-008 Section 2.2</td></tr>
+        <tr><td>Composite multiplier (K<sub>CFM</sub>)</td><td class="num">${kCFM.toFixed(2)}</td><td>F<sub>inf</sub> &times; F<sub>wind</sub> &times; F<sub>safety</sub></td></tr>
+        <tr class="highlight"><td><strong>Required exhaust CFM</strong></td><td class="num"><strong>${requiredCFM.toLocaleString()}</strong></td><td>Bare CFM &times; K<sub>CFM</sub></td></tr>
+      </table>
+    </div>
+
+    <div class="height-chart">
+      <h3>CFM at All Mounting Heights (${src.name}, ${wind.name})</h3>
+      <div class="height-bars">
+        ${heightCFMs.map(h => `
+          <div class="height-bar-col">
+            <div class="height-bar-val">${h.cfm.toLocaleString()}</div>
+            <div class="height-bar" style="height: ${Math.max(8, h.cfm / maxHeightCFM * 80)}px; background: ${h.selected ? '#2266AA' : '#B0CCE8'};"></div>
+            <div class="height-bar-label">${h.label}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="comparison-section">
+      <h3>CFM Across Wind Exposure Classes (${src.name} at ${zInches}")</h3>
+      <div class="comparison-bars">
+        ${windComps.map(w => `
+          <div class="comp-bar-row">
+            <span class="comp-bar-label">${w.label}</span>
+            <div class="comp-bar-track">
+              <div class="comp-bar-fill" style="width: ${w.cfm / maxWindCFM * 100}%; background: ${w.selected ? '#2266AA' : '#B0CCE8'};"></div>
+            </div>
+            <span class="comp-bar-value">${w.cfm.toLocaleString()} CFM</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="physics-section">
+      <h3>Indoor vs. Outdoor Comparison</h3>
+      <p>
+        <strong>Indoor baseline (ASHRAE BTU method):</strong> ${indoorCFM.toLocaleString()} CFM
+        (1 CFM per 100 BTU/hr &times; ${src.btu.toLocaleString()} BTU/hr)
+      </p>
+      <p>
+        <strong>Outdoor requirement:</strong> ${requiredCFM.toLocaleString()} CFM
+        &mdash; <strong>${outdoorFactor}&times;</strong> the indoor baseline
+      </p>
+      <p>
+        The outdoor correction factor accounts for: open-boundary dilution (no walls to redirect escaped plume),
+        wind-driven plume deflection, unrestricted three-dimensional entrainment, and the absence of
+        pressure-assisted capture that indoor hoods rely on. See RB-004 for the complete analysis.
+      </p>
+    </div>
+
+    <div class="physics-section">
+      <h3>Governing Equation</h3>
+      <p>
+        Bare plume mass flow: <code>m&#775; = 0.071 &middot; Q<sub>c</sub><sup>1/3</sup> &middot; z<sup>5/3</sup> + 0.0018 &middot; Q<sub>c</sub></code> (Heskestad, 1984)
+      </p>
+      <p>
+        Volume flow: <code>CFM<sub>plume</sub> = (m&#775; / &rho;<sub>plume</sub>) &times; 2119</code> where &rho;<sub>plume</sub> = ${RHO_PLUME} kg/m&sup3;
+      </p>
+      <p>
+        Required exhaust: <code>CFM<sub>required</sub> = CFM<sub>plume</sub> &times; K<sub>CFM</sub></code>
+      </p>
+      <p>
+        The z<sup>5/3</sup> dependence means doubling mounting height increases required CFM by 2.83&times;.
+        This is the fundamental physical basis for minimizing mounting height in outdoor installations.
+      </p>
+    </div>
+  `;
+}
+
+document.getElementById('sourceType').addEventListener('change', update);
+document.getElementById('mountHeight').addEventListener('change', update);
+document.getElementById('windClass').addEventListener('change', update);
+
+update();
+</script>
+</body>
+</html>

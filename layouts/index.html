@@ -1,0 +1,486 @@
+{{- define "main" }}
+
+<style>
+/* ===== HOMEPAGE CUSTOM STYLES ===== */
+/* Uses PaperMod CSS variables for theme consistency */
+
+.home-hero {
+  text-align: center;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.home-hero h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+.home-hero .last-updated {
+  font-size: 0.78rem;
+  color: var(--secondary);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.home-hero .tagline {
+  font-size: 1.05rem;
+  color: var(--secondary);
+  max-width: 680px;
+  margin: 0 auto 20px;
+  line-height: 1.65;
+}
+.home-hero .hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.home-hero .stat {
+  text-align: center;
+}
+.home-hero .stat-num {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+.home-hero .stat-label {
+  font-size: 0.75rem;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+/* Mission section */
+.home-mission {
+  max-width: 780px;
+  margin: 0 auto 36px;
+}
+.home-mission h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.home-mission p {
+  color: var(--content);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.home-mission .approach-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+.home-mission .approach-list li {
+  color: var(--content);
+  font-size: 0.9rem;
+  padding-left: 20px;
+  position: relative;
+}
+.home-mission .approach-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tertiary);
+}
+
+/* Diagram showcase */
+.home-diagram {
+  margin: 36px 0;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.home-diagram img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.home-diagram .diagram-caption {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--secondary);
+}
+.home-diagram .diagram-caption a {
+  color: var(--primary);
+  text-decoration: none;
+  box-shadow: 0 1px 0 var(--primary);
+}
+.home-diagram .diagram-caption a:hover {
+  box-shadow: none;
+}
+
+/* Feature cards */
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 36px 0;
+}
+.feature-card {
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 20px;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.feature-card:hover {
+  border-color: var(--primary);
+}
+.feature-card .card-icon {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.feature-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--secondary);
+  line-height: 1.55;
+  flex: 1;
+}
+.feature-card .card-link {
+  font-size: 0.8rem;
+  color: var(--primary);
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+/* Research highlights */
+.home-section {
+  margin: 40px 0;
+}
+.home-section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.research-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.research-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+  align-items: flex-start;
+}
+.research-item:hover {
+  border-color: var(--primary);
+}
+.research-item .ri-id {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--secondary);
+  background: var(--tertiary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.research-item .ri-title {
+  font-size: 0.85rem;
+  color: var(--primary);
+  line-height: 1.4;
+}
+.research-item .ri-tier {
+  font-size: 0.7rem;
+  color: var(--secondary);
+  margin-top: 2px;
+}
+
+/* CTA bottom */
+.home-cta {
+  text-align: center;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+.home-cta p {
+  color: var(--secondary);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+.home-cta .cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.home-cta .cta-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.home-cta .cta-btn:hover {
+  opacity: 0.85;
+}
+.home-cta .cta-primary {
+  background: var(--primary);
+  color: var(--theme);
+}
+.home-cta .cta-secondary {
+  background: var(--tertiary);
+  color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-features {
+    grid-template-columns: 1fr;
+  }
+  .research-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-mission .approach-list {
+    grid-template-columns: 1fr;
+  }
+  .home-hero .hero-stats {
+    gap: 20px;
+  }
+}
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="home-hero">
+  <h1>Outdoor Ventilation Standard</h1>
+  <p class="last-updated">Last Updated: February 2026</p>
+  <p class="tagline">
+    Independently researched, physics-grounded analysis of outdoor cooking ventilation.
+    No existing standard addresses hood systems in open-air environments &mdash; this research program fills that gap.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Research Papers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Interactive Tools</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Source Types Analyzed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Governance Documents</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MISSION ===== -->
+<section class="home-mission">
+  <h2>Why This Exists</h2>
+  <p>
+    Outdoor cooking ventilation operates under fundamentally different physical conditions than indoor kitchen ventilation,
+    yet is routinely designed using indoor-derived assumptions. No existing standard &mdash; ASHRAE 154, the International
+    Mechanical Code, or UL 710 &mdash; provides comprehensive, physics-based guidance for outdoor hood systems exposed to
+    open boundaries, wind, and unconstrained plume dispersion.
+  </p>
+  <p>
+    This program addresses that gap through applied physics research grounded in established principles:
+  </p>
+  <ul class="approach-list">
+    <li><strong>Fire science</strong> &mdash; Heskestad plume correlations</li>
+    <li><strong>Fluid dynamics</strong> &mdash; Morton-Taylor-Turner entrainment theory</li>
+    <li><strong>Atmospheric dispersion</strong> &mdash; Briggs plume rise equations</li>
+    <li><strong>Ventilation engineering</strong> &mdash; ASHRAE &amp; ACGIH analysis</li>
+  </ul>
+  <p>
+    No marketing language. No product recommendations. No ungrounded claims. Every conclusion is traceable
+    to a stated physical mechanism with explicit assumptions and applicable ranges.
+  </p>
+</section>
+
+<!-- ===== DIAGRAM ===== -->
+<section class="home-diagram">
+  <img src="/diagrams/indoor-vs-outdoor-comparison.svg"
+       alt="Diagram comparing indoor ventilation with wall confinement and pressure-assisted capture versus outdoor ventilation with open boundaries, wind deflection, and plume escape">
+  <div class="diagram-caption">
+    <strong>Why indoor ventilation assumptions fail outdoors.</strong>
+    Indoor hoods benefit from wall confinement, ceiling redirection, and pressure-assisted capture &mdash;
+    none of which exist in open-air environments.
+    <a href="/tools/indoor-vs-outdoor-comparison/">View full analysis &rarr;</a>
+  </div>
+</section>
+
+<!-- ===== FEATURE CARDS ===== -->
+<div class="home-features">
+  <a href="/research/" class="feature-card">
+    <div class="card-icon">&#x1F4D1;</div>
+    <h3>Research Library</h3>
+    <p>
+      12 peer-structured papers covering buoyant plume physics, entrainment, velocity decay,
+      hood geometry, wind interaction, failure modes, CFM sizing, and standards gap analysis.
+    </p>
+    <span class="card-link">Browse all papers &rarr;</span>
+  </a>
+  <a href="/tools/" class="feature-card">
+    <div class="card-icon">&#x1F527;</div>
+    <h3>Interactive Tools</h3>
+    <p>
+      CFM sizing calculator, velocity decay curves, and comparison diagrams &mdash;
+      all built on the physics from our research papers with full calculation transparency.
+    </p>
+    <span class="card-link">Explore tools &rarr;</span>
+  </a>
+  <a href="/governance/" class="feature-card">
+    <div class="card-icon">&#x1F3DB;</div>
+    <h3>Governance</h3>
+    <p>
+      Research charter, controlled glossary, diagram standard, and agent role definitions.
+      Every output is produced under formal quality governance.
+    </p>
+    <span class="card-link">View governance &rarr;</span>
+  </a>
+</div>
+
+<!-- ===== RESEARCH HIGHLIGHTS ===== -->
+<section class="home-section">
+  <h2>Research Papers</h2>
+  <div class="research-grid">
+    <a href="/research/rb-001-buoyant-plume-behavior/" class="research-item">
+      <span class="ri-id">RB-001</span>
+      <div>
+        <div class="ri-title">Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources</div>
+        <div class="ri-tier">P0 &mdash; Foundation</div>
+      </div>
+    </a>
+    <a href="/research/rb-002-entrainment-lateral-plume-spread/" class="research-item">
+      <span class="ri-id">RB-002</span>
+      <div>
+        <div class="ri-title">Entrainment and Lateral Plume Spread in Open-Air Environments</div>
+        <div class="ri-tier">P0 &mdash; Foundation</div>
+      </div>
+    </a>
+    <a href="/research/rb-003-velocity-decay-capture/" class="research-item">
+      <span class="ri-id">RB-003</span>
+      <div>
+        <div class="ri-title">Velocity Decay and Near-Field vs. Far-Field Capture</div>
+        <div class="ri-tier">P0 &mdash; Foundation</div>
+      </div>
+    </a>
+    <a href="/research/rb-004-indoor-vs-outdoor-assumptions/" class="research-item">
+      <span class="ri-id">RB-004</span>
+      <div>
+        <div class="ri-title">Why Indoor Ventilation Assumptions Fail Outdoors</div>
+        <div class="ri-tier">P1 &mdash; Core</div>
+      </div>
+    </a>
+    <a href="/research/rb-005-hood-geometry-capture/" class="research-item">
+      <span class="ri-id">RB-005</span>
+      <div>
+        <div class="ri-title">Impact of Hood Geometry on Capture Performance</div>
+        <div class="ri-tier">P1 &mdash; Core</div>
+      </div>
+    </a>
+    <a href="/research/rb-006-wind-interaction-crossflow/" class="research-item">
+      <span class="ri-id">RB-006</span>
+      <div>
+        <div class="ri-title">Wind Interaction and Cross-Flow Effects</div>
+        <div class="ri-tier">P1 &mdash; Core</div>
+      </div>
+    </a>
+    <a href="/research/rb-007-failure-modes/" class="research-item">
+      <span class="ri-id">RB-007</span>
+      <div>
+        <div class="ri-title">Failure Modes of Outdoor BBQ Hoods</div>
+        <div class="ri-tier">P2 &mdash; Applied</div>
+      </div>
+    </a>
+    <a href="/research/rb-008-cfm-requirements/" class="research-item">
+      <span class="ri-id">RB-008</span>
+      <div>
+        <div class="ri-title">CFM Requirements for Outdoor Cooking Ventilation</div>
+        <div class="ri-tier">P2 &mdash; Applied</div>
+      </div>
+    </a>
+    <a href="/research/rb-009-side-panel-effectiveness/" class="research-item">
+      <span class="ri-id">RB-009</span>
+      <div>
+        <div class="ri-title">Side Panel and Wind Baffle Effectiveness</div>
+        <div class="ri-tier">P2 &mdash; Applied</div>
+      </div>
+    </a>
+    <a href="/research/rb-010-standards-gaps/" class="research-item">
+      <span class="ri-id">RB-010</span>
+      <div>
+        <div class="ri-title">Gaps in Existing Standards, Codes, and Consumer Guidance</div>
+        <div class="ri-tier">P3 &mdash; Frontier</div>
+      </div>
+    </a>
+    <a href="/research/rb-011-grease-aerosol-transport/" class="research-item">
+      <span class="ri-id">RB-011</span>
+      <div>
+        <div class="ri-title">Grease Aerosol Transport and Deposition in Open Environments</div>
+        <div class="ri-tier">P3 &mdash; Frontier</div>
+      </div>
+    </a>
+    <a href="/research/rb-012-thermal-radiation-hood-surfaces/" class="research-item">
+      <span class="ri-id">RB-012</span>
+      <div>
+        <div class="ri-title">Thermal Radiation and Plume Interaction at Hood Surfaces</div>
+        <div class="ri-tier">P3 &mdash; Frontier</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ===== SECOND DIAGRAM ===== -->
+<section class="home-diagram">
+  <img src="/diagrams/velocity-decay-curves.svg"
+       alt="Chart showing centerline velocity decay curves for wood-fired, gas grill, charcoal, and pellet smoker plumes from 18 to 48 inch mounting heights">
+  <div class="diagram-caption">
+    <strong>Centerline velocity decay by source type.</strong>
+    All sources maintain capture-viable velocities (&gt;0.8 m/s) at standard mounting heights,
+    but plume width expansion &mdash; not velocity &mdash; is the primary capture constraint.
+    <a href="/tools/velocity-decay-curves/">View full analysis &rarr;</a>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="home-cta">
+  <p>Explore the research, use the tools, or review the methodology behind every finding.</p>
+  <div class="cta-buttons">
+    <a href="/research/" class="cta-btn cta-primary">Browse Research</a>
+    <a href="/tools/cfm-calculator/" class="cta-btn cta-secondary">CFM Calculator</a>
+    <a href="/methodology/" class="cta-btn cta-secondary">Methodology</a>
+  </div>
+</section>
+
+{{- end }}

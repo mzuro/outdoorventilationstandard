@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520">
+  <defs>
+    <style>
+      text { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="880" height="520" fill="#FAFAFA" rx="4"/>
+
+  <!-- Title -->
+  <text x="440" y="32" text-anchor="middle" font-size="17" font-weight="600" fill="#1a1a1a">Plume Capture Diameter vs. Hood Mounting Height</text>
+  <text x="440" y="52" text-anchor="middle" font-size="12" fill="#555">Heskestad correlation: d_capture = 0.48(z &#x2212; z&#x2080;) + D_eff</text>
+
+  <!-- Chart area: x=100..820, y=70..420 => width=720, height=350 -->
+  <!-- Y-axis: 0-70 inches. Scale: 350/70 = 5 px per inch -->
+  <!-- X-axis: 5 groups, each group width = 720/5 = 144px -->
+
+  <!-- Grid lines and Y-axis labels -->
+  <line x1="100" y1="420" x2="820" y2="420" stroke="#ccc" stroke-width="1"/>
+  <line x1="100" y1="370" x2="820" y2="370" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="320" x2="820" y2="320" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="270" x2="820" y2="270" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="220" x2="820" y2="220" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="170" x2="820" y2="170" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="120" x2="820" y2="120" stroke="#e8e8e8" stroke-width="0.5"/>
+  <line x1="100" y1="70" x2="820" y2="70" stroke="#e8e8e8" stroke-width="0.5"/>
+
+  <!-- Y-axis labels -->
+  <text x="92" y="424" text-anchor="end" font-size="11" fill="#666">0"</text>
+  <text x="92" y="374" text-anchor="end" font-size="11" fill="#666">10"</text>
+  <text x="92" y="324" text-anchor="end" font-size="11" fill="#666">20"</text>
+  <text x="92" y="274" text-anchor="end" font-size="11" fill="#666">30"</text>
+  <text x="92" y="224" text-anchor="end" font-size="11" fill="#666">40"</text>
+  <text x="92" y="174" text-anchor="end" font-size="11" fill="#666">50"</text>
+  <text x="92" y="124" text-anchor="end" font-size="11" fill="#666">60"</text>
+  <text x="92" y="74" text-anchor="end" font-size="11" fill="#666">70"</text>
+
+  <!-- Y-axis title -->
+  <text x="18" y="245" text-anchor="middle" font-size="12" fill="#444" transform="rotate(-90 18 245)">Plume Capture Diameter (inches)</text>
+
+  <!-- X-axis title -->
+  <text x="460" y="456" text-anchor="middle" font-size="12" fill="#444">Hood Mounting Height</text>
+
+  <!-- Reference line at 36" (typical grill width) -->
+  <!-- 36" => y = 420 - 36*5 = 420 - 180 = 240 -->
+  <line x1="100" y1="240" x2="820" y2="240" stroke="#CC3333" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <text x="822" y="237" font-size="10" fill="#CC3333" text-anchor="start">Typical 36" grill width</text>
+
+  <!-- Left axis line -->
+  <line x1="100" y1="70" x2="100" y2="420" stroke="#999" stroke-width="1"/>
+
+  <!-- Group 1: 18" mounting height, center at x=172 -->
+  <!-- Gas=36" Charcoal=40" Wood=45" Pellet=34" -->
+  <!-- Bar width=28, gap=4. Total 4 bars = 4*28 + 3*4 = 124. Start offset = 172-62 = 110 -->
+  <text x="172" y="440" text-anchor="middle" font-size="12" font-weight="500" fill="#333">18"</text>
+  <!-- Gas: 36" => h=180, y=240 -->
+  <rect x="110" y="240" width="28" height="180" fill="#3388DD" rx="2"/>
+  <text x="124" y="234" text-anchor="middle" font-size="9" fill="#3388DD" font-weight="600">36"</text>
+  <!-- Charcoal: 40" => h=200, y=220 -->
+  <rect x="142" y="220" width="28" height="200" fill="#888888" rx="2"/>
+  <text x="156" y="214" text-anchor="middle" font-size="9" fill="#888888" font-weight="600">40"</text>
+  <!-- Wood: 45" => h=225, y=195 -->
+  <rect x="174" y="195" width="28" height="225" fill="#CC6600" rx="2"/>
+  <text x="188" y="189" text-anchor="middle" font-size="9" fill="#CC6600" font-weight="600">45"</text>
+  <!-- Pellet: 34" => h=170, y=250 -->
+  <rect x="206" y="250" width="28" height="170" fill="#44AA88" rx="2"/>
+  <text x="220" y="244" text-anchor="middle" font-size="9" fill="#44AA88" font-weight="600">34"</text>
+
+  <!-- Group 2: 24" mounting height, center at x=316 -->
+  <!-- Gas=39" Charcoal=43" Wood=48" Pellet=37" -->
+  <text x="316" y="440" text-anchor="middle" font-size="12" font-weight="500" fill="#333">24"</text>
+  <!-- Gas: 39" => h=195, y=225 -->
+  <rect x="254" y="225" width="28" height="195" fill="#3388DD" rx="2"/>
+  <text x="268" y="219" text-anchor="middle" font-size="9" fill="#3388DD" font-weight="600">39"</text>
+  <!-- Charcoal: 43" => h=215, y=205 -->
+  <rect x="286" y="205" width="28" height="215" fill="#888888" rx="2"/>
+  <text x="300" y="199" text-anchor="middle" font-size="9" fill="#888888" font-weight="600">43"</text>
+  <!-- Wood: 48" => h=240, y=180 -->
+  <rect x="318" y="180" width="28" height="240" fill="#CC6600" rx="2"/>
+  <text x="332" y="174" text-anchor="middle" font-size="9" fill="#CC6600" font-weight="600">48"</text>
+  <!-- Pellet: 37" => h=185, y=235 -->
+  <rect x="350" y="235" width="28" height="185" fill="#44AA88" rx="2"/>
+  <text x="364" y="229" text-anchor="middle" font-size="9" fill="#44AA88" font-weight="600">37"</text>
+
+  <!-- Group 3: 30" mounting height, center at x=460 -->
+  <!-- Gas=41" Charcoal=45" Wood=51" Pellet=39" -->
+  <text x="460" y="440" text-anchor="middle" font-size="12" font-weight="500" fill="#333">30"</text>
+  <!-- Gas: 41" => h=205, y=215 -->
+  <rect x="398" y="215" width="28" height="205" fill="#3388DD" rx="2"/>
+  <text x="412" y="209" text-anchor="middle" font-size="9" fill="#3388DD" font-weight="600">41"</text>
+  <!-- Charcoal: 45" => h=225, y=195 -->
+  <rect x="430" y="195" width="28" height="225" fill="#888888" rx="2"/>
+  <text x="444" y="189" text-anchor="middle" font-size="9" fill="#888888" font-weight="600">45"</text>
+  <!-- Wood: 51" => h=255, y=165 -->
+  <rect x="462" y="165" width="28" height="255" fill="#CC6600" rx="2"/>
+  <text x="476" y="159" text-anchor="middle" font-size="9" fill="#CC6600" font-weight="600">51"</text>
+  <!-- Pellet: 39" => h=195, y=225 -->
+  <rect x="494" y="225" width="28" height="195" fill="#44AA88" rx="2"/>
+  <text x="508" y="219" text-anchor="middle" font-size="9" fill="#44AA88" font-weight="600">39"</text>
+
+  <!-- Group 4: 36" mounting height, center at x=604 -->
+  <!-- Gas=44" Charcoal=48" Wood=54" Pellet=42" -->
+  <text x="604" y="440" text-anchor="middle" font-size="12" font-weight="500" fill="#333">36"</text>
+  <!-- Gas: 44" => h=220, y=200 -->
+  <rect x="542" y="200" width="28" height="220" fill="#3388DD" rx="2"/>
+  <text x="556" y="194" text-anchor="middle" font-size="9" fill="#3388DD" font-weight="600">44"</text>
+  <!-- Charcoal: 48" => h=240, y=180 -->
+  <rect x="574" y="180" width="28" height="240" fill="#888888" rx="2"/>
+  <text x="588" y="174" text-anchor="middle" font-size="9" fill="#888888" font-weight="600">48"</text>
+  <!-- Wood: 54" => h=270, y=150 -->
+  <rect x="606" y="150" width="28" height="270" fill="#CC6600" rx="2"/>
+  <text x="620" y="144" text-anchor="middle" font-size="9" fill="#CC6600" font-weight="600">54"</text>
+  <!-- Pellet: 42" => h=210, y=210 -->
+  <rect x="638" y="210" width="28" height="210" fill="#44AA88" rx="2"/>
+  <text x="652" y="204" text-anchor="middle" font-size="9" fill="#44AA88" font-weight="600">42"</text>
+
+  <!-- Group 5: 48" mounting height, center at x=748 -->
+  <!-- Gas=50" Charcoal=54" Wood=60" Pellet=48" -->
+  <text x="748" y="440" text-anchor="middle" font-size="12" font-weight="500" fill="#333">48"</text>
+  <!-- Gas: 50" => h=250, y=170 -->
+  <rect x="686" y="170" width="28" height="250" fill="#3388DD" rx="2"/>
+  <text x="700" y="164" text-anchor="middle" font-size="9" fill="#3388DD" font-weight="600">50"</text>
+  <!-- Charcoal: 54" => h=270, y=150 -->
+  <rect x="718" y="150" width="28" height="270" fill="#888888" rx="2"/>
+  <text x="732" y="144" text-anchor="middle" font-size="9" fill="#888888" font-weight="600">54"</text>
+  <!-- Wood: 60" => h=300, y=120 -->
+  <rect x="750" y="120" width="28" height="300" fill="#CC6600" rx="2"/>
+  <text x="764" y="114" text-anchor="middle" font-size="9" fill="#CC6600" font-weight="600">60"</text>
+  <!-- Pellet: 48" => h=240, y=180 -->
+  <rect x="782" y="180" width="28" height="240" fill="#44AA88" rx="2"/>
+  <text x="796" y="174" text-anchor="middle" font-size="9" fill="#44AA88" font-weight="600">48"</text>
+
+  <!-- Legend -->
+  <rect x="200" y="472" width="14" height="14" fill="#3388DD" rx="2"/>
+  <text x="220" y="484" font-size="11" fill="#333">Gas Grill Medium</text>
+
+  <rect x="355" y="472" width="14" height="14" fill="#888888" rx="2"/>
+  <text x="375" y="484" font-size="11" fill="#333">Charcoal Kettle</text>
+
+  <rect x="495" y="472" width="14" height="14" fill="#CC6600" rx="2"/>
+  <text x="515" y="484" font-size="11" fill="#333">Wood-Fired Large</text>
+
+  <rect x="645" y="472" width="14" height="14" fill="#44AA88" rx="2"/>
+  <text x="665" y="484" font-size="11" fill="#333">Pellet Smoker Low</text>
+
+  <!-- Source attribution -->
+  <text x="440" y="510" text-anchor="middle" font-size="10" fill="#999">Source: OVS-RB-002 | outdoorventilationstandard.com</text>
+</svg>

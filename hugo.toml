@@ -1,0 +1,85 @@
+baseURL = 'https://outdoorventilationstandard.com/'
+languageCode = 'en-us'
+title = 'Outdoor Ventilation Standard'
+theme = 'PaperMod'
+enableGitInfo = false
+
+[frontmatter]
+  lastmod = ["lastmod", ":fileModTime"]
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[pagination]
+  pagerSize = 20
+
+[params]
+  description = "Independently researched, physics-grounded analysis of outdoor cooking ventilation. Buoyant plume behavior, entrainment, velocity decay, hood capture performance, and wind interaction."
+  author = "Outdoor Ventilation Standard — Applied Physics Research"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = true
+  defaultTheme = "light"
+  disableThemeToggle = false
+  images = ["/og-image.svg"]
+
+[params.label]
+  text = "Outdoor Ventilation Standard"
+  icon = "/logo.svg"
+  iconHeight = 48
+
+[params.assets]
+  favicon = "/favicon.svg"
+
+[params.homeInfoParams]
+  Title = "Outdoor Ventilation Standard"
+  Content = "Independently researched, physics-grounded analysis of outdoor cooking ventilation. No existing standard provides comprehensive guidance for hood systems in open-air environments. This research program addresses that gap — characterizing buoyant plume behavior, entrainment, velocity decay, capture performance, and wind interaction using established fire science and fluid dynamics."
+
+[params.profileMode]
+  enabled = false
+
+[[menu.main]]
+  name = "Research"
+  url = "/research/"
+  weight = 10
+
+[[menu.main]]
+  name = "Governance"
+  url = "/governance/"
+  weight = 20
+
+[[menu.main]]
+  name = "Tools"
+  url = "/tools/"
+  weight = 15
+
+[[menu.main]]
+  name = "Methodology"
+  url = "/methodology/"
+  weight = 25
+
+[[menu.main]]
+  name = "References"
+  url = "/references/"
+  weight = 30
+
+[[menu.main]]
+  name = "About"
+  url = "/about/"
+  weight = 40
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    endLevel = 4
+    startLevel = 2
+
+[outputs]
+  home = ["HTML", "RSS"]

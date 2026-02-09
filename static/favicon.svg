@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Background circle -->
+  <circle cx="24" cy="24" r="23" fill="#1d1d1f" stroke="#333" stroke-width="1"/>
+  <!-- Hood canopy - trapezoid -->
+  <path d="M10 20 L17 8 L31 8 L38 20 Z" fill="#e8e8ed" opacity="0.9"/>
+  <!-- Duct -->
+  <rect x="20" y="4" width="8" height="5" rx="1" fill="#e8e8ed" opacity="0.7"/>
+  <!-- Three rising plume lines -->
+  <path d="M17 42 C17 34, 18 28, 21 22" stroke="#e8e8ed" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.45"/>
+  <path d="M24 44 C24 36, 24 28, 24 22" stroke="#e8e8ed" stroke-width="2.8" stroke-linecap="round" fill="none" opacity="0.65"/>
+  <path d="M31 42 C31 34, 30 28, 27 22" stroke="#e8e8ed" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.45"/>
+  <!-- Cooking surface -->
+  <line x1="13" y1="45" x2="35" y2="45" stroke="#e8e8ed" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+</svg>

@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520">
+  <defs>
+    <style>
+      text { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    </style>
+    <!-- Arrowhead marker for wind arrows -->
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#555"/>
+    </marker>
+    <!-- Hood capture zone fill -->
+    <pattern id="captureHatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="#E8F4E8"/>
+      <path d="M0,6 L6,0" stroke="#B8D8B8" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="880" height="560" fill="#FAFAFA" rx="4"/>
+
+  <!-- Title -->
+  <text x="440" y="30" text-anchor="middle" font-size="17" font-weight="600" fill="#1a1a1a">Wind-Deflected Plume Trajectories at Hood Height</text>
+  <text x="440" y="50" text-anchor="middle" font-size="12" fill="#555">Gas Grill Medium (Q_c = 8.2 kW) at 30" mounting height</text>
+
+  <!-- Coordinate system for the diagram scene:
+       Scene ground level: y=420
+       Cooking surface top: y=400 (grill is 20px tall)
+       Grill surface: x=240 to x=400 (center ~320), width=160px representing ~34" grill
+       Hood at 30" above grill: y=400-200=200 (200px represents 30")
+       Scale: ~6.67 px per inch vertically
+       Hood width: 50" => ~333px, centered at x=320 => x=153 to x=487
+       Plume origin: x=320, y=400
+       At 30" height (y=200), deflections:
+         0 mph: 0" => 0px => x=320
+         3 mph: 7" => ~47px => x=367
+         5 mph: 12" => ~80px => x=400
+         8 mph: 20" => ~133px => x=453
+         12 mph: 35" => ~233px => x=553
+       Hood edges: left=153, right=487 (overhang ~17" = ~113px each side)
+  -->
+
+  <!-- Height reference markers on the right side -->
+  <line x1="680" y1="400" x2="700" y2="400" stroke="#aaa" stroke-width="0.8"/>
+  <line x1="680" y1="200" x2="700" y2="200" stroke="#aaa" stroke-width="0.8"/>
+  <line x1="690" y1="400" x2="690" y2="200" stroke="#aaa" stroke-width="0.8"/>
+  <text x="695" y="305" text-anchor="start" font-size="10" fill="#888" transform="rotate(-90 695 305)">30" mounting height</text>
+
+  <!-- Ground / base platform -->
+  <rect x="180" y="420" width="350" height="8" fill="#ddd" rx="2"/>
+
+  <!-- Grill body -->
+  <rect x="240" y="400" width="160" height="20" fill="#777" rx="3" stroke="#555" stroke-width="1"/>
+  <text x="320" y="415" text-anchor="middle" font-size="9" fill="#fff" font-weight="500">Cooking Surface</text>
+
+  <!-- Grill legs -->
+  <rect x="260" y="420" width="4" height="8" fill="#888"/>
+  <rect x="376" y="420" width="4" height="8" fill="#888"/>
+
+  <!-- Fire/heat indication on grill -->
+  <line x1="270" y1="398" x2="275" y2="390" stroke="#DD6600" stroke-width="1.5" opacity="0.5"/>
+  <line x1="300" y1="398" x2="305" y2="388" stroke="#DD6600" stroke-width="1.5" opacity="0.5"/>
+  <line x1="330" y1="398" x2="332" y2="387" stroke="#DD6600" stroke-width="1.5" opacity="0.5"/>
+  <line x1="360" y1="398" x2="358" y2="390" stroke="#DD6600" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Hood Capture Zone (shaded area under hood) -->
+  <rect x="153" y="190" width="334" height="210" fill="url(#captureHatch)" opacity="0.6"/>
+  <text x="155" y="185" font-size="9.5" fill="#5A9A5A" font-weight="500">Hood Capture Zone</text>
+
+  <!-- Hood shape (dashed outline) -->
+  <!-- Hood bottom at y=200, top at y=190, width 334px (153 to 487) -->
+  <path d="M143,200 L143,185 Q143,175 153,175 L487,175 Q497,175 497,185 L497,200" fill="none" stroke="#444" stroke-width="2" stroke-dasharray="8,4"/>
+  <!-- Hood bottom surface -->
+  <line x1="143" y1="200" x2="497" y2="200" stroke="#444" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="500" y="190" font-size="10" fill="#444" font-weight="500">Hood (50" wide)</text>
+
+  <!-- Hood edge markers -->
+  <line x1="153" y1="200" x2="153" y2="210" stroke="#444" stroke-width="1.5"/>
+  <line x1="487" y1="200" x2="487" y2="210" stroke="#444" stroke-width="1.5"/>
+
+  <!-- Wind arrows on the left side -->
+  <text x="60" y="280" text-anchor="middle" font-size="11" fill="#555" font-weight="600">Wind</text>
+
+  <!-- Wind arrow indicators -->
+  <line x1="30" y1="300" x2="90" y2="300" stroke="#555" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="30" y1="320" x2="90" y2="320" stroke="#555" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="30" y1="340" x2="90" y2="340" stroke="#555" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- PLUME TRAJECTORIES -->
+  <!-- All start at x=320, y=398 (just above grill surface) and rise to y=200 (hood height) -->
+
+  <!-- 0 mph (still air): straight vertical, x=320 -->
+  <line x1="320" y1="398" x2="320" y2="135" stroke="#333333" stroke-width="2.5" opacity="0.85"/>
+  <!-- Extends above hood since no wind -->
+  <text x="312" y="128" font-size="9" fill="#333" font-weight="500">0 mph</text>
+
+  <!-- 3 mph: slight bend rightward, endpoint at hood level x=367 -->
+  <!-- Quadratic bezier: start (320,398), control point roughly (325,290), end (367,135) -->
+  <path d="M320,398 Q330,290 367,135" fill="none" stroke="#4488CC" stroke-width="2.5" opacity="0.85"/>
+  <text x="371" y="128" font-size="9" fill="#4488CC" font-weight="500">3 mph</text>
+
+  <!-- 5 mph: more bend, endpoint at hood level x=400 -->
+  <path d="M320,398 Q340,290 410,135" fill="none" stroke="#DDAA00" stroke-width="2.5" opacity="0.85"/>
+  <text x="414" y="128" font-size="9" fill="#BBAA00" font-weight="500">5 mph</text>
+
+  <!-- 8 mph: significant bend, endpoint at hood level x=453 -->
+  <path d="M320,398 Q355,290 480,135" fill="none" stroke="#DD6600" stroke-width="2.5" opacity="0.85"/>
+  <text x="484" y="128" font-size="9" fill="#DD6600" font-weight="500">8 mph</text>
+
+  <!-- 12 mph: heavy deflection, endpoint at hood level x=553 -->
+  <path d="M320,398 Q380,290 590,135" fill="none" stroke="#CC3333" stroke-width="2.5" opacity="0.85"/>
+  <text x="594" y="128" font-size="9" fill="#CC3333" font-weight="500">12 mph</text>
+
+  <!-- Mark where plumes cross the hood boundary (y=200) -->
+  <!-- 0 mph at y=200: x=320 (within hood 153-487) => within -->
+  <circle cx="320" cy="200" r="4" fill="#333" opacity="0.6"/>
+  <!-- 3 mph at y=200: interpolate bezier. Approx x~347 => within -->
+  <circle cx="347" cy="200" r="4" fill="#4488CC" opacity="0.6"/>
+  <!-- 5 mph at y=200: approx x~370 => within but near edge zone -->
+  <circle cx="375" cy="200" r="4" fill="#DDAA00" opacity="0.6"/>
+  <!-- 8 mph at y=200: approx x~420 => within but approaching edge -->
+  <circle cx="420" cy="200" r="4" fill="#DD6600" opacity="0.6"/>
+  <!-- 12 mph at y=200: approx x~490 => just outside hood edge (487) -->
+  <circle cx="498" cy="200" r="4" fill="#CC3333" opacity="0.6"/>
+
+  <!-- Annotations with connecting lines -->
+  <!-- "Plume within hood" for 0 and 3 mph -->
+  <line x1="335" y1="220" x2="360" y2="248" stroke="#3a7a3a" stroke-width="0.8"/>
+  <rect x="360" y="238" width="120" height="20" fill="#FAFAFA" fill-opacity="0.9" rx="3" stroke="#5A9A5A" stroke-width="0.8"/>
+  <text x="420" y="252" text-anchor="middle" font-size="9.5" fill="#3a7a3a" font-weight="600">Plume within hood</text>
+
+  <!-- "Marginal capture" for 5 mph -->
+  <line x1="375" y1="205" x2="430" y2="280" stroke="#AA8800" stroke-width="0.8"/>
+  <rect x="430" y="270" width="108" height="20" fill="#FAFAFA" fill-opacity="0.9" rx="3" stroke="#AA8800" stroke-width="0.8"/>
+  <text x="484" y="284" text-anchor="middle" font-size="9.5" fill="#AA8800" font-weight="600">Marginal capture</text>
+
+  <!-- "Capture failure" for 8 and 12 mph -->
+  <line x1="498" y1="205" x2="555" y2="258" stroke="#CC3333" stroke-width="0.8"/>
+  <rect x="555" y="248" width="106" height="20" fill="#FAFAFA" fill-opacity="0.9" rx="3" stroke="#CC3333" stroke-width="0.8"/>
+  <text x="608" y="262" text-anchor="middle" font-size="9.5" fill="#CC3333" font-weight="600">Capture failure</text>
+
+  <!-- Legend at bottom -->
+  <line x1="130" y1="465" x2="150" y2="465" stroke="#333" stroke-width="2.5"/>
+  <text x="155" y="469" font-size="10" fill="#333">0 mph (still)</text>
+
+  <line x1="250" y1="465" x2="270" y2="465" stroke="#4488CC" stroke-width="2.5"/>
+  <text x="275" y="469" font-size="10" fill="#4488CC">3 mph</text>
+
+  <line x1="340" y1="465" x2="360" y2="465" stroke="#DDAA00" stroke-width="2.5"/>
+  <text x="365" y="469" font-size="10" fill="#BBAA00">5 mph</text>
+
+  <line x1="430" y1="465" x2="450" y2="465" stroke="#DD6600" stroke-width="2.5"/>
+  <text x="455" y="469" font-size="10" fill="#DD6600">8 mph</text>
+
+  <line x1="520" y1="465" x2="540" y2="465" stroke="#CC3333" stroke-width="2.5"/>
+  <text x="545" y="469" font-size="10" fill="#CC3333">12 mph</text>
+
+  <!-- Dashed line legend entry -->
+  <line x1="620" y1="465" x2="650" y2="465" stroke="#444" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="655" y="469" font-size="10" fill="#444">Hood outline</text>
+
+  <!-- Source attribution -->
+  <text x="440" y="500" text-anchor="middle" font-size="10" fill="#999">Source: OVS-RB-006 | outdoorventilationstandard.com</text>
+</svg>

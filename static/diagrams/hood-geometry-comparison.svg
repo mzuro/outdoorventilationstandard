@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.85"/>
+      <stop offset="40%" stop-color="#FFA500" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="missedRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#DD3333" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#DD3333" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="missedOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#DD8800" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#DD8800" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="captureGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#44AA44" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#44AA44" stop-opacity="0.05"/>
+    </linearGradient>
+    <marker id="dimArrow" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+      <path d="M0,0 L6,2 L0,4 Z" fill="#888"/>
+    </marker>
+    <marker id="dimArrowRev" markerWidth="6" markerHeight="4" refX="0" refY="2" orient="auto">
+      <path d="M6,0 L0,2 L6,4 Z" fill="#888"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="520" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="480" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#222">Hood Overhang: The Most Critical Geometric Parameter</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Gas Grill Medium at 30" mounting height — plume capture diameter = 41"</text>
+
+  <!-- Divider lines -->
+  <line x1="320" y1="60" x2="320" y2="470" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="6,4"/>
+  <line x1="640" y1="60" x2="640" y2="470" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ===== LEFT PANEL: Undersized Hood ===== -->
+  <text x="160" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#CC3333">Undersized Hood (No Overhang)</text>
+
+  <!-- Cooking surface — 36" grill (scaled: 120px represents 36") -->
+  <rect x="100" y="400" width="120" height="10" rx="2" fill="#444" stroke="#333" stroke-width="1"/>
+  <text x="160" y="425" text-anchor="middle" font-size="8" fill="#666">Cooking Surface (36")</text>
+
+  <!-- Plume rising — expands to ~41" diameter at hood height (~137px wide) -->
+  <path d="M130,400 Q125,370 118,340 Q108,300 98,260 Q91,230 91,210 L229,210 Q229,230 222,260 Q212,300 202,340 Q195,370 190,400 Z" fill="url(#plumeGrad)"/>
+
+  <!-- Hood canopy — same width as grill: 36" = 120px -->
+  <path d="M95,170 L100,195 L220,195 L225,170 Z" fill="#555" stroke="#444" stroke-width="2"/>
+  <rect x="145" y="140" width="30" height="30" fill="#555" stroke="#444" stroke-width="1.5"/>
+
+  <!-- Missed plume regions — plume is wider than hood on both sides -->
+  <path d="M91,210 Q88,230 85,250 L85,195 Q88,200 91,210 Z" fill="url(#missedRed)"/>
+  <path d="M75,170 L85,195 L85,280 Q80,290 75,300 Z" fill="url(#missedRed)"/>
+  <path d="M229,210 Q232,230 235,250 L235,195 Q232,200 229,210 Z" fill="url(#missedRed)"/>
+  <path d="M245,170 L235,195 L235,280 Q240,290 245,300 Z" fill="url(#missedRed)"/>
+
+  <!-- Missed plume labels -->
+  <text x="67" y="240" text-anchor="middle" font-size="7" fill="#CC3333" transform="rotate(-90,67,240)">Missed Plume</text>
+  <text x="253" y="240" text-anchor="middle" font-size="7" fill="#CC3333" transform="rotate(90,253,240)">Missed Plume</text>
+
+  <!-- Mounting height dimension -->
+  <line x1="55" y1="185" x2="55" y2="400" stroke="#888" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <line x1="50" y1="185" x2="60" y2="185" stroke="#888" stroke-width="0.8"/>
+  <line x1="50" y1="400" x2="60" y2="400" stroke="#888" stroke-width="0.8"/>
+  <text x="52" y="297" text-anchor="middle" font-size="7" fill="#888" transform="rotate(-90,52,297)">30"</text>
+
+  <!-- Hood width dimension -->
+  <line x1="100" y1="435" x2="220" y2="435" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <text x="160" y="448" text-anchor="middle" font-size="8" fill="#888">36"</text>
+
+  <!-- Overhang label -->
+  <rect x="110" y="138" width="100" height="18" rx="3" fill="#FEE8E8" stroke="#CC3333" stroke-width="0.8"/>
+  <text x="160" y="150" text-anchor="middle" font-size="9" fill="#CC3333" font-weight="600">0" overhang</text>
+
+  <!-- Capture efficiency -->
+  <rect x="115" y="90" width="90" height="26" rx="4" fill="#FEE8E8" stroke="#CC3333" stroke-width="1"/>
+  <text x="160" y="107" text-anchor="middle" font-size="11" fill="#CC2222" font-weight="700">~50% capture</text>
+
+  <!-- ===== CENTER PANEL: Minimum Overhang ===== -->
+  <text x="480" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#CC8800">Minimum Overhang (Indoor Spec)</text>
+
+  <!-- Cooking surface — 36" grill -->
+  <rect x="420" y="400" width="120" height="10" rx="2" fill="#444" stroke="#333" stroke-width="1"/>
+  <text x="480" y="425" text-anchor="middle" font-size="8" fill="#666">Cooking Surface (36")</text>
+
+  <!-- Plume rising — same expansion to ~41" -->
+  <path d="M450,400 Q445,370 438,340 Q428,300 418,260 Q411,230 411,210 L549,210 Q549,230 542,260 Q532,300 522,340 Q515,370 510,400 Z" fill="url(#plumeGrad)"/>
+
+  <!-- Hood canopy — 52" = ~173px, with 8" overhang each side (~27px) -->
+  <path d="M394,170 L400,195 L560,195 L566,170 Z" fill="#555" stroke="#444" stroke-width="2"/>
+  <rect x="465" y="140" width="30" height="30" fill="#555" stroke="#444" stroke-width="1.5"/>
+
+  <!-- Small missed plume on edges — plume barely exceeds hood -->
+  <path d="M398,195 L390,260 Q393,230 398,210 Z" fill="url(#missedOrange)" opacity="0.7"/>
+  <path d="M562,195 L570,260 Q567,230 562,210 Z" fill="url(#missedOrange)" opacity="0.7"/>
+
+  <!-- Missed plume labels -->
+  <text x="385" y="228" text-anchor="end" font-size="7" fill="#CC8800">Slight</text>
+  <text x="385" y="238" text-anchor="end" font-size="7" fill="#CC8800">escape</text>
+  <text x="575" y="228" text-anchor="start" font-size="7" fill="#CC8800">Slight</text>
+  <text x="575" y="238" text-anchor="start" font-size="7" fill="#CC8800">escape</text>
+
+  <!-- Mounting height dimension -->
+  <line x1="375" y1="185" x2="375" y2="400" stroke="#888" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <line x1="370" y1="185" x2="380" y2="185" stroke="#888" stroke-width="0.8"/>
+  <line x1="370" y1="400" x2="380" y2="400" stroke="#888" stroke-width="0.8"/>
+  <text x="372" y="297" text-anchor="middle" font-size="7" fill="#888" transform="rotate(-90,372,297)">30"</text>
+
+  <!-- Hood width dimension -->
+  <line x1="400" y1="435" x2="560" y2="435" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <text x="480" y="448" text-anchor="middle" font-size="8" fill="#888">52"</text>
+
+  <!-- Overhang arrows and labels -->
+  <!-- Left overhang -->
+  <line x1="400" y1="455" x2="420" y2="455" stroke="#CC8800" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <!-- Right overhang -->
+  <line x1="540" y1="455" x2="560" y2="455" stroke="#CC8800" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+
+  <!-- Overhang label -->
+  <rect x="430" y="138" width="100" height="18" rx="3" fill="#FFF3E0" stroke="#CC8800" stroke-width="0.8"/>
+  <text x="480" y="150" text-anchor="middle" font-size="9" fill="#CC8800" font-weight="600">8" overhang</text>
+
+  <!-- Capture efficiency -->
+  <rect x="435" y="90" width="90" height="26" rx="4" fill="#FFF3E0" stroke="#CC8800" stroke-width="1"/>
+  <text x="480" y="107" text-anchor="middle" font-size="11" fill="#AA6600" font-weight="700">~75% capture</text>
+
+  <!-- ===== RIGHT PANEL: Recommended Outdoor ===== -->
+  <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Outdoor (K=1.70)</text>
+
+  <!-- Cooking surface — 36" grill -->
+  <rect x="740" y="400" width="120" height="10" rx="2" fill="#444" stroke="#333" stroke-width="1"/>
+  <text x="800" y="425" text-anchor="middle" font-size="8" fill="#666">Cooking Surface (36")</text>
+
+  <!-- Plume rising — same expansion to ~41" -->
+  <path d="M770,400 Q765,370 758,340 Q748,300 738,260 Q731,230 731,210 L869,210 Q869,230 862,260 Q852,300 842,340 Q835,370 830,400 Z" fill="url(#plumeGrad)"/>
+
+  <!-- Hood canopy — 70" = ~233px, with 17" overhang each side (~57px) -->
+  <path d="M683,170 L690,195 L910,195 L917,170 Z" fill="#555" stroke="#444" stroke-width="2"/>
+  <rect x="785" y="140" width="30" height="30" fill="#555" stroke="#444" stroke-width="1.5"/>
+
+  <!-- Green capture envelope — plume fully contained -->
+  <path d="M695,195 Q698,210 700,230 L700,280 Q698,260 695,240 Z" fill="url(#captureGreen)" opacity="0.5"/>
+  <path d="M905,195 Q902,210 900,230 L900,280 Q902,260 905,240 Z" fill="url(#captureGreen)" opacity="0.5"/>
+  <rect x="695" y="195" width="210" height="85" rx="2" fill="url(#captureGreen)" opacity="0.35"/>
+
+  <!-- Capture envelope label -->
+  <text x="700" y="265" font-size="7" fill="#227722" font-weight="500">Capture</text>
+  <text x="700" y="275" font-size="7" fill="#227722" font-weight="500">Envelope</text>
+
+  <!-- Mounting height dimension -->
+  <line x1="670" y1="185" x2="670" y2="400" stroke="#888" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <line x1="665" y1="185" x2="675" y2="185" stroke="#888" stroke-width="0.8"/>
+  <line x1="665" y1="400" x2="675" y2="400" stroke="#888" stroke-width="0.8"/>
+  <text x="667" y="297" text-anchor="middle" font-size="7" fill="#888" transform="rotate(-90,667,297)">30"</text>
+
+  <!-- Hood width dimension -->
+  <line x1="690" y1="435" x2="910" y2="435" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <text x="800" y="448" text-anchor="middle" font-size="8" fill="#888">70"</text>
+
+  <!-- Overhang arrows -->
+  <line x1="690" y1="455" x2="740" y2="455" stroke="#227722" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <text x="715" y="465" text-anchor="middle" font-size="7" fill="#227722">17"</text>
+  <line x1="860" y1="455" x2="910" y2="455" stroke="#227722" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
+  <text x="885" y="465" text-anchor="middle" font-size="7" fill="#227722">17"</text>
+
+  <!-- Overhang label -->
+  <rect x="750" y="138" width="100" height="18" rx="3" fill="#E8F8E8" stroke="#44AA44" stroke-width="0.8"/>
+  <text x="800" y="150" text-anchor="middle" font-size="9" fill="#227722" font-weight="600">17" overhang</text>
+
+  <!-- Capture efficiency -->
+  <rect x="755" y="90" width="90" height="26" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
+  <text x="800" y="107" text-anchor="middle" font-size="11" fill="#227722" font-weight="700">~95% capture</text>
+
+  <!-- ===== BOTTOM COMPARISON BAR ===== -->
+  <rect x="30" y="475" width="900" height="32" rx="5" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
+  <text x="480" y="495" text-anchor="middle" font-size="9" fill="#555">
+    Plume diameter at 30" = 41" | Every inch of overhang improves capture | K = Hood Width / Grill Width: 1.0 (left), 1.44 (center), 1.94 (right)
+  </text>
+
+  <!-- Source attribution -->
+  <text x="480" y="515" text-anchor="middle" font-size="7" fill="#AAA">OVS-RB-005 | outdoorventilationstandard.com</text>
+</svg>

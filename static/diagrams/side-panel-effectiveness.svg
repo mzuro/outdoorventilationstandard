@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.85"/>
+      <stop offset="40%" stop-color="#FFA500" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="plumeDeflected" x1="0" y1="1" x2="0.4" y2="0">
+      <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.75"/>
+      <stop offset="40%" stop-color="#FFA500" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="missedRed" x1="0" y1="0" x2="1" y2="0.3">
+      <stop offset="0%" stop-color="#DD3333" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#DD3333" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="captureGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#44AA44" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#44AA44" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="recirc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#88BBDD" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#88BBDD" stop-opacity="0.03"/>
+    </linearGradient>
+    <marker id="windArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4488CC"/>
+    </marker>
+    <marker id="windArrowDeflect" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#88AACC"/>
+    </marker>
+    <marker id="recircArrow" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#6699BB"/>
+    </marker>
+    <marker id="dimArrow" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+      <path d="M0,0 L6,2 L0,4 Z" fill="#888"/>
+    </marker>
+    <marker id="dimArrowRev" markerWidth="6" markerHeight="4" refX="0" refY="2" orient="auto">
+      <path d="M6,0 L0,2 L6,4 Z" fill="#888"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="520" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="480" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#222">Side Panel Effectiveness: Restoring Partial Confinement</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Wind exposure class: Exposed (7-12 mph) — RB-009</text>
+
+  <!-- Divider -->
+  <line x1="480" y1="58" x2="480" y2="430" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ===== LEFT PANEL: Without Side Panels ===== -->
+  <text x="240" y="75" text-anchor="middle" font-size="14" font-weight="600" fill="#CC3333">Without Side Panels</text>
+
+  <!-- Ground/patio surface -->
+  <rect x="40" y="390" width="420" height="8" rx="1" fill="#B0A898"/>
+
+  <!-- Cooking surface (front view, wide rectangle) -->
+  <rect x="175" y="355" width="130" height="15" rx="2" fill="#444" stroke="#333" stroke-width="1.5"/>
+  <text x="240" y="382" text-anchor="middle" font-size="8" fill="#666">Cooking Surface</text>
+
+  <!-- Hood canopy (front view) -->
+  <path d="M140,130 L150,155 L330,155 L340,130 Z" fill="#555" stroke="#444" stroke-width="2"/>
+  <rect x="225" y="95" width="30" height="35" fill="#555" stroke="#444" stroke-width="1.5"/>
+  <text x="240" y="90" text-anchor="middle" font-size="8" fill="#555">Exhaust</text>
+
+  <!-- Wind arrows coming from the left -->
+  <line x1="45" y1="180" x2="130" y2="180" stroke="#4488CC" stroke-width="2.5" marker-end="url(#windArrow)"/>
+  <line x1="45" y1="210" x2="125" y2="210" stroke="#4488CC" stroke-width="2.2" marker-end="url(#windArrow)"/>
+  <line x1="45" y1="240" x2="120" y2="240" stroke="#4488CC" stroke-width="2" marker-end="url(#windArrow)"/>
+  <line x1="45" y1="270" x2="115" y2="270" stroke="#4488CC" stroke-width="1.8" marker-end="url(#windArrow)"/>
+  <line x1="45" y1="300" x2="110" y2="300" stroke="#4488CC" stroke-width="1.5" marker-end="url(#windArrow)"/>
+  <text x="60" y="170" font-size="10" fill="#4488CC" font-weight="600">Wind</text>
+  <text x="57" y="320" font-size="9" fill="#4488CC">5 mph</text>
+
+  <!-- Plume — deflected to the right by wind -->
+  <path d="M215,355 Q210,330 200,300 Q185,260 180,230 Q178,205 185,170 L295,170 Q315,205 320,230 Q330,260 340,300 Q345,330 345,355 Z" fill="url(#plumeDeflected)" opacity="0.75"/>
+
+  <!-- The deflected plume escaping to the right -->
+  <path d="M340,155 Q360,150 390,148 Q420,147 450,148 L450,200 Q420,198 390,195 Q360,190 340,185 Z" fill="url(#missedRed)"/>
+  <path d="M340,185 Q355,210 370,230 Q390,260 410,300 L410,280 Q395,250 380,225 Q365,200 345,175 Z" fill="url(#missedRed)" opacity="0.5"/>
+
+  <!-- Missed plume label -->
+  <rect x="360" y="155" width="85" height="30" rx="3" fill="#FEE8E8" stroke="#CC3333" stroke-width="0.8"/>
+  <text x="402" y="168" text-anchor="middle" font-size="8" fill="#CC3333" font-weight="500">Missed Plume</text>
+  <text x="402" y="179" text-anchor="middle" font-size="8" fill="#CC3333" font-weight="500">Region</text>
+
+  <!-- No side panels visible — open sides -->
+  <text x="130" y="285" text-anchor="middle" font-size="8" fill="#999" font-style="italic">Open side</text>
+  <text x="350" y="285" text-anchor="middle" font-size="8" fill="#999" font-style="italic">Open side</text>
+
+  <!-- Mounting height dimension -->
+  <line x1="125" y1="145" x2="125" y2="355" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <line x1="120" y1="145" x2="130" y2="145" stroke="#888" stroke-width="0.7"/>
+  <line x1="120" y1="355" x2="130" y2="355" stroke="#888" stroke-width="0.7"/>
+  <text x="122" y="255" text-anchor="middle" font-size="7" fill="#888" transform="rotate(-90,122,255)">30"</text>
+
+  <!-- Performance metrics -->
+  <rect x="155" y="400" width="170" height="20" rx="4" fill="#FEE8E8" stroke="#CC3333" stroke-width="1"/>
+  <text x="240" y="414" text-anchor="middle" font-size="9" fill="#CC2222" font-weight="600">40-60% capture at 5 mph wind</text>
+
+  <rect x="185" y="424" width="110" height="16" rx="3" fill="#F5F5F5" stroke="#DDD" stroke-width="0.8"/>
+  <text x="240" y="436" text-anchor="middle" font-size="9" fill="#666" font-weight="600">K_CFM = 5.75</text>
+
+  <!-- ===== RIGHT PANEL: With Side Panels ===== -->
+  <text x="720" y="75" text-anchor="middle" font-size="14" font-weight="600" fill="#227722">With Side Panels</text>
+
+  <!-- Ground/patio surface -->
+  <rect x="500" y="390" width="420" height="8" rx="1" fill="#B0A898"/>
+
+  <!-- Cooking surface -->
+  <rect x="655" y="355" width="130" height="15" rx="2" fill="#444" stroke="#333" stroke-width="1.5"/>
+  <text x="720" y="382" text-anchor="middle" font-size="8" fill="#666">Cooking Surface</text>
+
+  <!-- Hood canopy -->
+  <path d="M610,130 L620,155 L820,155 L830,130 Z" fill="#555" stroke="#444" stroke-width="2"/>
+  <rect x="705" y="95" width="30" height="35" fill="#555" stroke="#444" stroke-width="1.5"/>
+  <text x="720" y="90" text-anchor="middle" font-size="8" fill="#555">Exhaust</text>
+
+  <!-- LEFT side panel -->
+  <rect x="615" y="155" width="6" height="168" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
+  <text x="608" y="260" text-anchor="end" font-size="7" fill="#555" transform="rotate(-90,608,260)">Side Panel</text>
+
+  <!-- RIGHT side panel -->
+  <rect x="819" y="155" width="6" height="168" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
+  <text x="832" y="260" text-anchor="start" font-size="7" fill="#555" transform="rotate(90,832,260)">Side Panel</text>
+
+  <!-- Side panel height dimension (75% of mounting height) -->
+  <line x1="840" y1="155" x2="840" y2="323" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <line x1="835" y1="155" x2="845" y2="155" stroke="#888" stroke-width="0.7"/>
+  <line x1="835" y1="323" x2="845" y2="323" stroke="#888" stroke-width="0.7"/>
+  <text x="855" y="243" font-size="7" fill="#888">~75%</text>
+  <text x="855" y="253" font-size="7" fill="#888">height</text>
+
+  <!-- Wind arrows hitting side panel and being deflected -->
+  <line x1="515" y1="180" x2="606" y2="180" stroke="#4488CC" stroke-width="2.5" marker-end="url(#windArrow)"/>
+  <line x1="515" y1="210" x2="606" y2="210" stroke="#4488CC" stroke-width="2.2" marker-end="url(#windArrow)"/>
+  <line x1="515" y1="240" x2="606" y2="240" stroke="#4488CC" stroke-width="2" marker-end="url(#windArrow)"/>
+  <line x1="515" y1="270" x2="606" y2="270" stroke="#4488CC" stroke-width="1.8" marker-end="url(#windArrow)"/>
+  <line x1="515" y1="300" x2="606" y2="300" stroke="#4488CC" stroke-width="1.5" marker-end="url(#windArrow)"/>
+  <text x="530" y="170" font-size="10" fill="#4488CC" font-weight="600">Wind</text>
+  <text x="527" y="320" font-size="9" fill="#4488CC">5 mph</text>
+
+  <!-- Deflected wind arrows (bouncing off panel upward/downward) -->
+  <line x1="615" y1="200" x2="600" y2="165" stroke="#88AACC" stroke-width="1.2" marker-end="url(#windArrowDeflect)" stroke-dasharray="4,3"/>
+  <line x1="615" y1="260" x2="598" y2="230" stroke="#88AACC" stroke-width="1.2" marker-end="url(#windArrowDeflect)" stroke-dasharray="4,3"/>
+  <line x1="615" y1="300" x2="600" y2="340" stroke="#88AACC" stroke-width="1" marker-end="url(#windArrowDeflect)" stroke-dasharray="4,3"/>
+
+  <!-- Wind blocked label -->
+  <rect x="555" y="332" width="60" height="22" rx="3" fill="#E8F0FE" stroke="#88AACC" stroke-width="0.5"/>
+  <text x="585" y="341" text-anchor="middle" font-size="7" fill="#4488CC" font-weight="500">Wind</text>
+  <text x="585" y="350" text-anchor="middle" font-size="7" fill="#4488CC" font-weight="500">deflected</text>
+
+  <!-- Sheltered recirculation zone -->
+  <rect x="625" y="165" width="190" height="145" rx="4" fill="url(#recirc)"/>
+  <!-- Recirculation flow arrows (gentle swirl inside) -->
+  <path d="M660,200 Q680,190 700,195 Q720,200 715,215" fill="none" stroke="#6699BB" stroke-width="0.8" marker-end="url(#recircArrow)" stroke-dasharray="3,2"/>
+  <path d="M770,210 Q755,225 745,220 Q735,215 740,200" fill="none" stroke="#6699BB" stroke-width="0.8" marker-end="url(#recircArrow)" stroke-dasharray="3,2"/>
+  <text x="720" y="290" text-anchor="middle" font-size="7" fill="#5588AA" font-style="italic">Sheltered</text>
+  <text x="720" y="300" text-anchor="middle" font-size="7" fill="#5588AA" font-style="italic">recirculation zone</text>
+
+  <!-- Plume — mostly contained, slight upward drift -->
+  <path d="M695,355 Q690,330 685,300 Q675,260 670,230 Q668,205 672,170 L768,170 Q772,205 770,230 Q765,260 755,300 Q750,330 745,355 Z" fill="url(#plumeGrad)" opacity="0.8"/>
+
+  <!-- Green capture zone shading -->
+  <rect x="625" y="155" width="190" height="20" rx="2" fill="url(#captureGreen)" opacity="0.6"/>
+
+  <!-- Mounting height dimension -->
+  <line x1="600" y1="145" x2="600" y2="355" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <line x1="595" y1="145" x2="605" y2="145" stroke="#888" stroke-width="0.7"/>
+  <line x1="595" y1="355" x2="605" y2="355" stroke="#888" stroke-width="0.7"/>
+  <text x="597" y="255" text-anchor="middle" font-size="7" fill="#888" transform="rotate(-90,597,255)">30"</text>
+
+  <!-- Performance metrics -->
+  <rect x="635" y="400" width="170" height="20" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
+  <text x="720" y="414" text-anchor="middle" font-size="9" fill="#227722" font-weight="600">85-95% capture at 5 mph wind</text>
+
+  <rect x="645" y="424" width="150" height="16" rx="3" fill="#F5F5F5" stroke="#DDD" stroke-width="0.8"/>
+  <text x="720" y="436" text-anchor="middle" font-size="9" fill="#666" font-weight="600">K_CFM = 4.14 | 28% CFM reduction</text>
+
+  <!-- ===== BOTTOM COMPARISON BAR ===== -->
+  <rect x="30" y="455" width="900" height="36" rx="5" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
+  <text x="480" y="477" text-anchor="middle" font-size="9.5" fill="#555">
+    Side panels reduce effective wind speed by 40-60% | Required CFM drops 28% | Capture efficiency improves 25-35 percentage points
+  </text>
+
+  <!-- Source attribution -->
+  <text x="480" y="510" text-anchor="middle" font-size="7" fill="#AAA">OVS-RB-009 | outdoorventilationstandard.com</text>
+</svg>

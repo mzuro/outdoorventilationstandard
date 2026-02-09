@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="580" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="480" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#222">Outdoor Hood Failure Mode Taxonomy</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Six primary failure mechanisms — RB-007</text>
+
+  <!-- Legend -->
+  <rect x="260" y="58" width="440" height="22" rx="4" fill="#F5F5F5" stroke="#DDD" stroke-width="0.8"/>
+  <circle cx="290" cy="69" r="5" fill="#CC3333"/>
+  <text x="300" y="73" font-size="9" fill="#555">Design-Locked</text>
+  <circle cx="400" cy="69" r="5" fill="#DDAA00"/>
+  <text x="410" y="73" font-size="9" fill="#555">Partially Correctable</text>
+  <circle cx="540" cy="69" r="5" fill="#44AA44"/>
+  <text x="550" y="73" font-size="9" fill="#555">Correctable</text>
+
+  <!-- ===== ROW 1 ===== -->
+
+  <!-- FM-1: Inadequate Overhang -->
+  <g filter="url(#cardShadow)">
+    <rect x="30" y="90" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <!-- Left accent bar -->
+    <rect x="30" y="90" width="5" height="140" rx="3" fill="#CC3333"/>
+    <!-- Badge -->
+    <circle cx="58" cy="115" r="14" fill="#CC3333"/>
+    <text x="58" y="119" text-anchor="middle" font-size="10" fill="white" font-weight="700">1</text>
+    <!-- Title -->
+    <text x="80" y="112" font-size="13" font-weight="600" fill="#333">Inadequate Overhang</text>
+    <rect x="265" y="100" width="90" height="18" rx="9" fill="#FEE8E8" stroke="#CC3333" stroke-width="0.8"/>
+    <text x="310" y="113" text-anchor="middle" font-size="8" fill="#CC3333" font-weight="600">MOST COMMON</text>
+    <!-- Tag -->
+    <rect x="365" y="100" width="95" height="18" rx="9" fill="#FEE8E8" stroke="#CC3333" stroke-width="0.8"/>
+    <text x="412" y="113" text-anchor="middle" font-size="8" fill="#CC3333" font-weight="600">DESIGN-LOCKED</text>
+    <!-- Root Cause -->
+    <text x="48" y="140" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="120" y="140" font-size="9" fill="#555">Hood smaller than plume at interception plane</text>
+    <!-- Symptom -->
+    <text x="48" y="158" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="108" y="158" font-size="9" fill="#555">Symmetric smoke escape from all edges</text>
+    <!-- Fix -->
+    <text x="48" y="176" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="72" y="176" font-size="9" fill="#CC3333">Design-locked — requires hood replacement</text>
+    <!-- Severity bar -->
+    <rect x="48" y="195" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="48" y="195" width="380" height="4" rx="2" fill="#CC3333" opacity="0.6"/>
+    <text x="440" y="200" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- FM-2: Excessive Mounting Height -->
+  <g filter="url(#cardShadow)">
+    <rect x="490" y="90" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <rect x="490" y="90" width="5" height="140" rx="3" fill="#CC3333"/>
+    <circle cx="518" cy="115" r="14" fill="#CC3333"/>
+    <text x="518" y="119" text-anchor="middle" font-size="10" fill="white" font-weight="700">2</text>
+    <text x="540" y="112" font-size="13" font-weight="600" fill="#333">Excessive Mounting Height</text>
+    <rect x="825" y="100" width="95" height="18" rx="9" fill="#FEE8E8" stroke="#CC3333" stroke-width="0.8"/>
+    <text x="872" y="113" text-anchor="middle" font-size="8" fill="#CC3333" font-weight="600">DESIGN-LOCKED</text>
+    <text x="508" y="140" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="580" y="140" font-size="9" fill="#555">All plume parameters degraded by height</text>
+    <text x="508" y="158" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="568" y="158" font-size="9" fill="#555">Diffuse, general smoke escape; plume appears wide and weak</text>
+    <text x="508" y="176" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="532" y="176" font-size="9" fill="#CC3333">Design-locked — requires lowering hood or raising grill</text>
+    <rect x="508" y="195" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="508" y="195" width="340" height="4" rx="2" fill="#CC3333" opacity="0.6"/>
+    <text x="900" y="200" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- ===== ROW 2 ===== -->
+
+  <!-- FM-3: Insufficient Exhaust Rate -->
+  <g filter="url(#cardShadow)">
+    <rect x="30" y="245" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <rect x="30" y="245" width="5" height="140" rx="3" fill="#44AA44"/>
+    <circle cx="58" cy="270" r="14" fill="#44AA44"/>
+    <text x="58" y="274" text-anchor="middle" font-size="10" fill="white" font-weight="700">3</text>
+    <text x="80" y="267" font-size="13" font-weight="600" fill="#333">Insufficient Exhaust Rate</text>
+    <rect x="365" y="255" width="95" height="18" rx="9" fill="#E8F8E8" stroke="#44AA44" stroke-width="0.8"/>
+    <text x="412" y="268" text-anchor="middle" font-size="8" fill="#227722" font-weight="600">CORRECTABLE</text>
+    <text x="48" y="295" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="120" y="295" font-size="9" fill="#555">CFM below required K_CFM x plume mass flow</text>
+    <text x="48" y="313" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="108" y="313" font-size="9" fill="#555">Edge spillage that improves when blower speed increases</text>
+    <text x="48" y="331" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="72" y="331" font-size="9" fill="#227722">Correctable — upgrade blower, clean filters</text>
+    <rect x="48" y="350" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="48" y="350" width="280" height="4" rx="2" fill="#44AA44" opacity="0.6"/>
+    <text x="440" y="355" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- FM-4: Wind-Deflected Plume Escape -->
+  <g filter="url(#cardShadow)">
+    <rect x="490" y="245" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <rect x="490" y="245" width="5" height="140" rx="3" fill="#44AA44"/>
+    <circle cx="518" cy="270" r="14" fill="#44AA44"/>
+    <text x="518" y="274" text-anchor="middle" font-size="10" fill="white" font-weight="700">4</text>
+    <text x="540" y="267" font-size="13" font-weight="600" fill="#333">Wind-Deflected Plume Escape</text>
+    <rect x="825" y="255" width="95" height="18" rx="9" fill="#E8F8E8" stroke="#44AA44" stroke-width="0.8"/>
+    <text x="872" y="268" text-anchor="middle" font-size="8" fill="#227722" font-weight="600">CORRECTABLE</text>
+    <text x="508" y="295" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="580" y="295" font-size="9" fill="#555">Wind displaces plume beyond hood boundary</text>
+    <text x="508" y="313" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="568" y="313" font-size="9" fill="#555">Directional, intermittent escape correlated with gusts</text>
+    <text x="508" y="331" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="532" y="331" font-size="9" fill="#227722">Correctable — add side panels, wind baffles</text>
+    <rect x="508" y="350" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="508" y="350" width="320" height="4" rx="2" fill="#44AA44" opacity="0.6"/>
+    <text x="900" y="355" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- ===== ROW 3 ===== -->
+
+  <!-- FM-5: Geometry-Induced Spillage -->
+  <g filter="url(#cardShadow)">
+    <rect x="30" y="400" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <rect x="30" y="400" width="5" height="140" rx="3" fill="#DDAA00"/>
+    <circle cx="58" cy="425" r="14" fill="#DDAA00"/>
+    <text x="58" y="429" text-anchor="middle" font-size="10" fill="white" font-weight="700">5</text>
+    <text x="80" y="422" font-size="13" font-weight="600" fill="#333">Geometry-Induced Spillage</text>
+    <rect x="330" y="410" width="130" height="18" rx="9" fill="#FFF8E0" stroke="#DDAA00" stroke-width="0.8"/>
+    <text x="395" y="423" text-anchor="middle" font-size="8" fill="#AA8800" font-weight="600">PARTIALLY CORRECTABLE</text>
+    <text x="48" y="450" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="120" y="450" font-size="9" fill="#555">Low effective capture area (poor internal design)</text>
+    <text x="48" y="468" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="108" y="468" font-size="9" fill="#555">Uneven capture, dead zones under hood face</text>
+    <text x="48" y="486" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="72" y="486" font-size="9" fill="#AA8800">Partially correctable — add baffles, lip extension</text>
+    <rect x="48" y="505" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="48" y="505" width="240" height="4" rx="2" fill="#DDAA00" opacity="0.6"/>
+    <text x="440" y="510" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- FM-6: Momentum-Limited Capture -->
+  <g filter="url(#cardShadow)">
+    <rect x="490" y="400" width="440" height="140" rx="6" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+    <rect x="490" y="400" width="5" height="140" rx="3" fill="#44AA44"/>
+    <circle cx="518" cy="425" r="14" fill="#44AA44"/>
+    <text x="518" y="429" text-anchor="middle" font-size="10" fill="white" font-weight="700">6</text>
+    <text x="540" y="422" font-size="13" font-weight="600" fill="#333">Momentum-Limited Capture</text>
+    <rect x="825" y="410" width="95" height="18" rx="9" fill="#E8F8E8" stroke="#44AA44" stroke-width="0.8"/>
+    <text x="872" y="423" text-anchor="middle" font-size="8" fill="#227722" font-weight="600">CORRECTABLE</text>
+    <text x="508" y="450" font-size="9" fill="#666" font-weight="600">Root Cause:</text>
+    <text x="580" y="450" font-size="9" fill="#555">Edge velocity too low to draw in plume periphery</text>
+    <text x="508" y="468" font-size="9" fill="#666" font-weight="600">Symptom:</text>
+    <text x="568" y="468" font-size="9" fill="#555">Plume rises past hood face without being drawn in</text>
+    <text x="508" y="486" font-size="9" fill="#666" font-weight="600">Fix:</text>
+    <text x="532" y="486" font-size="9" fill="#227722">Correctable — increase CFM</text>
+    <rect x="508" y="505" width="400" height="4" rx="2" fill="#F0F0F0"/>
+    <rect x="508" y="505" width="260" height="4" rx="2" fill="#44AA44" opacity="0.6"/>
+    <text x="900" y="510" text-anchor="end" font-size="7" fill="#999">Severity</text>
+  </g>
+
+  <!-- Source attribution -->
+  <text x="480" y="570" text-anchor="middle" font-size="7" fill="#AAA">OVS-RB-007 | outdoorventilationstandard.com</text>
+</svg>

@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="captureZone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#44AA44" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#44AA44" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="dangerZone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#CC4444" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#CC4444" stop-opacity="0.03"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="520" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-size="17" font-weight="600" fill="#222">Centerline Velocity Decay: Buoyant Cooking Plume</text>
+  <text x="400" y="48" text-anchor="middle" font-size="10" fill="#666">Heskestad correlation: u&#8320; = 1.03 Q&#x1D04;&#xB9;&#x2F;&#xB3; (z - z&#8320;)&#x207B;&#xB9;&#x2F;&#xB3;</text>
+
+  <!-- Chart area -->
+  <!-- Y-axis (velocity) -->
+  <line x1="100" y1="70" x2="100" y2="420" stroke="#333" stroke-width="1.5"/>
+  <!-- X-axis (height) -->
+  <line x1="100" y1="420" x2="740" y2="420" stroke="#333" stroke-width="1.5"/>
+
+  <!-- Y-axis label -->
+  <text x="30" y="245" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90, 30, 245)">Centerline Velocity (m/s)</text>
+
+  <!-- X-axis label -->
+  <text x="420" y="458" text-anchor="middle" font-size="12" fill="#333">Height Above Cooking Surface</text>
+
+  <!-- Y-axis gridlines and labels (0 to 4.0 m/s) -->
+  <line x1="100" y1="420" x2="740" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="92" y="424" text-anchor="end" font-size="9" fill="#666">0.0</text>
+
+  <line x1="100" y1="332.5" x2="740" y2="332.5" stroke="#EEE" stroke-width="0.5"/>
+  <text x="92" y="337" text-anchor="end" font-size="9" fill="#666">1.0</text>
+
+  <line x1="100" y1="245" x2="740" y2="245" stroke="#EEE" stroke-width="0.5"/>
+  <text x="92" y="249" text-anchor="end" font-size="9" fill="#666">2.0</text>
+
+  <line x1="100" y1="157.5" x2="740" y2="157.5" stroke="#EEE" stroke-width="0.5"/>
+  <text x="92" y="162" text-anchor="end" font-size="9" fill="#666">3.0</text>
+
+  <line x1="100" y1="70" x2="740" y2="70" stroke="#EEE" stroke-width="0.5"/>
+  <text x="92" y="74" text-anchor="end" font-size="9" fill="#666">4.0</text>
+
+  <!-- X-axis gridlines and labels (18" to 48") -->
+  <!-- 18" = x:152, 24" = x:259, 30" = x:366, 36" = x:473, 42" = x:580, 48" = x:687 -->
+  <line x1="152" y1="70" x2="152" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="152" y="438" text-anchor="middle" font-size="9" fill="#666">18"</text>
+  <text x="152" y="450" text-anchor="middle" font-size="8" fill="#999">(46cm)</text>
+
+  <line x1="259" y1="70" x2="259" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="259" y="438" text-anchor="middle" font-size="9" fill="#666">24"</text>
+  <text x="259" y="450" text-anchor="middle" font-size="8" fill="#999">(61cm)</text>
+
+  <line x1="366" y1="70" x2="366" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="366" y="438" text-anchor="middle" font-size="9" fill="#666">30"</text>
+  <text x="366" y="450" text-anchor="middle" font-size="8" fill="#999">(76cm)</text>
+
+  <line x1="473" y1="70" x2="473" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="473" y="438" text-anchor="middle" font-size="9" fill="#666">36"</text>
+  <text x="473" y="450" text-anchor="middle" font-size="8" fill="#999">(91cm)</text>
+
+  <line x1="580" y1="70" x2="580" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="580" y="438" text-anchor="middle" font-size="9" fill="#666">42"</text>
+  <text x="580" y="450" text-anchor="middle" font-size="8" fill="#999">(107cm)</text>
+
+  <line x1="687" y1="70" x2="687" y2="420" stroke="#EEE" stroke-width="0.5"/>
+  <text x="687" y="438" text-anchor="middle" font-size="9" fill="#666">48"</text>
+  <text x="687" y="450" text-anchor="middle" font-size="8" fill="#999">(122cm)</text>
+
+  <!-- Minimum capture velocity threshold line -->
+  <line x1="100" y1="350.5" x2="740" y2="350.5" stroke="#CC4444" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <rect x="600" y="340" width="135" height="18" rx="3" fill="#FEE8E8" stroke="#CC4444" stroke-width="0.5"/>
+  <text x="667" y="353" text-anchor="middle" font-size="9" fill="#CC2222" font-weight="500">Min Capture: 0.8 m/s</text>
+
+  <!-- Capture zone shading (above threshold) -->
+  <rect x="100" y="70" width="640" height="280.5" fill="url(#captureZone)"/>
+  <!-- Danger zone shading (below threshold) -->
+  <rect x="100" y="350.5" width="640" height="69.5" fill="url(#dangerZone)"/>
+
+  <!-- Zone labels -->
+  <text x="115" y="88" font-size="9" fill="#44AA44" font-weight="500" opacity="0.7">Reliable Capture Zone</text>
+  <text x="115" y="410" font-size="9" fill="#CC4444" font-weight="500" opacity="0.7">Capture Unreliable</text>
+
+  <!-- ===== VELOCITY CURVES ===== -->
+  <!-- Using Heskestad: u0 = 1.03 * Qc^(1/3) * z^(-1/3) -->
+  <!-- Scale: x: 100-740 maps to 0.46-1.22m; y: 420-70 maps to 0-4.0 m/s -->
+  <!-- y = 420 - (velocity/4.0)*350 -->
+
+  <!-- Wood-fired: Qc = 16.25 kW (25kW * 0.65), highest curve -->
+  <!-- z=0.46: u=3.40, z=0.61: u=3.10, z=0.76: u=2.88, z=0.91: u=2.72, z=1.07: u=2.58, z=1.22: u=2.48 -->
+  <polyline points="152,123 259,149 366,168 473,182 580,194 687,203" fill="none" stroke="#CC6600" stroke-width="2.5"/>
+  <circle cx="152" cy="123" r="4" fill="#CC6600"/>
+  <circle cx="259" cy="149" r="4" fill="#CC6600"/>
+  <circle cx="366" cy="168" r="4" fill="#CC6600"/>
+  <circle cx="473" cy="182" r="4" fill="#CC6600"/>
+  <circle cx="580" cy="194" r="4" fill="#CC6600"/>
+  <circle cx="687" cy="203" r="4" fill="#CC6600"/>
+
+  <!-- Gas grill: Qc = 8.75 kW (12.5kW * 0.70) -->
+  <!-- z=0.46: u=2.75, z=0.61: u=2.51, z=0.76: u=2.33, z=0.91: u=2.20, z=1.07: u=2.09, z=1.22: u=2.00 -->
+  <polyline points="152,180 259,201 366,216 473,228 580,237 687,245" fill="none" stroke="#3388DD" stroke-width="2.5"/>
+  <circle cx="152" cy="180" r="4" fill="#3388DD"/>
+  <circle cx="259" cy="201" r="4" fill="#3388DD"/>
+  <circle cx="366" cy="216" r="4" fill="#3388DD"/>
+  <circle cx="473" cy="228" r="4" fill="#3388DD"/>
+  <circle cx="580" cy="237" r="4" fill="#3388DD"/>
+  <circle cx="687" cy="245" r="4" fill="#3388DD"/>
+
+  <!-- Charcoal: Qc = 2.60 kW (6.5kW * 0.40) -->
+  <!-- z=0.46: u=1.84, z=0.61: u=1.68, z=0.76: u=1.56, z=0.91: u=1.47, z=1.07: u=1.40, z=1.22: u=1.34 -->
+  <polyline points="152,259 259,273 366,283 473,291 580,298 687,303" fill="none" stroke="#888888" stroke-width="2.5"/>
+  <circle cx="152" cy="259" r="4" fill="#888888"/>
+  <circle cx="259" cy="273" r="4" fill="#888888"/>
+  <circle cx="366" cy="283" r="4" fill="#888888"/>
+  <circle cx="473" cy="291" r="4" fill="#888888"/>
+  <circle cx="580" cy="298" r="4" fill="#888888"/>
+  <circle cx="687" cy="303" r="4" fill="#888888"/>
+
+  <!-- Pellet smoker: Qc = 2.60 kW (4kW * 0.65) -->
+  <!-- z=0.46: u=1.46, z=0.61: u=1.33, z=0.76: u=1.24, z=0.91: u=1.17, z=1.07: u=1.11, z=1.22: u=1.06 -->
+  <polyline points="152,292 259,303 366,311 473,318 580,323 687,327" fill="none" stroke="#44AA88" stroke-width="2.5"/>
+  <circle cx="152" cy="292" r="4" fill="#44AA88"/>
+  <circle cx="259" cy="303" r="4" fill="#44AA88"/>
+  <circle cx="366" cy="311" r="4" fill="#44AA88"/>
+  <circle cx="473" cy="318" r="4" fill="#44AA88"/>
+  <circle cx="580" cy="323" r="4" fill="#44AA88"/>
+  <circle cx="687" cy="327" r="4" fill="#44AA88"/>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="145" y="470" width="510" height="42" rx="5" fill="white" stroke="#DDD" stroke-width="1"/>
+
+  <line x1="165" y1="485" x2="195" y2="485" stroke="#CC6600" stroke-width="2.5"/>
+  <circle cx="180" cy="485" r="3" fill="#CC6600"/>
+  <text x="202" y="489" font-size="10" fill="#333">Wood-Fired (Q=25 kW, &#x3C7;c=0.65)</text>
+
+  <line x1="165" y1="502" x2="195" y2="502" stroke="#3388DD" stroke-width="2.5"/>
+  <circle cx="180" cy="502" r="3" fill="#3388DD"/>
+  <text x="202" y="506" font-size="10" fill="#333">Gas Grill (Q=12.5 kW, &#x3C7;c=0.70)</text>
+
+  <line x1="430" y1="485" x2="460" y2="485" stroke="#888888" stroke-width="2.5"/>
+  <circle cx="445" cy="485" r="3" fill="#888888"/>
+  <text x="467" y="489" font-size="10" fill="#333">Charcoal (Q=6.5 kW, &#x3C7;c=0.40)</text>
+
+  <line x1="430" y1="502" x2="460" y2="502" stroke="#44AA88" stroke-width="2.5"/>
+  <circle cx="445" cy="502" r="3" fill="#44AA88"/>
+  <text x="467" y="506" font-size="10" fill="#333">Pellet Smoker (Q=4 kW, &#x3C7;c=0.65)</text>
+
+  <!-- Source attribution -->
+  <text x="400" y="518" text-anchor="middle" font-size="7" fill="#AAA">OVS-RB-003 | outdoorventilationstandard.com</text>
+</svg>
