@@ -82,4 +82,4 @@ enableGitInfo = false
     startLevel = 2
 
 [outputs]
-  home = ["HTML", "RSS"]
+  home = ["HTML", "RSS", "JSON"]

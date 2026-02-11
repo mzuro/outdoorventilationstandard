@@ -519,13 +519,13 @@
     var q = questions[id];
     if (!q) return;
     answerText.textContent = q.answer;
-    linkTool.href = q.tool;
-    linkQa.href = q.qa;
+    // Rebuild links (may have been replaced by search results)
+    var linksEl = answerEl.querySelector('.q-answer-links');
+    linksEl.innerHTML = '<a href="' + q.tool + '">Try the interactive tool \u2192</a><a href="' + q.qa + '">Read the full answer \u2192</a>';
     answerEl.classList.remove('visible');
-    void answerEl.offsetHeight; // reset animation
+    void answerEl.offsetHeight;
     answerEl.classList.add('visible');
     answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    // Track click
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -541,6 +541,126 @@
     });
   });
 
+  // Keyword matching: map keywords to existing question IDs
+  var keywordMap = [
+    { keywords: ['cfm', 'airflow', 'how much air', 'how many cfm', 'blower size', 'exhaust rate', 'cubic feet', 'ventilation rate', 'fan size', 'suction'], id: 'cfm' },
+    { keywords: ['indoor', 'inside hood', 'indoor hood outside', 'indoor range hood', 'repurpose', 'bring outside', 'use indoors'], id: 'indoor-outdoor' },
+    { keywords: ['not working', 'doesn\'t work', 'doesnt work', 'broken', 'fail', 'smoke escape', 'smoke coming', 'not catching', 'not capturing', 'problem with'], id: 'not-working' },
+    { keywords: ['wind', 'breeze', 'crosswind', 'gust', 'windy', 'draft'], id: 'wind' },
+    { keywords: ['height', 'how high', 'mount', 'how far above', 'install height', 'above grill', 'clearance', 'inches above'], id: 'height' }
+  ];
+
+  // Extra keyword responses beyond the 5 chips
+  var extraAnswers = {
+    'grease': {
+      answer: 'Grease aerosols from missed plume travel 3\u201330+ feet depending on particle size. Coarse droplets land near the grill; ultrafine particles travel much farther and deposit on surrounding surfaces.',
+      tool: '/tools/grease-aerosol-deposition/',
+      source: '/research/rb-011-grease-aerosol-transport/'
+    },
+    'side-panel': {
+      answer: 'Side panels restore partial confinement in open-air environments, reducing required CFM by ~28% and improving capture efficiency by 25\u201335 percentage points. More effective than simply increasing blower power.',
+      tool: '/tools/side-panel-effectiveness/',
+      source: '/research/rb-009-side-panel-effectiveness/'
+    },
+    'hood-size': {
+      answer: 'Hood overhang is the most critical design parameter. The hood must extend beyond the cooking surface on all sides to capture the expanding plume. Indoor-spec hoods are typically 20\u201340% too narrow for outdoor use.',
+      tool: '/tools/hood-geometry-comparison/',
+      source: '/research/rb-005-hood-geometry-capture/'
+    },
+    'plume': {
+      answer: 'Cooking plumes are buoyancy-driven \u2014 hot gases rise, entraining surrounding air and expanding as they climb. Plume width and velocity are governed by Heskestad correlations and Morton-Taylor-Turner entrainment theory.',
+      tool: '/tools/velocity-decay-curves/',
+      source: '/research/rb-001-buoyant-plume-behavior/'
+    },
+    'heat': {
+      answer: 'Different fuel types produce dramatically different heat release rates. Wood-fired sources can exceed 40 kW convective, while pellet smokers produce under 5 kW. This directly determines plume strength and required CFM.',
+      tool: '/tools/heat-release-rate-comparison/',
+      source: '/research/rb-001-buoyant-plume-behavior/'
+    }
+  };
+
+  var extraKeywordMap = [
+    { keywords: ['grease', 'oil', 'fat', 'drip', 'splatter', 'aerosol', 'residue', 'buildup'], id: 'grease' },
+    { keywords: ['side panel', 'baffle', 'shield', 'wind guard', 'wind block'], id: 'side-panel' },
+    { keywords: ['hood size', 'width', 'geometry', 'overhang', 'too small', 'too narrow', 'dimensions'], id: 'hood-size' },
+    { keywords: ['plume', 'smoke rise', 'thermal plume', 'buoyant', 'entrainment'], id: 'plume' },
+    { keywords: ['btu', 'heat release', 'fuel type', 'wood fire', 'charcoal vs', 'pellet vs', 'gas grill vs'], id: 'heat' }
+  ];
+
+  function matchKeywords(text) {
+    var lower = text.toLowerCase();
+    for (var i = 0; i < keywordMap.length; i++) {
+      for (var j = 0; j < keywordMap[i].keywords.length; j++) {
+        if (lower.indexOf(keywordMap[i].keywords[j]) !== -1) {
+          return { type: 'main', id: keywordMap[i].id };
+        }
+      }
+    }
+    for (var i = 0; i < extraKeywordMap.length; i++) {
+      for (var j = 0; j < extraKeywordMap[i].keywords.length; j++) {
+        if (lower.indexOf(extraKeywordMap[i].keywords[j]) !== -1) {
+          return { type: 'extra', id: extraKeywordMap[i].id };
+        }
+      }
+    }
+    return null;
+  }
+
+  function showExtraAnswer(id) {
+    var ea = extraAnswers[id];
+    answerText.textContent = ea.answer;
+    var linksEl = answerEl.querySelector('.q-answer-links');
+    linksEl.innerHTML = '<a href="' + ea.tool + '">Try the interactive tool \u2192</a><a href="' + ea.source + '">Read the research \u2192</a>';
+    answerEl.classList.remove('visible');
+    void answerEl.offsetHeight;
+    answerEl.classList.add('visible');
+    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Full-text search (Fuse.js loaded on demand)
+  var fuse = null;
+
+  function loadSearchIndex(callback) {
+    if (fuse) return callback();
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js';
+    script.onload = function() {
+      fetch('/index.json').then(function(r) { return r.json(); }).then(function(data) {
+        fuse = new Fuse(data, {
+          keys: [
+            { name: 'title', weight: 0.4 },
+            { name: 'description', weight: 0.35 },
+            { name: 'content', weight: 0.25 }
+          ],
+          threshold: 0.4,
+          includeScore: true
+        });
+        callback();
+      }).catch(function() { callback(); });
+    };
+    document.head.appendChild(script);
+  }
+
+  function showSearchResults(results) {
+    var linksEl = answerEl.querySelector('.q-answer-links');
+    if (!results || results.length === 0) {
+      answerText.textContent = 'We couldn\u2019t find an exact match, but browse our research papers and tools \u2014 your answer is likely covered.';
+      linksEl.innerHTML = '<a href="/research/">Browse research \u2192</a><a href="/tools/">Explore tools \u2192</a>';
+    } else {
+      var top = results.slice(0, 3);
+      answerText.textContent = 'Here\u2019s what we found in our research:';
+      var html = '';
+      for (var i = 0; i < top.length; i++) {
+        html += '<a href="' + top[i].item.url + '">' + top[i].item.title + ' \u2192</a>';
+      }
+      linksEl.innerHTML = html;
+    }
+    answerEl.classList.remove('visible');
+    void answerEl.offsetHeight;
+    answerEl.classList.add('visible');
+    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // Custom question submit
   var input = document.querySelector('.q-input');
   var submit = document.querySelector('.q-submit');
@@ -548,13 +668,33 @@
     var text = input.value.trim();
     if (!text) return;
     chips.forEach(function(c) { c.classList.remove('active'); });
-    answerText.textContent = 'Thanks for your question! Browse our research papers and interactive tools to find your answer, or check our Q&A section for common topics.';
-    linkTool.href = '/tools/';
-    linkQa.href = 'https://outdoorrangehoods.com/questions/';
-    answerEl.classList.remove('visible');
-    void answerEl.offsetHeight;
-    answerEl.classList.add('visible');
-    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // 1. Try keyword matching
+    var match = matchKeywords(text);
+    if (match) {
+      if (match.type === 'main') {
+        showAnswer(match.id);
+      } else {
+        showExtraAnswer(match.id);
+      }
+    } else {
+      // 2. Fall back to full-text search
+      loadSearchIndex(function() {
+        if (fuse) {
+          showSearchResults(fuse.search(text));
+        } else {
+          answerText.textContent = 'Thanks for your question! Browse our research papers and interactive tools to find your answer.';
+          var linksEl = answerEl.querySelector('.q-answer-links');
+          linksEl.innerHTML = '<a href="/research/">Browse research \u2192</a><a href="/tools/">Explore tools \u2192</a>';
+          answerEl.classList.remove('visible');
+          void answerEl.offsetHeight;
+          answerEl.classList.add('visible');
+          answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+
+    // Always track custom questions
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
