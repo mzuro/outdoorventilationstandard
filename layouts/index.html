@@ -348,20 +348,35 @@
   line-height: 1.65;
   margin-bottom: 14px;
 }
+.q-answer-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
 .q-answer-links {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 .q-answer-links a {
-  font-size: 0.82rem;
+  display: block;
+  font-size: 0.85rem;
   font-weight: 500;
   color: var(--primary);
   text-decoration: none;
-  box-shadow: 0 1px 0 var(--primary);
+  padding: 8px 14px;
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.2s ease, background 0.15s ease;
 }
 .q-answer-links a:hover {
-  box-shadow: none;
+  border-color: var(--primary);
+  background: var(--entry);
 }
 
 /* Responsive */
@@ -425,10 +440,6 @@
   .q-answer {
     padding: 16px;
   }
-  .q-answer-links {
-    flex-direction: column;
-    gap: 10px;
-  }
 }
 </style>
 
@@ -468,10 +479,8 @@
   </div>
   <div class="q-answer" id="q-answer">
     <p class="q-answer-text" id="q-answer-text"></p>
-    <div class="q-answer-links">
-      <a id="q-link-tool" href="">Try the interactive tool &rarr;</a>
-      <a id="q-link-qa" href="">Read the full answer &rarr;</a>
-    </div>
+    <p class="q-answer-label">Related topics:</p>
+    <div class="q-answer-links"></div>
   </div>
   <div class="q-input-wrap">
     <input type="text" class="q-input" placeholder="Or type your own question...">
@@ -481,51 +490,32 @@
 
 <script>
 (function() {
-  var questions = {
-    'cfm': {
-      answer: 'Outdoor installations need 1.7\u20132.5x the CFM of indoor specs. Use the physics-based calculator with your specific grill type, mounting height, and wind exposure \u2014 not the manufacturer\u2019s indoor-derived numbers.',
-      tool: '/tools/cfm-calculator/',
-      qa: 'https://outdoorrangehoods.com/questions/can-i-use-an-indoor-range-hood-outdoors/'
-    },
-    'indoor-outdoor': {
-      answer: 'No \u2014 indoor specs undersize outdoor installations by 40\u201360% because they assume wall confinement and pressure-assisted capture that don\u2019t exist in open-boundary outdoor environments.',
-      tool: '/tools/indoor-vs-outdoor-comparison/',
-      qa: 'https://outdoorrangehoods.com/questions/can-i-use-an-indoor-range-hood-outdoors/'
-    },
-    'not-working': {
-      answer: 'Six common failure modes: wind deflection (most common), mounted too high, hood too small, insufficient CFM, wrong position, and duct restriction. Most are design-locked from using indoor specs outdoors.',
-      tool: '/tools/failure-mode-taxonomy/',
-      qa: 'https://outdoorrangehoods.com/questions/why-doesnt-my-outdoor-range-hood-work/'
-    },
-    'wind': {
-      answer: 'Wind is the #1 factor. At just 5\u20137 mph of crosswind, the plume begins leaving the capture zone. Side panels are more effective than increasing blower power.',
-      tool: '/tools/wind-deflection-trajectory/',
-      qa: 'https://outdoorrangehoods.com/questions/does-wind-affect-outdoor-range-hood-performance/'
-    },
-    'height': {
-      answer: 'As low as safely possible \u2014 24 to 30 inches. CFM requirements scale with height to the 5/3 power: doubling the height roughly triples the airflow needed.',
-      tool: '/tools/velocity-decay-curves/',
-      qa: 'https://outdoorrangehoods.com/questions/how-high-should-i-mount-my-outdoor-range-hood/'
-    }
-  };
-
   var chips = document.querySelectorAll('.q-chip');
   var answerEl = document.getElementById('q-answer');
   var answerText = document.getElementById('q-answer-text');
-  var linkTool = document.getElementById('q-link-tool');
-  var linkQa = document.getElementById('q-link-qa');
 
-  function showAnswer(id) {
-    var q = questions[id];
-    if (!q) return;
-    answerText.textContent = q.answer;
-    // Rebuild links (may have been replaced by search results)
-    var linksEl = answerEl.querySelector('.q-answer-links');
-    linksEl.innerHTML = '<a href="' + q.tool + '">Try the interactive tool \u2192</a><a href="' + q.qa + '">Read the full answer \u2192</a>';
+  function revealAnswer() {
     answerEl.classList.remove('visible');
     void answerEl.offsetHeight;
     answerEl.classList.add('visible');
     answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function buildLinks(links) {
+    var linksEl = answerEl.querySelector('.q-answer-links');
+    var html = '';
+    for (var i = 0; i < links.length; i++) {
+      html += '<a href="' + links[i].url + '">' + links[i].label + ' \u2192</a>';
+    }
+    linksEl.innerHTML = html;
+  }
+
+  function showAnswer(id) {
+    var topic = topicAnswers[id];
+    if (!topic) return;
+    answerText.textContent = topic.answer;
+    buildLinks(topic.links);
+    revealAnswer();
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -541,50 +531,131 @@
     });
   });
 
-  // Keyword matching: map keywords to existing question IDs
+  // All topic answers — unified map for keywords + extra topics
+  // Links use #anchor fragments to jump to the specific section
+  var topicAnswers = {
+    'cfm': {
+      answer: 'Outdoor installations need 1.7\u20132.5x the CFM of indoor specs. Use the physics-based calculator with your specific grill type, mounting height, and wind exposure.',
+      links: [
+        { url: '/tools/cfm-calculator/', label: 'CFM Calculator' },
+        { url: '/research/rb-008-cfm-requirements/#311-quick-reference-cfm-table-at-30-inch-mounting-height', label: 'Quick-Reference CFM Table' },
+        { url: '/research/rb-008-cfm-requirements/#35-outdoor-correction-factors-relative-to-indoor-baselines', label: 'Outdoor vs Indoor CFM Correction Factors' }
+      ]
+    },
+    'indoor-outdoor': {
+      answer: 'Indoor specs undersize outdoor installations by 40\u201360% because they assume wall confinement and pressure-assisted capture that don\u2019t exist outdoors.',
+      links: [
+        { url: '/tools/indoor-vs-outdoor-comparison/', label: 'Indoor vs Outdoor Comparison Tool' },
+        { url: '/research/rb-004-indoor-vs-outdoor-assumptions/#21-the-six-indoor-capture-advantages', label: 'The Six Indoor Capture Advantages' },
+        { url: '/research/rb-004-indoor-vs-outdoor-assumptions/#39-indoor-versus-outdoor-comparison-table-reference-case', label: 'Indoor vs Outdoor Comparison Table' }
+      ]
+    },
+    'not-working': {
+      answer: 'Six common failure modes: wind deflection, mounted too high, hood too small, insufficient CFM, wrong position, and duct restriction.',
+      links: [
+        { url: '/tools/failure-mode-taxonomy/', label: 'Failure Mode Diagram' },
+        { url: '/research/rb-007-failure-modes/#31-failure-mode-taxonomy-overview', label: 'Failure Mode Taxonomy Overview' },
+        { url: '/research/rb-007-failure-modes/#310-diagnostic-decision-tree', label: 'Diagnostic Decision Tree' },
+        { url: '/research/rb-007-failure-modes/#311-corrective-action-matrix', label: 'Corrective Action Matrix' }
+      ]
+    },
+    'wind': {
+      answer: 'Wind is the #1 factor. At 5\u20137 mph crosswind, the plume begins leaving the capture zone. Side panels are more effective than increasing blower power.',
+      links: [
+        { url: '/tools/wind-deflection-trajectory/', label: 'Wind Deflection Tool' },
+        { url: '/research/rb-006-wind-interaction-crossflow/#34-critical-wind-speed-analysis', label: 'Critical Wind Speed Analysis' },
+        { url: '/research/rb-006-wind-interaction-crossflow/#32-plume-deflection-tables-comprehensive-results', label: 'Plume Deflection Tables' },
+        { url: '/research/rb-009-side-panel-effectiveness/#31-panel-wind-reduction-comprehensive-results', label: 'Side Panel Wind Reduction Results' }
+      ]
+    },
+    'height': {
+      answer: 'As low as safely possible \u2014 24\u201330 inches. CFM requirements scale with height to the 5/3 power: doubling the height roughly triples the airflow needed.',
+      links: [
+        { url: '/tools/velocity-decay-curves/', label: 'Velocity Decay Curves Tool' },
+        { url: '/research/rb-003-velocity-decay-capture/#37-critical-mounting-height-analysis', label: 'Critical Mounting Height Analysis' },
+        { url: '/research/rb-003-velocity-decay-capture/#38-cfm-versus-mounting-height-engineering-lookup-tables', label: 'CFM vs Mounting Height Tables' }
+      ]
+    },
+    'grease': {
+      answer: 'Grease aerosols from missed plume travel 3\u201330+ feet depending on particle size. Coarse droplets land near the grill; ultrafine particles travel much farther.',
+      links: [
+        { url: '/tools/grease-aerosol-deposition/', label: 'Grease Deposition Tool' },
+        { url: '/research/rb-011-grease-aerosol-transport/#33-particle-size-dependent-transport-distances', label: 'Particle Size Transport Distances' },
+        { url: '/research/rb-011-grease-aerosol-transport/#34-deposition-pattern-characterization', label: 'Deposition Pattern Analysis' }
+      ]
+    },
+    'side-panel': {
+      answer: 'Side panels restore partial confinement, reducing required CFM by ~28% and improving capture efficiency by 25\u201335 percentage points.',
+      links: [
+        { url: '/tools/side-panel-effectiveness/', label: 'Side Panel Tool' },
+        { url: '/research/rb-009-side-panel-effectiveness/#32-effective-capture-area-improvement-quantitative-results', label: 'Capture Area Improvement Results' },
+        { url: '/research/rb-009-side-panel-effectiveness/#38-combined-panel-plus-cfm-optimization', label: 'Panel + CFM Optimization' }
+      ]
+    },
+    'hood-size': {
+      answer: 'The hood must extend beyond the cooking surface on all sides to capture the expanding plume. Indoor-spec hoods are typically 20\u201340% too narrow for outdoor use.',
+      links: [
+        { url: '/tools/hood-geometry-comparison/', label: 'Hood Geometry Tool' },
+        { url: '/research/rb-005-hood-geometry-capture/#31-overhang-analysis-minimum-and-recommended-values', label: 'Overhang Analysis' },
+        { url: '/research/rb-005-hood-geometry-capture/#38-design-guideline-tables--primary-engineering-deliverable', label: 'Hood Design Guideline Tables' }
+      ]
+    },
+    'plume': {
+      answer: 'Cooking plumes are buoyancy-driven \u2014 hot gases rise, entraining surrounding air and expanding as they climb. Width and velocity follow Heskestad correlations.',
+      links: [
+        { url: '/tools/velocity-decay-curves/', label: 'Plume Velocity Curves Tool' },
+        { url: '/research/rb-001-buoyant-plume-behavior/#32-flame-height-and-virtual-origin-calculations', label: 'Flame Height & Virtual Origin' },
+        { url: '/research/rb-002-entrainment-lateral-plume-spread/#34-plume-spread-analysis-quantitative-width-at-each-height', label: 'Plume Width at Each Height' }
+      ]
+    },
+    'heat': {
+      answer: 'Different fuel types produce dramatically different heat release rates. Wood-fired sources exceed 40 kW; pellet smokers produce under 5 kW. This directly determines plume strength and CFM.',
+      links: [
+        { url: '/tools/heat-release-rate-comparison/', label: 'Heat Release Comparison Tool' },
+        { url: '/research/rb-001-buoyant-plume-behavior/#31-heat-release-rates-of-common-outdoor-cooking-appliances', label: 'Heat Release Rates by Appliance' }
+      ]
+    },
+    'duct': {
+      answer: 'Duct sizing, routing, and restriction directly affect exhaust performance. Long runs, excessive elbows, and undersized ducts reduce effective CFM at the hood.',
+      links: [
+        { url: '/research/rb-008-cfm-requirements/#310-hood-geometry-correction-effect-of-undersized-hoods-on-effective-cfm', label: 'Effect of Restrictions on Effective CFM' },
+        { url: '/research/rb-007-failure-modes/#34-fm-3-insufficient-exhaust-rate', label: 'Failure Mode: Insufficient Exhaust Rate' },
+        { url: '/tools/cfm-calculator/', label: 'CFM Calculator' }
+      ]
+    },
+    'standards': {
+      answer: 'No existing standard \u2014 ASHRAE 154, IMC, or UL 710 \u2014 provides comprehensive guidance for outdoor hood systems. This research identifies the specific gaps.',
+      links: [
+        { url: '/research/rb-010-standards-gaps/#31-standards-gaps', label: 'Standards Gaps Analysis' },
+        { url: '/research/rb-010-standards-gaps/#32-code-gaps', label: 'Building Code Gaps' },
+        { url: '/research/rb-004-indoor-vs-outdoor-assumptions/#21-the-six-indoor-capture-advantages', label: 'Why Indoor Assumptions Fail Outdoors' }
+      ]
+    },
+    'radiation': {
+      answer: 'Thermal radiation from high-heat sources (wood-fired, charcoal) affects hood surface temperatures and material selection. Radiation intensity follows inverse-square decay.',
+      links: [
+        { url: '/research/rb-012-thermal-radiation-hood-surfaces/#31-radiant-heat-flux-at-the-hood-surface', label: 'Radiant Heat Flux at Hood Surface' },
+        { url: '/research/rb-012-thermal-radiation-hood-surfaces/#32-hood-surface-equilibrium-temperature', label: 'Hood Surface Temperature Analysis' },
+        { url: '/research/rb-012-thermal-radiation-hood-surfaces/#34-material-temperature-rating-requirements', label: 'Material Temperature Ratings' }
+      ]
+    }
+  };
+
+  // Keyword-to-topic mapping
   var keywordMap = [
     { keywords: ['cfm', 'airflow', 'how much air', 'how many cfm', 'blower size', 'exhaust rate', 'cubic feet', 'ventilation rate', 'fan size', 'suction'], id: 'cfm' },
     { keywords: ['indoor', 'inside hood', 'indoor hood outside', 'indoor range hood', 'repurpose', 'bring outside', 'use indoors'], id: 'indoor-outdoor' },
     { keywords: ['not working', 'doesn\'t work', 'doesnt work', 'broken', 'fail', 'smoke escape', 'smoke coming', 'not catching', 'not capturing', 'problem with'], id: 'not-working' },
     { keywords: ['wind', 'breeze', 'crosswind', 'gust', 'windy', 'draft'], id: 'wind' },
-    { keywords: ['height', 'how high', 'mount', 'how far above', 'install height', 'above grill', 'clearance', 'inches above'], id: 'height' }
-  ];
-
-  // Extra keyword responses beyond the 5 chips
-  var extraAnswers = {
-    'grease': {
-      answer: 'Grease aerosols from missed plume travel 3\u201330+ feet depending on particle size. Coarse droplets land near the grill; ultrafine particles travel much farther and deposit on surrounding surfaces.',
-      tool: '/tools/grease-aerosol-deposition/',
-      source: '/research/rb-011-grease-aerosol-transport/'
-    },
-    'side-panel': {
-      answer: 'Side panels restore partial confinement in open-air environments, reducing required CFM by ~28% and improving capture efficiency by 25\u201335 percentage points. More effective than simply increasing blower power.',
-      tool: '/tools/side-panel-effectiveness/',
-      source: '/research/rb-009-side-panel-effectiveness/'
-    },
-    'hood-size': {
-      answer: 'Hood overhang is the most critical design parameter. The hood must extend beyond the cooking surface on all sides to capture the expanding plume. Indoor-spec hoods are typically 20\u201340% too narrow for outdoor use.',
-      tool: '/tools/hood-geometry-comparison/',
-      source: '/research/rb-005-hood-geometry-capture/'
-    },
-    'plume': {
-      answer: 'Cooking plumes are buoyancy-driven \u2014 hot gases rise, entraining surrounding air and expanding as they climb. Plume width and velocity are governed by Heskestad correlations and Morton-Taylor-Turner entrainment theory.',
-      tool: '/tools/velocity-decay-curves/',
-      source: '/research/rb-001-buoyant-plume-behavior/'
-    },
-    'heat': {
-      answer: 'Different fuel types produce dramatically different heat release rates. Wood-fired sources can exceed 40 kW convective, while pellet smokers produce under 5 kW. This directly determines plume strength and required CFM.',
-      tool: '/tools/heat-release-rate-comparison/',
-      source: '/research/rb-001-buoyant-plume-behavior/'
-    }
-  };
-
-  var extraKeywordMap = [
+    { keywords: ['height', 'how high', 'mount', 'how far above', 'install height', 'above grill', 'clearance', 'inches above'], id: 'height' },
     { keywords: ['grease', 'oil', 'fat', 'drip', 'splatter', 'aerosol', 'residue', 'buildup'], id: 'grease' },
     { keywords: ['side panel', 'baffle', 'shield', 'wind guard', 'wind block'], id: 'side-panel' },
-    { keywords: ['hood size', 'width', 'geometry', 'overhang', 'too small', 'too narrow', 'dimensions'], id: 'hood-size' },
+    { keywords: ['hood size', 'geometry', 'overhang', 'too small', 'too narrow', 'dimensions'], id: 'hood-size' },
     { keywords: ['plume', 'smoke rise', 'thermal plume', 'buoyant', 'entrainment'], id: 'plume' },
-    { keywords: ['btu', 'heat release', 'fuel type', 'wood fire', 'charcoal vs', 'pellet vs', 'gas grill vs'], id: 'heat' }
+    { keywords: ['btu', 'heat release', 'fuel type', 'wood fire', 'charcoal vs', 'pellet vs', 'gas grill vs'], id: 'heat' },
+    { keywords: ['duct', 'ductwork', 'duct run', 'duct size', 'duct restriction'], id: 'duct' },
+    { keywords: ['standard', 'code', 'ashrae', 'ul 710', 'imc', 'regulation'], id: 'standards' },
+    { keywords: ['radiation', 'radiant heat', 'surface temperature'], id: 'radiation' }
   ];
 
   function matchKeywords(text) {
@@ -592,29 +663,11 @@
     for (var i = 0; i < keywordMap.length; i++) {
       for (var j = 0; j < keywordMap[i].keywords.length; j++) {
         if (lower.indexOf(keywordMap[i].keywords[j]) !== -1) {
-          return { type: 'main', id: keywordMap[i].id };
-        }
-      }
-    }
-    for (var i = 0; i < extraKeywordMap.length; i++) {
-      for (var j = 0; j < extraKeywordMap[i].keywords.length; j++) {
-        if (lower.indexOf(extraKeywordMap[i].keywords[j]) !== -1) {
-          return { type: 'extra', id: extraKeywordMap[i].id };
+          return keywordMap[i].id;
         }
       }
     }
     return null;
-  }
-
-  function showExtraAnswer(id) {
-    var ea = extraAnswers[id];
-    answerText.textContent = ea.answer;
-    var linksEl = answerEl.querySelector('.q-answer-links');
-    linksEl.innerHTML = '<a href="' + ea.tool + '">Try the interactive tool \u2192</a><a href="' + ea.source + '">Read the research \u2192</a>';
-    answerEl.classList.remove('visible');
-    void answerEl.offsetHeight;
-    answerEl.classList.add('visible');
-    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   // Full-text search (Fuse.js loaded on demand)
@@ -632,7 +685,7 @@
             { name: 'description', weight: 0.35 },
             { name: 'content', weight: 0.25 }
           ],
-          threshold: 0.4,
+          threshold: 0.5,
           includeScore: true
         });
         callback();
@@ -641,24 +694,48 @@
     document.head.appendChild(script);
   }
 
-  function showSearchResults(results) {
-    var linksEl = answerEl.querySelector('.q-answer-links');
-    if (!results || results.length === 0) {
-      answerText.textContent = 'We couldn\u2019t find an exact match, but browse our research papers and tools \u2014 your answer is likely covered.';
-      linksEl.innerHTML = '<a href="/research/">Browse research \u2192</a><a href="/tools/">Explore tools \u2192</a>';
-    } else {
-      var top = results.slice(0, 3);
-      answerText.textContent = 'Here\u2019s what we found in our research:';
-      var html = '';
-      for (var i = 0; i < top.length; i++) {
-        html += '<a href="' + top[i].item.url + '">' + top[i].item.title + ' \u2192</a>';
+  function showTopicAnswer(topicId, searchText) {
+    var topic = topicAnswers[topicId];
+    if (!topic) return;
+    answerText.textContent = topic.answer;
+
+    // Build primary links
+    var links = topic.links.slice();
+
+    // Also search for additional related pages
+    if (fuse && searchText) {
+      var results = fuse.search(searchText).slice(0, 5);
+      var seen = {};
+      for (var i = 0; i < links.length; i++) seen[links[i].url] = true;
+      for (var i = 0; i < results.length; i++) {
+        if (!seen[results[i].item.url] && links.length < 5) {
+          links.push({ url: results[i].item.url, label: results[i].item.title });
+          seen[results[i].item.url] = true;
+        }
       }
-      linksEl.innerHTML = html;
     }
-    answerEl.classList.remove('visible');
-    void answerEl.offsetHeight;
-    answerEl.classList.add('visible');
-    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    buildLinks(links);
+    revealAnswer();
+  }
+
+  function showSearchOnly(results) {
+    if (!results || results.length === 0) {
+      answerText.textContent = 'We couldn\u2019t find an exact match. Try different keywords, or explore:';
+      buildLinks([
+        { url: '/research/', label: 'Browse all research' },
+        { url: '/tools/', label: 'Explore tools' }
+      ]);
+    } else {
+      answerText.textContent = 'Here\u2019s what we found in our research:';
+      var links = [];
+      var top = results.slice(0, 5);
+      for (var i = 0; i < top.length; i++) {
+        links.push({ url: top[i].item.url, label: top[i].item.title });
+      }
+      buildLinks(links);
+    }
+    revealAnswer();
   }
 
   // Custom question submit
@@ -669,32 +746,28 @@
     if (!text) return;
     chips.forEach(function(c) { c.classList.remove('active'); });
 
-    // 1. Try keyword matching
-    var match = matchKeywords(text);
-    if (match) {
-      if (match.type === 'main') {
-        showAnswer(match.id);
-      } else {
-        showExtraAnswer(match.id);
-      }
-    } else {
-      // 2. Fall back to full-text search
-      loadSearchIndex(function() {
-        if (fuse) {
-          showSearchResults(fuse.search(text));
-        } else {
-          answerText.textContent = 'Thanks for your question! Browse our research papers and interactive tools to find your answer.';
-          var linksEl = answerEl.querySelector('.q-answer-links');
-          linksEl.innerHTML = '<a href="/research/">Browse research \u2192</a><a href="/tools/">Explore tools \u2192</a>';
-          answerEl.classList.remove('visible');
-          void answerEl.offsetHeight;
-          answerEl.classList.add('visible');
-          answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      });
-    }
+    var topicId = matchKeywords(text);
 
-    // Always track custom questions
+    // Always load search index, then show combined results
+    loadSearchIndex(function() {
+      if (topicId) {
+        // Keyword matched — show topic answer + search-enriched links
+        showTopicAnswer(topicId, text);
+      } else if (fuse) {
+        // No keyword match — show search results
+        showSearchOnly(fuse.search(text));
+      } else {
+        // Search index failed to load
+        answerText.textContent = 'Browse our research papers and interactive tools to find your answer:';
+        buildLinks([
+          { url: '/research/', label: 'Browse all research' },
+          { url: '/tools/', label: 'Explore tools' }
+        ]);
+        revealAnswer();
+      }
+    });
+
+    // Track custom questions
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

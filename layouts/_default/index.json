@@ -7,7 +7,7 @@
     "url": {{ $p.RelPermalink | jsonify }},
     "section": {{ $p.Section | jsonify }},
     "description": {{ $p.Description | jsonify }},
-    "content": {{ $p.Plain | truncate 300 | jsonify }}
+    "content": {{ $p.Plain | jsonify }}
   }
 {{- end }}
 ]
