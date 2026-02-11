@@ -1,0 +1,204 @@
+/* ===== MOBILE RESPONSIVE TYPOGRAPHY ===== */
+/* Reference: diggitymarketing.com iPhone rendering */
+
+@media screen and (max-width: 768px) {
+  /* Reduce base font size on mobile */
+  body {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* Tighter padding — minimal top gap between nav and content */
+  .main {
+    padding: 4px 24px 16px;
+  }
+
+  /* --- HEADER / NAV --- */
+
+  /* Keep logo + dark mode toggle on one line */
+  .logo {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  /* Hide redundant PaperMod text label — SVG logo already has the wordmark */
+  .logo a {
+    font-size: 0;
+    line-height: 0;
+  }
+
+  /* Keep SVG logo visible and sized properly */
+  .logo a img {
+    height: 36px;
+    font-size: 16px; /* reset for alt text */
+  }
+
+  /* Dark mode toggle: pull up next to logo */
+  .logo-switches {
+    margin: 0 4px;
+  }
+
+  /* Nav menu: smaller font + tighter spacing */
+  #menu {
+    gap: 0;
+  }
+
+  #menu li + li {
+    margin-inline-start: 12px;
+  }
+
+  #menu a {
+    font-size: 13px;
+  }
+
+  /* --- PAGE TITLES (all pages) --- */
+
+  .post-title,
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .page-header,
+  .post-header {
+    margin: 12px auto 12px;
+  }
+
+  .post-description {
+    font-size: 14px;
+  }
+
+  /* --- CONTENT HEADINGS --- */
+
+  .post-content h1 {
+    font-size: 24px;
+    margin: 20px auto 12px;
+  }
+
+  .post-content h2 {
+    font-size: 22px;
+    margin: 20px auto 10px;
+  }
+
+  .post-content h3 {
+    font-size: 18px;
+  }
+
+  .post-content h4 {
+    font-size: 15px;
+  }
+
+  /* Tighter table cells on mobile */
+  .post-content table th,
+  .post-content table:not(.highlighttable, .highlight table, .gist .highlight) td {
+    padding: 6px 4px;
+    font-size: 13px;
+  }
+
+  /* --- HOMEPAGE --- */
+
+  .home-hero {
+    padding: 0 0 16px;
+    margin-bottom: 8px;
+  }
+
+  .home-hero h1 {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+
+  .home-hero .last-updated {
+    margin-bottom: 10px;
+  }
+
+  .home-hero .tagline {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .home-hero .hero-benefits {
+    margin: 10px auto 0;
+  }
+
+  .home-hero .benefit {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+
+  .hero-cta {
+    margin-top: 14px !important;
+  }
+
+  .hero-cta .cta-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+
+  /* Question picker */
+  .home-questions {
+    margin-top: 8px;
+    margin-bottom: 20px;
+  }
+
+  .home-questions h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .q-chips {
+    gap: 6px;
+  }
+
+  .q-chip {
+    font-size: 0.78rem;
+    padding: 6px 12px;
+  }
+
+  .q-answer {
+    padding: 16px;
+  }
+
+  .q-answer-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Sections */
+  .home-mission h2,
+  .home-section h2 {
+    font-size: 1.15rem;
+  }
+
+  .home-mission p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .feature-card {
+    padding: 20px 18px;
+  }
+
+  .feature-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .feature-card p {
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .research-item {
+    padding: 14px 16px;
+  }
+
+  .research-item .ri-title {
+    font-size: 0.82rem;
+  }
+
+  .home-diagram .diagram-caption {
+    font-size: 0.75rem;
+    padding: 14px 18px;
+    line-height: 1.6;
+  }
+}

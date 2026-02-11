@@ -6,9 +6,9 @@
 
 .home-hero {
   text-align: center;
-  padding: 40px 0 32px;
+  padding: 40px 0 24px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 .home-hero h1 {
   font-size: 2rem;
@@ -31,26 +31,19 @@
   margin: 0 auto 20px;
   line-height: 1.65;
 }
-.home-hero .hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 20px;
-  flex-wrap: wrap;
+.home-hero .hero-benefits {
+  max-width: 600px;
+  margin: 20px auto 0;
+  text-align: left;
 }
-.home-hero .stat {
-  text-align: center;
-}
-.home-hero .stat-num {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--primary);
-  line-height: 1;
-}
-.home-hero .stat-label {
-  font-size: 0.75rem;
+.home-hero .benefit {
+  font-size: 0.95rem;
   color: var(--secondary);
-  margin-top: 4px;
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+.home-hero .benefit strong {
+  color: var(--primary);
 }
 
 /* Mission section */
@@ -237,7 +230,7 @@
   gap: 12px;
   flex-wrap: wrap;
 }
-.home-cta .cta-btn {
+.cta-btn {
   display: inline-block;
   padding: 10px 24px;
   border-radius: 6px;
@@ -246,20 +239,173 @@
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
-.home-cta .cta-btn:hover {
+.cta-btn:hover {
   opacity: 0.85;
 }
-.home-cta .cta-primary {
+.cta-primary {
   background: var(--primary);
   color: var(--theme);
 }
-.home-cta .cta-secondary {
+.cta-secondary {
   background: var(--tertiary);
   color: var(--primary);
 }
 
+/* Question picker */
+.home-questions {
+  max-width: 680px;
+  margin: 0 auto 32px;
+  text-align: center;
+}
+.home-questions h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+.q-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.q-chip {
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  font-family: inherit;
+}
+.q-chip:hover {
+  border-color: var(--primary);
+}
+.q-chip.active {
+  background: var(--primary);
+  color: var(--theme);
+  border-color: var(--primary);
+}
+.q-input-wrap {
+  display: flex;
+  gap: 8px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.q-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  background: var(--theme);
+  font-family: inherit;
+}
+.q-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+.q-submit {
+  padding: 10px 20px;
+  background: var(--primary);
+  color: var(--theme);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s ease;
+}
+.q-submit:hover {
+  opacity: 0.85;
+}
+.q-answer {
+  max-width: 560px;
+  margin: 20px auto 16px;
+  text-align: left;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  display: none;
+  animation: fadeSlideIn 0.3s ease;
+}
+.q-answer.visible {
+  display: block;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.q-answer-text {
+  font-size: 0.9rem;
+  color: var(--content);
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+.q-answer-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.q-answer-links a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  box-shadow: 0 1px 0 var(--primary);
+}
+.q-answer-links a:hover {
+  box-shadow: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+  .home-hero {
+    padding: 1.5em 0 12px;
+    margin-bottom: 6px;
+  }
+  .home-hero h1 {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 2px;
+  }
+  .home-hero .last-updated {
+    margin-bottom: 8px;
+  }
+  .home-hero .tagline {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .home-hero .hero-benefits {
+    margin: 8px auto 0;
+  }
+  .home-hero .benefit {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .hero-cta {
+    margin-top: 12px !important;
+  }
+  .hero-cta .cta-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+  .home-questions {
+    margin-top: 6px;
+    margin-bottom: 20px;
+  }
+  .home-questions h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
   .home-features {
     grid-template-columns: 1fr;
   }
@@ -269,8 +415,19 @@
   .home-mission .approach-list {
     grid-template-columns: 1fr;
   }
-  .home-hero .hero-stats {
-    gap: 20px;
+  .q-chips {
+    gap: 6px;
+  }
+  .q-chip {
+    font-size: 0.78rem;
+    padding: 6px 12px;
+  }
+  .q-answer {
+    padding: 16px;
+  }
+  .q-answer-links {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 </style>
@@ -283,25 +440,133 @@
     Independently researched, physics-grounded analysis of outdoor cooking ventilation.
     No existing standard addresses hood systems in open-air environments &mdash; this research program fills that gap.
   </p>
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">12</div>
-      <div class="stat-label">Research Papers</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">10</div>
-      <div class="stat-label">Interactive Tools</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">4</div>
-      <div class="stat-label">Source Types Analyzed</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">5</div>
-      <div class="stat-label">Governance Documents</div>
-    </div>
+  <div class="hero-benefits">
+    <p class="benefit">
+      <strong>Understand why outdoor range hoods underperform</strong> &mdash;
+      Click Research for papers covering BBQ plume physics, wind effects, BBQ hood geometry, and the failure modes manufacturers don't talk about.
+    </p>
+    <p class="benefit">
+      <strong>Size and diagnose your BBQ Hood setup for free</strong> &mdash;
+      Interactive tools &amp; calculators for outdoor BBQ ventilation that have never existed before.
+    </p>
+  </div>
+  <div class="hero-cta" style="display:flex;justify-content:center;gap:10px;flex-wrap:nowrap;margin-top:24px;">
+    <a href="/research/" class="cta-btn cta-primary">Browse Research</a>
+    <a href="/tools/" class="cta-btn cta-secondary" style="text-align:center;line-height:1.3;">BBQ CFM Calculator<br><span style="font-size:0.7em;font-weight:400;opacity:0.75;">&amp; other tools</span></a>
   </div>
 </section>
+
+<!-- ===== QUESTION PICKER ===== -->
+<section class="home-questions">
+  <h2>What do you want to know?</h2>
+  <div class="q-chips">
+    <button class="q-chip" data-id="cfm">How many CFM does my outdoor hood need?</button>
+    <button class="q-chip" data-id="indoor-outdoor">Can I use an indoor range hood outside?</button>
+    <button class="q-chip" data-id="not-working">Why doesn't my outdoor range hood work?</button>
+    <button class="q-chip" data-id="wind">Does wind affect my outdoor range hood?</button>
+    <button class="q-chip" data-id="height">How high should I mount my outdoor range hood?</button>
+  </div>
+  <div class="q-answer" id="q-answer">
+    <p class="q-answer-text" id="q-answer-text"></p>
+    <div class="q-answer-links">
+      <a id="q-link-tool" href="">Try the interactive tool &rarr;</a>
+      <a id="q-link-qa" href="">Read the full answer &rarr;</a>
+    </div>
+  </div>
+  <div class="q-input-wrap">
+    <input type="text" class="q-input" placeholder="Or type your own question...">
+    <button class="q-submit">Ask</button>
+  </div>
+</section>
+
+<script>
+(function() {
+  var questions = {
+    'cfm': {
+      answer: 'Outdoor installations need 1.7\u20132.5x the CFM of indoor specs. Use the physics-based calculator with your specific grill type, mounting height, and wind exposure \u2014 not the manufacturer\u2019s indoor-derived numbers.',
+      tool: '/tools/cfm-calculator/',
+      qa: 'https://outdoorrangehoods.com/questions/can-i-use-an-indoor-range-hood-outdoors/'
+    },
+    'indoor-outdoor': {
+      answer: 'No \u2014 indoor specs undersize outdoor installations by 40\u201360% because they assume wall confinement and pressure-assisted capture that don\u2019t exist in open-boundary outdoor environments.',
+      tool: '/tools/indoor-vs-outdoor-comparison/',
+      qa: 'https://outdoorrangehoods.com/questions/can-i-use-an-indoor-range-hood-outdoors/'
+    },
+    'not-working': {
+      answer: 'Six common failure modes: wind deflection (most common), mounted too high, hood too small, insufficient CFM, wrong position, and duct restriction. Most are design-locked from using indoor specs outdoors.',
+      tool: '/tools/failure-mode-taxonomy/',
+      qa: 'https://outdoorrangehoods.com/questions/why-doesnt-my-outdoor-range-hood-work/'
+    },
+    'wind': {
+      answer: 'Wind is the #1 factor. At just 5\u20137 mph of crosswind, the plume begins leaving the capture zone. Side panels are more effective than increasing blower power.',
+      tool: '/tools/wind-deflection-trajectory/',
+      qa: 'https://outdoorrangehoods.com/questions/does-wind-affect-outdoor-range-hood-performance/'
+    },
+    'height': {
+      answer: 'As low as safely possible \u2014 24 to 30 inches. CFM requirements scale with height to the 5/3 power: doubling the height roughly triples the airflow needed.',
+      tool: '/tools/velocity-decay-curves/',
+      qa: 'https://outdoorrangehoods.com/questions/how-high-should-i-mount-my-outdoor-range-hood/'
+    }
+  };
+
+  var chips = document.querySelectorAll('.q-chip');
+  var answerEl = document.getElementById('q-answer');
+  var answerText = document.getElementById('q-answer-text');
+  var linkTool = document.getElementById('q-link-tool');
+  var linkQa = document.getElementById('q-link-qa');
+
+  function showAnswer(id) {
+    var q = questions[id];
+    if (!q) return;
+    answerText.textContent = q.answer;
+    linkTool.href = q.tool;
+    linkQa.href = q.qa;
+    answerEl.classList.remove('visible');
+    void answerEl.offsetHeight; // reset animation
+    answerEl.classList.add('visible');
+    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Track click
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: id })
+    }).catch(function() {});
+  }
+
+  chips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      chips.forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      showAnswer(chip.getAttribute('data-id'));
+    });
+  });
+
+  // Custom question submit
+  var input = document.querySelector('.q-input');
+  var submit = document.querySelector('.q-submit');
+  function handleCustom() {
+    var text = input.value.trim();
+    if (!text) return;
+    chips.forEach(function(c) { c.classList.remove('active'); });
+    answerText.textContent = 'Thanks for your question! Browse our research papers and interactive tools to find your answer, or check our Q&A section for common topics.';
+    linkTool.href = '/tools/';
+    linkQa.href = 'https://outdoorrangehoods.com/questions/';
+    answerEl.classList.remove('visible');
+    void answerEl.offsetHeight;
+    answerEl.classList.add('visible');
+    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: 'custom', text: text })
+    }).catch(function() {});
+  }
+  submit.addEventListener('click', handleCustom);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleCustom();
+  });
+})();
+</script>
 
 <!-- ===== MISSION ===== -->
 <section class="home-mission">
@@ -478,7 +743,7 @@
   <p>Explore the research, use the tools, or review the methodology behind every finding.</p>
   <div class="cta-buttons">
     <a href="/research/" class="cta-btn cta-primary">Browse Research</a>
-    <a href="/tools/cfm-calculator/" class="cta-btn cta-secondary">CFM Calculator</a>
+    <a href="/tools/" class="cta-btn cta-secondary">BBQ Tools</a>
     <a href="/methodology/" class="cta-btn cta-secondary">Methodology</a>
   </div>
 </section>

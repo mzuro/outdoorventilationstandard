@@ -1,0 +1,340 @@
+{{- define "main" }}
+
+<style>
+/* ===== TOOLS PAGE ===== */
+.tools-header {
+  margin-bottom: 32px;
+}
+.tools-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.tools-header p {
+  color: var(--secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+/* Featured tool (CFM Calculator) */
+.tool-featured {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: var(--entry);
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease;
+  margin-bottom: 32px;
+}
+.tool-featured:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.tool-featured-img {
+  background: var(--tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  min-height: 200px;
+}
+.tool-featured-img svg {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+}
+.tool-featured-body {
+  padding: 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.tool-featured-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--theme);
+  background: var(--primary);
+  padding: 3px 10px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.tool-featured-body h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.tool-featured-body p {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.tool-featured-cta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Tool card grid */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.tool-card {
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.tool-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.tool-card-img {
+  background: var(--tertiary);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  border-bottom: 1px solid var(--border);
+}
+.tool-card-img img {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+}
+.tool-card-body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.tool-card-body h3 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+.tool-card-body p {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  line-height: 1.55;
+  flex: 1;
+}
+.tool-card-link {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+/* Footer note */
+.tools-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  margin-top: 8px;
+}
+.tools-footer p {
+  font-size: 0.82rem;
+  color: var(--secondary);
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tool-featured {
+    grid-template-columns: 1fr;
+  }
+  .tool-featured-img {
+    min-height: 140px;
+    padding: 20px;
+  }
+  .tool-featured-body {
+    padding: 20px;
+  }
+  .tool-featured-body h2 {
+    font-size: 1.15rem;
+  }
+  .tools-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .tool-card-img {
+    min-height: 100px;
+    padding: 12px;
+  }
+  .tool-card-body {
+    padding: 12px;
+  }
+  .tool-card-body h3 {
+    font-size: 0.85rem;
+  }
+  .tool-card-body p {
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 480px) {
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<!-- Header -->
+<header class="tools-header">
+  <h1>{{ .Title }}</h1>
+  <p>Physics-based tools for understanding and sizing outdoor BBQ ventilation. Each tool is grounded in our <a href="/research/">research papers</a>.</p>
+</header>
+
+<!-- Featured: CFM Calculator -->
+<a href="/tools/cfm-calculator/" class="tool-featured">
+  <div class="tool-featured-img">
+    <svg viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="240" height="140" rx="8" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+      <rect x="35" y="40" width="100" height="24" rx="4" fill="currentColor" opacity="0.15"/>
+      <rect x="35" y="74" width="100" height="24" rx="4" fill="currentColor" opacity="0.15"/>
+      <rect x="35" y="108" width="100" height="24" rx="4" fill="currentColor" opacity="0.15"/>
+      <rect x="155" y="40" width="90" height="92" rx="6" fill="currentColor" opacity="0.1"/>
+      <text x="200" y="75" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor" opacity="0.6">CFM</text>
+      <text x="200" y="100" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.4">calculated</text>
+      <rect x="155" y="108" width="90" height="24" rx="4" fill="currentColor" opacity="0.25"/>
+      <text x="200" y="124" text-anchor="middle" font-size="10" font-weight="600" fill="currentColor" opacity="0.5">CALCULATE</text>
+    </svg>
+  </div>
+  <div class="tool-featured-body">
+    <span class="tool-featured-label">Interactive Calculator</span>
+    <h2>BBQ CFM Sizing Calculator</h2>
+    <p>Compute the minimum exhaust airflow (CFM) for any combination of cooking source, hood height, and wind exposure. Shows the complete calculation breakdown with indoor-vs-outdoor correction factors.</p>
+    <span class="tool-featured-cta">Open calculator &rarr;</span>
+  </div>
+</a>
+
+<!-- Tool Cards Grid — ordered by popularity -->
+<div class="tools-grid">
+
+  <a href="/tools/indoor-vs-outdoor-comparison/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/indoor-vs-outdoor-comparison.svg" alt="Indoor vs outdoor ventilation comparison diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Indoor vs. Outdoor Comparison</h3>
+      <p>Side-by-side diagram showing why indoor hood specs fail in open-air environments. 40–60% capture loss explained.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/wind-deflection-trajectory/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/wind-deflection-trajectory.svg" alt="Wind deflection trajectory diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Wind Deflection Trajectories</h3>
+      <p>Plume paths at five wind speeds (0–12 mph). See the critical speed where the plume exits the capture zone.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/failure-mode-taxonomy/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/failure-mode-taxonomy.svg" alt="Failure mode taxonomy diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Failure Mode Taxonomy</h3>
+      <p>Six primary failure modes of outdoor hoods — root cause, symptoms, and whether each is correctable or design-locked.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/velocity-decay-curves/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/velocity-decay-curves.svg" alt="Velocity decay curves chart">
+    </div>
+    <div class="tool-card-body">
+      <h3>Velocity Decay Curves</h3>
+      <p>Centerline velocity from cooking surface to hood for four source types. Shows the minimum capture threshold.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/hood-geometry-comparison/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/hood-geometry-comparison.svg" alt="Hood geometry comparison diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Hood Geometry Comparison</h3>
+      <p>Three-panel comparison: undersized, indoor-spec, and recommended outdoor hood. Overhang is the critical parameter.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/side-panel-effectiveness/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/side-panel-effectiveness.svg" alt="Side panel effectiveness diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Side Panel Effectiveness</h3>
+      <p>Before-and-after: side panels restore partial confinement, reducing required CFM by 28% and improving capture 25–35%.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/plume-width-by-height/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/plume-width-by-height.svg" alt="Plume width by height chart">
+    </div>
+    <div class="tool-card-body">
+      <h3>Plume Width by Height</h3>
+      <p>Plume capture diameter at five mounting heights. Shows why hoods must always be wider than the cooking surface.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/heat-release-rate-comparison/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/heat-release-rate-comparison.svg" alt="Heat release rate comparison chart">
+    </div>
+    <div class="tool-card-body">
+      <h3>Heat Release Rate Comparison</h3>
+      <p>Total vs. convective heat release for 12 cooking sources. Convective fraction drives plume strength.</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+  <a href="/tools/grease-aerosol-deposition/" class="tool-card">
+    <div class="tool-card-img">
+      <img src="/diagrams/grease-aerosol-deposition.svg" alt="Grease aerosol deposition pattern diagram">
+    </div>
+    <div class="tool-card-body">
+      <h3>Grease Aerosol Deposition</h3>
+      <p>Transport and deposition zones for grease particles in missed plume — from coarse droplets (0–3 ft) to ultrafine (30+ ft).</p>
+      <span class="tool-card-link">View diagram &rarr;</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- Footer -->
+<div class="tools-footer">
+  <p>All tools are self-contained, require no login, and are free to use. Each is grounded in the physics from our <a href="/research/">research papers</a>. For citation and licensing, see <a href="/about/">About</a>.</p>
+</div>
+
+{{- end }}
