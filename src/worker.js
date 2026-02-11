@@ -2,9 +2,14 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // API: track question clicks
+    // API: track question clicks (requires KV binding)
     if (url.pathname === '/api/track' && request.method === 'POST') {
       try {
+        if (!env.QUESTION_CLICKS) {
+          return new Response(JSON.stringify({ ok: true, note: 'tracking not configured' }), {
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
         const { question_id, text } = await request.json();
         if (!question_id) {
           return new Response(JSON.stringify({ error: 'missing question_id' }), {
@@ -13,12 +18,10 @@ export default {
           });
         }
 
-        // Increment click counter
         const key = `clicks:${question_id}`;
         const current = parseInt(await env.QUESTION_CLICKS.get(key) || '0');
         await env.QUESTION_CLICKS.put(key, String(current + 1));
 
-        // Store custom question text if provided
         if (question_id === 'custom' && text) {
           const customKey = `custom:${Date.now()}`;
           await env.QUESTION_CLICKS.put(customKey, text);
@@ -35,8 +38,11 @@ export default {
       }
     }
 
-    // API: read click stats (simple admin endpoint)
+    // API: read click stats (requires KV + admin token)
     if (url.pathname === '/api/stats' && request.method === 'GET') {
+      if (!env.QUESTION_CLICKS || !env.ADMIN_TOKEN) {
+        return new Response('Not configured', { status: 503 });
+      }
       const token = url.searchParams.get('token');
       if (token !== env.ADMIN_TOKEN) {
         return new Response('Unauthorized', { status: 401 });
