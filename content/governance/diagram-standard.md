@@ -2,7 +2,7 @@
 title: "Diagram Standard v2.1"
 description: "Visual governance standard for all diagrams produced under the Outdoor Ventilation Standard Research Program."
 date: 2025-08-01
-lastmod: 2025-10-20
+lastmod: 2026-02-13
 weight: 30
 ---
 

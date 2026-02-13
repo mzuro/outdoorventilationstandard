@@ -1,6 +1,8 @@
 ---
 title: "Governance"
 description: "Governing documents for the Outdoor Ventilation Standard Research Program — charter, glossary, diagram standard, research backlog, and agent role definitions."
+date: 2025-08-01
+lastmod: 2026-02-13
 weight: 20
 ---
 

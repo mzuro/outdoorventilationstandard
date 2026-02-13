@@ -1,0 +1,363 @@
+{{- define "main" }}
+
+<div class="scroll-progress"></div>
+
+<style>
+/* Mobile-first research page styles */
+.research-hero {
+  padding: 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.research-id {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.research-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.research-summary {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--content);
+  background: var(--entry);
+  padding: 16px;
+  border-radius: 6px;
+  border-left: 3px solid var(--primary);
+  margin-bottom: 16px;
+}
+.research-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--secondary);
+  margin-bottom: 16px;
+}
+.research-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Desktop action buttons (inline) */
+.research-actions-desktop {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.research-actions-desktop .action-btn {
+  flex: 1;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.action-btn-primary {
+  background: var(--primary);
+  color: var(--theme);
+}
+.action-btn-secondary {
+  background: var(--tertiary);
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+.action-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Scroll progress indicator */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--primary);
+  width: 0%;
+  z-index: 1000;
+  transition: width 0.1s ease;
+}
+
+/* Mobile sticky action bar (bottom) */
+.research-actions-mobile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--entry);
+  border-top: 1px solid var(--border);
+  padding: 6px 12px;
+  display: none;
+  gap: 6px;
+  z-index: 100;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+.research-actions-mobile .action-btn {
+  flex: 1;
+  padding: 10px 6px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+/* Content sections */
+.research-content {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.research-content h2 {
+  font-size: 1.3rem;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+.research-content h3 {
+  font-size: 1.1rem;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.research-content p {
+  margin-bottom: 16px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .research-actions-desktop {
+    display: none;
+  }
+  .research-actions-mobile {
+    display: flex;
+  }
+  .research-title {
+    font-size: 1.3rem;
+  }
+  .research-content {
+    font-size: 18px;
+    padding-bottom: 70px; /* Space for sticky bar */
+  }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  .research-hero {
+    padding: 24px 0 16px;
+  }
+  .research-title {
+    font-size: 2rem;
+  }
+}
+</style>
+
+<article class="post-single">
+  <header class="research-hero">
+    {{- if .Params.research_id }}
+    <div class="research-id">{{ .Params.research_id }} • {{ .Params.priority }} • v{{ .Params.version }}</div>
+    {{- end }}
+
+    <h1 class="research-title">{{ .Title }}</h1>
+
+    {{- if .Params.summary }}
+    <div class="research-summary">
+      <strong>Executive Summary:</strong> {{ .Params.summary }}
+    </div>
+    {{- end }}
+
+    <div class="research-meta">
+      {{- if .Date }}
+      <span class="research-meta-item">📅 {{ .Date.Format "Jan 2006" }}</span>
+      {{- end }}
+      {{- if .Params.status }}
+      <span class="research-meta-item">✓ {{ .Params.status }}</span>
+      {{- end }}
+      {{- if .ReadingTime }}
+      <span class="research-meta-item">⏱ {{ .ReadingTime }} min read</span>
+      {{- end }}
+    </div>
+  </header>
+
+  {{- /* Desktop action buttons */ -}}
+  <div class="research-actions-desktop">
+    {{- $researchID := .Params.research_id -}}
+    {{- if $researchID }}
+    <a href="/downloads/summaries/{{ $researchID }}-Summary.pdf" class="action-btn action-btn-primary" download>
+      📥 Download PDF Summary
+    </a>
+    <a href="/downloads/papers/{{ $researchID }}-Full.pdf" class="action-btn action-btn-primary" download>
+      📄 Download PDF
+    </a>
+    <button class="action-btn action-btn-secondary" onclick="shareResearch()">
+      ↗ Share
+    </button>
+    {{- end }}
+  </div>
+
+  <div class="research-content post-content">
+    {{- .Content }}
+  </div>
+
+  {{- /* Mobile sticky action bar */ -}}
+  <div class="research-actions-mobile">
+    {{- if $researchID }}
+    <a href="/downloads/summaries/{{ $researchID }}-Summary.pdf" class="action-btn action-btn-primary" download>
+      📥 PDF Summary
+    </a>
+    <a href="/downloads/papers/{{ $researchID }}-Full.pdf" class="action-btn action-btn-primary" download>
+      📄 Full PDF
+    </a>
+    <button class="action-btn action-btn-secondary" onclick="shareResearch()">
+      ↗ Share
+    </button>
+    {{- end }}
+  </div>
+</article>
+
+<script>
+// Scroll progress tracking
+(function() {
+  const progressBar = document.querySelector('.scroll-progress');
+  const article = document.querySelector('.research-content');
+
+  function updateProgress() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    progressBar.style.width = progress + '%';
+
+    // Track depth milestones
+    if (!window._depthTracked) window._depthTracked = {};
+    const milestones = [25, 50, 75, 100];
+    milestones.forEach(function(m) {
+      if (progress >= m && !window._depthTracked[m]) {
+        window._depthTracked[m] = true;
+        if (typeof fetch !== 'undefined') {
+          fetch('/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'scroll_depth',
+              research_id: {{ .Params.research_id | jsonify }},
+              depth: m
+            })
+          }).catch(function() {});
+        }
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateProgress);
+  updateProgress();
+})();
+
+// Time on page tracking
+(function() {
+  const startTime = Date.now();
+  const thresholds = [30, 60, 120, 300]; // seconds
+  const tracked = {};
+
+  setInterval(function() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    thresholds.forEach(function(t) {
+      if (elapsed >= t && !tracked[t]) {
+        tracked[t] = true;
+        if (typeof fetch !== 'undefined') {
+          fetch('/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'time_threshold',
+              research_id: {{ .Params.research_id | jsonify }},
+              seconds: t
+            })
+          }).catch(function() {});
+        }
+      }
+    });
+  }, 5000);
+})();
+
+// Web Share API integration
+function shareResearch() {
+  const title = {{ .Title | jsonify }};
+  const description = {{ .Params.summary | default .Description | jsonify }};
+  const url = window.location.href;
+
+  if (navigator.share) {
+    // Native share (mobile)
+    navigator.share({
+      title: title,
+      text: description,
+      url: url
+    }).then(() => {
+      // Track share success
+      if (typeof fetch !== 'undefined') {
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'share',
+            research_id: {{ .Params.research_id | jsonify }},
+            url: url
+          })
+        }).catch(function() {});
+      }
+    }).catch((err) => {
+      console.log('Share cancelled or failed:', err);
+    });
+  } else {
+    // Fallback: copy link to clipboard
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copied to clipboard!');
+    }).catch(() => {
+      // Fallback for older browsers
+      prompt('Copy this link:', url);
+    });
+  }
+}
+
+// Track PDF downloads
+document.querySelectorAll('a[download]').forEach(function(link) {
+  link.addEventListener('click', function() {
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'download_pdf',
+          research_id: {{ .Params.research_id | jsonify }},
+          file: this.getAttribute('href')
+        })
+      }).catch(function() {});
+    }
+  });
+});
+</script>
+
+{{- end }}

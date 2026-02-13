@@ -2,7 +2,7 @@
 title: "Research Program Charter v2.6"
 description: "Foundational governance and research mandate for the Outdoor Ventilation Standard Research Program."
 date: 2025-08-01
-lastmod: 2025-11-15
+lastmod: 2026-02-13
 weight: 10
 ---
 

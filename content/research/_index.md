@@ -1,6 +1,8 @@
 ---
 title: "Research"
 description: "Independently researched, physics-grounded publications on outdoor cooking ventilation — buoyant plume behavior, entrainment, velocity decay, hood capture, wind interaction, and standards analysis."
+date: 2025-08-01
+lastmod: 2026-02-13
 weight: 10
 ---
 

@@ -2,6 +2,7 @@
 title: "Terms of Use"
 description: "Terms of use, disclaimers, and intellectual property notice for the Outdoor Ventilation Standard research program."
 date: 2025-08-01
+lastmod: 2026-02-13
 ---
 
 ## Terms of Use
@@ -75,4 +76,4 @@ These terms may be updated periodically. Continued use of this site after change
 
 ---
 
-*Last updated: August 2025*
+*Last updated: February 2026*

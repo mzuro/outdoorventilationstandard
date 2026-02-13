@@ -2,7 +2,7 @@
 title: "Glossary v1.1"
 description: "Controlled vocabulary for all research, publications, and agent outputs produced under the Outdoor Ventilation Standard Research Program."
 date: 2025-08-01
-lastmod: 2025-10-12
+lastmod: 2026-02-13
 weight: 20
 ---
 

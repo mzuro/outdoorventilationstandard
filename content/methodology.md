@@ -2,7 +2,7 @@
 title: "Methodology"
 description: "Research methodology and standards of evidence for the Outdoor Ventilation Standard research program."
 date: 2025-08-01
-lastmod: 2025-11-15
+lastmod: 2026-02-13
 ---
 
 ## Research Methodology

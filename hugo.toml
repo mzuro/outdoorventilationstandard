@@ -27,6 +27,10 @@ enableGitInfo = false
   defaultTheme = "light"
   disableThemeToggle = false
   images = ["/og-image.svg"]
+  keywords = ["outdoor range hood", "outdoor cooking ventilation", "CFM sizing", "buoyant plume", "hood capture efficiency", "wind effects ventilation", "outdoor kitchen ventilation", "plume physics", "entrainment", "ventilation standards"]
+
+[params.schema]
+  publisherType = "Organization"
 
 [params.label]
   text = "Outdoor Ventilation Standard"
@@ -49,14 +53,19 @@ enableGitInfo = false
   weight = 10
 
 [[menu.main]]
-  name = "Governance"
-  url = "/governance/"
-  weight = 20
-
-[[menu.main]]
   name = "Tools"
   url = "/tools/"
   weight = 15
+
+[[menu.main]]
+  name = "Downloads"
+  url = "/downloads/"
+  weight = 17
+
+[[menu.main]]
+  name = "Governance"
+  url = "/governance/"
+  weight = 20
 
 [[menu.main]]
   name = "Methodology"
@@ -83,3 +92,5 @@ enableGitInfo = false
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+  page = ["HTML"]
