@@ -11,5 +11,8 @@
       "binding": "QUESTION_CLICKS",
       "id": "ff274b77a21a4990870979944d2c92d6"
     }
-  ]
+  ],
+  "ai": {
+    "binding": "AI"
+  }
 }
