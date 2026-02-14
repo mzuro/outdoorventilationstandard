@@ -242,12 +242,17 @@ export default {
           });
         }
 
-        // Parse markdown links from the response
+        // Parse markdown links from the response (deduplicated by URL)
         const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
         const links = [];
+        const seenUrls = new Set();
         let match;
         while ((match = linkRegex.exec(responseText)) !== null) {
-          links.push({ label: match[1], url: match[2] });
+          const url = match[2];
+          if (!seenUrls.has(url)) {
+            seenUrls.add(url);
+            links.push({ label: match[1], url });
+          }
         }
 
         // Remove link lines from the answer text
