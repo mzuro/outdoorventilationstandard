@@ -261,7 +261,38 @@
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
+}
+/* iOS segmented control — matches search page */
+.search-modes {
+  display: inline-flex;
+  margin-bottom: 14px;
+  background: var(--border);
+  border-radius: 17px;
+  padding: 2px;
+}
+.search-mode-btn {
+  padding: 4px 14px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 15px;
+  background: transparent;
+  color: var(--secondary);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.4;
+}
+.search-mode-btn.active {
+  background: var(--theme);
+  color: var(--primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+}
+.search-mode-btn:not(.active):hover {
+  color: var(--primary);
 }
 .q-chips {
   display: flex;
@@ -567,15 +598,21 @@
 <!-- ===== QUESTION PICKER ===== -->
 <section class="home-questions">
   <h2>What do you want to know?</h2>
-  <div class="q-chips">
-    <button class="q-chip" data-id="cfm">How many CFM does my outdoor hood need?</button>
-    <button class="q-chip" data-id="indoor-outdoor">Can I use an indoor range hood outside?</button>
-    <button class="q-chip" data-id="not-working">Why doesn't my outdoor range hood work?</button>
-    <button class="q-chip" data-id="wind">Does wind affect my outdoor range hood?</button>
-    <button class="q-chip" data-id="height">How high should I mount my outdoor range hood?</button>
+  <div class="search-modes">
+    <button class="search-mode-btn active" id="home-mode-topics">Browse Topics</button>
+    <button class="search-mode-btn" id="home-mode-ai">AI Search</button>
+  </div>
+  <div id="home-topics-view">
+    <div class="q-chips">
+      <button class="q-chip" data-id="cfm">How many CFM does my outdoor hood need?</button>
+      <button class="q-chip" data-id="indoor-outdoor">Can I use an indoor range hood outside?</button>
+      <button class="q-chip" data-id="not-working">Why doesn't my outdoor range hood work?</button>
+      <button class="q-chip" data-id="wind">Does wind affect my outdoor range hood?</button>
+      <button class="q-chip" data-id="height">How high should I mount my outdoor range hood?</button>
+    </div>
   </div>
   <div class="q-input-wrap">
-    <input type="text" class="q-input" placeholder="Or type your own question...">
+    <input type="text" class="q-input" id="q-input" placeholder="Or type your own question...">
     <input type="text" name="website" class="q-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
     <button class="q-submit">Ask</button>
   </div>
@@ -602,6 +639,26 @@
   var historyEl = document.getElementById('q-history');
   var historyList = document.getElementById('q-history-list');
   var askAnotherBtn = document.getElementById('q-ask-another');
+
+  // Mode toggle
+  var modeTopics = document.getElementById('home-mode-topics');
+  var modeAi = document.getElementById('home-mode-ai');
+  var topicsView = document.getElementById('home-topics-view');
+  var qInput = document.getElementById('q-input');
+
+  modeTopics.addEventListener('click', function() {
+    modeTopics.classList.add('active');
+    modeAi.classList.remove('active');
+    topicsView.style.display = '';
+    qInput.placeholder = 'Or type your own question...';
+  });
+  modeAi.addEventListener('click', function() {
+    modeAi.classList.add('active');
+    modeTopics.classList.remove('active');
+    topicsView.style.display = 'none';
+    qInput.placeholder = 'Ask a question about outdoor cooking ventilation...';
+    qInput.focus();
+  });
 
   // Turnstile: render widget after API loads
   var turnstileToken = null;
@@ -934,7 +991,7 @@
   }
 
   // Custom question submit — tries AI first, falls back to Fuse.js
-  var input = document.querySelector('.q-input');
+  var input = qInput;
   var submit = document.querySelector('.q-submit');
   function handleCustom() {
     var text = input.value.trim();
