@@ -167,23 +167,7 @@ export default {
           });
         }
 
-        // Content filter — block obviously inappropriate input before it reaches AI
-        if (isBlockedInput(question)) {
-          await logAiRequest(env, question, 'filtered', ip);
-          return new Response(JSON.stringify({
-            answer: 'This site covers outdoor cooking ventilation physics \u2014 BBQ hood sizing, plume behavior, wind effects, and related topics. Try asking about one of those!',
-            links: [
-              { label: 'Browse all research', url: '/research/' },
-              { label: 'Explore tools', url: '/tools/' }
-            ],
-            source: 'ai',
-            off_topic: true
-          }), {
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Turnstile verification
+        // Turnstile verification (before content filter so bots can't probe filter without auth)
         if (env.TURNSTILE_SECRET) {
           const cfToken = body.cf_token || '';
           const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
@@ -198,6 +182,22 @@ export default {
               headers: { 'Content-Type': 'application/json' }
             });
           }
+        }
+
+        // Content filter — block obviously inappropriate input before it reaches AI
+        if (isBlockedInput(question)) {
+          await logAiRequest(env, question, 'filtered', ip);
+          return new Response(JSON.stringify({
+            answer: 'This site covers outdoor cooking ventilation physics \u2014 BBQ hood sizing, plume behavior, wind effects, and related topics. Try asking about one of those!',
+            links: [
+              { label: 'Browse all research', url: '/research/' },
+              { label: 'Explore tools', url: '/tools/' }
+            ],
+            source: 'ai',
+            off_topic: true
+          }), {
+            headers: { 'Content-Type': 'application/json' }
+          });
         }
 
         if (!env.AI) {

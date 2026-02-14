@@ -26,7 +26,7 @@ enableGitInfo = false
   TocOpen = true
   defaultTheme = "light"
   disableThemeToggle = false
-  images = ["/og-image.svg"]
+  images = ["/og-image.png"]
   keywords = ["outdoor range hood", "outdoor cooking ventilation", "CFM sizing", "buoyant plume", "hood capture efficiency", "wind effects ventilation", "outdoor kitchen ventilation", "plume physics", "entrainment", "ventilation standards"]
 
 [params.schema]
