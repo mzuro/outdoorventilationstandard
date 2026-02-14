@@ -1,0 +1,477 @@
+{{- define "main" }}
+
+<style>
+/* Search mode toggle */
+.search-modes {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 360px;
+}
+.search-mode-btn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: var(--entry);
+  color: var(--secondary);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.search-mode-btn.active {
+  background: var(--primary);
+  color: var(--theme);
+}
+.search-mode-btn:not(.active):hover {
+  background: var(--border);
+}
+
+/* AI search section */
+.ai-search-box {
+  display: none;
+  margin-bottom: 20px;
+}
+.ai-search-box.visible {
+  display: block;
+}
+.ai-search-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+.ai-search-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--primary);
+  background: var(--theme);
+  font-family: inherit;
+}
+.ai-search-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+.ai-search-submit {
+  padding: 12px 24px;
+  background: var(--primary);
+  color: var(--theme);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+.ai-search-submit:hover {
+  opacity: 0.85;
+}
+.ai-search-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ai-search-hint {
+  font-size: 0.75rem;
+  color: var(--secondary);
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+/* AI result card */
+.ai-result {
+  display: none;
+  margin-top: 20px;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  animation: aiFadeIn 0.3s ease;
+}
+.ai-result.visible {
+  display: block;
+}
+@keyframes aiFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ai-result-answer {
+  font-size: 0.95rem;
+  color: var(--content);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.ai-result-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.ai-result-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ai-result-links a {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 10px 14px;
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.2s ease, background 0.15s ease;
+}
+.ai-result-links a:hover {
+  border-color: var(--primary);
+  background: var(--entry);
+}
+.ai-result-source {
+  font-size: 0.7rem;
+  color: var(--secondary);
+  margin-top: 12px;
+  opacity: 0.6;
+}
+.ai-result-another {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--primary);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+.ai-result-another:hover {
+  border-color: var(--primary);
+}
+
+/* Loading spinner */
+.ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--secondary);
+}
+.ai-loading .spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: aiSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes aiSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI search history */
+.ai-history {
+  margin-top: 12px;
+}
+.ai-history-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  opacity: 0.6;
+}
+.ai-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ai-history-item {
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  color: var(--secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ai-history-item:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Honeypot */
+.ai-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* Hide standard search when AI mode active */
+#searchbox.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .search-modes {
+    max-width: 100%;
+  }
+  .ai-search-input-wrap {
+    flex-direction: column;
+  }
+  .ai-search-submit {
+    width: 100%;
+  }
+}
+</style>
+
+<header class="page-header">
+    <h1>{{- (printf "%s&nbsp;" .Title ) | htmlUnescape -}}
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </h1>
+</header>
+
+<!-- Search mode toggle -->
+<div class="search-modes">
+  <button class="search-mode-btn active" id="mode-standard">Keyword Search</button>
+  <button class="search-mode-btn" id="mode-ai">AI Search</button>
+</div>
+
+<!-- Standard PaperMod search (default) -->
+<div id="searchbox">
+    <input id="searchInput" autofocus placeholder="{{ .Params.placeholder | default (printf "%s ↵" .Title) }}"
+        aria-label="search" type="search" autocomplete="off" maxlength="64">
+    <ul id="searchResults" aria-label="search results"></ul>
+</div>
+
+<!-- AI search -->
+<div class="ai-search-box" id="ai-search-box">
+  <div class="ai-search-input-wrap">
+    <input type="text" class="ai-search-input" id="ai-search-input"
+      placeholder="Ask a question about outdoor cooking ventilation..."
+      maxlength="500" aria-label="AI search">
+    <input type="text" name="website" class="ai-honey" id="ai-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
+    <button class="ai-search-submit" id="ai-search-submit">Ask AI</button>
+  </div>
+  <p class="ai-search-hint">Ask in natural language. AI answers are generated from our published research.</p>
+
+  <div class="ai-result" id="ai-result">
+    <div class="ai-result-answer" id="ai-result-answer"></div>
+    <p class="ai-result-label">Recommended reading:</p>
+    <div class="ai-result-links" id="ai-result-links"></div>
+    <p class="ai-result-source" id="ai-result-source"></p>
+    <button class="ai-result-another" id="ai-result-another">Ask another question</button>
+  </div>
+
+  <div class="ai-history" id="ai-history" style="display:none;">
+    <div class="ai-history-label">Recent AI questions</div>
+    <div class="ai-history-list" id="ai-history-list"></div>
+  </div>
+</div>
+
+<div id="ai-turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+
+<script>
+(function() {
+  // Mode toggle
+  var modeStd = document.getElementById('mode-standard');
+  var modeAi = document.getElementById('mode-ai');
+  var stdBox = document.getElementById('searchbox');
+  var aiBox = document.getElementById('ai-search-box');
+  var aiInput = document.getElementById('ai-search-input');
+  var aiSubmit = document.getElementById('ai-search-submit');
+  var aiResultEl = document.getElementById('ai-result');
+  var aiAnswer = document.getElementById('ai-result-answer');
+  var aiLinks = document.getElementById('ai-result-links');
+  var aiSource = document.getElementById('ai-result-source');
+  var aiAnother = document.getElementById('ai-result-another');
+  var aiHistoryEl = document.getElementById('ai-history');
+  var aiHistoryList = document.getElementById('ai-history-list');
+
+  modeStd.addEventListener('click', function() {
+    modeStd.classList.add('active');
+    modeAi.classList.remove('active');
+    stdBox.classList.remove('hidden');
+    aiBox.classList.remove('visible');
+    document.getElementById('searchInput').focus();
+  });
+
+  modeAi.addEventListener('click', function() {
+    modeAi.classList.add('active');
+    modeStd.classList.remove('active');
+    stdBox.classList.add('hidden');
+    aiBox.classList.add('visible');
+    aiInput.focus();
+  });
+
+  // Turnstile
+  var turnstileToken = null;
+  var turnstileWidgetId = null;
+  function initTurnstile() {
+    if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      turnstileWidgetId = turnstile.render('#ai-turnstile-container', {
+        sitekey: '0x4AAAAAACcaq_joFScewE6d',
+        size: 'invisible',
+        callback: function(token) { turnstileToken = token; }
+      });
+    }
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(initTurnstile, 100);
+  } else {
+    window.addEventListener('load', function() { setTimeout(initTurnstile, 100); });
+  }
+
+  // History (localStorage)
+  var HISTORY_KEY = 'ovs_ai_search_history';
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function addToHistory(text) {
+    var h = getHistory();
+    h = h.filter(function(q) { return q !== text; });
+    h.unshift(text);
+    if (h.length > 5) h = h.slice(0, 5);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch (e) {}
+    renderHistory();
+  }
+  function renderHistory() {
+    var h = getHistory();
+    if (h.length === 0) { aiHistoryEl.style.display = 'none'; return; }
+    aiHistoryEl.style.display = '';
+    var html = '';
+    for (var i = 0; i < h.length; i++) {
+      html += '<button class="ai-history-item" title="' + h[i].replace(/"/g, '&quot;') + '">' + h[i] + '</button>';
+    }
+    aiHistoryList.innerHTML = html;
+    var items = aiHistoryList.querySelectorAll('.ai-history-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        aiInput.value = item.title;
+        askAI();
+      });
+    });
+  }
+  renderHistory();
+
+  // "Ask another" button
+  aiAnother.addEventListener('click', function() {
+    aiInput.value = '';
+    aiInput.focus();
+  });
+
+  // Build links HTML
+  function buildResultLinks(links) {
+    var html = '';
+    for (var i = 0; i < links.length; i++) {
+      html += '<a href="' + links[i].url + '">' + links[i].label + ' \u2192</a>';
+    }
+    aiLinks.innerHTML = html;
+  }
+
+  // AI search
+  function askAI() {
+    var text = aiInput.value.trim();
+    if (!text) return;
+
+    addToHistory(text);
+    aiSubmit.disabled = true;
+
+    // Show loading
+    aiAnswer.innerHTML = '<span class="ai-loading"><span class="spinner"></span> Searching research...</span>';
+    aiLinks.innerHTML = '';
+    aiSource.textContent = '';
+    aiResultEl.querySelector('.ai-result-label').style.display = 'none';
+    aiAnother.style.display = 'none';
+    aiResultEl.classList.remove('visible');
+    void aiResultEl.offsetHeight;
+    aiResultEl.classList.add('visible');
+
+    var honey = document.getElementById('ai-honey');
+    var honeyVal = honey ? honey.value : '';
+    var token = turnstileToken || '';
+
+    fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, cf_token: token, website: honeyVal })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('ai_failed');
+      return r.json();
+    })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      aiAnswer.textContent = data.answer;
+      aiResultEl.querySelector('.ai-result-label').style.display = '';
+      buildResultLinks(data.links || []);
+      aiSource.textContent = data.off_topic ? '' : 'Answered by AI from site research';
+      aiAnother.style.display = '';
+      aiSubmit.disabled = false;
+    })
+    .catch(function() {
+      aiAnswer.textContent = 'AI search is temporarily unavailable. Try the keyword search instead.';
+      aiResultEl.querySelector('.ai-result-label').style.display = '';
+      buildResultLinks([
+        { label: 'Browse all research', url: '/research/' },
+        { label: 'Explore tools', url: '/tools/' }
+      ]);
+      aiAnother.style.display = '';
+      aiSubmit.disabled = false;
+    })
+    .finally(function() {
+      if (typeof turnstile !== 'undefined' && turnstileWidgetId) {
+        turnstileToken = null;
+        turnstile.reset(turnstileWidgetId);
+      }
+    });
+
+    // Track
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: 'ai_search', text: text })
+    }).catch(function() {});
+  }
+
+  aiSubmit.addEventListener('click', askAI);
+  aiInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') askAI();
+  });
+
+  // Check URL params for ?ai=1 to auto-switch to AI mode
+  if (new URLSearchParams(window.location.search).get('ai') === '1') {
+    modeAi.click();
+  }
+})();
+</script>
+
+{{- end }}{{/* end main */}}

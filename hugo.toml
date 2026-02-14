@@ -47,6 +47,16 @@ enableGitInfo = false
 [params.profileMode]
   enabled = false
 
+# Search configuration (Fuse.js)
+[params.fuseOpts]
+  isCaseSensitive = false
+  shouldSort = true
+  location = 0
+  distance = 1000
+  threshold = 0.4
+  minMatchCharLength = 0
+  keys = ["title", "permalink", "summary", "content"]
+
 [[menu.main]]
   name = "Research"
   url = "/research/"
@@ -63,24 +73,14 @@ enableGitInfo = false
   weight = 17
 
 [[menu.main]]
-  name = "Governance"
-  url = "/governance/"
-  weight = 20
-
-[[menu.main]]
-  name = "Methodology"
-  url = "/methodology/"
-  weight = 25
-
-[[menu.main]]
-  name = "References"
-  url = "/references/"
-  weight = 30
+  name = "Search"
+  url = "/search/"
+  weight = 18
 
 [[menu.main]]
   name = "About"
   url = "/about/"
-  weight = 40
+  weight = 20
 
 [markup]
   [markup.goldmark]

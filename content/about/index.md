@@ -48,6 +48,12 @@ The research program covers:
 - Standards gap analysis identifying where existing codes fall short
 - Grease aerosol transport and thermal radiation at hood surfaces
 
+## Additional Resources
+
+- **[Methodology](/methodology/)** — Research methodology, analytical approach, and quality standards
+- **[References](/references/)** — Complete bibliography of cited research and standards
+- **[Governance](/governance/)** — Full governance documentation and program charter
+
 ## Contact
 
 This site is maintained as a reference resource. For inquiries, contact the program administrators.
