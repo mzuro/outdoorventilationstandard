@@ -350,7 +350,7 @@
   }
 
   // History (localStorage)
-  var HISTORY_KEY = 'ovs_ai_search_history';
+  var HISTORY_KEY = 'ovs_question_history';
   function getHistory() {
     try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
     catch (e) { return []; }
