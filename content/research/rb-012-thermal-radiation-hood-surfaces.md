@@ -12,6 +12,8 @@ version: "1.0"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
+description: "Analyzes thermal radiation from outdoor cooking sources to hood surfaces, determines equilibrium hood surface temperatures, evaluates thermal boundary layer effects on plume capture, and establishes material temperature rating requirements. Covers gas grills, charcoal grills, wood-fired grills, and pellet smokers at all standard mounting heights."
+summary: "This paper quantifies the thermal radiation environment at outdoor cooking hood surfaces. Key findings include: charcoal grills produce higher radiant flux than gas grills of comparable output despite weaker convective plumes (the charcoal radiation paradox); hood surface temperatures range from 90-260°F depending on source type and mounting height; the heated hood creates a thermal boundary layer that slightly assists plume capture by generating updraft at the hood perimeter; 304 stainless steel is adequate for all configurations while aluminum hoods are unsuitable below 30-inch mounting height with charcoal or wood sources."
 dependencies: "RB-001, RB-003"
 downstream_topics: []
 tags: ["thermal radiation", "heat flux", "material requirements"]
