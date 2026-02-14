@@ -419,6 +419,62 @@
   overflow: hidden;
   opacity: 0;
 }
+/* Question history */
+.q-history {
+  max-width: 480px;
+  margin: 12px auto 0;
+}
+.q-history-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  opacity: 0.6;
+}
+.q-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.q-history-item {
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  color: var(--secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.q-history-item:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+/* Ask another prompt */
+.q-ask-another {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--primary);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+.q-ask-another:hover {
+  border-color: var(--primary);
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -518,16 +574,21 @@
     <button class="q-chip" data-id="wind">Does wind affect my outdoor range hood?</button>
     <button class="q-chip" data-id="height">How high should I mount my outdoor range hood?</button>
   </div>
+  <div class="q-input-wrap">
+    <input type="text" class="q-input" placeholder="Or type your own question...">
+    <input type="text" name="website" class="q-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
+    <button class="q-submit">Ask</button>
+  </div>
   <div class="q-answer" id="q-answer">
     <p class="q-answer-text" id="q-answer-text"></p>
     <p class="q-answer-label">Related topics:</p>
     <div class="q-answer-links"></div>
     <p class="q-answer-source" id="q-answer-source"></p>
+    <button class="q-ask-another" id="q-ask-another">Ask another question</button>
   </div>
-  <div class="q-input-wrap">
-    <input type="text" class="q-input" placeholder="Or type your own question...">
-    <input type="text" name="website" class="q-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
-    <button class="q-submit">Ask</button>
+  <div class="q-history" id="q-history" style="display:none;">
+    <div class="q-history-label">Recent questions</div>
+    <div class="q-history-list" id="q-history-list"></div>
   </div>
   <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
 </section>
@@ -538,6 +599,9 @@
   var chips = document.querySelectorAll('.q-chip');
   var answerEl = document.getElementById('q-answer');
   var answerText = document.getElementById('q-answer-text');
+  var historyEl = document.getElementById('q-history');
+  var historyList = document.getElementById('q-history-list');
+  var askAnotherBtn = document.getElementById('q-ask-another');
 
   // Turnstile: render widget after API loads
   var turnstileToken = null;
@@ -557,6 +621,48 @@
   } else {
     window.addEventListener('load', function() { setTimeout(initTurnstile, 100); });
   }
+
+  // Question history (localStorage, last 5)
+  var HISTORY_KEY = 'ovs_question_history';
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function addToHistory(text) {
+    var h = getHistory();
+    // Remove duplicate if exists
+    h = h.filter(function(q) { return q !== text; });
+    h.unshift(text);
+    if (h.length > 5) h = h.slice(0, 5);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch (e) {}
+    renderHistory();
+  }
+  function renderHistory() {
+    var h = getHistory();
+    if (h.length === 0) { historyEl.style.display = 'none'; return; }
+    historyEl.style.display = '';
+    var html = '';
+    for (var i = 0; i < h.length; i++) {
+      html += '<button class="q-history-item" title="' + h[i].replace(/"/g, '&quot;') + '">' + h[i] + '</button>';
+    }
+    historyList.innerHTML = html;
+    // Attach click handlers
+    var items = historyList.querySelectorAll('.q-history-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        input.value = item.title;
+        handleCustom();
+      });
+    });
+  }
+  renderHistory();
+
+  // "Ask another question" button
+  askAnotherBtn.addEventListener('click', function() {
+    input.value = '';
+    input.focus();
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
   function revealAnswer() {
     answerEl.classList.remove('visible');
@@ -579,6 +685,8 @@
     if (!topic) return;
     answerText.textContent = topic.answer;
     buildLinks(topic.links);
+    var sourceEl = document.getElementById('q-answer-source');
+    if (sourceEl) sourceEl.textContent = '';
     revealAnswer();
     fetch('/api/track', {
       method: 'POST',
@@ -832,6 +940,9 @@
     var text = input.value.trim();
     if (!text) return;
     chips.forEach(function(c) { c.classList.remove('active'); });
+
+    // Save to history
+    addToHistory(text);
 
     var sourceEl = document.getElementById('q-answer-source');
     var labelEl = answerEl.querySelector('.q-answer-label');

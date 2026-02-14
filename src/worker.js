@@ -79,8 +79,19 @@ STRICT RULES:
 
 RESPONSE FORMAT:
 - Answer in 2-3 sentences maximum using plain language suitable for a homeowner.
-- After your answer, list 1-3 most relevant pages as links. Format each on its own line as: [Page Title](url)
 - Use specific numbers and data from the research when possible (CFM values, temperatures, distances).
+- After your answer, list 1-3 most relevant pages as links. Format each on its own line as: [Page Title](url)
+- IMPORTANT: When the question relates to a topic that has an interactive tool, ALWAYS include the tool link FIRST in your links. The tools are:
+  * CFM sizing, airflow, how many CFM → [CFM Sizing Calculator](/tools/cfm-calculator/)
+  * Wind effects, plume deflection → [Wind Deflection Trajectories](/tools/wind-deflection-trajectory/)
+  * Hood failure, not working, smoke escaping → [Failure Mode Taxonomy](/tools/failure-mode-taxonomy/)
+  * Indoor vs outdoor, using indoor hood outside → [Indoor vs Outdoor Comparison](/tools/indoor-vs-outdoor-comparison/)
+  * Side panels, wind baffles, shielding → [Side Panel Effectiveness](/tools/side-panel-effectiveness/)
+  * Hood size, overhang, geometry → [Hood Geometry Comparison](/tools/hood-geometry-comparison/)
+  * Plume width, plume spread, plume size → [Plume Width by Height](/tools/plume-width-by-height/)
+  * Velocity decay, plume speed → [Velocity Decay Curves](/tools/velocity-decay-curves/)
+  * Heat release, BTU, fuel comparison → [Heat Release Rate Comparison](/tools/heat-release-rate-comparison/)
+  * Grease, aerosol, deposition → [Grease Aerosol Deposition Pattern](/tools/grease-aerosol-deposition/)
 
 Research context:
 `;
