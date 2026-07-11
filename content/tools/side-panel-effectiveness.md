@@ -14,7 +14,9 @@ This diagram shows the dramatic improvement in capture performance when side pan
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Side Panel Effectiveness](/diagrams/side-panel-effectiveness.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
