@@ -14,7 +14,9 @@ This chart shows how the buoyant cooking plume expands laterally as it rises fro
 
 <div style="max-width: 880px; margin: 0 auto;">
 
-![Plume Width by Height](/diagrams/plume-width-by-height.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
