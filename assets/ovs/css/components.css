@@ -774,6 +774,127 @@ a.ovs-chip:hover {
   font-size: 0.8rem;
 }
 
+/* ---------- research paper (Task 11) ----------
+   Two-column grid: article + clause-numbered TOC. Desktop gets a sticky
+   side rail (.ovs-toc-rail); narrow viewports get a <details> disclosure
+   (.ovs-toc-mobile) instead — both render the same .TableOfContents markup,
+   only one is visible at a given width. */
+
+.ovs-research-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 980px) {
+  .ovs-research-layout {
+    grid-template-columns: minmax(0, 7fr) minmax(200px, 3fr);
+  }
+}
+
+.ovs-research-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--faint);
+  margin: 0.9rem 0 1.1rem;
+}
+
+.ovs-research-meta time {
+  color: var(--faint);
+}
+
+.ovs-toc-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 0.7rem;
+}
+
+.ovs-toc-rail nav ul,
+.ovs-toc-mobile nav ul {
+  list-style: none;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.ovs-toc-rail nav > ul,
+.ovs-toc-mobile nav > ul {
+  border-left: 1px solid var(--line);
+  padding-left: 0.9rem;
+}
+
+.ovs-toc-rail nav ul ul,
+.ovs-toc-mobile nav ul ul {
+  margin: 0.3rem 0 0.5rem 0.9rem;
+  font-size: 0.76rem;
+}
+
+.ovs-toc-rail nav li,
+.ovs-toc-mobile nav li {
+  margin-bottom: 0.5rem;
+}
+
+.ovs-toc-rail nav a,
+.ovs-toc-mobile nav a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  line-height: 1.35;
+}
+
+.ovs-toc-rail nav a:hover,
+.ovs-toc-mobile nav a:hover {
+  color: var(--accent);
+}
+
+/* desktop rail: sticky under the 60px header */
+.ovs-toc-rail {
+  display: none;
+}
+
+@media (min-width: 980px) {
+  .ovs-toc-rail {
+    display: block;
+    position: sticky;
+    top: 76px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+}
+
+/* mobile disclosure: hidden once the rail takes over */
+.ovs-toc-mobile {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 980px) {
+  .ovs-toc-mobile {
+    display: none;
+  }
+}
+
+.ovs-toc-mobile summary {
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.ovs-toc-mobile nav {
+  padding: 0 1rem 1rem;
+}
+
 /* ---------- byline ---------- */
 
 .byline {
