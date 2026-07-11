@@ -60,7 +60,7 @@ Every instrument with hood geometry gets a wall/island toggle (sets depth) and a
 
 ## 6. E-E-A-T requirements
 
-- **Experience**: reviewer credentials on every technical page ("Reviewed by Mark Zuro, [credential line — NEEDS MARK: one-sentence bio/credentials]"); field-observation callouts where real installation experience informs guidance (sourced from Mark, never invented — REAL data only)
+- **Experience**: reviewer credentials on every technical page — "Reviewed by Mark Zuro, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods."; field-observation callouts where real installation experience informs guidance (sourced from Mark, never invented — REAL data only)
 - **Expertise**: numbered IEEE citations on every claim; methodology page linked from every paper/instrument footer; each instrument's method notes state model assumptions and limits plainly
 - **Authoritativeness**: `schema.org` structured data — `Organization` (site), `Person` (reviewer), `TechArticle` (papers), `WebApplication` (instruments), `FAQPage` (question pages), `BreadcrumbList` site-wide; consistent entity name/logo; About page states who runs the site, funding independence, and editorial policy
 - **Trust**: visible published/updated dates on all content; no-marketing pledge NOTE block; references page; contact route; correct HTTPS/canonical/OG metadata (already partly present)
@@ -121,5 +121,5 @@ Embedding: Hugo shortcode `{{</* instrument id="I-03" preset="island-48" */>}}` 
 
 ## 13. Needs Mark (during build)
 
-- One-sentence reviewer credential line for E-E-A-T bylines (§6)
+- ~~Reviewer credential line~~ — received 2026-07-11, now in §6
 - Any field-observation notes worth adding to question pages (optional, additive)
