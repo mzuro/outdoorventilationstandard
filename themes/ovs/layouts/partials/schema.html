@@ -1,0 +1,149 @@
+{{- /*
+  schema.html — JSON-LD emitted by page type (E-E-A-T signals).
+
+    Organization    — site-wide identity, emitted on the home page.
+    TechArticle     — section "research"
+    WebApplication  — section "tools"
+    FAQPage         — section "questions"
+    BreadcrumbList  — every page
+
+  Site name is fixed to "Outdoor Ventilation Standard"; all URLs are built
+  from .Site.BaseURL / .Permalink so they stay correct across environments.
+*/ -}}
+{{- $siteName := "Outdoor Ventilation Standard" }}
+{{- $baseURL := .Site.BaseURL }}
+{{- $section := .Section }}
+
+{{- /* ---------- Organization (home page only) ---------- */}}
+{{- if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ $siteName | jsonify }},
+  "url": {{ $baseURL | jsonify }},
+  "description": {{ (.Site.Params.description | default "") | jsonify }},
+  "logo": {{ ("logo.svg" | absURL) | jsonify }}
+}
+</script>
+{{- end }}
+
+{{- /* ---------- TechArticle (research briefs) ---------- */}}
+{{- if and (eq $section "research") .IsPage }}
+{{- $published := .Date.Format "2006-01-02" }}
+{{- $updated := (.Lastmod | default .Date).Format "2006-01-02" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": {{ .Title | jsonify }},
+  "description": {{ (.Params.summary | default .Description | default "") | jsonify }},
+  "datePublished": {{ $published | jsonify }},
+  "dateModified": {{ $updated | jsonify }},
+  "url": {{ .Permalink | jsonify }},
+  "author": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify }},
+    "url": {{ $baseURL | jsonify }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ ("logo.svg" | absURL) | jsonify }}
+    }
+  }
+}
+</script>
+{{- end }}
+
+{{- /* ---------- WebApplication (interactive tools) ---------- */}}
+{{- if and (eq $section "tools") .IsPage }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": {{ .Title | jsonify }},
+  "description": {{ (.Description | default .Params.summary | default "") | jsonify }},
+  "url": {{ .Permalink | jsonify }},
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+{{- end }}
+
+{{- /* ---------- FAQPage (question-answer pages) ----------
+   Sensible fallback: if the page declares a `faq` front-matter list
+   (each item with `question`/`answer`), use it; otherwise fall back to a
+   single-entry FAQPage built from the page title and description/summary
+   so the type is still valid once the questions section (a later task)
+   exists. */}}
+{{- if eq $section "questions" }}
+{{- $faq := .Params.faq }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- if $faq }}
+    {{- range $i, $item := $faq }}
+    {{- if $i }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $item.question | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $item.answer | jsonify }}
+      }
+    }
+    {{- end }}
+    {{- else }}
+    {
+      "@type": "Question",
+      "name": {{ .Title | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ (.Params.summary | default .Description | default .Title) | jsonify }}
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+
+{{- /* ---------- BreadcrumbList (every page) ---------- */}}
+{{- $items := slice (dict "name" "Home" "item" $baseURL) }}
+{{- if not .IsHome }}
+  {{- $currentSection := .CurrentSection }}
+  {{- if and $currentSection (not $currentSection.IsHome) }}
+    {{- $items = $items | append (dict "name" $currentSection.Title "item" $currentSection.Permalink) }}
+  {{- end }}
+  {{- if ne . $currentSection }}
+    {{- $items = $items | append (dict "name" .Title "item" .Permalink) }}
+  {{- end }}
+{{- end }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{- range $i, $it := $items }}
+    {{- if $i }},{{ end }}
+    {
+      "@type": "ListItem",
+      "position": {{ add $i 1 }},
+      "name": {{ $it.name | jsonify }},
+      "item": {{ $it.item | jsonify }}
+    }
+    {{- end }}
+  ]
+}
+</script>

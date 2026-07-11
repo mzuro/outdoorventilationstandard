@@ -1,7 +1,7 @@
 baseURL = 'https://outdoorventilationstandard.com/'
 languageCode = 'en-us'
 title = 'Outdoor Ventilation Standard'
-theme = 'PaperMod'
+theme = 'ovs'
 enableGitInfo = false
 
 [frontmatter]
@@ -58,29 +58,29 @@ enableGitInfo = false
   keys = ["title", "permalink", "summary", "content"]
 
 [[menu.main]]
-  name = "Research"
-  url = "/research/"
+  name = "Questions"
+  url = "/questions/"
   weight = 10
 
 [[menu.main]]
-  name = "Tools"
+  name = "Instruments"
   url = "/tools/"
-  weight = 15
+  weight = 20
 
 [[menu.main]]
-  name = "Downloads"
-  url = "/downloads/"
-  weight = 17
+  name = "Research"
+  url = "/research/"
+  weight = 30
 
 [[menu.main]]
-  name = "Search"
-  url = "/search/"
-  weight = 18
+  name = "Standard"
+  url = "/governance/"
+  weight = 40
 
 [[menu.main]]
   name = "About"
   url = "/about/"
-  weight = 20
+  weight = 50
 
 [markup]
   [markup.goldmark]

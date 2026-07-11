@@ -1,0 +1,12 @@
+name = "ovs"
+license = "UNLICENSED"
+licenselink = ""
+description = "Institutional-modern 'standard document' theme for the Outdoor Ventilation Standard research site."
+homepage = "https://outdoorventilationstandard.com/"
+tags = ["custom", "research", "standards-document"]
+features = ["custom-css", "jsonld-schema", "e-e-a-t-byline"]
+min_version = "0.115.0"
+
+[author]
+  name = "Outdoor Ventilation Standard"
+  homepage = "https://outdoorventilationstandard.com/"

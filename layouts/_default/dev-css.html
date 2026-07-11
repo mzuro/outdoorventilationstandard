@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>dev: ovs tokens/base/components check</title>
-<link rel="stylesheet" href="/ovs/css/tokens.css">
-<link rel="stylesheet" href="/ovs/css/base.css">
-<link rel="stylesheet" href="/ovs/css/components.css">
+{{- $tokens := resources.Get "ovs/css/tokens.css" }}
+{{- $base := resources.Get "ovs/css/base.css" }}
+{{- $components := resources.Get "ovs/css/components.css" }}
+{{- $bundle := slice $tokens $base $components | resources.Concat "ovs/css/bundle.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">
 <style>
   /* dev-page-only scaffolding, not part of the design system */
   .devsection { border-top: 1px solid var(--line); padding: 2rem 0; }
@@ -27,15 +29,15 @@
       <a href="#"><span class="ovs-clause">3.0</span>Instruments</a>
       <a href="#"><span class="ovs-clause">4.0</span>Research</a>
     </nav>
-    <span class="ovs-edition">OVS-H1 : 2026 · ed. 1.2</span>
+    <span class="ovs-edition">OVS-H1 : 2026 &middot; ed. 1.2</span>
   </div>
 </header>
 
 <main id="main" class="ovs-wrap">
 
 <section class="devsection">
-  <h2>Task 8 dev check — tokens.css + base.css + components.css</h2>
-  <p class="ovs-prose">Temporary page for Task 8. Links the three stylesheets via <code>/ovs/css/*.css</code>, a symlink into <code>assets/ovs/css/</code> created only for this manual check (Hugo Pipes will bundle the real files from <code>assets/</code> in Task 9). Renders one of every component this task produces. Toggle OS light/dark to check both themes.</p>
+  <h2>Task 8/9 dev check &mdash; tokens.css + base.css + components.css</h2>
+  <p class="ovs-prose">Temporary page for Task 8, repointed in Task 9 to the real Hugo Pipes bundle (<code>resources.Get | resources.Concat | minify | fingerprint</code>) &mdash; the same pipeline <code>partials/head.html</code> uses for every real page, served from a fingerprinted <code>/ovs/css/bundle.min.&lt;hash&gt;.css</code> URL. The Task 8 symlink (<code>static/ovs/css -&gt; assets/ovs/css</code>) has been removed. Renders one of every component this task produces. Toggle OS light/dark to check both themes.</p>
 </section>
 
 <section class="devsection">
@@ -46,7 +48,7 @@
   </header>
 
   <div class="ovs-note">
-    <span class="ovs-note-label">NOTE 1 — SCOPE LIMITATION</span>
+    <span class="ovs-note-label">NOTE 1 &mdash; SCOPE LIMITATION</span>
     No marketing language. No product recommendations. No ungrounded claims. Where the evidence is thin, this standard says so.
   </div>
 </section>
@@ -68,13 +70,13 @@
       <span class="ovs-clause">2.1</span>
       <h3>What CFM do I need?</h3>
       <p>Airflow only matters once the hood face can geometrically intercept the plume.</p>
-      <span class="ovs-card-refs"><b>RB-008</b> · Instrument <b>I-01</b></span>
+      <span class="ovs-card-refs"><b>RB-008</b> &middot; Instrument <b>I-01</b></span>
     </a>
     <a class="ovs-card" href="#">
       <span class="ovs-clause">2.2</span>
       <h3>Does wind matter?</h3>
       <p>More than any other variable. A steady 5&nbsp;mph breeze can displace the plume by half a hood-width.</p>
-      <span class="ovs-card-refs"><b>RB-006</b> · Instrument <b>I-03</b></span>
+      <span class="ovs-card-refs"><b>RB-006</b> &middot; Instrument <b>I-03</b></span>
     </a>
   </div>
 </section>
@@ -104,7 +106,7 @@
 </section>
 
 <section class="devsection">
-  <h2>Instrument engine — fake ovs-i-* control block</h2>
+  <h2>Instrument engine &mdash; fake ovs-i-* control block</h2>
   <p>Hand-built markup matching the exact classes <code>createInstrument</code> (static/js/ovs/viz.mjs) emits, so components.css can be checked without mounting the real engine.</p>
 
   <figure class="ovs-instrument">
@@ -163,7 +165,7 @@
         </div>
       </div>
     </div>
-    <figcaption><b>Fig. dev</b> — static markup, not the live engine. Tab to the range and segmented labels to check focus-visible.</figcaption>
+    <figcaption><b>Fig. dev</b> &mdash; static markup, not the live engine. Tab to the range and segmented labels to check focus-visible.</figcaption>
   </figure>
 </section>
 
@@ -197,7 +199,7 @@
       </div>
     </div>
     <div class="ovs-footer-legal">
-      <span>OVS-H1 : 2026 · EDITION 1.2</span>
+      <span>OVS-H1 : 2026 &middot; EDITION 1.2</span>
       <span>&copy; 2026 OUTDOOR VENTILATION STANDARD</span>
     </div>
   </div>
