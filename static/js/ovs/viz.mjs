@@ -11,6 +11,17 @@ export function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+/**
+ * Tween progress at time `now` for a tween started at `start`, clamped to
+ * [0, 1]. Pure. The low clamp matters: a rAF timestamp can predate the
+ * performance.now() captured when the tween started (observed as low as
+ * -2.6 ms on the first frame), which would otherwise leak t < 0 into
+ * lerp()/update().
+ */
+export function tweenProgress(now, start, dur = TWEEN_MS) {
+  return Math.min(1, Math.max(0, (now - start) / dur));
+}
+
 /** Format a numeric value for a readout/control-bubble. Pure, tabular-safe. */
 export function fmt(value, spec) {
   switch (spec) {
@@ -329,11 +340,7 @@ export function createInstrument(rootEl, spec) {
 
   function tick(now) {
     for (const [id, tween] of tweens) {
-      // Clamp both ends: a rAF timestamp can predate the performance.now()
-      // captured when the tween started (observed as low as -2.6 on the
-      // first frame), which would otherwise leak out-of-range t into
-      // lerp()/update().
-      const t = Math.min(1, Math.max(0, (now - tween.start) / TWEEN_MS));
+      const t = tweenProgress(now, tween.start);
       const to = state[id];
       displayed[id] = t >= 1 ? to : lerp(tween.from, to, t);
       refreshBubble(id);

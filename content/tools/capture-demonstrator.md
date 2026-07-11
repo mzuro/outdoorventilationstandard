@@ -25,7 +25,7 @@ This instrument demonstrates the core capture problem this standard exists to ad
 
 ---
 
-## Method & assumptions
+## How the demonstrator works
 
 The demonstrator combines three results from the research program into a single interactive model:
 

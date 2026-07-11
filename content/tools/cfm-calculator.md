@@ -12,10 +12,6 @@ instrument_id: "i02"
 
 This calculator implements the physics-based CFM sizing methodology developed in [RB-008: CFM Requirements for Outdoor Cooking Ventilation](/research/rb-008-cfm-requirements/). It computes the minimum exhaust airflow required for reliable plume capture based on the Heskestad plume mass flow correlation.
 
-<iframe src="/tools/cfm-calculator.html" width="100%" height="1200" frameborder="0" style="border: 1px solid #DDD; border-radius: 8px; background: #FAFAFA;"></iframe>
-
----
-
 ## Methodology
 
 The calculator uses the following physics:

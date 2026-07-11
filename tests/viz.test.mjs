@@ -1,8 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { lerp, fmt, createInstrument } from '../static/js/ovs/viz.mjs';
+import { lerp, fmt, tweenProgress, createInstrument } from '../static/js/ovs/viz.mjs';
 
 test('lerp', () => { assert.equal(lerp(0, 10, 0.5), 5); assert.equal(lerp(2, 2, 0.9), 2); });
+test('tweenProgress clamps to [0, 1]', () => {
+  // rAF timestamps can predate the performance.now() captured at tween
+  // start (observed as low as -2.6 ms) — negative elapsed must clamp to 0.
+  assert.equal(tweenProgress(97.4, 100), 0);
+  assert.equal(tweenProgress(100, 100), 0);       // exactly at start
+  assert.equal(tweenProgress(200, 100), 0.5);     // mid (default 200 ms)
+  assert.equal(tweenProgress(300, 100), 1);       // exactly at end
+  assert.equal(tweenProgress(1000, 100), 1);      // past end clamps to 1
+  assert.equal(tweenProgress(150, 100, 100), 0.5); // custom duration
+});
 test('fmt', () => {
   assert.equal(fmt(0.873, 'pct'), '87%');
   assert.equal(fmt(1497.4, 'cfm'), '1,497 CFM');

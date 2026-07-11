@@ -233,7 +233,7 @@ export function mount(figureEl) {
 
     // --- escape wisps: downwind of the hood lip once capture < ~0.97 --
     const escape = Math.max(0, 1 - capFrac);
-    const showWisps = capFrac < 0.97 && escape > 0.01;
+    const showWisps = capFrac < 0.97;
     if (showWisps) {
       // Anchor at the downwind hood lip or the plume edge, whichever is
       // further downwind — but keep the anchor on-canvas so the wisps stay

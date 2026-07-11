@@ -45,8 +45,13 @@
   {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "")) }}
   {{- end }}
 
+  {{- /* .ovs-clause-head is a `76px 1fr` grid (number | title); a bare
+         <h2> would land in the 76px number column and wrap one word per
+         line, so every heading needs its clause span. Sub-numbers hang
+         off the page's I-xx clause. */}}
   <section class="ovs-section" aria-labelledby="ovs-method-heading">
     <header class="ovs-clause-head">
+      <span class="ovs-clause">{{ with $clause }}{{ . }}.1{{ else }}&sect;{{ end }}</span>
       <h2 id="ovs-method-heading">Method &amp; assumptions</h2>
     </header>
     <div class="ovs-prose">
@@ -59,6 +64,7 @@
   {{- if or $relatedQ $relatedP }}
   <section class="ovs-section" aria-labelledby="ovs-related-heading">
     <header class="ovs-clause-head">
+      <span class="ovs-clause">{{ with $clause }}{{ . }}.2{{ else }}&sect;{{ end }}</span>
       <h2 id="ovs-related-heading">Related</h2>
     </header>
     {{- with $relatedQ }}
