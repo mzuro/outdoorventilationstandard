@@ -14,7 +14,9 @@ This diagram visualizes the centerline velocity decay from cooking surface to ho
 
 <div style="max-width: 800px; margin: 0 auto;">
 
-![Velocity Decay Curves](/diagrams/velocity-decay-curves.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
