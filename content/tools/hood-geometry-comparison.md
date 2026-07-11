@@ -14,7 +14,9 @@ This diagram compares three hood configurations over the same cooking source, sh
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Hood Geometry Comparison](/diagrams/hood-geometry-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
