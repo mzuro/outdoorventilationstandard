@@ -85,7 +85,7 @@
    single-entry FAQPage built from the page title and description/summary
    so the type is still valid once the questions section (a later task)
    exists. */}}
-{{- if eq $section "questions" }}
+{{- if and (eq $section "questions") .IsPage }}
 {{- $faq := .Params.faq }}
 <script type="application/ld+json">
 {
