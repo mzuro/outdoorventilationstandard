@@ -396,7 +396,12 @@
     threshold: {{ .Site.Params.fuseOpts.threshold | default 0.4 }},
     minMatchCharLength: {{ .Site.Params.fuseOpts.minMatchCharLength | default 1 }},
     ignoreLocation: true,
-    keys: {{ .Site.Params.fuseOpts.keys | default (slice "title" "url" "summary" "content") | jsonify }}
+    {{- /* jsonify inside a <script> gets contextually re-escaped by Hugo
+       into a JS STRING literal unless piped through safeJS — without it,
+       `keys` becomes '["title",...]' (a string) and `new Fuse` throws.
+       The numeric/boolean interpolations above are emitted as bare
+       literals and don't need it. */}}
+    keys: {{ .Site.Params.fuseOpts.keys | default (slice "title" "url" "summary" "content") | jsonify | safeJS }}
   };
 
   fetch('{{ "index.json" | absURL }}')
@@ -404,7 +409,9 @@
     .then(function(data) {
       if (data) { fuse = new Fuse(data, fuseOptions); }
     })
-    .catch(function() { /* keyword search silently unavailable */ });
+    .catch(function(err) {
+      console.error('Keyword search unavailable:', err);
+    });
 
   function sectionLabel(section) {
     if (!section) return '';
