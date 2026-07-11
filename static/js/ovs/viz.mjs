@@ -275,7 +275,7 @@ export function createInstrument(rootEl, spec) {
     const output = document.createElement('output');
     output.className = 'ovs-i-readout-value';
     output.setAttribute('aria-live', 'polite');
-    output.setAttribute('for', r.id);
+    output.setAttribute('aria-labelledby', `${r.id}-label`);
     row.appendChild(label);
     row.appendChild(output);
     readoutsWrap.appendChild(row);
@@ -298,8 +298,14 @@ export function createInstrument(rootEl, spec) {
   }
 
   let rafId = null;
-  let tweenFrom = null;
-  let tweenStart = 0;
+  // Per-control tween state: id → { from, start }. Each control keeps its
+  // own origin and clock so a change on one control never resets another's
+  // in-flight tween. A single shared rAF loop services all of them.
+  const tweens = new Map();
+
+  function nowMs() {
+    return window.performance ? window.performance.now() : Date.now();
+  }
 
   function currentNumericState() {
     const snapshot = {};
@@ -322,46 +328,55 @@ export function createInstrument(rootEl, spec) {
   }
 
   function tick(now) {
-    const elapsed = now - tweenStart;
-    const t = Math.min(1, elapsed / TWEEN_MS);
-    let stillRunning = false;
-    for (const c of spec.controls || []) {
-      if (c.type !== 'range') continue;
-      const from = tweenFrom[c.id];
-      const to = state[c.id];
-      if (from === to) continue;
-      displayed[c.id] = t >= 1 ? to : lerp(from, to, t);
-      refreshBubble(c.id);
-      if (t < 1) stillRunning = true;
+    for (const [id, tween] of tweens) {
+      const t = Math.min(1, (now - tween.start) / TWEEN_MS);
+      const to = state[id];
+      displayed[id] = t >= 1 ? to : lerp(tween.from, to, t);
+      refreshBubble(id);
+      if (t >= 1) tweens.delete(id);
     }
     runUpdate();
-    if (stillRunning) {
+    if (tweens.size > 0) {
       rafId = window.requestAnimationFrame(tick);
     } else {
       rafId = null;
     }
   }
 
-  function startTween() {
+  function startTween(id) {
     if (reduced) {
       // No tween: snap displayed to target and issue a single update call.
-      for (const c of spec.controls || []) {
-        if (c.type === 'range') { displayed[c.id] = state[c.id]; refreshBubble(c.id); }
-      }
+      displayed[id] = state[id];
+      refreshBubble(id);
       runUpdate();
       return;
     }
-    tweenFrom = { ...displayed };
-    tweenStart = window.performance ? window.performance.now() : Date.now();
+    if (displayed[id] === state[id]) {
+      // Already at the target: nothing to animate, just repaint.
+      tweens.delete(id);
+      if (rafId == null) runUpdate();
+      return;
+    }
+    // (Re)start THIS control's tween from its current displayed position;
+    // other controls' in-flight tweens keep their own origin and clock.
+    tweens.set(id, { from: displayed[id], start: nowMs() });
     if (rafId == null) rafId = window.requestAnimationFrame(tick);
+  }
+
+  function clampToControl(c, value) {
+    let v = Number(value);
+    if (!Number.isFinite(v)) v = state[c.id];
+    if (c.min != null) v = Math.max(Number(c.min), v);
+    if (c.max != null) v = Math.min(Number(c.max), v);
+    return v;
   }
 
   function handleChange(id, value) {
     const c = (spec.controls || []).find((ctrl) => ctrl.id === id);
     if (!c) return;
     if (c.type === 'range') {
-      state[id] = value;
-      startTween();
+      state[id] = clampToControl(c, value);
+      startTween(id);
     } else {
       // Non-numeric (segmented) values switch instantly: a single update call.
       state[id] = value;
@@ -378,7 +393,13 @@ export function createInstrument(rootEl, spec) {
     if (!c) return;
     if (c.type === 'range') {
       const bag = controlBags.get(id);
-      if (bag && bag.input) bag.input.value = String(value);
+      if (bag && bag.input) {
+        bag.input.value = String(value);
+        // The browser clamps range inputs to [min, max]; read the post-clamp
+        // value back so internal state can never diverge from the visible
+        // slider. handleChange clamps again against c.min/c.max for safety.
+        value = Number(bag.input.value);
+      }
     } else {
       const bag = controlBags.get(id);
       if (bag && bag.radios) {
