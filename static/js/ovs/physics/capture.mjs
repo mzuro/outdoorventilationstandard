@@ -10,8 +10,10 @@ export function erf(x) {
 }
 
 // Ground-level shelter: free-stream wind is attenuated near grade and around
-// the appliance; 0.5 is standard dispersion-modeling practice.
-const SHELTER = 0.5;
+// the appliance; 0.5 is standard dispersion-modeling practice. Exported so
+// instrument scenes draw the same sheltered trajectory the capture model
+// computes with (i01 uses it — keeps the calibration single-sourced).
+export const SHELTER = 0.5;
 
 // erf stays as-is (Abramowitz–Stegun 7.1.26)
 const phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));

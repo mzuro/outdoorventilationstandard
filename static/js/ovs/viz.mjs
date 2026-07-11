@@ -267,7 +267,7 @@ export function createInstrument(rootEl, spec) {
   const readoutEls = new Map();
   for (const r of spec.readouts || []) {
     const row = document.createElement('div');
-    row.className = 'ovs-i-readout';
+    row.className = r.hero ? 'ovs-i-readout ovs-i-readout--hero' : 'ovs-i-readout';
     const label = document.createElement('span');
     label.className = 'ovs-i-readout-label';
     label.id = `${r.id}-label`;
@@ -329,7 +329,11 @@ export function createInstrument(rootEl, spec) {
 
   function tick(now) {
     for (const [id, tween] of tweens) {
-      const t = Math.min(1, (now - tween.start) / TWEEN_MS);
+      // Clamp both ends: a rAF timestamp can predate the performance.now()
+      // captured when the tween started (observed as low as -2.6 on the
+      // first frame), which would otherwise leak out-of-range t into
+      // lerp()/update().
+      const t = Math.min(1, Math.max(0, (now - tween.start) / TWEEN_MS));
       const to = state[id];
       displayed[id] = t >= 1 ? to : lerp(tween.from, to, t);
       refreshBubble(id);
