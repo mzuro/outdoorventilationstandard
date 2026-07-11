@@ -14,7 +14,9 @@ This chart compares the total and convective heat release rates for every source
 
 <div style="max-width: 880px; margin: 0 auto;">
 
-![Heat Release Rate Comparison](/diagrams/heat-release-rate-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
