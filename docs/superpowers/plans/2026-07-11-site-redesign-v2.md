@@ -145,8 +145,10 @@ export function defaultConfig(mount) {
 **Interfaces — Produces:**
 ```js
 export const ENTRAINMENT = 0.11;                       // half-angle spread coefficient
-export function plumeRadius(zIn, b0 = 6)               // inches at height z above cook surface
-export function centerlineVelocity(zIn, w0 = 160, z0 = 12) // fpm; constant to z0, then w0·cbrt(z0/z)
+export function plumeRadius(zIn, b0 = 14)              // inches at height z; b0 ≈ half a typical grill-grate depth
+export function centerlineVelocity(zIn, w0 = 400, z0 = 12) // fpm ≈ 2 m/s buoyant rise over live fire; constant to z0, then w0·cbrt(z0/z)
+// CALIBRATION AMENDMENT 2026-07-11 (supersedes any 6/160 values below): b0=14, w0=400 everywhere,
+// including Task 4 deflection defaults, Task 5 capture, Task 6 plumeStrength baseline, and all test expectations.
 ```
 
 - [ ] **Step 1: Failing tests** `tests/plume.test.mjs`:
@@ -250,7 +252,7 @@ export function erf(x)  // Abramowitz–Stegun 7.1.26, |error| < 1.5e-7
 export function captureFraction({ widthIn, depthIn, mount, riseIn, windMph, panels = 'none' }) // → 0..1
 ```
 
-Model (state in method notes): plume at rise height has Gaussian cross-section, σ = plumeRadius(rise)/2; crosswind displaces centerline by `deflection(rise, effectiveWind(wind, panels))` along the depth axis. Island: aperture ±D/2 around center. Wall: plume anchored at the back wall, wall blocks upwind escape → one-sided aperture D. Width axis (no crosswind component): `erf((W/2)/(σ√2))`. Total = axial × lateral, clamped to [0,1].
+Model (state in method notes; AMENDED 2026-07-11 after review): plume at rise height has Gaussian cross-section, σ = plumeRadius(rise)/2; crosswind displaces centerline by `xc = deflection(rise, SHELTER × effectiveWind(wind, panels))` along the depth axis, where `SHELTER = 0.5` (ground-level wind reduction, standard dispersion practice). Island: two-sided aperture, `axial = phi((D/2−xc)/σ) − phi((−D/2−xc)/σ)`. Wall: plume anchored at the back wall with reflection (mass cannot escape upwind through the wall): `axial = [phi((D−xc)/σ) − phi(−xc/σ)] + [phi((D+xc)/σ) − phi(xc/σ)]`, clamp [0,1] — do NOT use a bare `+ phi(xc/σ)` term (it saturates and makes wall capture wind-invariant). Width axis (no crosswind component): `erf((W/2)/(σ√2))`. Total = axial × lateral, clamped to [0,1]. Add a wall-mount wind-sweep test: wall capture strictly decreasing over {0, 5, 15} mph and wall(8 mph) > island(8 mph) at equal width.
 
 - [ ] **Step 1: Failing tests** `tests/capture.test.mjs`:
 
@@ -327,7 +329,7 @@ export function captureFraction({ widthIn, depthIn, mount, riseIn, windMph, pane
 export function requiredCfm({ widthIn, depthIn, mount, btu = 60000, exposure = 'moderate' })
 // → { minimum, recommended, highWind }  (integers, rounded to nearest 25)
 // heat.mjs
-export function plumeStrength(btu) // → w0 fpm = 160 · cbrt(btu/60000)
+export function plumeStrength(btu) // → w0 fpm = 400 · cbrt(btu/60000)  (calibration amendment 2026-07-11)
 // grease.mjs
 export function depositionProfile(riseIn, steps = 8) // → [{zIn, intensity 0..1}] normalized, decreasing with height
 ```
@@ -363,8 +365,8 @@ test('ordering always min <= rec <= high', () => {
   assert.ok(r.minimum <= r.recommended && r.recommended <= r.highWind);
 });
 test('plume strength scales with cbrt of heat', () => {
-  assert.equal(plumeStrength(60000), 160);
-  assert.ok(Math.abs(plumeStrength(120000) - 160 * Math.cbrt(2)) < 1e-9);
+  assert.equal(plumeStrength(60000), 400);
+  assert.ok(Math.abs(plumeStrength(120000) - 400 * Math.cbrt(2)) < 1e-9);
 });
 test('deposition normalized and decreasing', () => {
   const p = depositionProfile(30);
@@ -394,7 +396,7 @@ export function requiredCfm({ widthIn, depthIn, mount, btu = 60000, exposure = '
 `heat.mjs`:
 
 ```js
-export function plumeStrength(btu) { return 160 * Math.cbrt(btu / 60000); }
+export function plumeStrength(btu) { return 400 * Math.cbrt(btu / 60000); }
 ```
 
 `grease.mjs`:
