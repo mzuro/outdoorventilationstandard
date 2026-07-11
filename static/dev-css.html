@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>dev: ovs tokens/base/components check</title>
+<link rel="stylesheet" href="/ovs/css/tokens.css">
+<link rel="stylesheet" href="/ovs/css/base.css">
+<link rel="stylesheet" href="/ovs/css/components.css">
+<style>
+  /* dev-page-only scaffolding, not part of the design system */
+  .devsection { border-top: 1px solid var(--line); padding: 2rem 0; }
+  .devsection h2 { margin-top: 0; }
+</style>
+</head>
+<body>
+<a class="ovs-skip" href="#main">Skip to content</a>
+
+<header class="ovs-header">
+  <div class="ovs-wrap ovs-header-inner">
+    <a class="ovs-wordmark" href="#">
+      <span class="ovs-wordmark-text">Outdoor Ventilation Standard<small>INDEPENDENT RESEARCH BODY</small></span>
+    </a>
+    <nav class="ovs-nav" aria-label="Primary">
+      <a href="#"><span class="ovs-clause">2.0</span>Questions</a>
+      <a href="#"><span class="ovs-clause">3.0</span>Instruments</a>
+      <a href="#"><span class="ovs-clause">4.0</span>Research</a>
+    </nav>
+    <span class="ovs-edition">OVS-H1 : 2026 · ed. 1.2</span>
+  </div>
+</header>
+
+<main id="main" class="ovs-wrap">
+
+<section class="devsection">
+  <h2>Task 8 dev check — tokens.css + base.css + components.css</h2>
+  <p class="ovs-prose">Temporary page for Task 8. Links the three stylesheets via <code>/ovs/css/*.css</code>, a symlink into <code>assets/ovs/css/</code> created only for this manual check (Hugo Pipes will bundle the real files from <code>assets/</code> in Task 9). Renders one of every component this task produces. Toggle OS light/dark to check both themes.</p>
+</section>
+
+<section class="devsection">
+  <header class="ovs-clause-head">
+    <span class="ovs-clause">2.1</span>
+    <h2>Clause heading + NOTE box</h2>
+    <p>The clause-head grid pairs a mono clause number with the title and an optional note line.</p>
+  </header>
+
+  <div class="ovs-note">
+    <span class="ovs-note-label">NOTE 1 — SCOPE LIMITATION</span>
+    No marketing language. No product recommendations. No ungrounded claims. Where the evidence is thin, this standard says so.
+  </div>
+</section>
+
+<section class="devsection">
+  <h2>Chips</h2>
+  <p>
+    <span class="ovs-chip">CORE</span>
+    <span class="ovs-chip">APPLIED</span>
+    <span class="ovs-chip">FRONTIER</span>
+    <span class="ovs-chip ovs-chip--accent">FOUNDATION</span>
+  </p>
+</section>
+
+<section class="devsection">
+  <h2>Cards</h2>
+  <div class="ovs-card-grid">
+    <a class="ovs-card" href="#">
+      <span class="ovs-clause">2.1</span>
+      <h3>What CFM do I need?</h3>
+      <p>Airflow only matters once the hood face can geometrically intercept the plume.</p>
+      <span class="ovs-card-refs"><b>RB-008</b> · Instrument <b>I-01</b></span>
+    </a>
+    <a class="ovs-card" href="#">
+      <span class="ovs-clause">2.2</span>
+      <h3>Does wind matter?</h3>
+      <p>More than any other variable. A steady 5&nbsp;mph breeze can displace the plume by half a hood-width.</p>
+      <span class="ovs-card-refs"><b>RB-006</b> · Instrument <b>I-03</b></span>
+    </a>
+  </div>
+</section>
+
+<section class="devsection">
+  <h2>Table</h2>
+  <div class="ovs-table-wrap">
+    <table class="ovs-table">
+      <thead>
+        <tr><th scope="col">DESIGNATION</th><th scope="col">TITLE</th><th scope="col">TIER</th><th scope="col">REV</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">RB-001</td><td><a href="#">Buoyant Plume Behavior Above Outdoor Cooking Appliances</a></td><td><span class="ovs-chip ovs-chip--accent">FOUNDATION</span></td><td class="mono">1.3</td></tr>
+        <tr><td class="mono">RB-009</td><td><a href="#">Side Panel Effectiveness in Crossflow</a></td><td><span class="ovs-chip">APPLIED</span></td><td class="mono">1.1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="devsection">
+  <h2>Byline</h2>
+  <p class="byline">
+    <strong>Reviewed by Mark Zuro</strong>, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
+    <time>Published 2026-01-14</time>
+    <time>Updated 2026-07-11</time>
+  </p>
+</section>
+
+<section class="devsection">
+  <h2>Instrument engine — fake ovs-i-* control block</h2>
+  <p>Hand-built markup matching the exact classes <code>createInstrument</code> (static/js/ovs/viz.mjs) emits, so components.css can be checked without mounting the real engine.</p>
+
+  <figure class="ovs-instrument">
+    <div class="ovs-i">
+      <div class="ovs-i-instrument" data-instrument="dev-fake">
+        <h3 class="ovs-i-title">Dev Fake Instrument</h3>
+        <div class="ovs-i-scene">
+          <svg class="ovs-i-svg" viewBox="0 0 200 100">
+            <g class="ovs-i-dim">
+              <line class="ovs-i-dim-line" x1="20" y1="80" x2="180" y2="80"/>
+              <line class="ovs-i-dim-tick" x1="20" y1="77" x2="20" y2="83"/>
+              <line class="ovs-i-dim-tick" x1="180" y1="77" x2="180" y2="83"/>
+              <text class="ovs-i-dim-label" x="100" y="70" text-anchor="middle">scene width</text>
+            </g>
+            <g class="ovs-i-notebox">
+              <rect class="ovs-i-notebox-rect" x="10" y="10" width="70" height="20"/>
+              <text class="ovs-i-notebox-text" x="16" y="24">note box</text>
+            </g>
+            <circle cx="100" cy="45" r="6" fill="var(--accent)"/>
+          </svg>
+        </div>
+
+        <fieldset class="ovs-i-controls">
+          <legend class="ovs-i-legend">Dev Fake Instrument controls</legend>
+
+          <div class="ovs-i-control">
+            <label class="ovs-i-control-label" for="dev-height">
+              <span class="ovs-i-control-label-text">MOUNTING HEIGHT</span>
+              <output class="ovs-i-bubble" for="dev-height">30 in</output>
+            </label>
+            <input class="ovs-i-range" type="range" id="dev-height" min="24" max="42" step="1" value="30">
+          </div>
+
+          <div class="ovs-i-control">
+            <label class="ovs-i-control-label">
+              <span class="ovs-i-control-label-text" id="dev-mount-label">MOUNT TYPE</span>
+            </label>
+            <div class="ovs-i-segmented" role="radiogroup" aria-labelledby="dev-mount-label">
+              <input class="ovs-i-segmented-input" type="radio" name="dev-mount" id="dev-mount-0" checked>
+              <label class="ovs-i-segmented-label" for="dev-mount-0">Wall</label>
+              <input class="ovs-i-segmented-input" type="radio" name="dev-mount" id="dev-mount-1">
+              <label class="ovs-i-segmented-label" for="dev-mount-1">Island</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="ovs-i-readouts">
+          <div class="ovs-i-readout">
+            <span class="ovs-i-readout-label">GAP</span>
+            <output class="ovs-i-readout-value">6 in</output>
+          </div>
+          <div class="ovs-i-readout">
+            <span class="ovs-i-readout-label">CAPTURE</span>
+            <output class="ovs-i-readout-value">94%</output>
+          </div>
+        </div>
+      </div>
+    </div>
+    <figcaption><b>Fig. dev</b> — static markup, not the live engine. Tab to the range and segmented labels to check focus-visible.</figcaption>
+  </figure>
+</section>
+
+</main>
+
+<footer class="ovs-footer">
+  <div class="ovs-wrap">
+    <div class="ovs-footer-grid">
+      <div>
+        <h4>THE BODY</h4>
+        <p class="mono" style="font-size:.68rem">outdoorventilationstandard.com</p>
+      </div>
+      <div>
+        <h4>DOCUMENTS</h4>
+        <ul>
+          <li><a href="#">Research briefs</a></li>
+          <li><a href="#">Methodology</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>INSTRUMENTS</h4>
+        <ul>
+          <li><a href="#">All ten instruments</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>GOVERNANCE</h4>
+        <ul>
+          <li><a href="#">Change log</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ovs-footer-legal">
+      <span>OVS-H1 : 2026 · EDITION 1.2</span>
+      <span>&copy; 2026 OUTDOOR VENTILATION STANDARD</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

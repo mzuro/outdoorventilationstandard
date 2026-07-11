@@ -1,0 +1,584 @@
+/* ==========================================================================
+   OVS components — header/nav, footer, cards, clause numbers, chips, NOTE
+   boxes, tables, byline, and the ovs-viz instrument engine (Task 7,
+   static/js/ovs/viz.mjs). Depends on tokens.css + base.css.
+
+   Specificity is kept flat throughout: single-class selectors, one level
+   of descendant combinator at most, no `!important`. Accent (--accent) is
+   used only for interaction/data emphasis — clause numbers, links, active
+   chip state, hover washes, focus rings, control fills — never for plain
+   body copy.
+   ========================================================================== */
+
+/* ---------- header / nav ---------- */
+
+.ovs-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--ground);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.ovs-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 60px;
+}
+
+.ovs-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  color: var(--ink);
+}
+
+.ovs-wordmark-text {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 0.95rem;
+  line-height: 1.15;
+}
+
+.ovs-wordmark-text small {
+  display: block;
+  font-weight: 400;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ovs-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+.ovs-nav a {
+  text-decoration: none;
+  font-size: 0.82rem;
+  color: var(--muted);
+  padding: 0.45rem 0.65rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.ovs-nav a:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.ovs-nav .ovs-clause {
+  margin-right: 0.35rem;
+}
+
+.ovs-edition {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.55rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .ovs-edition {
+    display: block;
+  }
+}
+
+/* ---------- footer ---------- */
+
+.ovs-footer {
+  border-top: 1px solid var(--line-strong);
+  margin-top: 1rem;
+}
+
+.ovs-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  padding: 2.5rem 0 2rem;
+}
+
+@media (max-width: 820px) {
+  .ovs-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .ovs-footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-footer-grid ul {
+  list-style: none;
+  margin: 0;
+}
+
+.ovs-footer-grid li {
+  margin-bottom: 0.4em;
+}
+
+.ovs-footer-grid a {
+  font-size: 0.84rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.ovs-footer-grid a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ovs-footer-legal {
+  border-top: 1px solid var(--line);
+  padding: 1rem 0 2.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--faint);
+}
+
+/* ---------- cards ---------- */
+
+.ovs-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 920px) {
+  .ovs-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .ovs-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-card {
+  background: var(--surface);
+  padding: 1.15rem 1.15rem 1.05rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: var(--ink);
+}
+
+.ovs-card:hover {
+  background: var(--accent-wash);
+}
+
+.ovs-card h3 {
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.ovs-card:hover h3 {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.ovs-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  flex: 1;
+  margin: 0;
+}
+
+.ovs-card-refs {
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+}
+
+.ovs-card-refs b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ---------- clause numbers ---------- */
+
+.ovs-clause {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* section-heading grid: number | title, note spanning under the title */
+.ovs-clause-head {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 0 1rem;
+  align-items: baseline;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.ovs-clause-head .ovs-clause {
+  font-size: 0.95rem;
+}
+
+.ovs-clause-head h2 {
+  margin: 0;
+}
+
+.ovs-clause-head p {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 56ch;
+  margin: 0.45rem 0 0;
+}
+
+@media (max-width: 560px) {
+  .ovs-clause-head {
+    grid-template-columns: 1fr;
+  }
+  .ovs-clause-head p {
+    grid-column: 1;
+  }
+}
+
+/* ---------- chips ---------- */
+
+.ovs-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  border: 1px solid var(--line);
+  padding: 0.14rem 0.45rem;
+  border-radius: 2px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.ovs-chip--accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- NOTE boxes ---------- */
+
+.ovs-note {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--note-bg);
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.ovs-note-label {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ---------- tables ----------
+   Pair with .ovs-table-wrap (base.css) for the overflow-x:auto container. */
+
+.ovs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+  font-size: 0.88rem;
+}
+
+.ovs-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+
+.ovs-table td {
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: baseline;
+}
+
+.ovs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ovs-table tbody tr:hover {
+  background: var(--accent-wash);
+}
+
+.ovs-table a {
+  text-decoration: none;
+  font-weight: 550;
+}
+
+.ovs-table tbody tr:hover a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* ---------- byline ---------- */
+
+.byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.byline strong {
+  color: var(--ink);
+}
+
+.byline time {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--faint);
+}
+
+/* ---------- instrument shortcode wrapper ----------
+   The <figure class="ovs-instrument"> mount point (Task 12 shortcode); the
+   engine (createInstrument) fills it with .ovs-i-instrument below. */
+
+.ovs-instrument {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+.ovs-instrument figcaption {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.74rem;
+  color: var(--faint);
+  border-top: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   Instrument engine (static/js/ovs/viz.mjs, createInstrument) — every
+   .ovs-i-* class the engine emits.
+   ========================================================================== */
+
+.ovs-i-instrument {
+  display: flex;
+  flex-direction: column;
+}
+
+.ovs-i-title {
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.ovs-i-scene {
+  background: var(--surface);
+}
+
+.ovs-i-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  background: var(--surface);
+}
+
+.ovs-i-svg text {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  fill: var(--muted);
+}
+
+/* SVG dimension-line helper (viz.mjs `dimensionLine`) */
+.ovs-i-dim-line,
+.ovs-i-dim-tick {
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 1;
+}
+
+.ovs-i-dim-label {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* SVG annotation box helper (viz.mjs `noteBox`) */
+.ovs-i-notebox-rect {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.ovs-i-notebox-text {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* controls */
+
+.ovs-i-controls {
+  border: 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.ovs-i-legend {
+  /* visually hidden: .ovs-i-title already shows the instrument name */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.ovs-i-control {
+  background: var(--surface);
+  padding: 0.8rem 0.9rem;
+}
+
+.ovs-i-control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ovs-i-control-label-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ovs-i-bubble {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ovs-i-range {
+  width: 100%;
+  height: 22px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.ovs-i-range:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.ovs-i-segmented-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ovs-i-segmented-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ovs-i-segmented-input:checked + .ovs-i-segmented-label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.ovs-i-segmented-input:focus-visible + .ovs-i-segmented-label {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* readouts */
+
+.ovs-i-readouts {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 0.85rem 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.ovs-i-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: 1 1 160px;
+}
+
+.ovs-i-readout-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+}
+
+.ovs-i-readout-value {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}

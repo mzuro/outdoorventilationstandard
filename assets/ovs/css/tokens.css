@@ -1,0 +1,86 @@
+/* ==========================================================================
+   OVS design tokens — extracted from docs/design/modern-standard-mockup.html
+   (Direction 3, "Modern Standard").
+
+   Every custom property from the mockup's :root is preserved here. Two
+   names are normalized to the vocabulary the rest of the system depends on:
+     --bg          -> --ground
+     --rule         -> --line
+     --rule-strong  -> --line-strong
+   --note-bg is new (the mockup reused --surface for its .note-box; giving
+   NOTE callouts their own token lets them read as a distinct surface without
+   re-deriving contrast math wherever they appear).
+
+   Contrast: --faint and --note-bg were tuned (not copied verbatim from the
+   mockup) so every ink/muted/accent-on-background pairing that is actually
+   used as text hits >=4.5:1 in BOTH themes. See task-8-report.md for the
+   computed ratios. Accent is unchanged: #1747c4 light / #8fb0ff dark.
+   ========================================================================== */
+
+:root {
+  /* grounds & surfaces */
+  --ground: #fbfbf9;
+  --surface: #ffffff;
+  --surface-2: #f3f3ef;
+  --note-bg: #eef2fb;
+
+  /* ink */
+  --ink: #171a1f;
+  --muted: #5c6470;
+  --faint: #666d79; /* tuned from mockup's #8a919c: 3.07:1 -> 4.69:1 min */
+
+  /* rules */
+  --line: #d8dad9;
+  --line-strong: #171a1f;
+
+  /* accent — do not change these two hex values */
+  --accent: #1747c4;
+  --accent-ink: #ffffff;
+  --accent-wash: rgba(23, 71, 196, 0.07);
+
+  /* status (reserved for readout/verdict states) */
+  --ok: #1747c4;
+  --warn: #8a5a00;
+  --fail: #b42318;
+
+  /* figure/diagram ink (decorative SVG strokes, not body text) */
+  --figure-line: #3a4048;
+  --plume: rgba(23, 71, 196, 0.1);
+  --plume-edge: #1747c4;
+
+  /* type stacks — system fonts only, no remote requests */
+  --sans:
+    "Helvetica Neue", Helvetica, "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Arial, sans-serif;
+  --mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #111316;
+    --surface: #16191d;
+    --surface-2: #1c2025;
+    --note-bg: #182335;
+
+    --ink: #e9ebee;
+    --muted: #9ba3ae;
+    --faint: #8b93a3; /* tuned from mockup's #737b86: 3.83:1 -> 5.30:1 min */
+
+    --line: #2b3138;
+    --line-strong: #e9ebee;
+
+    --accent: #8fb0ff;
+    --accent-ink: #0c1533;
+    --accent-wash: rgba(143, 176, 255, 0.09);
+
+    --ok: #8fb0ff;
+    --warn: #e0b34d;
+    --fail: #ff9c8e;
+
+    --figure-line: #aab2bd;
+    --plume: rgba(143, 176, 255, 0.12);
+    --plume-edge: #8fb0ff;
+  }
+}
