@@ -108,7 +108,7 @@
     <p>Live, explorable models. Every assumption is a control you can move; every output cites its parent brief.</p>
   </header>
 
-  {{- /* content/tools/ pages carry an explicit `weight` (1-10) recording
+  {{- /* content/tools/ pages carry an explicit `weight` (1-11) recording
          the I-xx assignment; order here is the single source of truth. */}}
   {{- $tools := where .Site.RegularPages "Section" "tools" }}
   <div class="ovs-igrid">
@@ -120,7 +120,7 @@
     </a>
     {{- end }}
   </div>
-  <p class="ovs-section-foot">All ten instruments are being rebuilt as live visualizations on the model of Figure 1. Each embeds the equations of its parent brief and exposes every assumption as a control &mdash; nothing is hard-coded that you cannot see and move.</p>
+  <p class="ovs-section-foot">Every instrument is being rebuilt as a live visualization on the model of Figure 1. Each embeds the equations of its parent brief and exposes every assumption as a control &mdash; nothing is hard-coded that you cannot see and move.</p>
 </section>
 
 {{- /* ================= 4.0 LIBRARY ================= */}}

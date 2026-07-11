@@ -1,0 +1,48 @@
+{{- /*
+  governance/list.html — the standard's document index (Task 13).
+
+  Same table/title-cell pattern as the research library (research/list.html,
+  homepage §4.0) — reused here as a numbered, document-style index rather
+  than a card grid, matching the mockup's clause-document aesthetic. Rows
+  are ordered by front-matter `weight` (charter -> glossary -> diagram
+  standard -> backlog -> agent roles), which is also the citation order
+  used elsewhere on the site (e.g. content/about/index.md's Governance
+  list).
+*/ -}}
+{{- define "main" }}
+<header style="margin-bottom:1.5rem">
+  <p class="ovs-clause">{{ .Section | humanize | upper }}</p>
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <p class="ovs-prose">{{ . }}</p>
+  {{- end }}
+</header>
+
+<div class="ovs-prose">
+  {{ .Content }}
+</div>
+
+{{- $docs := .Pages.ByWeight }}
+{{- if $docs }}
+<div class="ovs-table-wrap" style="margin-top:2rem">
+  <table class="ovs-table">
+    <thead>
+      <tr>
+        <th scope="col">Clause</th>
+        <th scope="col">Document</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{- range $i, $p := $docs }}
+      <tr>
+        <td class="mono">{{ add $i 1 }}.0</td>
+        <td class="ovs-table-ttl"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></td>
+        <td><span class="ovs-chip ovs-chip--accent">NORMATIVE</span></td>
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>
+{{- end }}
+{{- end }}

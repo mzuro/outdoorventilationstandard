@@ -15,39 +15,13 @@ enableGitInfo = false
   pagerSize = 20
 
 [params]
+  # .Site.Params.description — read by partials/head.html (meta description
+  # fallback) and partials/schema.html (Organization JSON-LD).
   description = "Independently researched, physics-grounded analysis of outdoor cooking ventilation. Buoyant plume behavior, entrainment, velocity decay, hood capture performance, and wind interaction."
-  author = "Outdoor Ventilation Standard — Applied Physics Research"
-  ShowReadingTime = true
-  ShowShareButtons = false
-  ShowPostNavLinks = true
-  ShowBreadCrumbs = true
-  ShowCodeCopyButtons = true
-  ShowToc = true
-  TocOpen = true
-  defaultTheme = "light"
-  disableThemeToggle = false
+  # .Site.Params.images — read by partials/head.html (Open Graph / Twitter image fallback).
   images = ["/og-image.png"]
-  keywords = ["outdoor range hood", "outdoor cooking ventilation", "CFM sizing", "buoyant plume", "hood capture efficiency", "wind effects ventilation", "outdoor kitchen ventilation", "plume physics", "entrainment", "ventilation standards"]
 
-[params.schema]
-  publisherType = "Organization"
-
-[params.label]
-  text = "Outdoor Ventilation Standard"
-  icon = "/logo.svg"
-  iconHeight = 48
-
-[params.assets]
-  favicon = "/favicon.svg"
-
-[params.homeInfoParams]
-  Title = "Outdoor Ventilation Standard"
-  Content = "Independently researched, physics-grounded analysis of outdoor cooking ventilation. No existing standard provides comprehensive guidance for hood systems in open-air environments. This research program addresses that gap — characterizing buoyant plume behavior, entrainment, velocity decay, capture performance, and wind interaction using established fire science and fluid dynamics."
-
-[params.profileMode]
-  enabled = false
-
-# Search configuration (Fuse.js)
+# Search configuration (Fuse.js) — read by _default/search.html (Task 13).
 [params.fuseOpts]
   isCaseSensitive = false
   shouldSort = true
@@ -55,7 +29,7 @@ enableGitInfo = false
   distance = 1000
   threshold = 0.4
   minMatchCharLength = 0
-  keys = ["title", "permalink", "summary", "content"]
+  keys = ["title", "url", "summary", "content"]
 
 [[menu.main]]
   name = "Questions"

@@ -363,6 +363,13 @@ a.ovs-chip:hover {
   font-weight: 550;
 }
 
+/* title column in document-index tables (homepage §4.0, research/list.html,
+   governance/list.html) — let the title take the remaining width so the
+   designation/tier/date columns beside it stay compact */
+.ovs-table-ttl {
+  width: 100%;
+}
+
 .ovs-table tbody tr:hover a {
   text-decoration: underline;
   text-decoration-color: var(--accent);
