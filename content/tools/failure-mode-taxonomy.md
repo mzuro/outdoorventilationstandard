@@ -14,7 +14,9 @@ This reference card catalogs the six primary failure modes observed in outdoor b
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Failure Mode Taxonomy](/diagrams/failure-mode-taxonomy.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

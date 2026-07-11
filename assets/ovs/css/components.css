@@ -1258,3 +1258,87 @@ a.ovs-chip:hover {
   color: var(--muted);
   line-height: 1.5;
 }
+
+/* Failure-mode taxonomy tree (I-10) — HTML <details>/<summary>, not SVG,
+   styled with the same tokens as the rest of the instrument engine.
+   Lives inside .ovs-i-scene, toggled against the deposition <svg> by the
+   VIEW control. */
+.ovs-i-taxonomy {
+  padding: 0.9rem 0.9rem 0.3rem;
+  background: var(--surface);
+}
+
+.ovs-i-fm-branch {
+  border: 1px solid var(--line);
+  margin-bottom: 0.5rem;
+  background: var(--surface);
+}
+
+.ovs-i-fm-branch summary {
+  cursor: pointer;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.ovs-i-fm-branch summary::-webkit-details-marker {
+  display: none;
+}
+
+.ovs-i-fm-branch[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.ovs-i-fm-branch summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-fm-body {
+  padding: 0.7rem 0.9rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.ovs-i-fm-body p {
+  margin: 0 0 0.5rem;
+}
+
+.ovs-i-fm-body p:last-child {
+  margin-bottom: 0;
+}
+
+.ovs-i-fm-body strong {
+  color: var(--ink);
+}
+
+.ovs-i-fm-tag {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  color: var(--accent-ink);
+}
+
+.ovs-i-fm-tag--fail {
+  background: var(--fail);
+}
+
+.ovs-i-fm-tag--warn {
+  background: var(--warn);
+  color: var(--accent-ink);
+}
+
+.ovs-i-fm-tag--ok {
+  background: var(--ok);
+}
