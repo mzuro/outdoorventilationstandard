@@ -1,0 +1,11 @@
+{{- /*
+  instrument.html — shortcode: instrument id="i03" preset="island-48"
+
+  Thin wrapper around partials/instrument-figure.html so the shortcode and
+  the tools/questions single-template auto-embeds render identical markup
+  (Task 12 contract). See that partial for the id -> legacy-SVG fallback
+  map and the note on instrument modules not existing until Tasks 14-16.
+*/ -}}
+{{- $id := .Get "id" }}
+{{- $preset := .Get "preset" }}
+{{ partial "instrument-figure.html" (dict "id" $id "preset" $preset) }}

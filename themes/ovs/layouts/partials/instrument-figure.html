@@ -1,0 +1,52 @@
+{{- /*
+  instrument-figure.html — shared instrument mount markup (Task 12).
+
+  Emits exactly the shortcode contract from the Task 12 brief:
+
+    <figure class="ovs-instrument" data-instrument="ID" data-preset="PRESET">
+      <noscript>...legacy SVG or one-line text fallback...</noscript>
+    </figure>
+    <script type="module">
+      import { mount } from '/js/ovs/instruments/ID.mjs';
+      document.querySelectorAll('[data-instrument="ID"]').forEach(mount);
+    </script>
+
+  Called with a dict: "id" (required, e.g. "i03"), "preset" (optional),
+  "caption" (optional, pre-escaped HTML string rendered as <figcaption> —
+  additive to the brief's contract, not part of it).
+
+  This is the single source of truth for the markup shape so the
+  "instrument" shortcode, tools/single.html and questions/single.html
+  auto-embeds, and the homepage hero Figure 1 all render identically.
+
+  id -> legacy SVG map (static/diagrams/*.svg) per the brief; i01 and i02
+  have no legacy diagram and get a one-line text fallback instead.
+
+  The instrument modules themselves (static/js/ovs/instruments/i01.mjs..
+  i10.mjs) are Tasks 14-16 and do not exist yet — every page using this
+  partial will 404 the <script type="module"> import until then. That is
+  expected and intentionally not worked around here.
+*/ -}}
+{{- $id := .id }}
+{{- $preset := .preset | default "" }}
+{{- $caption := .caption }}
+{{- $svgMap := dict
+  "i03" "wind-deflection-trajectory"
+  "i04" "plume-width-by-height"
+  "i05" "hood-geometry-comparison"
+  "i06" "velocity-decay-curves"
+  "i07" "side-panel-effectiveness"
+  "i08" "indoor-vs-outdoor-comparison"
+  "i09" "heat-release-rate-comparison"
+  "i10" "failure-mode-taxonomy"
+}}
+<figure class="ovs-instrument" data-instrument="{{ $id }}" data-preset="{{ $preset }}">
+  <noscript>{{- with index $svgMap $id }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="/tools/">Browse all instruments</a>.</p>{{- end }}</noscript>
+  {{- with $caption }}
+  <figcaption>{{ . | safeHTML }}</figcaption>
+  {{- end }}
+</figure>
+<script type="module">
+  import { mount } from '/js/ovs/instruments/{{ $id }}.mjs';
+  document.querySelectorAll('[data-instrument="{{ $id }}"]').forEach(mount);
+</script>

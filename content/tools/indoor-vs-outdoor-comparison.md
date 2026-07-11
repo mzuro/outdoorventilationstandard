@@ -7,6 +7,7 @@ tags: ["indoor vs outdoor", "open-boundary dilution", "visualization"]
 categories: ["Tools"]
 ShowToc: false
 weight: 7
+instrument_id: "i08"
 ---
 
 This diagram contrasts plume capture in enclosed indoor environments versus open-boundary outdoor environments. The physics are fundamentally different — indoor hoods benefit from four structural advantages that do not exist outdoors.

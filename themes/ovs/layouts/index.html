@@ -44,15 +44,13 @@
       </div>
     </div>
 
-    {{- /* Figure 1 mount point — Task 14 wires the real instrument module.
-           No instrument JS is written here; this is a static placeholder. */}}
-    <figure class="ovs-instrument" data-instrument="i01" data-preset="island-48">
-      <div class="ovs-note">
-        <span class="ovs-note-label">FIGURE 1 &mdash; CAPTURE DEMONSTRATOR</span>
-        Instrument I-01 loads here.
-      </div>
-      <figcaption><strong>Fig. 1</strong> &mdash; Simplified plume-capture model over a 3-burner grill, 32&#8243; mounting height. Model per RB-001, RB-002 &amp; RB-006. Illustrative; not a design tool.</figcaption>
-    </figure>
+    {{- /* Figure 1 — shared partials/instrument-figure.html (Task 12), the
+           same markup shape the "instrument" shortcode and the
+           tools/questions auto-embeds render. The module import
+           (static/js/ovs/instruments/i01.mjs) doesn't exist until Task 14
+           — this 404s the script import until then, same as every other
+           instrument mount on the site; not worked around. */}}
+    {{ partial "instrument-figure.html" (dict "id" "i01" "preset" "island-48" "caption" "<strong>Fig. 1</strong> &mdash; Simplified plume-capture model over a 3-burner grill, 32&#8243; mounting height. Model per RB-001, RB-002 &amp; RB-006. Illustrative; not a design tool.") }}
   </div>
 </div>
 

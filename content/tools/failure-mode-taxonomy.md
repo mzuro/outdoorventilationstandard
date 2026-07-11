@@ -7,6 +7,7 @@ tags: ["failure modes", "diagnostics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
 weight: 10
+instrument_id: "i10"
 ---
 
 This reference card catalogs the six primary failure modes observed in outdoor barbecue hood installations. Each mode has a distinct physical root cause, observable symptom pattern, and corrective classification.

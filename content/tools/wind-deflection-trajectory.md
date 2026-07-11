@@ -7,6 +7,7 @@ tags: ["wind effects", "plume deflection", "visualization"]
 categories: ["Tools"]
 ShowToc: false
 weight: 3
+instrument_id: "i03"
 ---
 
 This diagram shows how ambient crosswind deflects the buoyant cooking plume away from the hood's capture zone. Even moderate breezes (5 mph) can push the plume to the edge of hood coverage, and winds above 8 mph cause outright capture failure for unshielded installations.

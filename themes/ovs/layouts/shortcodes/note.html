@@ -1,0 +1,16 @@
+{{- /*
+  note.html — shortcode: note n="1" label="Scope limitation" ... /note
+
+  Renders the .ovs-note callout box used throughout the standard (hero,
+  footer, 404, research SUMMARY boxes): a small-caps label line followed
+  by body copy. `n` is optional — when given, the label reads
+  "NOTE {n} — {LABEL}"; otherwise just "{LABEL}" (label defaults to
+  "NOTE"). Inner content is markdownified so shortcode bodies can use
+  normal markdown links/emphasis.
+*/ -}}
+{{- $n := .Get "n" }}
+{{- $label := .Get "label" | default "Note" }}
+<div class="ovs-note">
+  <span class="ovs-note-label">{{ if $n }}NOTE {{ $n }} &mdash; {{ upper $label }}{{ else }}{{ upper $label }}{{ end }}</span>
+  {{ .Inner | markdownify }}
+</div>
