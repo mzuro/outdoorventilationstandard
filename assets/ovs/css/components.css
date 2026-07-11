@@ -1221,3 +1221,40 @@ a.ovs-chip:hover {
 .ovs-i-readout--hero .ovs-i-readout-value {
   font-size: 1.9rem;
 }
+
+/* Disabled control (I-08: WIND is disabled indoors). The engine has no
+   native disable mechanism, so instrument modules reach into the DOM
+   post-mount to add this class + aria-disabled + the real `disabled`
+   attribute on the <input> — this class only supplies the visual dim. */
+.ovs-i-control--disabled {
+  opacity: 0.45;
+}
+
+.ovs-i-control--disabled .ovs-i-range {
+  cursor: not-allowed;
+}
+
+/* Assumptions list (I-08) — appended after .ovs-i-readouts, swapped per
+   environment by the instrument module. */
+.ovs-i-assumptions {
+  border-top: 1px solid var(--line);
+  padding: 0.85rem 0.9rem;
+  background: var(--surface);
+}
+
+.ovs-i-assumptions h4 {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.5rem;
+}
+
+.ovs-i-assumptions ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}

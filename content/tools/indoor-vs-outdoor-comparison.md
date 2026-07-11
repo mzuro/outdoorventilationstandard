@@ -14,7 +14,9 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Indoor vs Outdoor Ventilation Comparison](/diagrams/indoor-vs-outdoor-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
