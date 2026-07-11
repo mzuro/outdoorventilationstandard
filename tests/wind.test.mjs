@@ -9,8 +9,8 @@ test('deflection monotonic in wind and height', () => {
   assert.ok(deflection(36, 5) > deflection(24, 5));
 });
 test('5mph over 30in rise deflects on the order of the hood depth', () => {
-  const x = deflection(30, 5);      // U/w ≈ 440/160 near field → tens of inches
-  assert.ok(x > 20 && x < 120, `got ${x}`);
+  const x = deflection(30, 5);      // U/w ≈ 440/400 near field → tens of inches
+  assert.ok(x > 25 && x < 60, `got ${x}`);
 });
 test('side panels attenuate wind', () => {
   assert.equal(effectiveWind(10, 'none'), 10);

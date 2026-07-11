@@ -27,3 +27,9 @@ test('bounded 0..1 at extremes', () => {
   const c = captureFraction({ ...base, windMph: 40 });
   assert.ok(c >= 0 && c <= 1);
 });
+test('wall mount responds to wind and beats island', () => {
+  const wall = (windMph) => captureFraction({ widthIn: 48, depthIn: 36, mount: 'wall', riseIn: 30, windMph });
+  assert.ok(wall(0) > wall(5) && wall(5) > wall(15));
+  const island8 = captureFraction({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 8 });
+  assert.ok(wall(8) > island8);
+});
