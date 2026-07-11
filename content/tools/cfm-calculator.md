@@ -6,6 +6,7 @@ lastmod: 2026-02-05
 tags: ["CFM sizing", "interactive tool", "hood design"]
 categories: ["Tools"]
 ShowToc: false
+weight: 1
 ---
 
 This calculator implements the physics-based CFM sizing methodology developed in [RB-008: CFM Requirements for Outdoor Cooking Ventilation](/research/rb-008-cfm-requirements/). It computes the minimum exhaust airflow required for reliable plume capture based on the Heskestad plume mass flow correlation.

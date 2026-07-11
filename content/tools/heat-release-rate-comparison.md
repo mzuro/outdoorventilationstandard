@@ -6,6 +6,7 @@ lastmod: 2026-02-09
 tags: ["heat release rate", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 8
 ---
 
 This chart compares the total and convective heat release rates for every source type analyzed in the research program. The convective fraction (Q<sub>c</sub>) — not the total heat output — is the parameter that drives plume buoyancy, velocity, and entrainment.

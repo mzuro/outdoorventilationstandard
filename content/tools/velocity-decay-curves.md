@@ -6,6 +6,7 @@ lastmod: 2026-02-05
 tags: ["velocity decay", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 5
 ---
 
 This diagram visualizes the centerline velocity decay from cooking surface to hood mounting heights for four representative outdoor cooking source types. The minimum capture velocity threshold (0.8 m/s) separates the reliable capture zone from conditions where capture becomes unreliable without compensating exhaust rates.

@@ -6,6 +6,7 @@ lastmod: 2026-02-09
 tags: ["grease aerosol", "particle transport", "fire risk"]
 categories: ["Tools"]
 ShowToc: false
+weight: 9
 ---
 
 When the buoyant cooking plume escapes the hood (partially or fully), grease aerosol is carried into the surrounding environment. This diagram shows how particle size determines how far the grease travels and where it deposits.

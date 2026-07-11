@@ -1,0 +1,366 @@
+{{- define "main" }}
+
+{{- /* ================= 1.0 HERO ================= */}}
+<div class="ovs-wrap ovs-hero">
+  <div class="ovs-hero-grid">
+    <div>
+      <p class="ovs-designation">
+        <span class="ovs-dot" aria-hidden="true"></span>
+        <span>OVS-H1 : 2026</span><span class="ovs-sep" aria-hidden="true">/</span>
+        <span>LIVING STANDARD</span><span class="ovs-sep" aria-hidden="true">/</span>
+        <span>EDITION 1.2</span>
+      </p>
+      <h1>Outdoor cooking ventilation, held to a standard.</h1>
+      <p class="ovs-lede">Indoor hood rules do not survive contact with wind. We study how smoke, heat, and grease actually behave above an open-air grill &mdash; then write it down as <strong>plain-language guidance a homeowner can act on</strong>, with the physics one click beneath every claim.</p>
+
+      <div class="ovs-note">
+        <span class="ovs-note-label">NOTE 1 &mdash; SCOPE LIMITATION</span>
+        No marketing language. No product recommendations. No ungrounded claims. Where the evidence is thin, this standard says so.
+      </div>
+
+      <div class="ovs-askbox">
+        <div class="ovs-askbox-head">
+          <span class="ovs-clause">1.2</span>
+          <h3 id="ask-label">Ask about hood performance</h3>
+        </div>
+        <form class="ovs-askform" id="ask-form">
+          <input id="ask-input" type="text" aria-labelledby="ask-label"
+                 placeholder="e.g. What CFM do I need for a 36&#8243; grill?" autocomplete="off">
+          <input type="text" name="website" id="ask-honey" class="ovs-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
+          <button type="submit" id="ask-submit">Ask</button>
+        </form>
+        <p class="ovs-askmeta">Answers are generated from research briefs RB-001&ndash;RB-012 and cite their clauses. Nothing outside the corpus.</p>
+        <div class="ovs-ask-answer" id="ask-answer" role="region" aria-live="polite">
+          <p id="ask-text"></p>
+          <div class="ovs-ask-links" id="ask-links"></div>
+          <p class="ovs-ask-source" id="ask-source"></p>
+          <button type="button" class="ovs-ask-another" id="ask-another" style="display:none">Ask another question</button>
+        </div>
+        <div class="ovs-history" id="ask-history" style="display:none">
+          <div class="ovs-history-label">Recent questions</div>
+          <div class="ovs-history-list" id="ask-history-list"></div>
+        </div>
+        <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+      </div>
+    </div>
+
+    {{- /* Figure 1 mount point — Task 14 wires the real instrument module.
+           No instrument JS is written here; this is a static placeholder. */}}
+    <figure class="ovs-instrument" data-instrument="i01" data-preset="island-48">
+      <div class="ovs-note">
+        <span class="ovs-note-label">FIGURE 1 &mdash; CAPTURE DEMONSTRATOR</span>
+        Instrument I-01 loads here.
+      </div>
+      <figcaption><strong>Fig. 1</strong> &mdash; Simplified plume-capture model over a 3-burner grill, 32&#8243; mounting height. Model per RB-001, RB-002 &amp; RB-006. Illustrative; not a design tool.</figcaption>
+    </figure>
+  </div>
+</div>
+
+{{- /* ================= 2.0 QUESTIONS ================= */}}
+<section class="ovs-wrap ovs-section" id="questions">
+  <header class="ovs-clause-head">
+    <span class="ovs-clause">2.0</span>
+    <h2>Start with your question</h2>
+    <p>Plain-language answers first. Each one traces to the research brief and instrument that back it.</p>
+  </header>
+
+  {{- $questionPages := where .Site.RegularPages "Section" "questions" }}
+  {{- if $questionPages }}
+  <div class="ovs-card-grid">
+    {{- range $i, $p := $questionPages.ByWeight }}
+    <a class="ovs-card" href="{{ $p.RelPermalink }}">
+      <span class="ovs-card-num">2.{{ add $i 1 }}</span>
+      <h3>{{ $p.Title }}</h3>
+      <p>{{ $p.Params.summary | default $p.Description }}</p>
+    </a>
+    {{- end }}
+  </div>
+  {{- else }}
+  {{- /* content/questions/ does not exist yet (Task 17). Static sample
+         cards, linking to the section index — these 404 until then. */}}
+  <div class="ovs-card-grid">
+    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+      <span class="ovs-card-num">2.1</span>
+      <h3>What CFM do I need?</h3>
+      <p>Not a rule of thumb. Airflow only matters once the hood face can geometrically intercept the plume &mdash; width and height come first, CFM is derived after.</p>
+      <span class="ovs-card-refs"><b>RB-008</b> &middot; Instrument <b>I-01</b></span>
+    </a>
+    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+      <span class="ovs-card-num">2.2</span>
+      <h3>Does wind matter?</h3>
+      <p>More than any other variable. A steady 5 mph breeze can displace the plume by half a hood-width before it reaches the capture plane.</p>
+      <span class="ovs-card-refs"><b>RB-006</b> &middot; Instrument <b>I-03</b></span>
+    </a>
+    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+      <span class="ovs-card-num">2.3</span>
+      <h3>Island or wall hood?</h3>
+      <p>A wall behind the grill is a free side panel: it blocks one entrainment path and one wind direction. Islands need wider hoods, mounted lower, to match.</p>
+      <span class="ovs-card-refs"><b>RB-005</b>, <b>RB-009</b> &middot; Instrument <b>I-04</b></span>
+    </a>
+  </div>
+  <p class="ovs-section-foot">Sample questions &mdash; the full question index (Task 17) will answer each with a dedicated page. Links above 404 until then.</p>
+  {{- end }}
+</section>
+
+{{- /* ================= 3.0 INSTRUMENTS ================= */}}
+<section class="ovs-wrap ovs-section" id="instruments">
+  <header class="ovs-clause-head">
+    <span class="ovs-clause">3.0</span>
+    <h2>Instruments</h2>
+    <p>Live, explorable models. Every assumption is a control you can move; every output cites its parent brief.</p>
+  </header>
+
+  {{- /* content/tools/ pages carry an explicit `weight` (1-10) recording
+         the I-xx assignment; order here is the single source of truth. */}}
+  {{- $tools := where .Site.RegularPages "Section" "tools" }}
+  <div class="ovs-igrid">
+    {{- range $i, $p := $tools.ByWeight }}
+    <a class="ovs-icard" href="{{ $p.RelPermalink }}">
+      <span class="ovs-card-num">I-{{ printf "%02d" (add $i 1) }}</span>
+      <h3>{{ $p.Title }}</h3>
+      <span class="ovs-ihint">{{ $p.Description | truncate 78 }}</span>
+    </a>
+    {{- end }}
+  </div>
+  <p class="ovs-section-foot">All ten instruments are being rebuilt as live visualizations on the model of Figure 1. Each embeds the equations of its parent brief and exposes every assumption as a control &mdash; nothing is hard-coded that you cannot see and move.</p>
+</section>
+
+{{- /* ================= 4.0 LIBRARY ================= */}}
+<section class="ovs-wrap ovs-section" id="library">
+  <header class="ovs-clause-head">
+    <span class="ovs-clause">4.0</span>
+    <h2>Research library</h2>
+    <p>Twelve briefs in four tiers. Foundation establishes the physics; Frontier marks where the evidence runs out.</p>
+  </header>
+
+  {{- /* Tier derived from the `categories` front matter param (e.g.
+         "P0 — Foundation"), which is consistent across all 12 briefs and
+         matches the RB-001..003/004..006/007..009/010..012 grouping
+         (the `priority` param has a typo on rb-010: "P3 — Guidance"
+         instead of "P3 — Frontier" — categories is the reliable field). */}}
+  {{- $research := where .Site.RegularPages "Section" "research" }}
+  <div class="ovs-table-wrap">
+    <table class="ovs-table">
+      <thead>
+        <tr>
+          <th scope="col">Designation</th>
+          <th scope="col">Title</th>
+          <th scope="col">Tier</th>
+          <th scope="col">Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{- range $research.ByParam "research_id" }}
+        {{- $cat := "" }}
+        {{- with .Params.categories }}{{ $cat = index . 0 }}{{ end }}
+        {{- $tier := replaceRE "^.*\\s" "" $cat }}
+        <tr>
+          <td class="mono">{{ .Params.research_id }}</td>
+          <td class="ovs-table-ttl"><a href="{{ .RelPermalink }}">{{ replaceRE "^RB-[0-9]+:\\s*" "" .Title }}</a></td>
+          <td><span class="ovs-chip{{ if eq $tier "Foundation" }} ovs-chip--accent{{ end }}">{{ upper $tier }}</span></td>
+          <td class="mono">{{ .Lastmod.Format "2006-01-02" }}</td>
+        </tr>
+        {{- end }}
+      </tbody>
+    </table>
+  </div>
+  <p class="ovs-tierkey">
+    <span><b>FOUNDATION</b> &mdash; first principles, read these first</span>
+    <span><b>CORE</b> &mdash; the capture problem in full</span>
+    <span><b>APPLIED</b> &mdash; decisions and mitigations</span>
+    <span><b>FRONTIER</b> &mdash; active work, open for comment</span>
+  </p>
+</section>
+
+{{- /* ================= 5.0 TRUST ================= */}}
+<section class="ovs-wrap ovs-section" id="trust">
+  <header class="ovs-clause-head">
+    <span class="ovs-clause">5.0</span>
+    <h2>Basis for trust</h2>
+    <p>A standard is only as good as its process. Ours is written down, versioned, and open to challenge.</p>
+  </header>
+
+  <div class="ovs-trust-grid">
+    <div class="ovs-trust-cell">
+      <span class="ovs-clause">5.1</span>
+      <h3>Methodology</h3>
+      <p>Every quantitative claim traces to a derivation from published fluid dynamics or a cited measurement. Simplifications are declared where they are made.</p>
+      <a href="{{ "/methodology/" | absURL }}">Read the methodology &rarr;</a>
+    </div>
+    <div class="ovs-trust-cell">
+      <span class="ovs-clause">5.2</span>
+      <h3>Governance</h3>
+      <p>Versioned like a standard: numbered clauses, a published change log, an errata process, and open comment periods on every Frontier-tier brief before it advances.</p>
+      <a href="{{ "/governance/" | absURL }}">Governance &amp; change log &rarr;</a>
+    </div>
+    <div class="ovs-trust-cell">
+      <span class="ovs-clause">5.3</span>
+      <h3>References</h3>
+      <p>No manufacturer funding. No affiliate links. No sponsored placement. Every source cited is traceable to a published reference.</p>
+      <a href="{{ "/references/" | absURL }}">View references &rarr;</a>
+    </div>
+  </div>
+
+  <div class="ovs-note" style="margin-top:1px">
+    <span class="ovs-note-label">NORMATIVE COMMITMENTS</span>
+    No marketing language &mdash; No product recommendations &mdash; No ungrounded claims.
+  </div>
+</section>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+<script>
+(function() {
+  "use strict";
+
+  var form = document.getElementById('ask-form');
+  var input = document.getElementById('ask-input');
+  var submitBtn = document.getElementById('ask-submit');
+  var answerEl = document.getElementById('ask-answer');
+  var textEl = document.getElementById('ask-text');
+  var linksEl = document.getElementById('ask-links');
+  var sourceEl = document.getElementById('ask-source');
+  var anotherBtn = document.getElementById('ask-another');
+  var historyEl = document.getElementById('ask-history');
+  var historyList = document.getElementById('ask-history-list');
+  var honey = document.getElementById('ask-honey');
+
+  /* ---------- Turnstile: render the invisible widget once the API loads ---------- */
+  var turnstileToken = null;
+  var turnstileWidgetId = null;
+  function initTurnstile() {
+    if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      turnstileWidgetId = turnstile.render('#turnstile-container', {
+        sitekey: '0x4AAAAAACcaq_joFScewE6d',
+        size: 'invisible',
+        callback: function(token) { turnstileToken = token; }
+      });
+    }
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(initTurnstile, 100);
+  } else {
+    window.addEventListener('load', function() { setTimeout(initTurnstile, 100); });
+  }
+
+  /* ---------- question history (localStorage, shared key+shape with /search/) ---------- */
+  var HISTORY_KEY = 'ovs_question_history';
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function addToHistory(text) {
+    var h = getHistory();
+    h = h.filter(function(q) { return q !== text; });
+    h.unshift(text);
+    if (h.length > 5) h = h.slice(0, 5);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch (e) {}
+    renderHistory();
+  }
+  function renderHistory() {
+    var h = getHistory();
+    if (h.length === 0) { historyEl.style.display = 'none'; return; }
+    historyEl.style.display = '';
+    var html = '';
+    for (var i = 0; i < h.length; i++) {
+      html += '<button type="button" class="ovs-history-item" title="' + h[i].replace(/"/g, '&quot;') + '">' + h[i] + '</button>';
+    }
+    historyList.innerHTML = html;
+    var items = historyList.querySelectorAll('.ovs-history-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        input.value = item.title;
+        askQuestion();
+      });
+    });
+  }
+  renderHistory();
+
+  anotherBtn.addEventListener('click', function() {
+    input.value = '';
+    input.focus();
+  });
+
+  /* ---------- answer links, rendered as citation chips, deduped by URL ---------- */
+  function buildLinks(links) {
+    var seen = {};
+    var html = '';
+    for (var i = 0; i < links.length; i++) {
+      if (!links[i] || seen[links[i].url]) continue;
+      seen[links[i].url] = true;
+      html += '<a class="ovs-chip ovs-chip--accent" href="' + links[i].url + '">' + links[i].label + '</a>';
+    }
+    linksEl.innerHTML = html;
+  }
+
+  function reveal() {
+    answerEl.classList.remove('show');
+    void answerEl.offsetHeight;
+    answerEl.classList.add('show');
+  }
+
+  /* ---------- /api/ask — AI-first, graceful fallback on failure ---------- */
+  function askQuestion() {
+    var text = input.value.trim();
+    if (!text) return;
+
+    addToHistory(text);
+    submitBtn.disabled = true;
+
+    textEl.innerHTML = '<span class="ovs-ask-loading"><span class="ovs-spinner"></span> Searching research...</span>';
+    linksEl.innerHTML = '';
+    sourceEl.textContent = '';
+    anotherBtn.style.display = 'none';
+    reveal();
+
+    var honeyVal = honey ? honey.value : '';
+    var token = turnstileToken || '';
+
+    fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, cf_token: token, website: honeyVal })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('ai_failed');
+      return r.json();
+    })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      textEl.textContent = data.answer;
+      buildLinks(data.links || []);
+      sourceEl.textContent = data.off_topic ? '' : 'Answered by AI from site research';
+      anotherBtn.style.display = '';
+      submitBtn.disabled = false;
+    })
+    .catch(function() {
+      textEl.textContent = 'AI search is temporarily unavailable. Try browsing the research library or instruments below.';
+      buildLinks([
+        { url: '/research/', label: 'Browse all research' },
+        { url: '/tools/', label: 'Explore instruments' }
+      ]);
+      anotherBtn.style.display = '';
+      submitBtn.disabled = false;
+    })
+    .finally(function() {
+      if (typeof turnstile !== 'undefined' && turnstileWidgetId) {
+        turnstileToken = null;
+        turnstile.reset(turnstileWidgetId);
+      }
+    });
+
+    /* fire-and-forget usage tracking */
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: 'custom', text: text })
+    }).catch(function() {});
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    askQuestion();
+  });
+})();
+</script>
+
+{{- end }}

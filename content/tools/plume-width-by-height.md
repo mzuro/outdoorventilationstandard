@@ -6,6 +6,7 @@ lastmod: 2026-02-09
 tags: ["plume physics", "entrainment", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 2
 ---
 
 This chart shows how the buoyant cooking plume expands laterally as it rises from the cooking surface to the hood. The plume diameter at hood height — not the cooking surface width — determines the minimum hood size required for capture.

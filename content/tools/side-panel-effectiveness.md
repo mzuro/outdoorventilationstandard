@@ -6,6 +6,7 @@ lastmod: 2026-02-09
 tags: ["side panels", "wind protection", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 6
 ---
 
 This diagram shows the dramatic improvement in capture performance when side panels are added to an outdoor hood installation. Panels are the single most effective post-installation intervention for wind-exposed sites.
