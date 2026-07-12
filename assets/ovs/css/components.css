@@ -1477,3 +1477,146 @@ a.ovs-chip:hover {
 .ovs-i-fm-tag--ok {
   background: var(--ok);
 }
+
+/* ==========================================================================
+   v2.1 fun-physics (F1) — living smoke, preset chips, verdict stamp, and
+   direct-manipulation drag affordances. All additive to the engine above;
+   only appear when an instrument opts into the matching spec key.
+   ========================================================================== */
+
+/* ---- living smoke (static/js/ovs/smoke.mjs) ----
+   Captured parcels fade into the hood in neutral --smoke; parcels whose
+   trajectory exits the aperture render ember-orange (--smoke-escape),
+   agreeing with the capture readout by construction. */
+.ovs-i-svg .ovs-i-smoke {
+  fill: var(--smoke);
+  stroke: none;
+}
+
+.ovs-i-svg .ovs-i-smoke--escape {
+  fill: var(--smoke-escape);
+}
+
+/* prefers-reduced-motion fallback: one filled plume-density silhouette from
+   the plumeRadius envelope + deflected centerline (no particles). */
+.ovs-i-svg .ovs-i-smoke-silhouette {
+  fill: var(--plume);
+  stroke: none;
+}
+
+/* ---- direct-manipulation handles ----
+   Transparent SVG hit strips over the hood lip / wind arrow. touch-action:
+   none so a drag never fights page scroll on touch devices. */
+.ovs-i-svg .ovs-i-draggable {
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.ovs-i-svg .ovs-i-drag-hood-edge:hover,
+.ovs-i-svg .ovs-i-drag-wind:hover {
+  fill: var(--accent-wash);
+}
+
+/* ---- preset chips ----
+   A wrap-friendly row above the controls; each chip animates every control
+   to its scenario. Active chip = current committed state matches the preset. */
+.ovs-i-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.75rem 0.9rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.ovs-i-preset {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.7rem;
+  min-height: 34px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ovs-i-preset:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ovs-i-preset:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-preset--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---- verdict stamp ----
+   A standards-voice rubber-stamp slammed over the scene on settle. The scene
+   wrapper is its positioning context. */
+.ovs-i-scene {
+  position: relative;
+}
+
+.ovs-i-stamp {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.3rem 0.75rem;
+  border: 3px solid var(--ok);
+  border-radius: 4px;
+  color: var(--ok);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  font-family: var(--mono);
+  line-height: 1.05;
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+
+.ovs-i-stamp[data-grade="MARGINAL"] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.ovs-i-stamp[data-grade="FAIL"] {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
+.ovs-i-stamp-grade {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.ovs-i-stamp-clause {
+  font-size: 0.54rem;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* The one orchestrated moment: the stamp slams on settle. Neutralized under
+   prefers-reduced-motion by the global override in base.css (and the engine
+   also skips adding this class when reduced), so it just appears at rest. */
+.ovs-i-stamp--slam {
+  animation: ovs-i-stamp-slam 0.42s cubic-bezier(0.2, 1.4, 0.3, 1) both;
+}
+
+@keyframes ovs-i-stamp-slam {
+  0% { transform: rotate(-6deg) scale(2.4); opacity: 0; }
+  60% { transform: rotate(-6deg) scale(0.9); opacity: 1; }
+  100% { transform: rotate(-6deg) scale(1); opacity: 1; }
+}

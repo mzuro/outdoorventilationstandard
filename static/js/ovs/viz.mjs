@@ -3,8 +3,55 @@
 // This module must import cleanly under plain node (no `document`/`window`)
 // so the pure helpers below can be unit-tested without a DOM. Every access
 // to a global browser API is therefore guarded.
+//
+// v2.1 (F1) additive layers — all opt-in via new spec keys, so instruments
+// not yet migrated keep working unchanged:
+//   spec.smoke(state)   -> geomState|null  (living-smoke visualization)
+//   spec.drag[]         -> direct manipulation of scene handles
+//   spec.presets[]      -> one-tap story chips (animated via the same tweens)
+//   spec.verdict(state, physics) -> PASS/MARGINAL/FAIL rubber-stamp on settle
+
+import { createSmokeField } from './smoke.mjs';
 
 const TWEEN_MS = 200;
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+// keyword drag targets -> the hit-strip class the instrument scene draws
+const DRAG_SELECTORS = {
+  'hood-edge': '.ovs-i-drag-hood-edge',
+  'wind-arrow': '.ovs-i-drag-wind',
+  'hood-height': '.ovs-i-drag-height',
+};
+
+/**
+ * Grade a capture fraction into a standards verdict. Pure. Default
+ * thresholds per the plan: >=0.85 PASS, 0.60-0.85 MARGINAL, <0.60 FAIL.
+ * Instruments on a different basis (e.g. CFM recommended-met) pass their
+ * own thresholds.
+ */
+export function gradeCapture(capFrac, { pass = 0.85, marginal = 0.6 } = {}) {
+  if (capFrac >= pass) return 'PASS';
+  if (capFrac >= marginal) return 'MARGINAL';
+  return 'FAIL';
+}
+
+/**
+ * Which preset (if any) the committed `state` currently equals — for the
+ * chip active-state. Every control listed in a preset must match (string-
+ * compared so segmented literals and numeric ranges compare uniformly).
+ * Pure. Returns the preset id or null.
+ */
+export function presetActiveId(presets, state) {
+  for (const p of presets || []) {
+    let match = true;
+    for (const [id, val] of Object.entries(p.state || {})) {
+      if (String(state[id]) !== String(val)) { match = false; break; }
+    }
+    if (match) return p.id;
+  }
+  return null;
+}
 
 /** Linear interpolation. Pure. */
 export function lerp(a, b, t) {
@@ -302,10 +349,36 @@ export function createInstrument(rootEl, spec) {
     r.el.textContent = fmt(value, r.format);
   }
 
-  const ctx = { svg, setReadout, reduced };
+  const ctx = { svg, setReadout, reduced, physics: null };
 
   if (typeof spec.scene === 'function') {
     spec.scene(svg, HELPERS);
+  }
+
+  // ---- v2.1 smoke layer (opt-in via spec.smoke) --------------------------
+  let smokeField = null;
+  let smokeVisible = true;
+  let io = null;
+  let visHandler = null;
+  if (typeof spec.smoke === 'function') {
+    const g0 = spec.smoke(currentNumericState());
+    if (g0) {
+      const group = document.createElementNS(SVG_NS, 'g');
+      group.setAttribute('class', 'ovs-i-smoke-layer');
+      // Sit the smoke with the plume, beneath the hood: the instrument marks
+      // an insertion point with .ovs-i-smoke-mount; otherwise append on top.
+      const mount = svg.querySelector('.ovs-i-smoke-mount') || svg;
+      mount.appendChild(group);
+      smokeField = createSmokeField(group, {
+        sourceX: g0.sourceX, sourceY: g0.sourceY, hoodPlaneY: g0.hoodPlaneY, pxPerIn: g0.pxPerIn,
+      });
+      smokeField.setReduced(reduced);
+      smokeField.update(g0);
+    }
+  }
+
+  function smokeShouldRun() {
+    return !!smokeField && !reduced && smokeVisible && !(hasDom && document.hidden);
   }
 
   let rafId = null;
@@ -327,7 +400,12 @@ export function createInstrument(rootEl, spec) {
   }
 
   function runUpdate() {
-    if (typeof spec.update === 'function') spec.update(currentNumericState(), ctx);
+    const st = currentNumericState();
+    if (typeof spec.update === 'function') spec.update(st, ctx);
+    if (smokeField && typeof spec.smoke === 'function') {
+      const gs = spec.smoke(st);
+      if (gs) smokeField.update(gs);
+    }
   }
 
   function refreshBubble(id) {
@@ -339,39 +417,54 @@ export function createInstrument(rootEl, spec) {
   }
 
   function tick(now) {
-    for (const [id, tween] of tweens) {
-      const t = tweenProgress(now, tween.start);
-      const to = state[id];
-      displayed[id] = t >= 1 ? to : lerp(tween.from, to, t);
-      refreshBubble(id);
-      if (t >= 1) tweens.delete(id);
+    const hadTweens = tweens.size > 0;
+    if (hadTweens) {
+      for (const [id, tween] of tweens) {
+        const t = tweenProgress(now, tween.start);
+        const to = state[id];
+        displayed[id] = t >= 1 ? to : lerp(tween.from, to, t);
+        refreshBubble(id);
+        if (t >= 1) tweens.delete(id);
+      }
+      runUpdate();
     }
-    runUpdate();
-    if (tweens.size > 0) {
+    // Living smoke rides the SAME single rAF (Global Constraint: one rAF).
+    if (smokeShouldRun()) smokeField.frame(now);
+    // One orchestrated moment: the verdict re-stamps only when motion settles.
+    if (hadTweens && tweens.size === 0) settle();
+    if (tweens.size > 0 || smokeShouldRun()) {
       rafId = window.requestAnimationFrame(tick);
     } else {
       rafId = null;
     }
   }
 
+  function ensureRaf() {
+    if (rafId == null && (tweens.size > 0 || smokeShouldRun())) {
+      rafId = window.requestAnimationFrame(tick);
+    }
+  }
+
   function startTween(id) {
     if (reduced) {
-      // No tween: snap displayed to target and issue a single update call.
+      // No tween: snap displayed to target, single update call, instant stamp.
       displayed[id] = state[id];
       refreshBubble(id);
       runUpdate();
+      settle();
       return;
     }
     if (displayed[id] === state[id]) {
       // Already at the target: nothing to animate, just repaint.
       tweens.delete(id);
       if (rafId == null) runUpdate();
+      ensureRaf();
       return;
     }
     // (Re)start THIS control's tween from its current displayed position;
     // other controls' in-flight tweens keep their own origin and clock.
     tweens.set(id, { from: displayed[id], start: nowMs() });
-    if (rafId == null) rafId = window.requestAnimationFrame(tick);
+    ensureRaf();
   }
 
   function clampToControl(c, value) {
@@ -393,11 +486,163 @@ export function createInstrument(rootEl, spec) {
       state[id] = value;
       displayed[id] = value;
       runUpdate();
+      settle();
+      ensureRaf();
     }
+  }
+
+  // ---- v2.1 preset chips (opt-in via spec.presets) -----------------------
+  const presetChips = new Map();
+  if (Array.isArray(spec.presets) && spec.presets.length) {
+    const row = document.createElement('div');
+    row.className = 'ovs-i-presets';
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', 'Scenario presets');
+    for (const preset of spec.presets) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'ovs-i-preset';
+      chip.textContent = preset.label;
+      chip.dataset.presetId = preset.id;
+      const handler = () => applyPreset(preset);
+      chip.addEventListener('click', handler);
+      listeners.push({ target: chip, type: 'click', handler });
+      row.appendChild(chip);
+      presetChips.set(preset.id, chip);
+    }
+    // Chips sit above the controls (below the scene), so the story leads.
+    article.insertBefore(row, fieldset);
+  }
+
+  function applyPreset(preset) {
+    const entries = Object.entries(preset.state || {});
+    entries.forEach(([id, val], idx) => {
+      // Staggered so the controls animate to the scenario one after another
+      // (each control tweens itself via the engine). Instant under reduced.
+      if (reduced) set(id, val);
+      else window.setTimeout(() => set(id, val), idx * 60);
+    });
+  }
+
+  function updatePresetActive() {
+    if (!presetChips.size) return;
+    const active = presetActiveId(spec.presets, get());
+    for (const [id, chip] of presetChips) {
+      const on = id === active;
+      chip.classList.toggle('ovs-i-preset--active', on);
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+
+  // ---- v2.1 verdict stamp (opt-in via spec.verdict) ----------------------
+  let stampEl = null;
+  if (typeof spec.verdict === 'function') {
+    stampEl = document.createElement('div');
+    stampEl.className = 'ovs-i-stamp';
+    stampEl.setAttribute('aria-live', 'polite');
+    // Positioned over the scene; svgWrap is the positioning context.
+    svgWrap.appendChild(stampEl);
+  }
+
+  function updateVerdict(animate) {
+    if (!stampEl) return;
+    const v = spec.verdict(get(), ctx.physics);
+    if (!v || !v.grade) { stampEl.hidden = true; return; }
+    stampEl.hidden = false;
+    stampEl.dataset.grade = v.grade;
+    stampEl.replaceChildren();
+    const g = document.createElement('span');
+    g.className = 'ovs-i-stamp-grade';
+    g.textContent = v.grade;
+    stampEl.appendChild(g);
+    if (v.clauseRef) {
+      const c = document.createElement('span');
+      c.className = 'ovs-i-stamp-clause';
+      c.textContent = v.clauseRef;
+      stampEl.appendChild(c);
+    }
+    if (v.detail) stampEl.title = v.detail;
+    if (animate && !reduced) {
+      // Restart the slam: remove, force reflow, re-add.
+      stampEl.classList.remove('ovs-i-stamp--slam');
+      void stampEl.offsetWidth;
+      stampEl.classList.add('ovs-i-stamp--slam');
+    }
+  }
+
+  function settle() {
+    updateVerdict(true);
+    updatePresetActive();
+  }
+
+  // ---- v2.1 direct manipulation (opt-in via spec.drag) -------------------
+  const dragCleanups = [];
+  function clientToUser(evt) {
+    if (typeof svg.getScreenCTM !== 'function') return { x: 0, y: 0 };
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    const inv = ctm.inverse();
+    return {
+      x: inv.a * evt.clientX + inv.c * evt.clientY + inv.e,
+      y: inv.b * evt.clientX + inv.d * evt.clientY + inv.f,
+    };
+  }
+  for (const d of spec.drag || []) {
+    const sel = DRAG_SELECTORS[d.target] || d.target;
+    const handle = svg.querySelector(sel);
+    if (!handle) continue;
+    handle.classList.add('ovs-i-draggable');
+    if (d.cursor) handle.style.cursor = d.cursor;
+    let dragging = false;
+    const apply = (evt) => {
+      const u = clientToUser(evt);
+      const coord = d.axis === 'y' ? u.y : u.x;
+      const v = d.toValue(coord, u);
+      if (v != null && Number.isFinite(Number(v))) set(d.control, v);
+    };
+    const onDown = (evt) => {
+      dragging = true;
+      if (handle.setPointerCapture) { try { handle.setPointerCapture(evt.pointerId); } catch { /* ignore */ } }
+      apply(evt);
+      evt.preventDefault();
+    };
+    const onMove = (evt) => { if (dragging) { apply(evt); evt.preventDefault(); } };
+    const onUp = (evt) => {
+      dragging = false;
+      if (handle.releasePointerCapture) { try { handle.releasePointerCapture(evt.pointerId); } catch { /* ignore */ } }
+    };
+    handle.addEventListener('pointerdown', onDown);
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+    handle.addEventListener('pointercancel', onUp);
+    dragCleanups.push(() => {
+      handle.removeEventListener('pointerdown', onDown);
+      handle.removeEventListener('pointermove', onMove);
+      handle.removeEventListener('pointerup', onUp);
+      handle.removeEventListener('pointercancel', onUp);
+    });
+  }
+
+  // ---- smoke lifecycle: pause off-viewport and when the tab is hidden ----
+  if (smokeField) {
+    if (typeof IntersectionObserver === 'function') {
+      io = new IntersectionObserver((entries) => {
+        smokeVisible = entries.some((e) => e.isIntersecting);
+        if (smokeVisible) { smokeField.resume(); ensureRaf(); } else { smokeField.pause(); }
+      }, { threshold: 0 });
+      io.observe(svgWrap);
+    }
+    visHandler = () => {
+      if (document.hidden) { smokeField.pause(); } else if (smokeVisible) { smokeField.resume(); ensureRaf(); }
+    };
+    document.addEventListener('visibilitychange', visHandler);
   }
 
   // Initial paint: single update call with the spec's starting values.
   runUpdate();
+  updateVerdict(false); // stamp present from the start; no slam on load
+  updatePresetActive();
+  ensureRaf(); // kick the shared rAF if smoke is live and on-screen
 
   function set(id, value) {
     const c = (spec.controls || []).find((ctrl) => ctrl.id === id);
@@ -431,6 +676,10 @@ export function createInstrument(rootEl, spec) {
       window.cancelAnimationFrame(rafId);
       rafId = null;
     }
+    if (io) { io.disconnect(); io = null; }
+    if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
+    if (smokeField) { smokeField.destroy(); smokeField = null; }
+    for (const cleanup of dragCleanups) cleanup();
     for (const { target, type, handler } of listeners) {
       target.removeEventListener(type, handler);
     }

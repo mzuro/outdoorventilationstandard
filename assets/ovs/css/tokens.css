@@ -48,6 +48,12 @@
   --plume: rgba(23, 71, 196, 0.1);
   --plume-edge: #1747c4;
 
+  /* living smoke (v2.1) — decorative non-text graphics, not body copy.
+     --smoke is captured smoke fading into the hood; --smoke-escape is the
+     ember-orange tint on parcels whose trajectory exits the aperture. */
+  --smoke: rgba(88, 96, 108, 0.5);
+  --smoke-escape: rgba(198, 88, 20, 0.72);
+
   /* type stacks — system fonts only, no remote requests */
   --sans:
     "Helvetica Neue", Helvetica, "Inter", -apple-system, BlinkMacSystemFont,
@@ -82,5 +88,8 @@
     --figure-line: #aab2bd;
     --plume: rgba(143, 176, 255, 0.12);
     --plume-edge: #8fb0ff;
+
+    --smoke: rgba(178, 186, 198, 0.42);
+    --smoke-escape: rgba(255, 148, 68, 0.66);
   }
 }
