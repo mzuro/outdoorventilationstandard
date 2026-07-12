@@ -1,6 +1,6 @@
 ---
 title: "Does wind really affect an outdoor range hood?"
-summary: "Yes — at a 48-inch island hood, capture drops from about 97% in still air to 56% at 5 mph, and to roughly 2% at 10 mph. Wind is the single largest variable in outdoor hood performance, larger than CFM or hood size."
+summary: "Yes — at a 48-inch island hood, capture drops from about 97% in still air to 79% at 5 mph, and to roughly 24% at 10 mph. Wind is the single largest variable in outdoor hood performance, larger than CFM or hood size."
 date: 2026-07-11
 lastmod: 2026-07-11
 reviewed: true
@@ -10,11 +10,11 @@ instrument_id: "i03"
 citations: ["rb-006", "rb-009"]
 ---
 
-A 48-inch island hood at a standard 30-inch mounting height captures about **97% of the plume in still air**, **56% at 5 mph**, and collapses to roughly **2% at 10 mph**. No amount of extra CFM fixes this on its own — wind doesn't just dilute the plume, it physically pushes it out from under the hood before the exhaust can act on it.
+A 48-inch island hood at a standard 30-inch mounting height captures about **97% of the plume in still air**, **79% at 5 mph**, and falls to roughly **24% at 10 mph**. No amount of extra CFM fixes this on its own — wind doesn't just dilute the plume, it physically pushes it out from under the hood before the exhaust can act on it.
 
 ## What's actually happening
 
-A buoyant plume rises straight up only in calm air. Any crosswind bends its path sideways as it climbs, and the higher it has to rise before reaching the hood, the more time wind has to work on it. At a 30-inch rise, a 5 mph breeze deflects the plume about 19 inches sideways — even after the partial shelter that grade-level obstructions and the appliance itself provide. That's close to half the depth of a typical island hood, which is why capture falls off so sharply between 0 and 10 mph rather than declining gradually.
+A buoyant plume rises straight up only in calm air. Any crosswind bends its path sideways as it climbs, and the higher it has to rise before reaching the hood, the more time wind has to work on it. At a 30-inch rise, a 5 mph breeze deflects the plume about 13 inches sideways — the RB-006 wind-coupling coefficient applied to the plume's rise. That's roughly a third of the depth of a typical island hood, and by 10 mph the deflection doubles past the hood's downwind edge — which is why capture falls off so sharply between 0 and 10 mph rather than declining gradually.
 
 ## Why this catches people off guard
 

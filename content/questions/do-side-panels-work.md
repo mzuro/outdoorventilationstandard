@@ -1,6 +1,6 @@
 ---
 title: "Do side panels actually help an outdoor hood?"
-summary: "Yes, substantially. On a 48-inch island hood in an 8 mph breeze, capture rises from about 13% with no panels to about 82% with panels on both sides — the single largest performance gain available from any post-installation change."
+summary: "Yes, substantially. On a 48-inch island hood in an 8 mph breeze, capture rises from about 46% with no panels to about 91% with panels on both sides — the single largest performance gain available from any post-installation change."
 date: 2026-07-11
 lastmod: 2026-07-11
 reviewed: true
@@ -11,7 +11,7 @@ instrument_preset: "island-48"
 citations: ["rb-009", "rb-006"]
 ---
 
-On a 48-inch island hood at a 30-inch mounting height in an 8 mph breeze, capture goes from about **13% with no side panels** to about **53% with one panel** and **82% with panels on both sides**. That's a bigger swing than switching from moderate to high-wind CFM sizing, and it's achievable without touching the blower at all.
+On a 48-inch island hood at a 30-inch mounting height in an 8 mph breeze, capture goes from about **46% with no side panels** to about **77% with one panel** and **91% with panels on both sides**. That's a bigger swing than switching from moderate to high-wind CFM sizing, and it's achievable without touching the blower at all.
 
 ## Why panels are so effective
 

@@ -1,6 +1,6 @@
 ---
 title: "What CFM does my outdoor kitchen hood need?"
-summary: "A 48-inch wall hood over a standard 60,000 BTU grill needs a minimum of 1,200 CFM, with 1,500 CFM as the recommended moderate-exposure target. The same width mounted on an island needs 2,000 CFM minimum and 2,500 CFM recommended — islands lose the back wall's free confinement."
+summary: "A 48-inch wall hood over a standard 60,000 BTU grill needs a minimum of 1,200 CFM, with 1,500 CFM as the recommended moderate-exposure target. The same width mounted on an island needs about 1,450 CFM minimum and 1,800 CFM recommended — roughly 20% more, because islands lose the back wall's free confinement."
 date: 2026-07-11
 lastmod: 2026-07-11
 reviewed: true
@@ -15,15 +15,15 @@ A 48-inch wall-mounted hood over a 60,000 BTU grill needs at least **1,200 CFM**
 
 ## Why island installs need more
 
-The same 48-inch hood on an island needs **2,000 CFM minimum** and **2,500 CFM recommended** — roughly 65% more than the wall equivalent. A wall behind the grill blocks one whole side of entrainment and one whole wind direction for free; an island hood has to do that work with airflow alone. The instrument above is set to the wall scenario — switch its mount control to island to see the CFM figures move.
+The same 48-inch hood on an island needs about **1,450 CFM minimum** and **1,800 CFM recommended** — roughly 20% more than the wall equivalent, the island multiplier established in RB-008. A wall behind the grill blocks one whole side of ambient infiltration and one whole wind direction for free; an island hood, open on all four sides, has to do that work with airflow alone. The instrument above is set to the wall scenario — switch its mount control to island to see the CFM figures move.
 
 ## Adjusting for BTU
 
 Grills hotter than 60,000 BTU add to the requirement in fixed steps: every 10,000 BTU above baseline adds roughly 100 CFM to every tier. A 90,000 BTU grill on the same 48-inch wall hood needs 1,500 CFM minimum and 1,800 CFM recommended — the extra heat output pushes more plume mass through the capture plane, so the exhaust has to keep pace.
 
-## Width and depth both matter
+## What drives the number — width and mount, not depth
 
-CFM scales with the hood's face area — width times depth — not width alone. A wall hood is sized around a 36-inch depth in this lineup; island hoods use 40 inches, since there's no wall to help contain the plume and the extra depth partly compensates. Wider hoods at the same depth need proportionally more CFM, and vice versa: a 42-inch wall hood needs less than a 48-inch one at the same exposure class, a 60-inch hood needs more.
+CFM scales with the hood's width and its mount type, not with how deep the hood is. RB-008 (§3.4.3) is explicit that hood depth and cooking-surface area do not set the required exhaust rate — only the plume strength, mounting height, and the open-sides penalty do. So a wider hood needs proportionally more CFM (a 42-inch hood needs less than a 48-inch one at the same exposure; a 60-inch hood needs more), and an island hood needs the ~20% mount premium — but a deeper canopy on its own does not raise the number. Island hoods are still built deeper (40 inches vs 36) for overhang and capture geometry; that depth earns its keep at the hood face, not in the blower spec.
 
 ## Wind pushes the number up further
 

@@ -19,7 +19,7 @@ Every inch a hood's edge sits past the grill's edge is an inch of margin against
 
 ## Width matters less than people expect — at fixed wind
 
-Once a hood is wide enough to clear the plume's lateral spread, adding more width buys very little. At a steady 5 mph breeze, a 42-inch island hood captures about 55.8%; a 60-inch hood over the identical grill captures about 56.7% — under a single point of difference. The plume's own growth, not the hood's width, is usually the binding constraint once a reasonable overhang is in place.
+Once a hood is wide enough to clear the plume's lateral spread, adding more width buys very little. At a steady 5 mph breeze, a 42-inch island hood captures about 78%; a 60-inch hood over the identical grill captures about 79% — barely more than a point of difference. The plume's own growth, not the hood's width, is usually the binding constraint once a reasonable overhang is in place.
 
 ## What actually drives capture instead
 
