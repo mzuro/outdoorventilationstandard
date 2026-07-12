@@ -601,6 +601,42 @@ a.ovs-chip:hover {
   margin: 0;
 }
 
+/* three tappable follow-up chips (AI #6) — refill + re-submit the ask box */
+.ovs-ask-followups,
+.ovs-ai-result-followups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ovs-followups-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-transform: uppercase;
+  margin-right: 0.2rem;
+}
+
+.ovs-followup-chip {
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ovs-followup-chip:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
 .ovs-ask-another {
   display: inline-block;
   margin-top: 0.6rem;
