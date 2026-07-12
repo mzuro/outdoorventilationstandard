@@ -3,8 +3,12 @@ import { citableUrlSet, assembleCitations } from './lib/citations.mjs';
 import { isBlockedInput, parseModelResponse } from './lib/moderation.mjs';
 import { checkDailyCap } from './lib/costcap.mjs';
 import { askCacheKey } from './lib/normalize.mjs';
+import { clampParams, paramsCacheKey } from './lib/params.mjs';
+import { computeState, PAPER_MAP } from './lib/explain-state.mjs';
 
+const ASK_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const ASK_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
+const EXPLAIN_CACHE_TTL = 60 * 60 * 24 * 30; // 30 days
 
 // Module-level cache for the AI grounding corpus (ai-context.json),
 // refreshes when the Worker instance recycles.
@@ -22,9 +26,10 @@ const ASK_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
 // relevant entries (with their real numbers) go into the prompt.
 let cachedFlatCorpus = null;
 let cachedCitableSet = null;
+let cachedRawCorpus = null;
 
 async function buildContext(env) {
-  if (cachedFlatCorpus) return { flat: cachedFlatCorpus, citableSet: cachedCitableSet };
+  if (cachedFlatCorpus) return { flat: cachedFlatCorpus, citableSet: cachedCitableSet, raw: cachedRawCorpus };
 
   try {
     const res = await env.ASSETS.fetch(new Request('https://dummy/ai-context.json'));
@@ -34,10 +39,11 @@ async function buildContext(env) {
 
     cachedFlatCorpus = flat;
     cachedCitableSet = citableSet;
+    cachedRawCorpus = raw;
 
-    return { flat, citableSet };
+    return { flat, citableSet, raw };
   } catch (e) {
-    return { flat: null, citableSet: null };
+    return { flat: null, citableSet: null, raw: null };
   }
 }
 
@@ -127,6 +133,21 @@ RESPONSE FORMAT — respond with ONLY a single JSON object, nothing else (no pro
 - followups: exactly 3 short, natural-language follow-up questions a user might ask next, answerable from this site's research.
 
 Research context:
+`;
+
+// AI #7: "Explain this configuration" (i01/i02 only). The model narrates
+// a state sheet computed server-side by the SAME pure physics modules
+// the instrument uses client-side (src/lib/explain-state.mjs imports
+// static/js/ovs/physics/*.mjs directly) -- every number in the
+// explanation is deterministic; the model only puts it into words.
+const EXPLAIN_SYSTEM_PROMPT_HEADER = `You narrate a single configuration of a physics instrument on the Outdoor Ventilation Standard research site, for a homeowner audience.
+
+STRICT RULES:
+1. Use ONLY the numbers in the STATE SHEET below. Never introduce, estimate, round differently, or recall a number from anywhere else -- every number you use must appear verbatim in the sheet.
+2. Write 2-4 plain-language sentences explaining what this configuration's numbers mean physically and why (mounting height, wind, mount type, panels, exposure -- whichever apply).
+3. You may reference the listed RB-xxx papers by code; never invent a citation, a url, or a paper not in the list.
+4. No marketing language, no product or brand recommendations, no claims outside outdoor cooking ventilation physics.
+5. Output plain narration text only -- no JSON, no markdown links, no headers, no bullet lists.
 `;
 
 async function handleFetch(request, env) {
@@ -279,7 +300,7 @@ async function handleFetch(request, env) {
         }
         const context = buildContextText(selected);
 
-        const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        const aiResponse = await env.AI.run(ASK_MODEL, {
           messages: [
             { role: 'system', content: SYSTEM_PROMPT + context },
             { role: 'user', content: question }
@@ -348,6 +369,136 @@ async function handleFetch(request, env) {
       } catch (e) {
         await logAiRequest(env, '(parse error)', 'error', ip);
         return new Response(JSON.stringify({ error: 'ai_failed' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // API: "Explain this configuration" (AI #7) -- i01/i02 only. Input is
+    // structured params (no free text), recomputed server-side through
+    // the same pure physics modules the instruments use client-side; the
+    // LLM narrates the numbers, never generates them.
+    if (url.pathname === '/api/explain' && request.method === 'POST') {
+      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+
+      try {
+        const allowed = await checkRateLimit(ip, env);
+        if (!allowed) {
+          return new Response(JSON.stringify({ error: 'rate_limited' }), {
+            status: 429,
+            headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
+          });
+        }
+
+        const body = await request.json();
+
+        if (body.website) {
+          return new Response(JSON.stringify({ error: 'bot_detected' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (env.TURNSTILE_SECRET) {
+          const cfToken = body.cf_token || '';
+          const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `secret=${encodeURIComponent(env.TURNSTILE_SECRET)}&response=${encodeURIComponent(cfToken)}&remoteip=${encodeURIComponent(ip)}`
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyData.success) {
+            return new Response(JSON.stringify({ error: 'turnstile_failed' }), {
+              status: 403,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+        }
+
+        const instrument = body.instrument;
+        if (instrument !== 'i01' && instrument !== 'i02') {
+          return new Response(JSON.stringify({ error: 'invalid_instrument' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Params are validated/clamped against the same ranges the
+        // controls enforce (src/lib/params.mjs) -- out-of-range, wrong
+        // types, unknown enum values, missing or extra keys all reject
+        // with 400 rather than being silently corrected.
+        const clamp = clampParams(instrument, body.params);
+        if (!clamp.ok) {
+          return new Response(JSON.stringify({ error: 'invalid_params', details: clamp.errors }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Quantized-param cache: the validated params ARE already
+        // quantized (every field is an enum or a discrete slider step),
+        // so the canonical key is just their sorted key=value join.
+        const cacheKey = `explain:${paramsCacheKey(instrument, clamp.params)}`;
+        if (env.QUESTION_CLICKS) {
+          const cached = await env.QUESTION_CLICKS.get(cacheKey);
+          if (cached) {
+            return new Response(cached, { headers: { 'Content-Type': 'application/json' } });
+          }
+        }
+
+        if (!env.AI) {
+          return new Response(JSON.stringify({ error: 'ai_not_configured' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        const underCap = await checkDailyCap(env);
+        if (!underCap) {
+          return new Response(JSON.stringify({ error: 'capacity_limited' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Every number below comes from computeState() -- the SAME pure
+        // physics modules (static/js/ovs/physics/*.mjs) the instrument
+        // itself draws with. The model never generates a number.
+        const state = computeState(instrument, clamp.params);
+        const { raw } = await buildContext(env);
+        const papers = PAPER_MAP[instrument] || [];
+        const citations = papers
+          .map((rb) => {
+            const p = ((raw && raw.papers) || []).find((pp) => pp.research_id === rb);
+            return p ? { rb, section: null, url: p.url } : null;
+          })
+          .filter(Boolean);
+
+        const prompt = `${EXPLAIN_SYSTEM_PROMPT_HEADER}\nSTATE SHEET:\n${JSON.stringify(state)}\n\nRelevant papers: ${papers.join(', ')}\n`;
+
+        const aiResponse = await env.AI.run(ASK_MODEL, {
+          messages: [
+            { role: 'system', content: prompt },
+            { role: 'user', content: 'Narrate this configuration.' }
+          ],
+          max_tokens: 220,
+          temperature: 0.2
+        });
+
+        const explanation = (aiResponse.response || '').trim();
+        const responseBody = JSON.stringify({ explanation, citations, state });
+
+        if (env.QUESTION_CLICKS && explanation) {
+          try {
+            await env.QUESTION_CLICKS.put(cacheKey, responseBody, { expirationTtl: EXPLAIN_CACHE_TTL });
+          } catch (e) { /* cache-write failure should never block the response */ }
+        }
+
+        return new Response(responseBody, { headers: { 'Content-Type': 'application/json' } });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ error: 'explain_failed' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         });

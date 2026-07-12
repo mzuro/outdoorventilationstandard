@@ -23,6 +23,15 @@
   "instrument" shortcode, tools/single.html and questions/single.html
   auto-embeds, and the homepage hero Figure 1 all render identically.
 
+  "Explain this configuration" (AI #7, v1: i01/i02 only) is appended here
+  rather than per-page, so it appears automatically wherever i01/i02 is
+  embedded (homepage hero, their tool pages, and any question page that
+  embeds them). static/js/ovs/instruments/i01.mjs and i02.mjs expose the
+  live control state as `figureEl.ovsInstrument` (a createInstrument()
+  handle); static/js/ovs/explain-ui.mjs reads it on click and POSTs
+  {instrument, params} to /api/explain — no free text, so the button
+  carries none of the ask box's prompt-injection surface.
+
   id -> legacy SVG map (static/diagrams/*.svg) per the brief; i01 and i02
   have no legacy diagram and get a one-line text fallback instead.
 
@@ -51,7 +60,18 @@
   <figcaption>{{ . | safeHTML }}</figcaption>
   {{- end }}
 </figure>
+{{- if or (eq $id "i01") (eq $id "i02") }}
+<div class="ovs-explain" data-explain-for="{{ $id }}">
+  <button type="button" class="ovs-explain-btn">Explain this configuration</button>
+  <input type="text" name="website" class="ovs-explain-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
+  <div class="ovs-explain-turnstile cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+  <div class="ovs-explain-result" hidden></div>
+</div>
+{{- end }}
 <script type="module">
   import { mount } from '/js/ovs/instruments/{{ $id }}.mjs';
   document.querySelectorAll('[data-instrument="{{ $id }}"]').forEach(mount);
+  {{- if or (eq $id "i01") (eq $id "i02") }}
+  import('/js/ovs/explain-ui.mjs').then(function(m) { m.wireExplain('{{ $id }}'); });
+  {{- end }}
 </script>

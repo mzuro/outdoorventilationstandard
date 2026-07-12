@@ -1088,6 +1088,69 @@ a.ovs-chip:hover {
   border-top: 1px solid var(--line);
 }
 
+/* ---------- "Explain this configuration" (AI #7, i01/i02 only) ---------- */
+.ovs-explain {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.ovs-explain-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.ovs-explain-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.55rem 1rem;
+}
+
+.ovs-explain-btn:hover {
+  border-color: var(--accent);
+}
+
+.ovs-explain-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ovs-explain-result {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+}
+
+.ovs-explain-result[hidden] {
+  display: none;
+}
+
+.ovs-explain-text {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 0.7rem;
+}
+
+.ovs-explain-citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 /* ==========================================================================
    Instrument engine (static/js/ovs/viz.mjs, createInstrument) — every
    .ovs-i-* class the engine emits.

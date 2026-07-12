@@ -159,5 +159,9 @@ export function mount(figureEl) {
     update,
   };
 
-  createInstrument(container, spec);
+  // Exposed on the figure element so the shared "Explain this
+  // configuration" button (partials/instrument-figure.html,
+  // static/js/ovs/explain-ui.mjs) can read the live control state via
+  // .get() without this module knowing anything about that feature.
+  figureEl.ovsInstrument = createInstrument(container, spec);
 }
