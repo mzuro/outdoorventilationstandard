@@ -24,14 +24,20 @@
 //     aperture to partition captured-vs-escaped smoke against. The smoke
 //     layer still rides the SAME wind/rise physics the readouts use
 //     (riseIn from the real RISE slider, windMph/panels from the real
-//     controls), but the widthIn/depthIn/mount passed to it are a fixed
-//     NOMINAL aperture (48in island, this suite's default hood) used only
-//     to color captured-vs-escaping particles — it does not correspond to
-//     any control or readout on this page, so it can never disagree with
-//     one. Documented explicitly per the smoke.mjs contract note: geom
-//     carries no hoodPlaneY, so the recycle plane is riseIn (the real
-//     slider value) in physics space, matching the dashed hood-plane line
-//     drawn at the same pxPerIn scale.
+//     controls). SHARED RULE with i09 (F2 review F-5 fix): instruments
+//     with no on-page capture concept (no aperture control, no capture
+//     readout) give the smoke a deliberately OVERSIZED nominal aperture
+//     (NOMINAL_WIDTH_IN/NOMINAL_DEPTH_IN below) so every particle always
+//     registers as captured and none render ember-orange — an escape tint
+//     would imply a capture verdict this page's physics never computes.
+//     (An earlier revision tinted against a phantom 48in island aperture
+//     with no on-page counterpart, telling an escape story nothing here
+//     states or grades; that was inconsistent with i09 and is gone.)
+//     Deflection is this page's story, and the trajectory line already
+//     tells it. Documented explicitly per the smoke.mjs contract note:
+//     geom carries no hoodPlaneY, so the recycle plane is riseIn (the
+//     real slider value) in physics space, matching the dashed hood-plane
+//     line drawn at the same pxPerIn scale.
 //   - drag: the wind arrow (0-20 mph), same shape as i01's.
 //   - presets: four site-voice scenarios.
 //   - verdict: not assigned by the plan (no capture concept here to grade).
@@ -40,9 +46,11 @@ import { createInstrument } from '../viz.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
 import { WIND_COUPLING } from '../physics/capture.mjs';
-import { MOUNT } from '../hood-presets.mjs';
 
-const NOMINAL_WIDTH_IN = 48; // decorative-only aperture for the smoke tint (see header note)
+// Deliberately oversized: every particle always registers as captured, no
+// escape tint — same rule and same values as i09 (see header note).
+const NOMINAL_WIDTH_IN = 4000;
+const NOMINAL_DEPTH_IN = 4000;
 const NOMINAL_MOUNT = 'island';
 
 const SAMPLE_STEP_IN = 2; // "sampled every 2in of rise" per brief
@@ -227,12 +235,13 @@ export function mount(figureEl) {
     scene: buildScene,
     update,
 
-    // --- living smoke: real riseIn/windMph/panels, nominal aperture for
-    //     the escape tint only (see header note). --------------------------
+    // --- living smoke: real riseIn/windMph/panels; oversized nominal
+    //     aperture so nothing ever tints as escaping (see header note —
+    //     shared always-captured rule with i09). ---------------------------
     smoke: (state) => ({
       sourceX: GX, sourceY: GY, pxPerIn: PX_PER_IN_Y,
       widthIn: NOMINAL_WIDTH_IN,
-      depthIn: MOUNT[NOMINAL_MOUNT].depthIn,
+      depthIn: NOMINAL_DEPTH_IN,
       mount: NOMINAL_MOUNT,
       riseIn: state['i03-rise'],
       windMph: state['i03-wind'],

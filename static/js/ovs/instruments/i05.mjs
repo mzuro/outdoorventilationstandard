@@ -53,8 +53,16 @@
 //     `--small`/`--left`/`--right` in components.css) and re-stamps them
 //     on a local settle-debounce (220ms of no update() calls — the
 //     engine's own settle() is only reachable from inside createInstrument
-//     and not exposed to instruments), so a held drag does not re-slam on
-//     every pointermove, matching the one-orchestrated-moment intent.
+//     and not exposed to instruments). BOTH the repaint and the slam are
+//     settle-gated (F2 review F-2 fix): update() runs on every tween frame
+//     and drag pointermove, and the stamps are aria-live, so painting
+//     per-frame walked the grades through transient intermediate values
+//     mid-tween and streamed mutations to screen readers. The stamps paint
+//     once at mount (no slam, matching the engine's updateVerdict(false)
+//     on load), then exactly once per settle; under reduced motion there
+//     are no tweens (one update() per change), so they repaint immediately
+//     per change and never slam — mirroring the engine's own
+//     settle()-per-change behavior under reduced motion.
 
 import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
@@ -255,9 +263,15 @@ export function mount(figureEl) {
     el.appendChild(g);
     const c = document.createElement('span');
     c.className = 'ovs-i-stamp-clause';
-    c.textContent = 'per OVS-H1 §2.4 / RB-005';
+    // The 0.85/0.60 grade bands are this instrument's MODEL CRITERIA — no
+    // research bulletin (and no clause on this site) defines PASS/MARGINAL
+    // bands, so they are labeled as such rather than attributed. The RB
+    // citation is where the capture reasoning lives: RB-005 §4.3 "Island
+    // Versus Wall-Mount: A Significant Performance Gap" (content/research/
+    // rb-005-hood-geometry-capture.md) — exactly this A/B comparison.
+    c.textContent = 'model criterion · capture per RB-005 §4.3';
     el.appendChild(c);
-    el.title = `Plume capture ${Math.round(cap * 100)}% — thresholds 85% PASS / 60% MARGINAL.`;
+    el.title = `Plume capture ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`;
   }
   function slamStamp(el) {
     if (!el || reducedMode) return;
@@ -265,10 +279,24 @@ export function mount(figureEl) {
     void el.offsetWidth;
     el.classList.add('ovs-i-stamp--slam');
   }
-  function scheduleSlam() {
-    if (reducedMode) return;
+  function scheduleStamps() {
+    // Repaint AND slam together, settle-gated (see header note / F2 review
+    // F-2). Reduced motion: no tweens, one update() per change — paint
+    // immediately and statically, never slam (mirrors the engine's
+    // settle()-per-change under reduced motion).
+    if (reducedMode) {
+      paintStamp(stampA, lastCapA);
+      paintStamp(stampB, lastCapB);
+      return;
+    }
     if (settleTimer) clearTimeout(settleTimer);
-    settleTimer = window.setTimeout(() => { slamStamp(stampA); slamStamp(stampB); }, 220);
+    settleTimer = window.setTimeout(() => {
+      settleTimer = null;
+      paintStamp(stampA, lastCapA);
+      paintStamp(stampB, lastCapB);
+      slamStamp(stampA);
+      slamStamp(stampB);
+    }, 220);
   }
 
   function update(state, ctx) {
@@ -309,13 +337,14 @@ export function mount(figureEl) {
     }
     ensureSmokeRaf();
 
-    paintStamp(stampA, capA);
-    paintStamp(stampB, capB);
-    // No slam on the very first (mount-time) paint — matches i01's
-    // updateVerdict(false) convention; every later change debounces to one
-    // orchestrated slam per side, 220ms after the last update() call.
+    // Stamps: NOT painted per-frame here (F2 review F-2). The mount-time
+    // update() has nothing to paint anyway (stampA/stampB don't exist until
+    // the post-mount block below, which paints them once from lastCapA/B —
+    // present from the start, no slam on load, matching i01's
+    // updateVerdict(false)); every later change settle-debounces to exactly
+    // one repaint + one slam per side via scheduleStamps().
     if (firstPaint) firstPaint = false;
-    else scheduleSlam();
+    else scheduleStamps();
   }
 
   const spec = {

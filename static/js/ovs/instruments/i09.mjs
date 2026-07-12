@@ -26,7 +26,10 @@
 //     NOMINAL_DEPTH_IN below) so every particle always registers as
 //     "captured" and none render ember-orange: there is no readout here
 //     an escape tint could agree or disagree with, so showing one would
-//     fabricate a capture story this instrument doesn't tell. One known,
+//     fabricate a capture story this instrument doesn't tell. This is the
+//     SHARED RULE for no-capture-concept instruments (i03 follows it too,
+//     same oversized values, since the F2 review's F-5 fix): never imply
+//     a capture verdict the page's physics doesn't compute. One known,
 //     cosmetic-only divergence: the drawn envelope's WIDTH is deliberately
 //     exaggerated by strengthScale beyond plumeRadius() (the visualization
 //     device described above), but smoke.mjs has no equivalent knob — the

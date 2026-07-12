@@ -22,18 +22,24 @@
 //     bands exclusively through requiredCfm().
 //   - presets: four site-voice scenarios landing exactly on their control
 //     values.
-//   - verdict: SKIPPED, documented. This instrument has no "installed/
-//     actual CFM" control — only the three physics bands (minimum,
-//     recommended, high-wind) for the CONFIGURED hood. A PASS/FAIL stamp
-//     needs something to grade an actual airflow against; the only way to
-//     produce one without a real user-supplied airflow would be a
-//     tautology (e.g. "recommended meets recommended" is always PASS) or
-//     a silently fabricated assumption about what the user's blower
-//     actually delivers. Both are less truthful than simply presenting the
-//     three bands, which is already the complete, honest answer this
-//     instrument gives. Per the plan's own escape hatch ("if you cannot
-//     define a truthful PASS/FAIL for i02, SKIP the stamp... truthfulness
-//     > feature count"), no spec.verdict is wired here.
+//   - verdict: SKIPPED, documented. NOTE: this is a deliberate DEVIATION
+//     from the plan (docs/superpowers/plans/2026-07-12-v2.1-fun-physics.md
+//     lists i02 among the verdict instruments: "verdict: i01/i02/i05/i07/
+//     i08"). The deviation is the implementer's own call, on these merits:
+//     this instrument has no "installed/actual CFM" control — only the
+//     three physics bands (minimum, recommended, high-wind) computed FOR
+//     the configured hood. A PASS/FAIL stamp needs an actual airflow to
+//     grade against those bands, and every framing available from the
+//     current control set would be untruthful: grading the tool's own
+//     recommended output against its own recommended band is a tautology
+//     (always PASS); assuming the user's blower delivers the minimum (or
+//     any other number) fabricates an input the user never supplied. Both
+//     are less truthful than presenting the three bands as-is, which is
+//     already the complete, honest answer this instrument gives — so no
+//     spec.verdict is wired here. A non-tautological verdict would need a
+//     new user-entered "rated CFM" control graded on the recommended-met
+//     basis; that is a design change deferred to a future task, not
+//     something this rollout invents.
 //   - smoke: not assigned to this instrument by the plan (it has no plume
 //     elevation to visualize).
 

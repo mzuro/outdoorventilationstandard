@@ -353,14 +353,23 @@ export function mount(figureEl) {
     ],
 
     // --- verdict stamp: capture-fraction thresholds (>=0.85 PASS,
-    //     0.60-0.85 MARGINAL, <0.60 FAIL) with a real clause reference. -------
+    //     0.60-0.85 MARGINAL, <0.60 FAIL). The bands are this instrument's
+    //     MODEL CRITERIA: no research bulletin (and no clause anywhere on
+    //     the site — "OVS-H1" exists only as header/footer chrome) defines
+    //     PASS/MARGINAL capture bands, so the stamp labels them as model
+    //     criteria rather than attributing them to a clause (F2 review F-3
+    //     fix — the earlier "OVS-H1 §2.4" resolved to nothing). The RB
+    //     citation is where the capture reasoning lives: RB-005 §2.2 "The
+    //     Capture Envelope Geometry" (content/research/
+    //     rb-005-hood-geometry-capture.md), the paper behind this
+    //     instrument's width/mount capture envelope. ------------------------
     verdict: (state, physics) => {
       const cap = physics ? physics.capFrac : 0;
       const grade = gradeCapture(cap);
       return {
         grade,
-        clauseRef: 'per OVS-H1 §2.4 / RB-005',
-        detail: `Plume capture ${Math.round(cap * 100)}% — thresholds 85% PASS / 60% MARGINAL.`,
+        clauseRef: 'model criterion · capture per RB-005 §2.2',
+        detail: `Plume capture ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`,
       };
     },
   };

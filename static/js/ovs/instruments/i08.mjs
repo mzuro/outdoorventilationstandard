@@ -349,14 +349,22 @@ export function mount(figureEl) {
     ],
 
     // --- verdict stamp: capture-fraction thresholds, same rubric as i01,
-    //     honest in both environments (see header note). --------------------
+    //     honest in both environments (see header note). The 0.85/0.60
+    //     bands are this instrument's MODEL CRITERIA (no research bulletin
+    //     or on-site clause defines PASS/MARGINAL bands; the old
+    //     "OVS-H1 §2.4" resolved to nothing — F2 review F-3). The RB
+    //     citation is where the capture reasoning lives: RB-004 §2.3
+    //     "Capture Efficiency: Indoor Versus Outdoor Definition"
+    //     (content/research/rb-004-indoor-vs-outdoor-assumptions.md) —
+    //     first-pass capture is the only capture outdoors, exactly what
+    //     this instrument grades in both environments. ----------------------
     verdict: (state, physics) => {
       const cap = physics ? physics.capFrac : 0;
       const grade = gradeCapture(cap);
       return {
         grade,
-        clauseRef: 'per OVS-H1 §2.4 / RB-004',
-        detail: `Plume capture ${Math.round(cap * 100)}% (${physics ? physics.env : 'outdoor'}) — thresholds 85% PASS / 60% MARGINAL.`,
+        clauseRef: 'model criterion · capture per RB-004 §2.3',
+        detail: `Plume capture ${Math.round(cap * 100)}% (${physics ? physics.env : 'outdoor'}) — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-004).`,
       };
     },
   };

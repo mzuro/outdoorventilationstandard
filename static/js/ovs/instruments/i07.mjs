@@ -322,14 +322,22 @@ export function mount(figureEl) {
     ],
 
     // --- verdict stamp: capture-fraction thresholds, graded on the
-    //     WITH-PANELS capture — the scenario the panels exist to fix. -------
+    //     WITH-PANELS capture — the scenario the panels exist to fix. The
+    //     0.85/0.60 bands are this instrument's MODEL CRITERIA (no research
+    //     bulletin or on-site clause defines PASS/MARGINAL bands; the old
+    //     "OVS-H1 §2.4" resolved to nothing — F2 review F-3). The RB
+    //     citation is the side-panel paper this instrument's physics is
+    //     built from: RB-009 §3.1 "Panel Wind Reduction: Comprehensive
+    //     Results" (content/research/rb-009-side-panel-effectiveness.md),
+    //     the U_eff = U_w · (1 − R_panel) attenuation that effectiveWind()
+    //     implements — apter than the previous RB-006 (F2 review F-4). ------
     verdict: (state, physics) => {
       const cap = physics ? physics.capWithPanels : 0;
       const grade = gradeCapture(cap);
       return {
         grade,
-        clauseRef: 'per OVS-H1 §2.4 / RB-006',
-        detail: `Plume capture with panels ${Math.round(cap * 100)}% — thresholds 85% PASS / 60% MARGINAL.`,
+        clauseRef: 'model criterion · capture per RB-009 §3.1',
+        detail: `Plume capture with panels ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (panel attenuation data: RB-009).`,
       };
     },
   };
