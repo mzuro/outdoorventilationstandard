@@ -26,6 +26,8 @@ categories: ["P1 — Core"]
 dataset:
   name: "RB-006 Wind Exposure and Plume Deflection Tables"
   description: "Tabulated model outputs from RB-006 quantifying how ambient wind affects buoyant cooking plume trajectory and hood capture: crosswind Froude-number regime classification, entrainment-coefficient adjustment factors by Froude number, terrain-based gust factors and turbulence intensity by terrain class, and near-ground wind-shear profiles by installation setting. Values are derived from Briggs plume-rise and crossflow jet theory, not field-measured wind data collected for this application."
+  csv: "/data/rb-006-crosswind-froude-number.csv"
+  csvDescription: "Table 3.3 (Gas Grill Medium, Q_c = 8.2 kW): crosswind Froude number Fr = U_w / u_0(z) at 5 mounting heights x 5 wind speeds — transcribed verbatim from the paper body."
   variableMeasured:
     - "Crosswind Froude number regime"
     - "Entrainment coefficient adjustment factor (wind-affected)"

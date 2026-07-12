@@ -27,6 +27,8 @@ downstream_topics:
 dataset:
   name: "RB-003 Velocity Decay and CFM-vs-Height Tables"
   description: "Tabulated centerline and off-centerline velocity decay profiles and CFM-versus-mounting-height requirements for outdoor cooking plumes, covering mounting heights from 6 to 72 inches above the cooking surface across all source types (gas, charcoal, wood-fired, pellet). Derived from Heskestad centerline velocity correlations and Gaussian off-centerline velocity profiles; values are physics-model outputs, not field-measured velocities."
+  csv: "/data/rb-003-centerline-velocity-decay.csv"
+  csvDescription: "Table 3.1b: centerline velocity u0 (ft/min) from 6 to 72 inches above the cooking surface for all 8 representative source types — transcribed verbatim from the paper body."
   variableMeasured:
     - "Centerline velocity decay with height"
     - "Off-centerline velocity as a fraction of centerline (Gaussian profile)"

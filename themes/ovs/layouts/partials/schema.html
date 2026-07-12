@@ -102,6 +102,13 @@
   {{- with $ds.measurementTechnique }},
   "measurementTechnique": {{ . | jsonify | safeJS }}
   {{- end }}
+  {{- with $ds.csv }},
+  "distribution": {
+    "@type": "DataDownload",
+    "encodingFormat": "text/csv",
+    "contentUrl": {{ (. | absURL) | jsonify | safeJS }}
+  }
+  {{- end }}
 }
 </script>
 {{- end }}
