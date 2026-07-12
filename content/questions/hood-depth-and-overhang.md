@@ -15,7 +15,7 @@ A cooking plume starts about 14 inches in radius at the grill surface — 28 inc
 
 ## Overhang isn't cosmetic
 
-Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower. The instrument above is set to a 54-inch island hood; note how much of that width is overhang beyond a typical grill footprint rather than grill coverage itself.
+Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower. The instrument above is set to a 54-inch island hood; note how much of that width is overhang beyond a typical grill footprint rather than grill coverage itself. Open the full [Capture Demonstrator](/tools/capture-demonstrator/) to move mounting height, width, and wind together and watch the capture boundary shift.
 
 ## Width matters less than people expect — at fixed wind
 
