@@ -1513,9 +1513,18 @@ a.ovs-chip:hover {
 }
 
 .ovs-i-svg .ovs-i-drag-hood-edge:hover,
-.ovs-i-svg .ovs-i-drag-wind:hover {
+.ovs-i-svg .ovs-i-drag-wind:hover,
+.ovs-i-svg .ovs-i-drag-height:hover,
+.ovs-i-svg .ovs-i-drag-tracer:hover,
+.ovs-i-svg .ovs-i-drag-hood-edge-a:hover,
+.ovs-i-svg .ovs-i-drag-hood-edge-b:hover {
   fill: var(--accent-wash);
 }
+
+/* v2.1 (F2) rollout: i04's measuring-line handle and i06's tracer handle
+   drag vertically/horizontally rather than the wind-arrow's fixed
+   ew-resize, so their cursor is set inline per-instrument (spec.drag
+   `cursor`); touch-action:none still applies via .ovs-i-draggable above. */
 
 /* ---- preset chips ----
    A wrap-friendly row above the controls; each chip animates every control
@@ -1543,7 +1552,13 @@ a.ovs-chip:hover {
   white-space: nowrap;
 }
 
-.ovs-i-preset:hover {
+/* :not(--active) matters: :hover's specificity (class+pseudo-class) beats
+   --active's (single class) regardless of source order, so without this
+   exclusion hovering the ACTIVE chip paints --accent text on an --accent
+   background (invisible) — found in the F2 rollout once presets existed on
+   10 pages instead of 1; pre-existing since F1, fixed here as a tiny,
+   in-scope CSS correction rather than carrying it forward untouched. */
+.ovs-i-preset:hover:not(.ovs-i-preset--active) {
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -1593,6 +1608,30 @@ a.ovs-chip:hover {
 .ovs-i-stamp[data-grade="FAIL"] {
   border-color: var(--fail);
   color: var(--fail);
+}
+
+/* v2.1 (F2): i05 needs TWO stamps (one per A/B side) rather than the
+   engine's single centered spec.verdict stamp, so it builds its own pair
+   directly (see i05.mjs) reusing this same visual language. --small keeps
+   them from crowding the narrower mini-scenes; --left/--right pin them
+   under their own side instead of the single-stamp default corner. */
+.ovs-i-stamp--small {
+  padding: 0.18rem 0.5rem;
+  border-width: 2px;
+}
+
+.ovs-i-stamp--small .ovs-i-stamp-grade {
+  font-size: 0.8rem;
+}
+
+.ovs-i-stamp--left {
+  left: 16px;
+  right: auto;
+}
+
+.ovs-i-stamp--right {
+  right: 16px;
+  left: auto;
 }
 
 .ovs-i-stamp-grade {
