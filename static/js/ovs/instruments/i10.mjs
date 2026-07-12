@@ -28,6 +28,18 @@
 // constant 1 regardless of riseIn/steps (z=0 <= centerlineVelocity's z0,
 // so centerlineVelocity(0..z0) === w0 always) — so this is not a new
 // formula, just the same exported function called at a different height.
+//
+// v2.1 (F2) adoption:
+//   - presets: four site-voice scenarios covering both VIEW tabs (one
+//     taxonomy, three deposition heights). Per the plan, this is the ONLY
+//     v2.1 feature this instrument adopts.
+//   - verdict: SKIPPED, per the plan's explicit list. The taxonomy tab is
+//     a reference tree, not a measurement; the deposition tab's intensity
+//     is a relative (0-1) profile shape with no pass/fail threshold of
+//     its own — RB-007's classification (design-locked / correctable) is
+//     already presented per failure mode via its own tag, which is a
+//     better-fit affordance than a single scene-wide stamp.
+//   - drag/smoke: not assigned by the plan.
 
 import { createInstrument } from '../viz.mjs';
 import { depositionProfile } from '../physics/grease.mjs';
@@ -221,6 +233,15 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- story presets: one taxonomy scenario + three deposition heights.
+    //     No spec.verdict — see the header comment. ------------------------
+    presets: [
+      { id: 'browse-the-failure-modes', label: 'Browse the failure modes', state: { 'i10-view': 'taxonomy', 'i10-height': 15 } },
+      { id: 'deposition-at-the-grate', label: 'Deposition at the grate', state: { 'i10-view': 'deposition', 'i10-height': 2 } },
+      { id: 'deposition-mid-hood', label: 'Deposition mid-hood', state: { 'i10-view': 'deposition', 'i10-height': 15 } },
+      { id: 'deposition-near-the-hood', label: 'Deposition near the hood', state: { 'i10-view': 'deposition', 'i10-height': 28 } },
+    ],
   };
 
   createInstrument(container, spec);
