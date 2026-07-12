@@ -22,8 +22,38 @@
 // value is snapped to 0 via the engine's own `set()` so the slider and the
 // physics never disagree. The pre-indoor wind value is remembered and
 // restored when the user returns to OUTDOOR.
+//
+// v2.1 (F2) adoption:
+//   - smoke: OUTDOOR ONLY, per the plan. spec.smoke is a pure function of
+//     state and never calls inst.set() or touches lastEnv, so it cannot
+//     interact with the delicate env-switch reentrancy guard in update()
+//     above (documented there) — it is fully orthogonal to it. To hide
+//     the smoke indoors WITHOUT an engine hook for "pause this field"
+//     (the engine only exposes create/update/frame internally; there is
+//     no per-instrument pause() reachable from spec.smoke), this collapses
+//     the geom to a degenerate, physically-inert state when indoor:
+//     riseIn: 0 and w0: 1 (a tiny NONZERO velocity scale — w0: 0 would
+//     make centerlineVelocity()===0 everywhere, and riseK() in smoke.mjs
+//     divides by centerlineVelocity(...), so an exact 0 produces a 0/0
+//     NaN that corrupts every live particle's z permanently; w0: 1 keeps
+//     that denominator finite while still making the rise speed ~0). With
+//     riseIn: 0, every spawned particle's retirement test
+//     (z >= riseIn*1.02 === 0) is already true at spawn (z starts > 0),
+//     so it is recycled the same frame it is created — no particles ever
+//     draw indoors, verified in the F2 puppeteer sweep (0 `.ovs-i-smoke`
+//     nodes indoors, particles resume immediately on returning outdoor).
+//   - presets: four site-voice scenarios (three outdoor wind levels, one
+//     indoor) — the indoor preset sets `i08-wind: 0` explicitly so it
+//     matches what the environment switch would force anyway, rather than
+//     relying on that side effect.
+//   - verdict: capture thresholds, same rubric as i01. Applies in BOTH
+//     environments — indoor's capture number is exactly as honestly
+//     computed (captureFraction at windMph=0) as outdoor's, so grading it
+//     is not a stretch; it typically lands PASS indoors, which is itself
+//     an informative confirmation of the instrument's point.
+//   - drag: not assigned by the plan (no hood/width control here).
 
-import { createInstrument } from '../viz.mjs';
+import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
@@ -125,6 +155,10 @@ export function mount(figureEl) {
     svg.appendChild(refs.plumeL);
     svg.appendChild(refs.plumeR);
 
+    // living-smoke layer mount — outdoor only, see header note.
+    refs.smokeMount = H.el('g', { class: 'ovs-i-smoke-mount' });
+    svg.appendChild(refs.smokeMount);
+
     refs.wisp1 = H.el('path', { class: 'ovs-i-wisp', d: '', opacity: 0 });
     svg.appendChild(refs.wisp1);
 
@@ -201,6 +235,9 @@ export function mount(figureEl) {
     });
     setReadout('capture', capFrac);
     setReadout('assumptionCount', ASSUMPTIONS[env].length);
+
+    // expose physics to the engine's verdict stamp (spec.verdict)
+    ctx.physics = { capFrac, env };
 
     // --- highlight the active side --------------------------------------
     refs.room.setAttribute('opacity', env === 'indoor' ? 1 : 0.18);
@@ -288,6 +325,40 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- living smoke: outdoor-only (see header note for the riseIn:0/
+    //     w0:1 indoor-collapse mechanism). -----------------------------------
+    smoke: (state) => {
+      const outdoor = state['i08-environment'] === 'outdoor';
+      return {
+        sourceX: GX, sourceY: GY, pxPerIn,
+        widthIn: WIDTH_IN, depthIn: DEPTH_IN, mount: MOUNT_VAL,
+        riseIn: outdoor ? RISE_IN : 0,
+        windMph: outdoor ? state['i08-wind'] : 0,
+        panels: 'none',
+        w0: outdoor ? 400 : 1,
+      };
+    },
+
+    // --- story presets: three outdoor wind levels + one indoor. ------------
+    presets: [
+      { id: 'calm-outdoor-evening', label: 'Calm outdoor evening', state: { 'i08-environment': 'outdoor', 'i08-wind': 0 } },
+      { id: 'breezy-outdoor-patio', label: 'Breezy outdoor patio', state: { 'i08-environment': 'outdoor', 'i08-wind': 8 } },
+      { id: 'windy-outdoor-exposure', label: 'Windy outdoor exposure', state: { 'i08-environment': 'outdoor', 'i08-wind': 12 } },
+      { id: 'indoor-kitchen', label: 'Indoor kitchen', state: { 'i08-environment': 'indoor', 'i08-wind': 0 } },
+    ],
+
+    // --- verdict stamp: capture-fraction thresholds, same rubric as i01,
+    //     honest in both environments (see header note). --------------------
+    verdict: (state, physics) => {
+      const cap = physics ? physics.capFrac : 0;
+      const grade = gradeCapture(cap);
+      return {
+        grade,
+        clauseRef: 'per OVS-H1 §2.4 / RB-004',
+        detail: `Plume capture ${Math.round(cap * 100)}% (${physics ? physics.env : 'outdoor'}) — thresholds 85% PASS / 60% MARGINAL.`,
+      };
+    },
   };
 
   inst = createInstrument(container, spec);
