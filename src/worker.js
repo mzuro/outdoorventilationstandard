@@ -1,9 +1,59 @@
 // Module-level cache for AI context (refreshes when Worker instance recycles)
 let cachedContext = null;
 let cachedPages = null;
+let cachedValidUrls = null;
+
+// Own origin — the only absolute-URL origin ever accepted from model output.
+const SITE_ORIGIN = 'https://outdoorventilationstandard.com';
+
+// Pure helper: given the ask response's proposed links (label/url pairs,
+// where `url` may originate from unsanitized model output) and the set of
+// real site page URLs (from index.json), return only links that point at
+// an actual page on our own origin. Accepts:
+//   (a) relative paths starting with "/" that resolve (after normalizing
+//       any "/../" per URL semantics) to a URL in validUrls, or
+//   (b) absolute URLs whose origin is exactly SITE_ORIGIN, converted to
+//       their relative path and checked the same way.
+// Everything else (javascript:, protocol-relative //host, external
+// https://, malformed strings, paths not in validUrls) is dropped
+// silently. Deduplicates by resulting path.
+function sanitizeLinks(links, validUrls) {
+  if (!Array.isArray(links) || !(validUrls instanceof Set)) return [];
+  const out = [];
+  const seen = new Set();
+
+  for (const link of links) {
+    if (!link || typeof link.url !== 'string') continue;
+    const raw = link.url.trim();
+    if (!raw) continue;
+
+    let parsed;
+    try {
+      // Resolving against SITE_ORIGIN turns a leading-"/" relative path
+      // into an absolute URL on our own origin and collapses "/../"
+      // traversal per the URL spec. A protocol-relative "//host/..." or
+      // an absolute "https://other/..." resolves to that *other* origin,
+      // so the origin check below still rejects it.
+      parsed = new URL(raw, SITE_ORIGIN);
+    } catch (e) {
+      continue; // not a parseable URL at all
+    }
+
+    if (parsed.origin !== SITE_ORIGIN) continue; // wrong origin — drop
+
+    const path = parsed.pathname;
+    if (!validUrls.has(path)) continue; // not a real site page — drop
+    if (seen.has(path)) continue;
+    seen.add(path);
+
+    out.push({ label: typeof link.label === 'string' && link.label ? link.label : path, url: path });
+  }
+
+  return out;
+}
 
 async function buildContext(env) {
-  if (cachedContext) return { context: cachedContext, pages: cachedPages };
+  if (cachedContext) return { context: cachedContext, pages: cachedPages, validUrls: cachedValidUrls };
 
   try {
     const res = await env.ASSETS.fetch(new Request('https://dummy/index.json'));
@@ -14,6 +64,7 @@ async function buildContext(env) {
     );
 
     cachedPages = relevant;
+    cachedValidUrls = new Set(pages.map(p => p.url));
     cachedContext = relevant.map(p => {
       let entry = `## ${p.title} (${p.url})`;
       if (p.description) entry += `\n${p.description}`;
@@ -21,9 +72,9 @@ async function buildContext(env) {
       return entry;
     }).join('\n\n');
 
-    return { context: cachedContext, pages: cachedPages };
+    return { context: cachedContext, pages: cachedPages, validUrls: cachedValidUrls };
   } catch (e) {
-    return { context: null, pages: null };
+    return { context: null, pages: null, validUrls: null };
   }
 }
 
@@ -206,7 +257,7 @@ async function handleFetch(request, env) {
           });
         }
 
-        const { context } = await buildContext(env);
+        const { context, validUrls } = await buildContext(env);
         if (!context) {
           return new Response(JSON.stringify({ error: 'context_unavailable' }), {
             status: 503,
@@ -258,12 +309,18 @@ async function handleFetch(request, env) {
         let answerBody = responseText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '').trim();
         answerBody = answerBody.replace(/\n\s*\n/g, '\n').trim();
 
+        // Model output flows into `links` above via linkRegex — a prompt
+        // injection could emit a javascript: URI or an attacker-controlled
+        // external link and have it rendered as a trusted citation. Only
+        // links that resolve to a real page on our own origin survive.
+        const safeLinks = sanitizeLinks(links, validUrls);
+
         // Log successful AI request
         await logAiRequest(env, question, 'ok', ip);
 
         return new Response(JSON.stringify({
           answer: answerBody,
-          links: links.length > 0 ? links : [
+          links: safeLinks.length > 0 ? safeLinks : [
             { label: 'Browse all research', url: '/research/' },
             { label: 'Explore tools', url: '/tools/' }
           ],
