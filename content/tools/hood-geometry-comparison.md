@@ -9,6 +9,11 @@ categories: ["Tools"]
 ShowToc: false
 weight: 4
 instrument_id: "i05"
+related_questions:
+  - "/questions/island-vs-wall-hood/"
+related_papers:
+  - "/research/rb-005-hood-geometry-capture/"
+  - "/research/rb-002-entrainment-lateral-plume-spread/"
 ---
 
 This diagram compares three hood configurations over the same cooking source, showing why overhang — the distance the hood extends beyond the cooking surface — is the single most important design parameter for outdoor capture performance.
@@ -22,6 +27,20 @@ This diagram compares three hood configurations over the same cooking source, sh
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same capture-fraction module (`physics/capture.mjs`) driving the width-versus-mount comparison above, at a fixed 30-inch rise and an 8 mph crosswind — the live instrument's default; live values update as you move the width and wind controls.*
+
+| Hood width | Wall mount | Island mount |
+|---|---|---|
+| 42″ | 95% | 46% |
+| 48″ | 96% | 46% |
+| 54″ | 96% | 46% |
+| 60″ | 96% | 46% |
+| 72″ | 96% | 46% |
+
+At an 8 mph crosswind, widening the hood from 42 to 72 inches moves wall-mount capture only from 95% to 96%, and moves island-mount capture not at all — capture holds flat at 46% across the entire lineup [RB-006 §3.1]. That is because width only buys lateral coverage; in this model a crosswind pushes the plume off the hood's front-to-back axis, and no amount of extra width recovers axial capture lost to wind [RB-005 §2.2]. The 50-point gap between wall (96%) and island (46%) at the same width and wind speed is the Coanda wall-reflection effect quantified in RB-005 [RB-005 §3.4.3].
 
 ## Key Findings
 

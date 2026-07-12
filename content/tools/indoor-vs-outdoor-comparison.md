@@ -9,6 +9,14 @@ categories: ["Tools"]
 ShowToc: false
 weight: 7
 instrument_id: "i08"
+related_questions:
+  - "/questions/what-cfm-do-i-need/"
+  - "/questions/do-side-panels-work/"
+related_papers:
+  - "/research/rb-004-indoor-vs-outdoor-assumptions/"
+  - "/research/rb-005-hood-geometry-capture/"
+  - "/research/rb-008-cfm-requirements/"
+  - "/research/rb-009-side-panel-effectiveness/"
 ---
 
 This diagram contrasts plume capture in enclosed indoor environments versus open-boundary outdoor environments. The physics are fundamentally different — indoor hoods benefit from four structural advantages that do not exist outdoors.
@@ -22,6 +30,20 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same capture-fraction module (`physics/capture.mjs`) driving the instrument above, at a fixed 48-inch island hood — this instrument's only control is wind speed, since it isolates the outdoor wind-exposure effect from hood geometry; live values update as you move the control.*
+
+| Wind speed | Modeled outdoor capture |
+|---|---|
+| 0 mph (indoor-equivalent, still air) | 97% |
+| 3 mph | 92% |
+| 5 mph | 79% |
+| 8 mph | 46% |
+| 12 mph | 10% |
+
+In still air, this 48-inch island hood models at 97% capture — close to the near-100% indoor baseline RB-004 describes, since none of the four indoor advantages are wind-related [RB-004 §2.1]. Introducing an 8 mph crosswind, with no other change to the hood, drops modeled capture to about 46%, squarely inside the 40-60% outdoor range RB-004 reports as the real-world consequence of losing wall confinement, ceiling redirection, and pressure assist [RB-004 §2.1]. By 12 mph, modeled capture falls to about 10%, the same order of magnitude RB-008 uses to justify a 5.75x wind-exposure multiplier over the sheltered CFM baseline [RB-008 §3.9].
 
 ## The Four Indoor Advantages
 

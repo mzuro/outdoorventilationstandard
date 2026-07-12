@@ -9,6 +9,11 @@ categories: ["Tools"]
 ShowToc: false
 weight: 6
 instrument_id: "i07"
+related_questions:
+  - "/questions/do-side-panels-work/"
+related_papers:
+  - "/research/rb-009-side-panel-effectiveness/"
+  - "/research/rb-006-wind-interaction-crossflow/"
 ---
 
 This diagram shows the dramatic improvement in capture performance when side panels are added to an outdoor hood installation. Panels are the single most effective post-installation intervention for wind-exposed sites.
@@ -22,6 +27,20 @@ This diagram shows the dramatic improvement in capture performance when side pan
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same capture-fraction and panel-effectiveness modules (`physics/capture.mjs`, `physics/sidepanels.mjs`) driving the instrument above, at a 48-inch island hood; live values update as you move the wind and panel controls.*
+
+| Wind speed | Without panels | With panels (both sides) |
+|---|---|---|
+| 0 mph | 97% | 97% |
+| 4 mph | 86% | 96% |
+| 8 mph | 46% | 91% |
+| 12 mph | 10% | 80% |
+| 16 mph | 1% | 65% |
+
+On a 48-inch island hood in an 8 mph breeze, this model's capture rises from about 46% with no side panels to about 91% with panels on both sides — the same panel configuration the calculator above defaults to [RB-009 §2.1]. Panels on both sides cut the wind speed the plume actually experiences to 40% of ambient, which is why the capture gap between panels and no panels widens rather than narrows as wind speed increases (from 0 points at 0 mph to 64 points at 16 mph) [RB-009 §2.1]. Even at 16 mph — well above the "Exposed" threshold — a panel-equipped hood in this model still holds 65% capture, while the unshielded hood has collapsed to about 1% [RB-006 §3.8].
 
 ## Key Findings
 
