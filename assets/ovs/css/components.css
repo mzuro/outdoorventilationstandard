@@ -622,6 +622,42 @@ a.ovs-chip:hover {
   margin: 0;
 }
 
+/* three tappable follow-up chips (AI #6) — refill + re-submit the ask box */
+.ovs-ask-followups,
+.ovs-ai-result-followups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ovs-followups-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-transform: uppercase;
+  margin-right: 0.2rem;
+}
+
+.ovs-followup-chip {
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ovs-followup-chip:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
 .ovs-ask-another {
   display: inline-block;
   margin-top: 0.6rem;
@@ -1071,6 +1107,82 @@ a.ovs-chip:hover {
   font-size: 0.74rem;
   color: var(--faint);
   border-top: 1px solid var(--line);
+}
+
+/* ---------- "Explain this configuration" (AI #7, i01/i02 only) ---------- */
+.ovs-explain {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.ovs-explain-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.ovs-explain-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.55rem 1rem;
+}
+
+.ovs-explain-btn:hover {
+  border-color: var(--accent);
+}
+
+.ovs-explain-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ovs-explain-result {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+}
+
+.ovs-explain-result[hidden] {
+  display: none;
+}
+
+/* Authoritative server-computed readout inside the explain result (W3
+   review MAJOR-1). Reuses the instrument engine's .ovs-i-readout* row
+   classes for exact visual consistency; this wrapper just re-fits the
+   engine's .ovs-i-readouts container (surface-2 bg + top border) to sit
+   inside the result panel, separated from the narration below it. */
+.ovs-explain-state.ovs-i-readouts {
+  background: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 0.7rem;
+  margin: 0 0 0.7rem;
+}
+
+.ovs-explain-text {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 0.7rem;
+}
+
+.ovs-explain-citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 /* ==========================================================================
