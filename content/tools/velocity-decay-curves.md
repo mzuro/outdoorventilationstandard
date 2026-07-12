@@ -9,6 +9,11 @@ categories: ["Tools"]
 ShowToc: false
 weight: 5
 instrument_id: "i06"
+related_questions:
+  - "/questions/mounting-height/"
+related_papers:
+  - "/research/rb-001-buoyant-plume-behavior/"
+  - "/research/rb-003-velocity-decay-capture/"
 ---
 
 This diagram visualizes centerline velocity decay from the cooking surface up to hood mounting height for a single reference plume, calibrated to a representative ~60,000 BTU gas grill (see Governing Equation below). Stronger and weaker sources — wood-fired at one end, pellet smokers at the other — shift the curve up or down without changing its shape; those source-type differences are quantified in [RB-003](/research/rb-003-velocity-decay-capture/) rather than drawn as separate curves here.
@@ -22,6 +27,23 @@ This diagram visualizes centerline velocity decay from the cooking surface up to
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same centerline-velocity function (`physics/plume.mjs`) driving the instrument above; live values update as you move the distance control.*
+
+| Distance above source | Centerline velocity |
+|---|---|
+| 6″ | 400 fpm |
+| 12″ | 400 fpm |
+| 18″ | 349 fpm |
+| 24″ | 317 fpm |
+| 30″ | 295 fpm |
+| 36″ | 277 fpm |
+| 48″ | 252 fpm |
+| 60″ | 234 fpm |
+
+Centerline velocity holds at 400 fpm from the cooking surface up to the 12-inch reference height, then decays to about 295 fpm by a 30-inch mounting height and 252 fpm by 48 inches — a cube-root decay, not a linear one [RB-003 §2.1]. Even at 60 inches, well beyond any standard mounting height, this reference plume's centerline velocity (234 fpm) stays more than double the ASHRAE 100 fpm capture-velocity reference cited elsewhere on this site [RB-003 §2.5]. The velocity loss from 24 to 48 inches (317 to 252 fpm, a 21% drop) is proportionally smaller than the mass-flow and plume-width growth over the same interval, which is why RB-008's CFM tables — not centerline velocity — govern hood sizing at greater mounting heights [RB-003 §4.1].
 
 ## Key Findings
 

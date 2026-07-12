@@ -29,6 +29,8 @@ downstream_topics:
 dataset:
   name: "RB-008 CFM Sizing Tables for Outdoor Cooking Hoods"
   description: "Consolidated CFM (required exhaust airflow) lookup tables for outdoor cooking hood sizing, covering gas, charcoal, wood-fired, and pellet source types, standard mounting heights from 18 to 48 inches, and four wind exposure classes (Sheltered, Moderate, Exposed, Severe). Derived from plume mass-flow, hood-geometry correction, and wind-exposure correction factors developed in RB-001, RB-003, RB-005, and RB-006. These are physics-model outputs, not measured airflow data from installed hoods."
+  csv: "/data/rb-008-cfm-sizing-tables.csv"
+  csvDescription: "Tables 3.2a-3.2d combined: required CFM by source type, mounting height, and wind exposure class — transcribed verbatim from the paper body."
   variableMeasured:
     - "Required exhaust airflow (CFM)"
     - "Wind exposure correction factor (K_CFM)"
