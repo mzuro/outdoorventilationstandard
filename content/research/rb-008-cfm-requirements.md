@@ -26,6 +26,15 @@ downstream_topics:
   - "RB-009: Side Panel and Wind Baffle Effectiveness"
   - "RB-010: Blower and Duct Sizing for Outdoor Installations"
   - "RB-012: Thermal Radiation and Plume Interaction at Hood Surfaces"
+dataset:
+  name: "RB-008 CFM Sizing Tables for Outdoor Cooking Hoods"
+  description: "Consolidated CFM (required exhaust airflow) lookup tables for outdoor cooking hood sizing, covering gas, charcoal, wood-fired, and pellet source types, standard mounting heights from 18 to 48 inches, and four wind exposure classes (Sheltered, Moderate, Exposed, Severe). Derived from plume mass-flow, hood-geometry correction, and wind-exposure correction factors developed in RB-001, RB-003, RB-005, and RB-006. These are physics-model outputs, not measured airflow data from installed hoods."
+  variableMeasured:
+    - "Required exhaust airflow (CFM)"
+    - "Wind exposure correction factor (K_CFM)"
+    - "Height-scaling CFM ratio"
+    - "Convective heat release rate (kW)"
+  measurementTechnique: "Physics-based sizing model combining Heskestad plume correlations, hood-geometry capture factors, and wind-exposure correction factors; not field-measured airflow data"
 ---
 
 **Research Program:** Outdoor Ventilation Standard
