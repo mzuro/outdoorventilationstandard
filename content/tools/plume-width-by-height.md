@@ -1,6 +1,6 @@
 ---
 title: "Plume Width by Height"
-description: "Visualization of plume capture diameter expansion from cooking surface to hood mounting heights for four representative source types. Shows why hoods must be wider than the cooking surface."
+description: "Visualization of reference-plume capture diameter expansion from cooking surface to hood mounting height. Shows why hoods must be wider than the cooking surface."
 date: 2025-11-10
 lastmod: 2026-07-11
 reviewed: true

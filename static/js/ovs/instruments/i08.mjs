@@ -252,7 +252,10 @@ export function mount(figureEl) {
       const article = container.querySelector('.ovs-i-instrument');
       refs.assumptionsWrap = document.createElement('div');
       refs.assumptionsWrap.className = 'ovs-i-assumptions';
-      const heading = document.createElement('h4');
+      // h3, not h4: the instrument title is an h2 (viz.mjs, T19 D.9), so
+      // an h4 here would skip a level. Styled via the class, not the tag.
+      const heading = document.createElement('h3');
+      heading.className = 'ovs-i-assumptions-head';
       heading.textContent = 'ASSUMPTIONS IN THIS VIEW';
       refs.assumptionsList = document.createElement('ul');
       refs.assumptionsWrap.appendChild(heading);

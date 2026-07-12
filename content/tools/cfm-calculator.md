@@ -1,6 +1,6 @@
 ---
 title: "CFM Sizing Calculator"
-description: "Physics-based interactive calculator for determining minimum exhaust airflow (CFM) for outdoor cooking ventilation hoods. Covers all source types, mounting heights, and wind exposure classes."
+description: "Physics-based interactive calculator for determining minimum exhaust airflow (CFM) for outdoor cooking ventilation hoods, from hood width, mount type, wind exposure, and burner rating."
 date: 2025-12-15
 lastmod: 2026-07-11
 reviewed: true
@@ -31,7 +31,7 @@ The calculator uses the following physics:
 ## Source Papers
 
 - [RB-001: Buoyant Plume Behavior](/research/rb-001-buoyant-plume-behavior/) — Heat release rate data
-- [RB-003: Velocity Decay and Capture](/research/rb-003-velocity-decay-capture/) — Mass flow and CFM multiplier framework
-- [RB-005: Hood Geometry and Capture](/research/rb-005-hood-geometry-capture/) — Infiltration factor derivation
+- [RB-003: Velocity Decay and Capture](/research/rb-003-velocity-decay-capture/) — ASHRAE face-velocity band underlying the 100 fpm capture velocity
+- [RB-005: Hood Geometry and Capture](/research/rb-005-hood-geometry-capture/) — Capture geometry and the island premium range behind the mount multipliers
 - [RB-006: Wind Interaction and Crossflow](/research/rb-006-wind-interaction-crossflow/) — Wind correction factors
-- [RB-008: CFM Requirements](/research/rb-008-cfm-requirements/) — Complete methodology and lookup tables
+- [RB-008: CFM Requirements](/research/rb-008-cfm-requirements/) — CFM sizing methodology (§3.9) and the depth-independence result (§3.4.3)

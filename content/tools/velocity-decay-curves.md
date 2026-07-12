@@ -1,6 +1,6 @@
 ---
 title: "Velocity Decay Curves"
-description: "Centerline velocity decay visualization for buoyant cooking plumes across four source types, showing capture reliability thresholds at standard hood mounting heights."
+description: "Centerline velocity decay visualization for a reference buoyant cooking plume at standard hood mounting heights, with source-type variation discussed per RB-003."
 date: 2025-11-01
 lastmod: 2026-07-11
 reviewed: true
@@ -11,7 +11,7 @@ weight: 5
 instrument_id: "i06"
 ---
 
-This diagram visualizes the centerline velocity decay from cooking surface to hood mounting heights for four representative outdoor cooking source types. The minimum capture velocity threshold (0.8 m/s) separates the reliable capture zone from conditions where capture becomes unreliable without compensating exhaust rates.
+This diagram visualizes centerline velocity decay from the cooking surface up to hood mounting height for a single reference plume, calibrated to a representative ~60,000 BTU gas grill (see Governing Equation below). Stronger and weaker sources — wood-fired at one end, pellet smokers at the other — shift the curve up or down without changing its shape; those source-type differences are quantified in [RB-003](/research/rb-003-velocity-decay-capture/) rather than drawn as separate curves here.
 
 <div style="max-width: 800px; margin: 0 auto;">
 
