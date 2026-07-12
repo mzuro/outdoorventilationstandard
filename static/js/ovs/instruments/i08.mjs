@@ -156,7 +156,18 @@ export function mount(figureEl) {
     // engine's startTween re-enters update() synchronously, so a stale
     // lastEnv here would recurse forever ("Maximum call stack size
     // exceeded"). With lastEnv already committed, the reentrant call sees
-    // env === lastEnv and falls straight through to the normal paint. ---
+    // env === lastEnv and falls straight through to the normal paint.
+    //
+    // After inst.set() the outer frame RETURNS EARLY: its `state` argument
+    // was snapshotted before the set, so letting it finish would overwrite
+    // the reentrant paint with stale values (e.g. outdoor restore painting
+    // capture/label from wind = 0 while the slider shows the restored
+    // value). The engine guarantees a fresh paint for every range set() —
+    // synchronously under reduced motion or when the value is already at
+    // target, otherwise on the tween's first rAF tick — so nothing is
+    // lost by bailing out here. The early return only happens when set()
+    // was actually called: the initial mount paint also lands in this
+    // block (lastEnv === null) and must fall through to paint normally. ---
     if (env !== lastEnv) {
       const prevEnv = lastEnv;
       lastEnv = env;
@@ -165,8 +176,11 @@ export function mount(figureEl) {
         // restores it instead of leaving the slider parked at 0.
         savedWind = inst.get()['i08-wind'];
         inst.set('i08-wind', 0);
-      } else if (inst && env === 'outdoor' && prevEnv === 'indoor' && savedWind != null) {
+        return;
+      }
+      if (inst && env === 'outdoor' && prevEnv === 'indoor' && savedWind != null) {
         inst.set('i08-wind', savedWind);
+        return;
       }
     }
 
