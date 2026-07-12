@@ -3,7 +3,7 @@
 // Same module contract as i01.mjs/i02.mjs (the canonical pattern): a single
 // `mount(figureEl)` export, re-mount guarded, physics only from
 // ../physics/{wind,plume,sidepanels,capture}.mjs (capture.mjs supplies only
-// the SHELTER calibration constant — no captureFraction here, this
+// the WIND_COUPLING calibration constant — no captureFraction here, this
 // instrument isolates the deflection integrator by itself).
 //
 // This instrument has no mount/width control (unlike i01/i02), so it does
@@ -21,7 +21,7 @@
 import { createInstrument } from '../viz.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
-import { SHELTER } from '../physics/capture.mjs';
+import { WIND_COUPLING } from '../physics/capture.mjs';
 
 const SAMPLE_STEP_IN = 2; // "sampled every 2in of rise" per brief
 const MAX_RISE_IN = 48; // control max — sets the fixed vertical scale
@@ -125,7 +125,7 @@ export function mount(figureEl) {
     // The wind the plume actually feels: panel attenuation x at-grade
     // shelter — exactly what the deflection readout and the drawn
     // trajectory must share so they never disagree (RB-006).
-    const plumeWind = SHELTER * effWind;
+    const plumeWind = WIND_COUPLING * effWind;
     const deflAtHood = deflection(riseIn, plumeWind);
 
     setReadout('deflection', deflAtHood);

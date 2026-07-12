@@ -23,6 +23,13 @@ test('side panels help in wind', () => {
   assert.ok(captureFraction({ ...base, windMph: 8, panels: 'both' }) >
             captureFraction({ ...base, windMph: 8 }));
 });
+test('both side panels recover 15-20 pts capture at 5 mph', () => {
+  // RB-006 §3.9.1: full side panels recover 15-20% capture efficiency at 5 mph.
+  const none = captureFraction({ ...base, windMph: 5 });
+  const both = captureFraction({ ...base, windMph: 5, panels: 'both' });
+  const pts = (both - none) * 100;
+  assert.ok(pts >= 14 && pts <= 20, `recovery ${pts.toFixed(1)} pts`);
+});
 test('bounded 0..1 at extremes', () => {
   const c = captureFraction({ ...base, windMph: 40 });
   assert.ok(c >= 0 && c <= 1);

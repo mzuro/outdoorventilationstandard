@@ -14,7 +14,7 @@
 // stops fully capturing the plume.
 
 import { createInstrument } from '../viz.mjs';
-import { captureFraction, SHELTER } from '../physics/capture.mjs';
+import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
@@ -161,7 +161,7 @@ export function mount(figureEl) {
     // The wind the plume actually feels: panel attenuation × at-grade
     // shelter — exactly what captureFraction integrates with, so the drawn
     // trajectory and the deflection readout agree with the capture number.
-    const plumeWind = SHELTER * effWind;
+    const plumeWind = WIND_COUPLING * effWind;
     const deflAtHood = deflection(RISE_IN, plumeWind);
     const capFrac = captureFraction({
       widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels,

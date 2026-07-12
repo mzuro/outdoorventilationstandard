@@ -27,7 +27,7 @@ import { createInstrument } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
-import { SHELTER } from '../physics/capture.mjs';
+import { WIND_COUPLING } from '../physics/capture.mjs';
 import { MOUNT } from '../hood-presets.mjs';
 
 const RISE_IN = 30;
@@ -208,7 +208,7 @@ export function mount(figureEl) {
     refs.windGroup.setAttribute('opacity', env === 'outdoor' ? 1 : 0.15);
 
     // --- shared plume, bends only when outdoor + wind ------------------
-    const plumeWind = SHELTER * windMph;
+    const plumeWind = WIND_COUPLING * windMph;
     const samples = [];
     for (let z = 0; z <= RISE_IN; z += SAMPLE_STEP_IN) samples.push(z);
     if (samples[samples.length - 1] !== RISE_IN) samples.push(RISE_IN);

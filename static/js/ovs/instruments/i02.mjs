@@ -101,10 +101,9 @@ export function mount(figureEl) {
   function update(state, ctx) {
     const { setReadout } = ctx;
     const mountKey = MOUNT[state['i02-mount']] ? state['i02-mount'] : 'island';
-    const depthIn = MOUNT[mountKey].depthIn;
+    // Depth is not a CFM driver (RB-008 §3.4.3); mount carries the island premium.
     const bands = requiredCfm({
       widthIn: state['i02-width'],
-      depthIn,
       mount: mountKey,
       btu: state['i02-btu'],
       exposure: state['i02-exposure'],

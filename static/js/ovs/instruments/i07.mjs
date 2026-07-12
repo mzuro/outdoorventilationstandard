@@ -15,7 +15,7 @@
 // so the glyph itself shows what the panels are doing.
 
 import { createInstrument } from '../viz.mjs';
-import { captureFraction, SHELTER } from '../physics/capture.mjs';
+import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
@@ -138,7 +138,7 @@ export function mount(figureEl) {
     const panels = state['i07-panels'];
 
     const effWind = effectiveWind(windMph, panels);
-    const plumeWind = SHELTER * effWind;
+    const plumeWind = WIND_COUPLING * effWind;
 
     const capWithPanels = captureFraction({
       widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels,
