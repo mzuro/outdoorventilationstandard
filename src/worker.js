@@ -323,10 +323,12 @@ export default {
   async fetch(request, env) {
     const resp = await handleFetch(request, env);
 
-    // Staging preview builds (wrangler.preview.jsonc: vars.PREVIEW="1") must
-    // never be indexed — this is the only difference from the production
+    // Staging previews (wrangler.preview.jsonc: vars.PREVIEW="1", or any
+    // *.workers.dev host — git-integration branch previews and the
+    // production workers.dev mirror) must never be indexed; only the custom
+    // domain stays indexable. This is the only difference from production
     // worker behavior.
-    if (env.PREVIEW === '1') {
+    if (env.PREVIEW === '1' || new URL(request.url).hostname.endsWith('.workers.dev')) {
       const previewResp = new Response(resp.body, resp);
       previewResp.headers.set('X-Robots-Tag', 'noindex, nofollow');
       return previewResp;
