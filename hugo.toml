@@ -64,7 +64,13 @@ enableGitInfo = false
     endLevel = 4
     startLevel = 2
 
+[outputFormats.AIContext]
+  mediaType = "application/json"
+  baseName = "ai-context"
+  isPlainText = true
+  notAlternative = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "AIContext"]
   section = ["HTML", "RSS"]
   page = ["HTML"]

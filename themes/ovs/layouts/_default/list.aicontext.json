@@ -1,0 +1,130 @@
+{{- /*
+  ai-context.json — build-time grounding corpus for the /api/ask worker
+  (AI #3, v2.1 AI-features wave). Custom Hugo output format (see
+  hugo.toml [outputFormats.AIContext]), same mechanism as index.json —
+  the worker fetches it from ASSETS at request time and caches the
+  parsed corpus in the isolate (src/worker.js buildContext()).
+
+  The point of this file: give the ask-box model REAL numbers with REAL,
+  working section anchors instead of summaries alone, so answers can
+  quote a published figure instead of guessing one (see homepage note
+  "No ungrounded claims").
+
+  Three page kinds:
+    - questions: full plain text of every /questions/ page. These are
+      short, answer-first, and already contain the site's canonical
+      published numbers (e.g. content/questions/what-cfm-do-i-need.md's
+      "1,450 CFM minimum ... 1,800 CFM recommended" for a 48in island
+      hood) — the single best grounding source on the site.
+    - papers: per research brief, up to $maxFactsPerPaper short numeric
+      facts pulled from rendered bold list items (the papers' own
+      "Answer:" / numbered-findings callouts), each tagged with the
+      REAL heading anchor Hugo rendered for that section — extracted
+      from .Content via regex, never re-slugified by hand, so a fact's
+      #anchor can never drift from what the page actually renders.
+    - tools / methodology: title + description + summary only; these
+      are already covered by the worker's static tool-routing table in
+      SYSTEM_PROMPT, so they're included here just so keyword scoring
+      can still surface them for phrasing the routing table doesn't
+      anticicate literally.
+
+  Budget: kept well under 300KB by capping facts/paper and fact length;
+  see task-w3-report.md for the measured output size.
+*/ -}}
+{{- $maxFactsPerPaper := 10 }}
+{{- $maxFactLen := 200 }}
+{{- $maxFactsPerSection := 2 }}
+
+{{- $unescape := dict "&amp;" "&" "&lt;" "<" "&gt;" ">" "&#39;" "'" "&#34;" "\"" "&quot;" "\"" "&rsquo;" "’" "&mdash;" "—" "&ndash;" "–" "&times;" "×" }}
+
+{{- $questions := slice }}
+{{- range where site.RegularPages "Section" "questions" }}
+  {{- if and .Title (ne .RelPermalink "/questions/") }}
+    {{- $text := .Plain | strings.TrimSpace }}
+    {{- $questions = $questions | append (dict
+      "url" .RelPermalink
+      "title" .Title
+      "type" "question"
+      "text" $text
+    ) }}
+  {{- end }}
+{{- end }}
+
+{{- $papers := slice }}
+{{- range where site.RegularPages "Section" "research" }}
+  {{- if .Params.research_id }}
+    {{- $rid := .Params.research_id }}
+    {{- $url := .RelPermalink }}
+    {{- $marked := replaceRE `(<h[234] id="[^"]*")` "${1}" .Content }}
+    {{- $chunks := split $marked "" }}
+    {{- $facts := slice }}
+    {{- range $ci, $chunk := $chunks }}
+      {{- if and (gt $ci 0) (lt (len $facts) $maxFactsPerPaper) }}
+        {{- $tagMatches := findRE `(?s)^<h[234] id="[^"]*"[^>]*>.*?</h[234]>` $chunk 1 }}
+        {{- if $tagMatches }}
+          {{- $tag := index $tagMatches 0 }}
+          {{- $id := replaceRE `(?s)^<h[234] id="([^"]*)".*$` "$1" $tag }}
+          {{- $titleRaw := replaceRE `(?s)^<h[234] id="[^"]*"[^>]*>(.*)</h[234]>$` "$1" $tag }}
+          {{- $title := replaceRE `<[^>]+>` "" $titleRaw }}
+          {{- range $k, $v := $unescape }}{{ $title = replace $title $k $v }}{{ end }}
+          {{- $body := replaceRE `(?s)^<h[234] id="[^"]*"[^>]*>.*?</h[234]>` "" $chunk }}
+          {{- $liItems := findRE `(?s)<li>.*?</li>` $body }}
+          {{- $sectionCount := 0 }}
+          {{- range $liItems }}
+            {{- if and (lt $sectionCount $maxFactsPerSection) (lt (len $facts) $maxFactsPerPaper) (in . "<strong>") (findRE `[0-9]` .) }}
+              {{- $plain := replaceRE `<[^>]+>` " " . }}
+              {{- range $k, $v := $unescape }}{{ $plain = replace $plain $k $v }}{{ end }}
+              {{- $plain = replaceRE `\s+` " " $plain | strings.TrimSpace }}
+              {{- if gt (len $plain) 0 }}
+                {{- $facts = $facts | append (dict
+                  "section" $title
+                  "url" (printf "%s#%s" $url $id)
+                  "text" ($plain | truncate $maxFactLen)
+                ) }}
+                {{- $sectionCount = add $sectionCount 1 }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- $papers = $papers | append (dict
+      "url" $url
+      "title" (replaceRE `^RB-[0-9]+:\s*` "" .Title)
+      "research_id" $rid
+      "type" "research"
+      "summary" (.Params.summary | default .Description)
+      "facts" $facts
+    ) }}
+  {{- end }}
+{{- end }}
+
+{{- $tools := slice }}
+{{- range where site.RegularPages "Section" "tools" }}
+  {{- $tools = $tools | append (dict
+    "url" .RelPermalink
+    "title" .Title
+    "type" "tool"
+    "instrument_id" .Params.instrument_id
+    "summary" (.Params.summary | default .Description)
+  ) }}
+{{- end }}
+
+{{- $methodology := slice }}
+{{- with site.GetPage "/methodology" }}
+  {{- $methodology = $methodology | append (dict
+    "url" .RelPermalink
+    "title" .Title
+    "type" "methodology"
+    "summary" (.Params.summary | default .Description)
+  ) }}
+{{- end }}
+
+{{- $out := dict
+  "generated" (now.Format "2006-01-02T15:04:05Z07:00")
+  "questions" $questions
+  "papers" $papers
+  "tools" $tools
+  "methodology" $methodology
+}}
+{{ $out | jsonify }}

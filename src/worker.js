@@ -1,80 +1,38 @@
-// Module-level cache for AI context (refreshes when Worker instance recycles)
-let cachedContext = null;
-let cachedPages = null;
-let cachedValidUrls = null;
+import { flattenCorpus, selectTopK, buildContextText } from './lib/corpus.mjs';
+import { sanitizeLinks, citableUrlSet } from './lib/citations.mjs';
 
-// Own origin — the only absolute-URL origin ever accepted from model output.
-const SITE_ORIGIN = 'https://outdoorventilationstandard.com';
-
-// Pure helper: given the ask response's proposed links (label/url pairs,
-// where `url` may originate from unsanitized model output) and the set of
-// real site page URLs (from index.json), return only links that point at
-// an actual page on our own origin. Accepts:
-//   (a) relative paths starting with "/" that resolve (after normalizing
-//       any "/../" per URL semantics) to a URL in validUrls, or
-//   (b) absolute URLs whose origin is exactly SITE_ORIGIN, converted to
-//       their relative path and checked the same way.
-// Everything else (javascript:, protocol-relative //host, external
-// https://, malformed strings, paths not in validUrls) is dropped
-// silently. Deduplicates by resulting path.
-function sanitizeLinks(links, validUrls) {
-  if (!Array.isArray(links) || !(validUrls instanceof Set)) return [];
-  const out = [];
-  const seen = new Set();
-
-  for (const link of links) {
-    if (!link || typeof link.url !== 'string') continue;
-    const raw = link.url.trim();
-    if (!raw) continue;
-
-    let parsed;
-    try {
-      // Resolving against SITE_ORIGIN turns a leading-"/" relative path
-      // into an absolute URL on our own origin and collapses "/../"
-      // traversal per the URL spec. A protocol-relative "//host/..." or
-      // an absolute "https://other/..." resolves to that *other* origin,
-      // so the origin check below still rejects it.
-      parsed = new URL(raw, SITE_ORIGIN);
-    } catch (e) {
-      continue; // not a parseable URL at all
-    }
-
-    if (parsed.origin !== SITE_ORIGIN) continue; // wrong origin — drop
-
-    const path = parsed.pathname;
-    if (!validUrls.has(path)) continue; // not a real site page — drop
-    if (seen.has(path)) continue;
-    seen.add(path);
-
-    out.push({ label: typeof link.label === 'string' && link.label ? link.label : path, url: path });
-  }
-
-  return out;
-}
+// Module-level cache for the AI grounding corpus (ai-context.json),
+// refreshes when the Worker instance recycles.
+//
+// This replaces the old summaries-only context (title+description+summary
+// of every /research/, /tools/, /methodology/ page, concatenated whole,
+// every request, /questions/ excluded entirely). That gave the model
+// almost no real numbers to ground on — the papers' `content` field was
+// never read — which is exactly backwards for a site whose brand is "no
+// ungrounded claims" (AI expert report §2.1). ai-context.json
+// (themes/ovs/layouts/_default/list.aicontext.json, a Hugo custom output
+// format) instead ships per-paper numeric facts with real section
+// anchors and full /questions/ text; selectTopK() below does a cheap
+// keyword-overlap selection over it per request so only the ~6 most
+// relevant entries (with their real numbers) go into the prompt.
+let cachedFlatCorpus = null;
+let cachedCitableSet = null;
 
 async function buildContext(env) {
-  if (cachedContext) return { context: cachedContext, pages: cachedPages, validUrls: cachedValidUrls };
+  if (cachedFlatCorpus) return { flat: cachedFlatCorpus, citableSet: cachedCitableSet };
 
   try {
-    const res = await env.ASSETS.fetch(new Request('https://dummy/index.json'));
-    const pages = await res.json();
+    const res = await env.ASSETS.fetch(new Request('https://dummy/ai-context.json'));
+    const raw = await res.json();
+    const flat = flattenCorpus(raw);
+    const citableSet = citableUrlSet(flat);
 
-    const relevant = pages.filter(p =>
-      p.url.startsWith('/research/') || p.url.startsWith('/tools/') || p.url === '/methodology/'
-    );
+    cachedFlatCorpus = flat;
+    cachedCitableSet = citableSet;
 
-    cachedPages = relevant;
-    cachedValidUrls = new Set(pages.map(p => p.url));
-    cachedContext = relevant.map(p => {
-      let entry = `## ${p.title} (${p.url})`;
-      if (p.description) entry += `\n${p.description}`;
-      if (p.summary) entry += `\n${p.summary}`;
-      return entry;
-    }).join('\n\n');
-
-    return { context: cachedContext, pages: cachedPages, validUrls: cachedValidUrls };
+    return { flat, citableSet };
   } catch (e) {
-    return { context: null, pages: null, validUrls: null };
+    return { flat: null, citableSet: null };
   }
 }
 
@@ -257,13 +215,24 @@ async function handleFetch(request, env) {
           });
         }
 
-        const { context, validUrls } = await buildContext(env);
-        if (!context) {
+        const { flat, citableSet } = await buildContext(env);
+        if (!flat) {
           return new Response(JSON.stringify({ error: 'context_unavailable' }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' }
           });
         }
+
+        // Top-k keyword selection over the real, numbers-bearing corpus —
+        // no embeddings infra needed at ~40 pages. Falls back to the
+        // question pages generally when nothing scores (a very generic
+        // question) so the model is never run with zero grounding text.
+        let selected = selectTopK(flat, question, { k: 6, maxChars: 6000 });
+        if (selected.length === 0) {
+          selected = flat.filter((c) => c.kind === 'question').slice(0, 6);
+        }
+        const context = buildContextText(selected);
+        const validUrls = citableSet;
 
         const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
           messages: [
