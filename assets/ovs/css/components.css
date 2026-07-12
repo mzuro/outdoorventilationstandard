@@ -849,6 +849,28 @@ a.ovs-chip:hover {
   min-width: 0;
 }
 
+/* Long papers (rb-006 is ~160 KB of HTML with 37 tables) pay a large
+   first-layout cost. content-visibility:auto lets the browser skip
+   layout/paint of below-fold table blocks until they approach the
+   viewport; contain-intrinsic-size supplies a placeholder height so the
+   scrollbar stays stable ("auto" pins it to the real height once a block
+   has rendered). 320px = the measured median table-wrap height on rb-006
+   (n=37, median 314, mean 316) — keeping the placeholder close to reality
+   keeps the scrollbar honest. No visual change. Scoped to research
+   articles only. */
+.ovs-research-article .ovs-table-wrap {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+/* Escape hatch for anchor navigation (see the inline script in
+   research/single.html): estimated positions + scroll-behavior:smooth
+   break TOC/fragment jumps, so the moment the reader navigates by anchor
+   the paper renders in full and positions become exact. */
+.ovs-research-article.ovs-anchored .ovs-table-wrap {
+  content-visibility: visible;
+}
+
 @media (min-width: 980px) {
   .ovs-research-layout {
     grid-template-columns: minmax(0, 7fr) minmax(200px, 3fr);
@@ -985,6 +1007,42 @@ a.ovs-chip:hover {
 .ovs-instrument {
   border: 1px solid var(--line-strong);
   background: var(--surface);
+}
+
+/* ---------- CLS reserve (pre-mount) ----------
+   createInstrument() stamps .ovs-i on the figure when it mounts; until
+   then the figure holds only the (JS-hidden) noscript fallback and
+   collapses to ~0px, so everything below jumps when the instrument
+   appears (Lighthouse CLS 0.31 on tool pages). Reserve each instrument's
+   typical mounted footprint — measured 2026-07-12 on the live build at
+   1280px and 390px viewports — via a min-height that is released on
+   mount, so the final layout stays exact. Values are rounded slightly
+   DOWN: any residual shift is a small downward settle, not an upward
+   snap. i10 is one module shared by two pages with very different
+   mounted heights (506px taxonomy / 1081px grease deposition), so it
+   gets the smaller of the two. */
+.ovs-instrument:not(.ovs-i) {
+  min-height: var(--i-reserve, 750px);
+}
+.ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
+.ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
+.ovs-instrument[data-instrument="i08"] { --i-reserve: 900px; }
+.ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
+.ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
+
+@media (max-width: 640px) {
+  .ovs-instrument:not(.ovs-i) {
+    min-height: var(--i-reserve-m, 760px);
+  }
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 860px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 860px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 730px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 580px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 980px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 495px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 845px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 615px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 595px; }
 }
 
 .ovs-instrument figcaption {

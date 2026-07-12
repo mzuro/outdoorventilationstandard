@@ -72,4 +72,35 @@
   </aside>
   {{- end }}
 </div>
+<script>
+/* Long papers use content-visibility:auto on .ovs-table-wrap (components.css)
+   so first render skips below-fold table layout. That makes anchor positions
+   estimates, and the sitewide scroll-behavior:smooth animation aborts when
+   passing blocks render mid-flight — TOC jumps land short. Escape hatch:
+   before any in-page anchor scroll (TOC click, hashchange, or arriving with
+   a #fragment), stamp .ovs-anchored on the article — CSS switches the wraps
+   back to content-visibility:visible — and force a reflow so the scroll is
+   computed against the real, fully-laid-out positions. One-way: once a
+   reader navigates by anchor the whole paper stays rendered, which is fine
+   (first paint already happened). */
+(function () {
+  var article = document.querySelector('.ovs-research-article');
+  if (!article) return;
+  function reveal() {
+    if (article.classList.contains('ovs-anchored')) return;
+    article.classList.add('ovs-anchored');
+    void article.offsetHeight; /* force synchronous layout */
+  }
+  if (location.hash) {
+    reveal();
+    /* Re-aim the initial fragment scroll now that positions are exact. */
+    var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (t) t.scrollIntoView();
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('a[href^="#"]')) reveal();
+  }, true);
+  window.addEventListener('hashchange', reveal);
+})();
+</script>
 {{- end }}

@@ -353,7 +353,7 @@
 
 {{- /* vendored Fuse.js — the site's only fuzzy-search dependency, no CDN
    (static/js/vendor/fuse.min.js, v7.0.0, UMD build -> window.Fuse). */}}
-<script src="{{ "js/vendor/fuse.min.js" | absURL }}"></script>
+<script src="{{ "js/vendor/fuse.min.js" | relURL }}"></script>
 <script>
 (function() {
   "use strict";
@@ -408,7 +408,9 @@
     keys: {{ .Site.Params.fuseOpts.keys | default (slice "title" "url" "summary" "content") | jsonify | safeJS }}
   };
 
-  fetch('{{ "index.json" | absURL }}')
+  {{- /* relURL, not absURL: the fetch must be same-origin on every host
+     (workers.dev branch previews included) or CORS kills keyword search. */}}
+  fetch('{{ "index.json" | relURL }}')
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data) { fuse = new Fuse(data, fuseOptions); }
