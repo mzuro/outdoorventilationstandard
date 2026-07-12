@@ -1682,11 +1682,18 @@ a.ovs-chip:hover {
 @media (max-width: 760px) {
   .ovs-i-svg .ovs-i-drag-hood-edge,
   .ovs-i-svg .ovs-i-drag-hood-edge-a,
-  .ovs-i-svg .ovs-i-drag-hood-edge-b,
+  .ovs-i-svg .ovs-i-drag-hood-edge-b {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    /* x: 44 -> 96.8 units (~21px -> ~46px); y: the 92-unit strips render
+       43.6px at 375 — a hair under 44 — so nudge y too */
+    transform: scale(2.2, 1.05);
+  }
+
   .ovs-i-svg .ovs-i-drag-tracer {
     transform-box: fill-box;
     transform-origin: 50% 50%;
-    transform: scale(2.2, 1); /* 44 -> 96.8 units: ~21px -> ~46px wide */
+    transform: scale(2.2, 1); /* 44 -> 96.8 units: ~21px -> ~46px wide; full-height strip */
   }
 
   .ovs-i-svg .ovs-i-drag-wind {
