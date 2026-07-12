@@ -312,11 +312,13 @@ export function mount(figureEl) {
     // --- living smoke: derives ENTIRELY from the same physics the readouts
     //     use (deflection trajectory, plumeRadius spread, captureFraction
     //     partition for the ember-orange escape tint). Fixed pixel geometry
-    //     (GX/GY/HY/pxPerIn) + the current physics state. ---------------------
+    //     (GX/GY/pxPerIn) + the current physics state; the hood plane is
+    //     defined by riseIn in physics space (see smoke.mjs contract note),
+    //     not by a pixel-space HY. ---------------------------------------------
     smoke: (state) => {
       const m = MOUNT[state['i01-mount']] ? state['i01-mount'] : 'island';
       return {
-        sourceX: GX, sourceY: GY, hoodPlaneY: HY, pxPerIn,
+        sourceX: GX, sourceY: GY, pxPerIn,
         widthIn: state['i01-width'],
         depthIn: MOUNT[m].depthIn,
         mount: m,

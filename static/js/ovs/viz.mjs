@@ -370,7 +370,7 @@ export function createInstrument(rootEl, spec) {
       const mount = svg.querySelector('.ovs-i-smoke-mount') || svg;
       mount.appendChild(group);
       smokeField = createSmokeField(group, {
-        sourceX: g0.sourceX, sourceY: g0.sourceY, hoodPlaneY: g0.hoodPlaneY, pxPerIn: g0.pxPerIn,
+        sourceX: g0.sourceX, sourceY: g0.sourceY, pxPerIn: g0.pxPerIn,
       });
       smokeField.setReduced(reduced);
       smokeField.update(g0);
@@ -489,6 +489,13 @@ export function createInstrument(rootEl, spec) {
       settle();
       ensureRaf();
     }
+    // Preset-active tracks the COMMITTED state and must recompute on every
+    // change, never wait for settle(): a held drag re-arms tweens on each
+    // pointermove, so a settle-gated recompute would keep a stale chip
+    // asserted through the whole sweep. Cheap string comparison per change.
+    // The verdict-stamp slam stays settle-gated on purpose (one orchestrated
+    // moment at rest, not a re-slam per pointermove).
+    updatePresetActive();
   }
 
   // ---- v2.1 preset chips (opt-in via spec.presets) -----------------------
@@ -571,8 +578,9 @@ export function createInstrument(rootEl, spec) {
   }
 
   function settle() {
+    // Verdict only. Preset-active is handled per-change in handleChange();
+    // gating it here would leave a stale chip asserted through a held drag.
     updateVerdict(true);
-    updatePresetActive();
   }
 
   // ---- v2.1 direct manipulation (opt-in via spec.drag) -------------------

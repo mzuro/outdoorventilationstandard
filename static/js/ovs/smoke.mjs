@@ -165,18 +165,26 @@ const NS = 'http://www.w3.org/2000/svg';
 
 /**
  * createSmokeField(svgGroup, geom) — the DOM layer. geom is the FIXED pixel
- * geometry: { sourceX, sourceY, hoodPlaneY, pxPerIn }. Returns
+ * geometry: { sourceX, sourceY, pxPerIn }. Returns
  *   .update(state)   — state = { widthIn, depthIn, mount, riseIn, windMph, panels, w0 }
  *   .frame(nowMs)    — one animation step (driven by the engine's single rAF)
  *   .setReduced(bool).pause().resume().destroy()
  * No-op object when there is no DOM / no group (headless test import).
+ *
+ * Contract note (F1 review): geom deliberately carries NO hoodPlaneY. The
+ * capture/recycle plane is authoritative in PHYSICS space — a particle
+ * retires at z ≥ riseIn (state.riseIn, inches), and every pixel position is
+ * sourceY − z·pxPerIn. A separate pixel-space hood plane would be a second
+ * source of truth that could silently disagree with riseIn, so F2
+ * instruments must not wire one up: pass source + scale and let riseIn
+ * define the plane.
  */
 export function createSmokeField(svgGroup, geom) {
   if (!hasDom || !svgGroup) {
     return { update() {}, frame() {}, setReduced() {}, pause() {}, resume() {}, destroy() {} };
   }
 
-  const { sourceX, sourceY, hoodPlaneY, pxPerIn } = geom;
+  const { sourceX, sourceY, pxPerIn } = geom;
   const rand = mulberry32(0x9e3779b9);
   let params = deriveParams({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 0 });
   let reduced = false;
@@ -239,7 +247,11 @@ export function createSmokeField(svgGroup, geom) {
     const turb = Math.sin(now / 520 + p.jitterPhase + z * 0.12) * p.jitterAmp * plumeRadius(z) * pxPerIn * 0.06;
     const x = baseX + turb;
     const y = sourceY - z * pxPerIn;
-    // opacity: fade in at birth, gentle falloff with rise
+    // opacity: fade in at birth, gentle falloff with rise. NOTE: this
+    // multiplier keeps particles below the 3:1 non-text contrast guideline
+    // by design — they are decorative redundancy (readouts + status-tinted
+    // plume fill + wisps carry the same information at full contrast); see
+    // the --smoke token comment in tokens.css for the a11y rationale.
     const frac = params.riseIn > 0 ? z / params.riseIn : 1;
     const fadeIn = Math.min(1, z / 3);
     const op = fadeIn * Math.max(0, 1 - frac * 0.85) * 0.5;
