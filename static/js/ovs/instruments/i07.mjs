@@ -13,13 +13,28 @@
 // PANELS selection and a wind arrow whose length scales with the
 // *effective* wind (post-panel-attenuation), not the raw control value —
 // so the glyph itself shows what the panels are doing.
+//
+// v2.1 (F2) adoption:
+//   - smoke: same physics as the drawn plume (widthCtl/mountVal/riseIn/
+//     windMph/panels — the exact inputs captureFraction/deflection use).
+//   - drag: BOTH the hood edge (6" snap, i01-identical) and the wind
+//     arrow. The wind arrow's pixel position encodes EFFECTIVE wind
+//     (post-panel), not the raw control, so its toValue inverts through
+//     effectiveWind(1, panels) — the panel attenuation factor for the
+//     CURRENT panels selection, read from the physics module itself
+//     (never a re-derived constant) — to recover the raw i07-wind value
+//     the control actually holds.
+//   - presets: four site-voice scenarios.
+//   - verdict: capture thresholds, same rubric as i01, graded on the
+//     WITH-PANELS capture (the hero readout — the scenario the panels
+//     were added to solve).
 
-import { createInstrument } from '../viz.mjs';
+import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
-import { MOUNT, MODEL_WIDTHS, parsePreset } from '../hood-presets.mjs';
+import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const RISE_IN = 30; // fixed hood mounting height, matching i01's canonical rise
 const SAMPLE_STEP_IN = 2;
@@ -62,6 +77,7 @@ export function mount(figureEl) {
 
   let H = null;
   const refs = {};
+  let panelsNow = 'none'; // tracked so the wind-arrow drag can invert effective->raw wind
 
   function buildScene(svg, helpers) {
     H = helpers;
@@ -90,6 +106,10 @@ export function mount(figureEl) {
     svg.appendChild(refs.plumeFill);
     svg.appendChild(refs.plumeL);
     svg.appendChild(refs.plumeR);
+
+    // living-smoke layer mount — over the plume, under the hood (i01 order).
+    refs.smokeMount = H.el('g', { class: 'ovs-i-smoke-mount' });
+    svg.appendChild(refs.smokeMount);
 
     refs.wisp1 = H.el('path', { class: 'ovs-i-wisp', d: '', opacity: 0 });
     refs.wisp2 = H.el('path', { class: 'ovs-i-wisp', d: '', opacity: 0 });
@@ -124,6 +144,16 @@ export function mount(figureEl) {
 
     refs.dimW = H.el('g');
     svg.appendChild(refs.dimW);
+
+    // --- direct-manipulation hit strips (drawn last, on top) ---------------
+    refs.dragHood = H.el('rect', {
+      class: 'ovs-i-drag-hood-edge', x: 0, y: HY - 40, width: 44, height: 92, fill: 'transparent',
+    });
+    refs.dragWind = H.el('rect', {
+      class: 'ovs-i-drag-wind', x: 36, y: 24, width: 90, height: 48, fill: 'transparent',
+    });
+    svg.appendChild(refs.dragHood);
+    svg.appendChild(refs.dragWind);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -136,6 +166,7 @@ export function mount(figureEl) {
     const windMph = state['i07-wind'];
     const widthCtl = state['i07-width'];
     const panels = state['i07-panels'];
+    panelsNow = panels;
 
     const effWind = effectiveWind(windMph, panels);
     const plumeWind = WIND_COUPLING * effWind;
@@ -146,6 +177,9 @@ export function mount(figureEl) {
     const capWithoutPanels = captureFraction({
       widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels: 'none',
     });
+
+    // expose physics to the engine's verdict stamp (spec.verdict)
+    ctx.physics = { capWithPanels, capWithoutPanels, effWind };
 
     setReadout('captureWithPanels', capWithPanels);
     setReadout('captureWithoutPanels', capWithoutPanels);
@@ -188,6 +222,9 @@ export function mount(figureEl) {
 
     replaceChildren(refs.dimW, H.dimensionLine(lx, HY - 20, rx, HY - 20, `${Math.round(widthCtl)}″`));
 
+    // --- drag hit strip: centered on the downwind (right) hood lip --------
+    refs.dragHood.setAttribute('x', (rx - 22).toFixed(1));
+
     // --- side panels -----------------------------------------------
     refs.panelL.setAttribute('x', (lx - 6).toFixed(1));
     refs.panelR.setAttribute('x', rx.toFixed(1));
@@ -201,6 +238,10 @@ export function mount(figureEl) {
     const shaftX = 90 + effWind * 1.5;
     refs.windShaft.setAttribute('x2', shaftX.toFixed(1));
     refs.windArrow.setAttribute('d', `M${shaftX.toFixed(1)} 48 l-7 -4 m7 4 l-7 4`);
+    // wind drag strip spans the shaft's full travel at the CURRENT panel
+    // attenuation (max raw wind 16 mph -> max effective = 16 * factor).
+    const maxEff = effectiveWind(16, panels);
+    refs.dragWind.setAttribute('width', (90 + maxEff * 1.5 + 12 - 36).toFixed(1));
 
     // --- escape wisps, keyed to the WITH-panels capture number --------
     const escape = Math.max(0, 1 - capWithPanels);
@@ -241,6 +282,56 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- living smoke: derives entirely from the same physics the drawn
+    //     plume + readouts use. --------------------------------------------
+    smoke: (state) => ({
+      sourceX: GX, sourceY: GY, pxPerIn,
+      widthIn: state['i07-width'],
+      depthIn,
+      mount: mountVal,
+      riseIn: RISE_IN,
+      windMph: state['i07-wind'],
+      panels: state['i07-panels'],
+      w0: 400,
+    }),
+
+    // --- direct manipulation: hood edge (6" snap) and the wind arrow
+    //     (inverted through the CURRENT panel attenuation — see header). ----
+    drag: [
+      {
+        target: 'hood-edge', control: 'i07-width', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => snapWidth(((x - GX) * 2) / pxPerIn),
+      },
+      {
+        target: 'wind-arrow', control: 'i07-wind', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => {
+          const factor = effectiveWind(1, panelsNow) || 1;
+          const eff = Math.max(0, (x - 90) / 1.5);
+          return Math.max(0, Math.min(16, Math.round(eff / factor)));
+        },
+      },
+    ],
+
+    // --- story presets: four site-voice scenarios. -------------------------
+    presets: [
+      { id: 'calm-evening-no-panels', label: 'Calm evening, no panels', state: { 'i07-panels': 'none', 'i07-wind': 0, 'i07-width': 48 } },
+      { id: 'breezy-unshielded', label: 'Breezy, unshielded', state: { 'i07-panels': 'none', 'i07-wind': 10, 'i07-width': 48 } },
+      { id: 'windy-corner-one-panel', label: 'Windy corner, one panel', state: { 'i07-panels': 'one', 'i07-wind': 14, 'i07-width': 54 } },
+      { id: 'exposed-island-both-panels', label: 'Exposed island, both panels', state: { 'i07-panels': 'both', 'i07-wind': 16, 'i07-width': 60 } },
+    ],
+
+    // --- verdict stamp: capture-fraction thresholds, graded on the
+    //     WITH-PANELS capture — the scenario the panels exist to fix. -------
+    verdict: (state, physics) => {
+      const cap = physics ? physics.capWithPanels : 0;
+      const grade = gradeCapture(cap);
+      return {
+        grade,
+        clauseRef: 'per OVS-H1 §2.4 / RB-006',
+        detail: `Plume capture with panels ${Math.round(cap * 100)}% — thresholds 85% PASS / 60% MARGINAL.`,
+      };
+    },
   };
 
   createInstrument(container, spec);
