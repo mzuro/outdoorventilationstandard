@@ -14,6 +14,17 @@
 {{- $description := .Description | default (.Params.summary) | default .Site.Params.description }}
 <meta name="description" content="{{ $description }}">
 
+{{- /* ---------- robots (thin taxonomy pages) ----------
+   Tag/category list pages (Kind "taxonomy", e.g. /tags/) and individual
+   term pages (Kind "term", e.g. /tags/wind-effects/) are thin
+   auto-generated indexes with no unique editorial value — noindex them
+   (site-wide Helpful Content quality is judged partly on such pages) while
+   leaving them crawlable/followable and rendered for on-site navigation.
+   They are also excluded from sitemap.xml — see themes/ovs/layouts/sitemap.xml. */}}
+{{- if or (eq .Kind "taxonomy") (eq .Kind "term") }}
+<meta name="robots" content="noindex, follow">
+{{- end }}
+
 {{- /* ---------- canonical ---------- */}}
 <link rel="canonical" href="{{ .Permalink }}">
 

@@ -1,11 +1,14 @@
 {{- /*
   byline.html — E-E-A-T reviewer attribution. Renders only on pages that
   declare `reviewed: true` in front matter. The reviewer sentence is fixed
-  text (do not paraphrase); published/updated dates come from the page.
+  text (do not paraphrase); published/updated dates come from the page. The
+  "Mark Zuro" name is hyperlinked to the dedicated reviewer profile page
+  (ProfilePage schema, /about/reviewer/) — this is the machine- and
+  human-readable link between the byline and the reviewer entity (R4).
 */ -}}
 {{- if .Params.reviewed }}
 <p class="byline">
-  <strong>Reviewed by Mark Zuro</strong>, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
+  <strong>Reviewed by <a href="{{ "/about/reviewer/" | relURL }}">Mark Zuro</a></strong>, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
   {{- if .Date }}
   <time datetime="{{ .Date.Format "2006-01-02" }}">Published {{ .Date.Format "2006-01-02" }}</time>
   {{- end }}

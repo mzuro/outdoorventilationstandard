@@ -34,6 +34,7 @@ The program is governed by:
 - **[Research Program Charter v2.6](/governance/research-program-charter/)** — Defines scope, rules, and output structure
 - **[Glossary v1.1](/governance/glossary/)** — 11 controlled terms with precise physical definitions
 - **[Diagram Standard v2.1](/governance/diagram-standard/)** — Visual conventions for all technical diagrams
+- **[Agent Role Definitions](/governance/agent-role-definitions/)** — Defines how content is drafted; see [How This Content Is Produced](#how-this-content-is-produced) below
 
 ## Scope
 
@@ -56,6 +57,10 @@ The Outdoor Ventilation Standard is an independent research program. It is not a
 
 Every technical claim published here traces to a numbered research brief (the RB-series papers) grounded in cited fire science, fluid dynamics, and ventilation engineering literature — Heskestad plume correlations, Morton-Taylor-Turner entrainment theory, Briggs plume rise equations, and the relevant ASHRAE/ACGIH/IMC provisions. Pages are updated when the underlying physics, source standards, or reconciliation against cited papers changes; a `lastmod` date and, where applicable, a technical review byline accompany that update. No page recommends a specific product or brand, and no page is written or edited in exchange for compensation from an equipment maker or retailer.
 
+## How This Content Is Produced
+
+Research briefs and instrument content on this site are drafted with AI-assisted research and writing, operating under the six roles defined in [Agent Role Definitions](/governance/agent-role-definitions/) and bound by the [Research Program Charter v2.6](/governance/research-program-charter/) and [Glossary v1.1](/governance/glossary/). Every draft passes an editorial and quality-assurance review for charter compliance, controlled-vocabulary usage, and citation grounding before publication. Pages that carry engineering claims additionally receive a named human technical review — see [Technical Review](#technical-review) below and the [reviewer profile](/about/reviewer/) for what that review covers. This is the small technical editorial team's production process described above: AI-assisted drafting under a defined governance process, with human expert review on every page where it matters.
+
 ## Funding Independence
 
 This program accepts no manufacturer sponsorship, no paid placement, and no affiliate revenue tied to specific products or brands. It is not monetized by comparison-shopping links, and no page's content or conclusions are influenced by advertising relationships. The program's only commitment is to the physics — where the analysis and a manufacturer's marketing claim disagree, the analysis is what gets published.
@@ -64,7 +69,7 @@ This program accepts no manufacturer sponsorship, no paid placement, and no affi
 
 Pages that carry engineering claims — CFM sizing, mounting-height velocity, capture geometry, wind deflection, and the interactive tools built on that analysis — are reviewed for physical accuracy and practical soundness against outdoor hood installation practice.
 
-**Reviewed by Mark Zuro**, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
+**Reviewed by [Mark Zuro](/about/reviewer/)**, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
 
 The review confirms that the underlying research briefs are correctly applied to real installation scenarios; it does not substitute for the research briefs' own citations and derivations, which remain the primary technical record. Every reviewed page shows a "Reviewed by" line with the publish and update dates directly beneath the claim it applies to.
 

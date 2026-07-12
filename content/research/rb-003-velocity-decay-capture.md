@@ -24,6 +24,14 @@ downstream_topics:
   - "RB-006: Wind Interaction and Cross-Flow Effects"
   - "RB-007: Failure Modes of Outdoor BBQ Hoods"
   - "RB-008: CFM Requirements for Outdoor Cooking Ventilation"
+dataset:
+  name: "RB-003 Velocity Decay and CFM-vs-Height Tables"
+  description: "Tabulated centerline and off-centerline velocity decay profiles and CFM-versus-mounting-height requirements for outdoor cooking plumes, covering mounting heights from 6 to 72 inches above the cooking surface across all source types (gas, charcoal, wood-fired, pellet). Derived from Heskestad centerline velocity correlations and Gaussian off-centerline velocity profiles; values are physics-model outputs, not field-measured velocities."
+  variableMeasured:
+    - "Centerline velocity decay with height"
+    - "Off-centerline velocity as a fraction of centerline (Gaussian profile)"
+    - "Minimum CFM by mounting height and source type"
+  measurementTechnique: "Heskestad plume correlation and Gaussian velocity-profile model output; not field-measured"
 ---
 
 **Research Program:** Outdoor Ventilation Standard

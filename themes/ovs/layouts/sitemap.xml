@@ -1,0 +1,22 @@
+{{- /*
+  sitemap.xml — overrides Hugo's embedded default sitemap template for one
+  reason: exclude the thin, auto-generated taxonomy pages (Kind "taxonomy",
+  e.g. /tags/, /categories/) and term pages (Kind "term", e.g.
+  /tags/wind-effects/) from the sitemap. They still render (on-site nav)
+  and carry a noindex robots meta (partials/head.html) — this just keeps
+  them out of the crawl-priority signal a submitted sitemap sends. Every
+  other page kind is emitted exactly as Hugo's default sitemap template
+  would emit it.
+*/ -}}
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+{{- $pages := where .Data.Pages "Kind" "not in" (slice "taxonomy" "term") }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {{ range $pages }}
+  <url>
+    <loc>{{ .Permalink }}</loc>{{ if not .Lastmod.IsZero }}
+    <lastmod>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" | safeHTML }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
+    <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
+    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}
+  </url>
+  {{ end }}
+</urlset>
