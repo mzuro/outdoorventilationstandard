@@ -1,0 +1,21 @@
+{
+  "name": "ovs-v2-preview",
+  "compatibility_date": "2026-02-09",
+  "main": "src/worker.js",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "QUESTION_CLICKS",
+      "id": "ff274b77a21a4990870979944d2c92d6"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "PREVIEW": "1"
+  }
+}

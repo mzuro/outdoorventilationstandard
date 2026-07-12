@@ -96,8 +96,7 @@ RESPONSE FORMAT:
 Research context:
 `;
 
-export default {
-  async fetch(request, env) {
+async function handleFetch(request, env) {
     const url = new URL(request.url);
 
     // API: track question clicks (requires KV binding)
@@ -318,5 +317,21 @@ export default {
 
     // Everything else: serve static assets
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request, env) {
+    const resp = await handleFetch(request, env);
+
+    // Staging preview builds (wrangler.preview.jsonc: vars.PREVIEW="1") must
+    // never be indexed — this is the only difference from the production
+    // worker behavior.
+    if (env.PREVIEW === '1') {
+      const previewResp = new Response(resp.body, resp);
+      previewResp.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return previewResp;
+    }
+
+    return resp;
   }
 };
