@@ -52,10 +52,13 @@
      --smoke-escape is the ember-orange tint on parcels whose trajectory
      exits the aperture.
 
-     Contrast (deliberate, per F1 review): rendered particles land around
-     2.2:1 / 2.8:1 against the light surface after the draw()-time opacity
-     falloff — BELOW the 3:1 WCAG 1.4.11 guideline for meaningful graphics.
-     That is acceptable because the particles are decorative REDUNDANCY:
+     Contrast (deliberate, per F1 review): 2.2:1 / 2.8:1 against the light
+     surface is the token's OWN swatch ratio, measured BEFORE smoke.mjs's
+     draw()-time opacity falloff (fadeIn * (1 - frac*0.85) * 0.5 — see the
+     op calculation in smoke.mjs draw()); the actual rendered particles sit
+     lower still, around 1.5:1 at typical mid-plume opacity. Both figures
+     are BELOW the 3:1 WCAG 1.4.11 guideline for meaningful graphics. That
+     is acceptable because the particles are decorative REDUNDANCY:
      every physical quantity they express is also presented as text (the
      PLUME CAPTURE / DEFLECTION / EFFECTIVE WIND readouts) and as
      higher-contrast graphics (the status-tinted plume fill and the
