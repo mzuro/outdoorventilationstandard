@@ -119,9 +119,14 @@ export function wireExplain(instrument) {
         setTimeout(initTurnstile, 150);
         return;
       }
+      // NOTE: 'invisible' is NOT a valid Turnstile `size` (valid: normal /
+      // flexible / compact) — passing it makes render() throw and leaves
+      // turnstileToken null. Invisible behavior comes from
+      // appearance:'interaction-only' (widget only shows if interaction is
+      // required).
       turnstileWidgetId = window.turnstile.render(turnstileContainer, {
         sitekey: TURNSTILE_SITEKEY,
-        size: 'invisible',
+        appearance: 'interaction-only',
         callback: function(token) { turnstileToken = token; },
       });
     }

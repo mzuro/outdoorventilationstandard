@@ -146,7 +146,10 @@ export function mount(figureEl) {
     // Transparent hit strip re-measured live (in update()) to sit centered
     // on the current right edge — same ≥44px-tall convention as i01.
     refs.dragWidth = H.el('rect', {
-      class: 'ovs-i-drag-hood-edge', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
+      // --square modifier: this strip is 44x44 (not 44x92 like the hood
+      // elevations), so the mobile hit-area scale-up in components.css
+      // must grow BOTH axes for it (F3 QA F-6).
+      class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
     });
     svg.appendChild(refs.dragWidth);
   }
@@ -235,7 +238,7 @@ export function mount(figureEl) {
     // --- story presets: four site-voice scenarios landing exactly on their
     //     control values. ---------------------------------------------------
     presets: [
-      { id: 'compact-wall', label: 'Compact wall kitchen', state: { 'i02-width': 42, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-btu': 45000 } },
+      { id: 'compact-wall', label: 'Compact wall kitchen', state: { 'i02-width': 42, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-btu': 40000 } },
       { id: 'standard-island', label: 'Standard island', state: { 'i02-width': 48, 'i02-mount': 'island', 'i02-exposure': 'moderate', 'i02-btu': 60000 } },
       { id: 'big-island-exposed', label: 'Big island, exposed', state: { 'i02-width': 60, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 90000 } },
       { id: 'pro-outdoor-kitchen', label: 'Pro outdoor kitchen', state: { 'i02-width': 72, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 120000 } },

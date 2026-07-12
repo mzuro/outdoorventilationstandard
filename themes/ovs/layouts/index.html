@@ -41,7 +41,7 @@
           <div class="ovs-history-label">Recent questions</div>
           <div class="ovs-history-list" id="ask-history-list"></div>
         </div>
-        <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+        <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-appearance="interaction-only"></div>
       </div>
     </div>
 
@@ -246,9 +246,11 @@
   var turnstileWidgetId = null;
   function initTurnstile() {
     if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      /* 'invisible' is not a valid Turnstile size (normal/flexible/compact);
+         invisible behavior = appearance:'interaction-only'. */
       turnstileWidgetId = turnstile.render('#turnstile-container', {
         sitekey: '0x4AAAAAACcaq_joFScewE6d',
-        size: 'invisible',
+        appearance: 'interaction-only',
         callback: function(token) { turnstileToken = token; }
       });
     }

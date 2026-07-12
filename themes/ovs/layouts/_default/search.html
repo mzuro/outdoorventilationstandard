@@ -349,7 +349,7 @@
   </div>
 </div>
 
-<div id="ovs-search-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+<div id="ovs-search-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-appearance="interaction-only"></div>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 
 {{- /* vendored Fuse.js — the site's only fuzzy-search dependency, no CDN
@@ -546,9 +546,11 @@
   var turnstileWidgetId = null;
   function initTurnstile() {
     if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      /* 'invisible' is not a valid Turnstile size (normal/flexible/compact);
+         invisible behavior = appearance:'interaction-only'. */
       turnstileWidgetId = turnstile.render('#ovs-search-turnstile', {
         sitekey: '0x4AAAAAACcaq_joFScewE6d',
-        size: 'invisible',
+        appearance: 'interaction-only',
         callback: function(token) { turnstileToken = token; }
       });
     }

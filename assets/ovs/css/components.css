@@ -1080,6 +1080,14 @@ a.ovs-chip:hover {
    gets the smaller of the two. */
 .ovs-instrument:not(.ovs-i) {
   min-height: var(--i-reserve, 750px);
+  /* Pin any authored <figcaption> to the BOTTOM of the reserved box
+     pre-mount: post-mount it sits below the instrument, so without this
+     it rides from the top of the reserve to the bottom when the mount
+     fills in — the homepage hero's only CLS source (0.0768, F3 QA F-1).
+     Figures without a figcaption are unaffected (empty flex column). */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 .ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
@@ -1137,6 +1145,8 @@ a.ovs-chip:hover {
   border: 1px solid var(--line-strong);
   border-radius: 2px;
   padding: 0.55rem 1rem;
+  /* hosts the shared ::after tap-target expansion (see .ovs-i-preset) */
+  position: relative;
 }
 
 .ovs-explain-btn:hover {
@@ -1659,6 +1669,45 @@ a.ovs-chip:hover {
    ew-resize, so their cursor is set inline per-instrument (spec.drag
    `cursor`); touch-action:none still applies via .ovs-i-draggable above. */
 
+/* ---- mobile hit-strip scale-up (F3 QA F-6) ----
+   The strips are authored 44+ units in viewBox space, so on a ~345px-wide
+   render (375px viewport) they shrink to ~21-43 CSS px. Scale each strip's
+   deficient axis back up around its own box (transform-box: fill-box) so
+   every strip is >=44 CSS px both ways at 375px. They are invisible
+   affordances (transparent fill; :hover wash grows with them, which only
+   shows on hover-capable small windows) and drag math reads the pointer,
+   not the rect, so geometry-only scaling is safe. Strips authored near
+   y=0 (i02 gauge, i04 measuring line, wind arrows) anchor to their top
+   edge so the enlarged box is not clipped by the SVG viewport. */
+@media (max-width: 760px) {
+  .ovs-i-svg .ovs-i-drag-hood-edge,
+  .ovs-i-svg .ovs-i-drag-hood-edge-a,
+  .ovs-i-svg .ovs-i-drag-hood-edge-b,
+  .ovs-i-svg .ovs-i-drag-tracer {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transform: scale(2.2, 1); /* 44 -> 96.8 units: ~21px -> ~46px wide */
+  }
+
+  .ovs-i-svg .ovs-i-drag-wind {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    transform: scale(1.2, 2.2); /* 90x48 -> 108x105.6: ~43x23px -> ~52x51px */
+  }
+
+  .ovs-i-svg .ovs-i-drag-height {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    transform: scale(1, 1.5); /* 160x44 @480 viewBox: ~115x32px -> ~115x47px */
+  }
+
+  /* i02's width-gauge strip is 44x44 (both axes deficient) */
+  .ovs-i-svg .ovs-i-drag-hood-edge.ovs-i-drag-hood-edge--square {
+    transform-origin: 50% 0;
+    transform: scale(2.2, 2.2);
+  }
+}
+
 /* ---- preset chips ----
    A wrap-friendly row above the controls; each chip animates every control
    to its scenario. Active chip = current committed state matches the preset. */
@@ -1683,6 +1732,24 @@ a.ovs-chip:hover {
   min-height: 34px;
   cursor: pointer;
   white-space: nowrap;
+  /* hosts the ::after tap-target expansion below */
+  position: relative;
+}
+
+/* ---- >=44px effective tap target (F3 QA F-5) ----
+   The chip stays 34px visually; a transparent ::after overlay expands the
+   hit area symmetrically to exactly 44px tall (clicks/taps on a pseudo-
+   element dispatch to its originating element). min(0px, ...) keeps it a
+   no-op if a chip ever renders >=44px on its own. Same treatment for the
+   explain button (39px visual). */
+.ovs-i-preset::after,
+.ovs-explain-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: min(0px, calc((100% - 44px) / 2));
+  bottom: min(0px, calc((100% - 44px) / 2));
 }
 
 /* :not(--active) matters: :hover's specificity (class+pseudo-class) beats
@@ -1776,7 +1843,10 @@ a.ovs-chip:hover {
 .ovs-i-stamp-clause {
   font-size: 0.54rem;
   letter-spacing: 0.02em;
-  opacity: 0.85;
+  /* 0.95, not 0.85: at 0.85 the MARGINAL --warn clause composited to
+     4.31:1 in the light theme (< 4.5:1 WCAG for this sub-18px text);
+     0.95 keeps the de-emphasis while passing both themes (F3 QA F-4). */
+  opacity: 0.95;
   white-space: nowrap;
 }
 
