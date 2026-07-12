@@ -2,7 +2,8 @@
 title: "Wind Deflection Trajectories"
 description: "Side-view diagram showing how crosswind bends the buoyant cooking plume at different wind speeds, from still air to 12 mph. Illustrates the critical wind speed for capture failure."
 date: 2025-11-20
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["wind effects", "plume deflection", "visualization"]
 categories: ["Tools"]
 ShowToc: false

@@ -2,7 +2,8 @@
 title: "Heat Release Rate Comparison"
 description: "Comprehensive comparison of total and convective heat release rates for all 12 outdoor cooking source types analyzed in the research program. Shows how convective fraction varies by fuel type."
 date: 2025-10-20
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["heat release rate", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false

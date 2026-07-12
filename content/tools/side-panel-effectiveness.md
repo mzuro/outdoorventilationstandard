@@ -2,7 +2,8 @@
 title: "Side Panel Effectiveness"
 description: "Before-and-after comparison showing how side panels restore partial confinement in outdoor installations, reducing required CFM by 28% and improving capture efficiency by 25-35 percentage points."
 date: 2025-12-20
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["side panels", "wind protection", "visualization"]
 categories: ["Tools"]
 ShowToc: false

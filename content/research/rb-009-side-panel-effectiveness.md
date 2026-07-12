@@ -1,7 +1,8 @@
 ---
 title: "RB-009: Side Panel and Wind Baffle Effectiveness"
 date: 2025-12-18
-lastmod: 2026-01-06
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

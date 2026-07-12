@@ -10,7 +10,7 @@ instrument_id: "i06"
 citations: ["rb-003", "rb-001"]
 ---
 
-At a 24-inch mounting height, the plume's centerline velocity is about **317 fpm**; at 30 inches, about **295 fpm**; at 36 inches, about **277 fpm**. A wall hood needs to sustain at least 100 fpm of capture velocity at the hood face, an island hood 150 fpm — so all three heights clear the threshold in still air, but the margin above the island threshold shrinks from roughly 2.1x at 24 inches to about 1.8x at 36 inches.
+At a 24-inch mounting height, the plume's centerline velocity is about **317 fpm**; at 30 inches, about **295 fpm**; at 36 inches, about **277 fpm**. A wall hood needs to sustain at least 100 fpm of capture velocity at the hood face; this analysis uses 150 fpm as the island margin threshold — so all three heights clear the threshold in still air, but the margin above the island threshold shrinks from roughly 2.1x at 24 inches to about 1.8x at 36 inches.
 
 ## Two things trade off with height
 

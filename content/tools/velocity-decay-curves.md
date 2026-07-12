@@ -2,7 +2,8 @@
 title: "Velocity Decay Curves"
 description: "Centerline velocity decay visualization for buoyant cooking plumes across four source types, showing capture reliability thresholds at standard hood mounting heights."
 date: 2025-11-01
-lastmod: 2026-02-05
+lastmod: 2026-07-11
+reviewed: true
 tags: ["velocity decay", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false

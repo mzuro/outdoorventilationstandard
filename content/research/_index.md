@@ -50,7 +50,7 @@ These papers address gaps in existing knowledge, edge cases, and emerging questi
 
 When referencing publications from this research program, use the following format:
 
-> OVS-[RB-number] ([Year]). "[Title]." *Outdoor Ventilation Standard — Applied Physics Research.* https://outdoorventilationstandard.com/research/[slug]/
+> OVS-[RB-number] ([Year]). "[Title]." *Outdoor Ventilation Standard — Applied Physics Research.* `https://outdoorventilationstandard.com/research/[slug]/`
 
 **Example:**
 

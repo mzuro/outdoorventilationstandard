@@ -2,7 +2,8 @@
 title: "Grease Aerosol Deposition Pattern"
 description: "Visualization of grease particle transport and deposition zones in the missed plume region, showing how particle size determines transport distance, deposition intensity, and health/fire risk."
 date: 2026-01-10
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["grease aerosol", "particle transport", "fire risk"]
 categories: ["Tools"]
 ShowToc: false

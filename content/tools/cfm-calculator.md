@@ -2,7 +2,8 @@
 title: "CFM Sizing Calculator"
 description: "Physics-based interactive calculator for determining minimum exhaust airflow (CFM) for outdoor cooking ventilation hoods. Covers all source types, mounting heights, and wind exposure classes."
 date: 2025-12-15
-lastmod: 2026-02-05
+lastmod: 2026-07-11
+reviewed: true
 tags: ["CFM sizing", "interactive tool", "hood design"]
 categories: ["Tools"]
 ShowToc: false

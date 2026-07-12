@@ -2,7 +2,8 @@
 title: "Indoor vs. Outdoor Ventilation Comparison"
 description: "Side-by-side diagram showing why indoor ventilation assumptions fail in outdoor environments — wall confinement, pressure-assisted capture, and ceiling redirection do not exist outdoors."
 date: 2025-11-01
-lastmod: 2026-02-05
+lastmod: 2026-07-11
+reviewed: true
 tags: ["indoor vs outdoor", "open-boundary dilution", "visualization"]
 categories: ["Tools"]
 ShowToc: false

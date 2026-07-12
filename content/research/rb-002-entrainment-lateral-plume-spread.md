@@ -1,7 +1,8 @@
 ---
 title: "RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments"
 date: 2025-09-02
-lastmod: 2025-09-20
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

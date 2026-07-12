@@ -2,7 +2,8 @@
 title: "Hood Geometry Comparison"
 description: "Side-by-side comparison of three hood overhang configurations showing the capture performance difference between undersized, indoor-spec, and recommended outdoor hoods."
 date: 2025-12-01
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["hood design", "capture envelope", "visualization"]
 categories: ["Tools"]
 ShowToc: false

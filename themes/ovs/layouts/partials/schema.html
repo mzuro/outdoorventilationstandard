@@ -20,10 +20,10 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": {{ $siteName | jsonify }},
-  "url": {{ $baseURL | jsonify }},
-  "description": {{ (.Site.Params.description | default "") | jsonify }},
-  "logo": {{ ("logo.svg" | absURL) | jsonify }}
+  "name": {{ $siteName | jsonify | safeJS }},
+  "url": {{ $baseURL | jsonify | safeJS }},
+  "description": {{ (.Site.Params.description | default "") | jsonify | safeJS }},
+  "logo": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
 }
 </script>
 {{- end }}
@@ -36,22 +36,22 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": {{ .Title | jsonify }},
-  "description": {{ (.Params.summary | default .Description | default "") | jsonify }},
-  "datePublished": {{ $published | jsonify }},
-  "dateModified": {{ $updated | jsonify }},
-  "url": {{ .Permalink | jsonify }},
+  "headline": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Params.summary | default .Description | default "") | jsonify | safeJS }},
+  "datePublished": {{ $published | jsonify | safeJS }},
+  "dateModified": {{ $updated | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
   "author": {
     "@type": "Organization",
-    "name": {{ $siteName | jsonify }},
-    "url": {{ $baseURL | jsonify }}
+    "name": {{ $siteName | jsonify | safeJS }},
+    "url": {{ $baseURL | jsonify | safeJS }}
   },
   "publisher": {
     "@type": "Organization",
-    "name": {{ $siteName | jsonify }},
+    "name": {{ $siteName | jsonify | safeJS }},
     "logo": {
       "@type": "ImageObject",
-      "url": {{ ("logo.svg" | absURL) | jsonify }}
+      "url": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
     }
   }
 }
@@ -64,9 +64,9 @@
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": {{ .Title | jsonify }},
-  "description": {{ (.Description | default .Params.summary | default "") | jsonify }},
-  "url": {{ .Permalink | jsonify }},
+  "name": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Description | default .Params.summary | default "") | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -97,24 +97,39 @@
     {{- if $i }},{{ end }}
     {
       "@type": "Question",
-      "name": {{ $item.question | jsonify }},
+      "name": {{ $item.question | jsonify | safeJS }},
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": {{ $item.answer | jsonify }}
+        "text": {{ $item.answer | jsonify | safeJS }}
       }
     }
     {{- end }}
     {{- else }}
     {
       "@type": "Question",
-      "name": {{ .Title | jsonify }},
+      "name": {{ .Title | jsonify | safeJS }},
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": {{ (.Params.summary | default .Description | default .Title) | jsonify }}
+        "text": {{ (.Params.summary | default .Description | default .Title) | jsonify | safeJS }}
       }
     }
     {{- end }}
   ]
+}
+</script>
+{{- end }}
+
+{{- /* ---------- Person (reviewer entity, About page) ---------- */}}
+{{- if eq .RelPermalink "/about/" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Mark Zuro",
+  "jobTitle": "Outdoor Ventilation Product Specialist",
+  "description": {{ "Outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods." | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  "knowsAbout": ["Outdoor kitchen ventilation", "Range hood engineering", "Buoyant plume capture physics"]
 }
 </script>
 {{- end }}
@@ -140,8 +155,8 @@
     {
       "@type": "ListItem",
       "position": {{ add $i 1 }},
-      "name": {{ $it.name | jsonify }},
-      "item": {{ $it.item | jsonify }}
+      "name": {{ $it.name | jsonify | safeJS }},
+      "item": {{ $it.item | jsonify | safeJS }}
     }
     {{- end }}
   ]

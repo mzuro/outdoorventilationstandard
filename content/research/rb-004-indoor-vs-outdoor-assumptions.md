@@ -1,7 +1,8 @@
 ---
 title: "RB-004: Why Indoor Ventilation Assumptions Fail Outdoors"
 date: 2025-10-07
-lastmod: 2025-10-25
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

@@ -1,7 +1,8 @@
 ---
 title: "RB-007: Failure Modes of Outdoor BBQ Hoods"
 date: 2025-11-21
-lastmod: 2025-12-08
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

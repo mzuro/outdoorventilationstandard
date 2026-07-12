@@ -1,7 +1,8 @@
 ---
 title: "RB-005: Impact of Hood Geometry on Capture Performance"
 date: 2025-10-22
-lastmod: 2025-11-09
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

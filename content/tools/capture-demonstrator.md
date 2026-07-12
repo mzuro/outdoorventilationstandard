@@ -4,6 +4,7 @@ description: "Interactive plume-capture model showing how mounting height, hood 
 summary: "An interactive model of plume capture over an open-air grill. Move the mounting height, hood width, and wind speed controls and watch the capture boundary shift in real time — the same physics behind every other instrument on this site, isolated into one demonstrator."
 date: 2026-07-11
 lastmod: 2026-07-11
+reviewed: true
 tags: ["plume capture", "interactive tool", "hood design"]
 categories: ["Tools"]
 ShowToc: false
