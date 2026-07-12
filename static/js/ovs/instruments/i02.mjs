@@ -11,10 +11,35 @@
 // bars animate for free: the engine tweens the width/BTU range values and
 // calls update() every frame, so the bars re-derive from the tweened
 // state.
+//
+// v2.1 (F2) adoption, per the plan's per-instrument assignment:
+//   - drag: this instrument has no side-view hood elevation (it is a bar
+//     chart), so there is no literal hood-edge glyph to grab. A small
+//     "HOOD WIDTH" ruler-gauge is added to the scene purely to host the
+//     6"-snapping drag affordance (mirrors i01's hood-edge drag pattern,
+//     same `hood-edge` -> `.ovs-i-drag-hood-edge` engine target); it does
+//     not duplicate or disagree with any bar — width still drives the
+//     bands exclusively through requiredCfm().
+//   - presets: four site-voice scenarios landing exactly on their control
+//     values.
+//   - verdict: SKIPPED, documented. This instrument has no "installed/
+//     actual CFM" control — only the three physics bands (minimum,
+//     recommended, high-wind) for the CONFIGURED hood. A PASS/FAIL stamp
+//     needs something to grade an actual airflow against; the only way to
+//     produce one without a real user-supplied airflow would be a
+//     tautology (e.g. "recommended meets recommended" is always PASS) or
+//     a silently fabricated assumption about what the user's blower
+//     actually delivers. Both are less truthful than simply presenting the
+//     three bands, which is already the complete, honest answer this
+//     instrument gives. Per the plan's own escape hatch ("if you cannot
+//     define a truthful PASS/FAIL for i02, SKIP the stamp... truthfulness
+//     > feature count"), no spec.verdict is wired here.
+//   - smoke: not assigned to this instrument by the plan (it has no plume
+//     elevation to visualize).
 
 import { createInstrument } from '../viz.mjs';
 import { requiredCfm } from '../physics/cfm.mjs';
-import { MOUNT, MODEL_WIDTHS, parsePreset } from '../hood-presets.mjs';
+import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const AXIS_MAX_CFM = 3500;
 
@@ -50,6 +75,14 @@ export function mount(figureEl) {
   const BAR_H = 22;
   const AXIS_Y = 236;
   const xFor = (cfm) => X0 + (Math.min(cfm, AXIS_MAX_CFM) / AXIS_MAX_CFM) * (X1 - X0);
+
+  // --- HOOD WIDTH drag gauge (top-right, above the bands) ---------------
+  // A small ruler, not a hood elevation: fixed 42-72in scale, drag target
+  // is its right edge, exactly like i01's hood-edge except linear instead
+  // of centered-on-a-hood.
+  const WIDTH_X0 = 520, WIDTH_X1 = 690; // 42in .. 72in
+  const WIDTH_Y = 16, WIDTH_H = 14;
+  const widthX = (w) => WIDTH_X0 + ((w - 42) / 30) * (WIDTH_X1 - WIDTH_X0);
 
   let H = null;
   const refs = { rows: {} };
@@ -91,6 +124,25 @@ export function mount(figureEl) {
       svg.appendChild(g);
       refs.rows[row.key] = { bar, dim, y: row.y };
     }
+
+    // --- HOOD WIDTH gauge + drag handle --------------------------------
+    const gauge = H.el('g');
+    gauge.appendChild(H.el('text', { x: WIDTH_X0, y: WIDTH_Y - 6, text: 'HOOD WIDTH' }));
+    gauge.appendChild(H.el('line', {
+      class: 'ovs-i-fl-thin', x1: WIDTH_X0, y1: WIDTH_Y + WIDTH_H / 2, x2: WIDTH_X1, y2: WIDTH_Y + WIDTH_H / 2,
+    }));
+    refs.widthBar = H.el('rect', { class: 'ovs-i-bar', x: WIDTH_X0, y: WIDTH_Y, width: 0, height: WIDTH_H });
+    gauge.appendChild(refs.widthBar);
+    refs.widthLabel = H.el('text', { x: WIDTH_X1, y: WIDTH_Y + WIDTH_H + 12, 'text-anchor': 'end', text: '' });
+    gauge.appendChild(refs.widthLabel);
+    svg.appendChild(gauge);
+
+    // Transparent hit strip re-measured live (in update()) to sit centered
+    // on the current right edge — same ≥44px-tall convention as i01.
+    refs.dragWidth = H.el('rect', {
+      class: 'ovs-i-drag-hood-edge', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
+    });
+    svg.appendChild(refs.dragWidth);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -129,6 +181,13 @@ export function mount(figureEl) {
     // refresh, so this wins in every code path (init, tween tick, reduced).
     const btuBubble = container.querySelector('output[for="i02-btu"]');
     if (btuBubble) btuBubble.textContent = fmtBtu(state['i02-btu']);
+
+    // --- HOOD WIDTH gauge + drag handle ---------------------------------
+    const widthCtl = state['i02-width'];
+    const wx = widthX(widthCtl);
+    refs.widthBar.setAttribute('width', Math.max(0, wx - WIDTH_X0).toFixed(1));
+    refs.widthLabel.textContent = `${Math.round(widthCtl)}″`;
+    refs.dragWidth.setAttribute('x', (wx - 22).toFixed(1));
   }
 
   const spec = {
@@ -157,6 +216,27 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- direct manipulation: grab the width gauge's right edge, 6" snap,
+    //     matching i01's hood-edge drag exactly (same conversion shape). ----
+    drag: [
+      {
+        target: 'hood-edge', control: 'i02-width', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => snapWidth(42 + ((x - WIDTH_X0) / (WIDTH_X1 - WIDTH_X0)) * 30),
+      },
+    ],
+
+    // --- story presets: four site-voice scenarios landing exactly on their
+    //     control values. ---------------------------------------------------
+    presets: [
+      { id: 'compact-wall', label: 'Compact wall kitchen', state: { 'i02-width': 42, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-btu': 45000 } },
+      { id: 'standard-island', label: 'Standard island', state: { 'i02-width': 48, 'i02-mount': 'island', 'i02-exposure': 'moderate', 'i02-btu': 60000 } },
+      { id: 'big-island-exposed', label: 'Big island, exposed', state: { 'i02-width': 60, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 90000 } },
+      { id: 'pro-outdoor-kitchen', label: 'Pro outdoor kitchen', state: { 'i02-width': 72, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 120000 } },
+    ],
+
+    // No spec.verdict: see the header comment — this instrument has no
+    // installed/actual-CFM input to grade a stamp against.
   };
 
   createInstrument(container, spec);
