@@ -13,12 +13,12 @@
 // wind, dimension lines for width/rise, and escape wisps once the hood
 // stops fully capturing the plume.
 
-import { createInstrument } from '../viz.mjs';
+import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
-import { MOUNT, MODEL_WIDTHS, parsePreset } from '../hood-presets.mjs';
+import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const RISE_IN = 30; // fixed hood mounting height for this demonstrator
 const SAMPLE_STEP_IN = 2; // "sampled every 2in of rise" per brief
@@ -111,6 +111,12 @@ export function mount(figureEl) {
     svg.appendChild(refs.plumeR);
     svg.appendChild(refs.plumeC);
 
+    // living-smoke layer mount — the engine (spec.smoke) fills this <g>; it
+    // sits over the plume envelope but under the hood, so captured smoke
+    // visually disappears into the hood mouth.
+    refs.smokeMount = H.el('g', { class: 'ovs-i-smoke-mount' });
+    svg.appendChild(refs.smokeMount);
+
     // escape wisps (downwind of the hood lip)
     refs.wisp1 = H.el('path', { class: 'ovs-i-wisp', d: '', opacity: 0 });
     refs.wisp2 = H.el('path', { class: 'ovs-i-wisp', d: '', opacity: 0 });
@@ -142,6 +148,21 @@ export function mount(figureEl) {
     svg.appendChild(refs.dimW);
     svg.appendChild(refs.dimRise);
     svg.appendChild(refs.depthNote);
+
+    // --- direct-manipulation hit strips (drawn last so they sit on top for
+    //     pointer capture; transparent fill, ≥44px hit area). The engine
+    //     (spec.drag) wires pointer events; these rects only get positioned
+    //     here and re-measured live in update(). ------------------------------
+    refs.dragHood = H.el('rect', {
+      class: 'ovs-i-drag-hood-edge', x: 0, y: HY - 40, width: 44, height: 92,
+      fill: 'transparent',
+    });
+    refs.dragWind = H.el('rect', {
+      class: 'ovs-i-drag-wind', x: 36, y: 112, width: 90, height: 48,
+      fill: 'transparent',
+    });
+    svg.appendChild(refs.dragHood);
+    svg.appendChild(refs.dragWind);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -171,6 +192,9 @@ export function mount(figureEl) {
     setReadout('capture', capFrac);
     setReadout('deflection', deflAtHood);
     setReadout('effWind', effWind);
+
+    // expose physics to the engine's verdict stamp (spec.verdict)
+    ctx.physics = { capFrac, deflAtHood, effWind };
 
     // --- wall visibility --------------------------------------------
     refs.wall.setAttribute('opacity', mountVal === 'wall' ? '1' : '0');
@@ -220,6 +244,9 @@ export function mount(figureEl) {
     refs.capPlane.setAttribute('x1', (lx - 24).toFixed(1));
     refs.capPlane.setAttribute('x2', (rx + 24).toFixed(1));
 
+    // --- drag hit strip: centered on the downwind (right) hood lip --------
+    refs.dragHood.setAttribute('x', (rx - 22).toFixed(1));
+
     // --- dimension lines (re-measured live) ---------------------------
     replaceChildren(refs.dimW, H.dimensionLine(lx, HY - 20, rx, HY - 20, `${Math.round(widthCtl)}″`));
     replaceChildren(refs.dimRise, H.dimensionLine(660, GY, 660, HY, `${RISE_IN}″ rise`));
@@ -230,6 +257,9 @@ export function mount(figureEl) {
     const shaftX = 90 + windMph * 1.5;
     refs.windShaft.setAttribute('x2', shaftX.toFixed(1));
     refs.windArrow.setAttribute('d', `M${shaftX.toFixed(1)} 136 l-7 -4 m7 4 l-7 4`);
+    // wind drag strip spans the shaft's full travel (0..20 mph) so the whole
+    // arrow is grabbable regardless of the current speed
+    refs.dragWind.setAttribute('width', (90 + 20 * 1.5 + 12 - 36).toFixed(1));
 
     // --- escape wisps: downwind of the hood lip once capture < ~0.97 --
     const escape = Math.max(0, 1 - capFrac);
@@ -278,6 +308,59 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- living smoke: derives ENTIRELY from the same physics the readouts
+    //     use (deflection trajectory, plumeRadius spread, captureFraction
+    //     partition for the ember-orange escape tint). Fixed pixel geometry
+    //     (GX/GY/HY/pxPerIn) + the current physics state. ---------------------
+    smoke: (state) => {
+      const m = MOUNT[state['i01-mount']] ? state['i01-mount'] : 'island';
+      return {
+        sourceX: GX, sourceY: GY, hoodPlaneY: HY, pxPerIn,
+        widthIn: state['i01-width'],
+        depthIn: MOUNT[m].depthIn,
+        mount: m,
+        riseIn: RISE_IN,
+        windMph: state['i01-wind'],
+        panels: state['i01-panels'],
+        w0: 400,
+      };
+    },
+
+    // --- direct manipulation: grab the downwind hood lip (snaps to the 6″
+    //     model grid) or the wind arrow (0-20 mph). Both drive inst.set() so
+    //     the sliders, bubbles, readouts and smoke stay in lockstep. ----------
+    drag: [
+      {
+        target: 'hood-edge', control: 'i01-width', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => snapWidth(((x - GX) * 2) / pxPerIn),
+      },
+      {
+        target: 'wind-arrow', control: 'i01-wind', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => Math.max(0, Math.min(20, Math.round((x - 90) / 1.5))),
+      },
+    ],
+
+    // --- story presets: full four-control scenarios so each lands exactly on
+    //     its node values regardless of the prior state. ----------------------
+    presets: [
+      { id: 'calm-evening', label: 'Calm evening', state: { 'i01-wind': 0, 'i01-width': 48, 'i01-mount': 'island', 'i01-panels': 'none' } },
+      { id: 'breeze', label: 'Light breeze', state: { 'i01-wind': 5, 'i01-width': 48, 'i01-mount': 'island', 'i01-panels': 'none' } },
+      { id: 'island-party-exposed', label: 'Island party, exposed', state: { 'i01-wind': 10, 'i01-width': 60, 'i01-mount': 'island', 'i01-panels': 'none' } },
+      { id: 'sheltered-wall', label: 'Sheltered wall', state: { 'i01-wind': 5, 'i01-width': 54, 'i01-mount': 'wall', 'i01-panels': 'both' } },
+    ],
+
+    // --- verdict stamp: capture-fraction thresholds (>=0.85 PASS,
+    //     0.60-0.85 MARGINAL, <0.60 FAIL) with a real clause reference. -------
+    verdict: (state, physics) => {
+      const cap = physics ? physics.capFrac : 0;
+      const grade = gradeCapture(cap);
+      return {
+        grade,
+        clauseRef: 'per OVS-H1 §2.4 / RB-005',
+        detail: `Plume capture ${Math.round(cap * 100)}% — thresholds 85% PASS / 60% MARGINAL.`,
+      };
+    },
   };
 
   createInstrument(container, spec);
