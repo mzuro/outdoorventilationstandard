@@ -42,7 +42,7 @@
   </header>
 
   {{- with .Params.instrument_id }}
-  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "")) }}
+  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "") "fallback" $.Params.fallback_svg) }}
   {{- end }}
 
   {{- /* .ovs-clause-head is a `76px 1fr` grid (number | title); a bare

@@ -13,7 +13,11 @@
 
   Called with a dict: "id" (required, e.g. "i03"), "preset" (optional),
   "caption" (optional, pre-escaped HTML string rendered as <figcaption> —
-  additive to the brief's contract, not part of it).
+  additive to the brief's contract, not part of it), "fallback" (optional
+  static/diagrams/*.svg basename that overrides the id -> legacy-SVG map
+  below — needed because i10 is one module shared by two pages whose
+  correct no-JS diagrams differ; pages set `fallback_svg` front matter,
+  plumbed through by tools/single.html and questions/single.html).
 
   This is the single source of truth for the markup shape so the
   "instrument" shortcode, tools/single.html and questions/single.html
@@ -30,6 +34,7 @@
 {{- $id := .id }}
 {{- $preset := .preset | default "" }}
 {{- $caption := .caption }}
+{{- $fallback := .fallback }}
 {{- $svgMap := dict
   "i03" "wind-deflection-trajectory"
   "i04" "plume-width-by-height"
@@ -41,7 +46,7 @@
   "i10" "failure-mode-taxonomy"
 }}
 <figure class="ovs-instrument" data-instrument="{{ $id }}" data-preset="{{ $preset }}">
-  <noscript>{{- with index $svgMap $id }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="/tools/">Browse all instruments</a>.</p>{{- end }}</noscript>
+  <noscript>{{- with $fallback | default (index $svgMap $id) }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="/tools/">Browse all instruments</a>.</p>{{- end }}</noscript>
   {{- with $caption }}
   <figcaption>{{ . | safeHTML }}</figcaption>
   {{- end }}

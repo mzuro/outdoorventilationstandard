@@ -20,7 +20,8 @@
 // truly cannot be interacted with, not just styled), its wrapper gets
 // `.ovs-i-control--disabled` (dims it) and `aria-disabled="true"`, and its
 // value is snapped to 0 via the engine's own `set()` so the slider and the
-// physics never disagree.
+// physics never disagree. The pre-indoor wind value is remembered and
+// restored when the user returns to OUTDOOR.
 
 import { createInstrument } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
@@ -72,6 +73,7 @@ export function mount(figureEl) {
   const refs = {};
   let inst = null;
   let lastEnv = null;
+  let savedWind = null; // outdoor wind value remembered across an indoor visit
 
   function buildScene(svg, helpers) {
     H = helpers;
@@ -149,12 +151,24 @@ export function mount(figureEl) {
     const { setReadout } = ctx;
     const env = state['i08-environment'];
 
-    // --- one-time reset when switching TO indoor: engine has no native
-    // disable, so the control is force-snapped to 0 and hard-disabled. ---
-    if (env === 'indoor' && lastEnv !== 'indoor' && inst) {
-      inst.set('i08-wind', 0);
+    // --- one-time wind snap/restore on an environment switch. lastEnv is
+    // assigned BEFORE inst.set(): under prefers-reduced-motion the
+    // engine's startTween re-enters update() synchronously, so a stale
+    // lastEnv here would recurse forever ("Maximum call stack size
+    // exceeded"). With lastEnv already committed, the reentrant call sees
+    // env === lastEnv and falls straight through to the normal paint. ---
+    if (env !== lastEnv) {
+      const prevEnv = lastEnv;
+      lastEnv = env;
+      if (inst && env === 'indoor') {
+        // Remember the outdoor wind setting so returning to OUTDOOR
+        // restores it instead of leaving the slider parked at 0.
+        savedWind = inst.get()['i08-wind'];
+        inst.set('i08-wind', 0);
+      } else if (inst && env === 'outdoor' && prevEnv === 'indoor' && savedWind != null) {
+        inst.set('i08-wind', savedWind);
+      }
     }
-    lastEnv = env;
 
     if (!refs.windCtl) {
       const windInput = container.querySelector('#i08-wind');

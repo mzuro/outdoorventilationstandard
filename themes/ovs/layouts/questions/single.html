@@ -30,7 +30,7 @@
   {{ partial "byline.html" . }}
 
   {{- with .Params.instrument_id }}
-  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "")) }}
+  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "") "fallback" $.Params.fallback_svg) }}
   {{- end }}
 
   <div class="ovs-prose">
