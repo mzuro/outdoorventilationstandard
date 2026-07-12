@@ -33,9 +33,11 @@ This chart shows how the buoyant cooking plume expands laterally as it rises fro
 
 ## Governing Equation
 
-> d<sub>capture</sub> = 0.48(z - z<sub>0</sub>) + D<sub>eff</sub>
+The live instrument above draws one reference plume's lateral spread, not a separate curve per source type. Capture diameter starts at 28 inches at the cooking surface (twice the 14-inch reference half-width) and widens linearly through entrainment:
 
-where z is the mounting height, z<sub>0</sub> is the virtual origin (negative for most sources), and D<sub>eff</sub> is the effective source diameter.
+> d<sub>capture</sub> = 28 + 0.22 &middot; z (inches)
+
+where z is height above the cooking surface, in inches. As with the velocity-decay instrument above, this is a single representative plume — the source-type width differences described in Key Findings (charcoal/wood vs. gas) are RB-002's own measured comparisons, not separate D<sub>eff</sub>/z<sub>0</sub> curves this instrument computes.
 
 ## Source Papers
 

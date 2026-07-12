@@ -228,7 +228,7 @@ export function createInstrument(rootEl, spec) {
   if (spec.id) article.dataset.instrument = spec.id;
 
   if (spec.title) {
-    const h = document.createElement('h3');
+    const h = document.createElement('h2');
     h.className = 'ovs-i-title';
     h.textContent = spec.title;
     article.appendChild(h);

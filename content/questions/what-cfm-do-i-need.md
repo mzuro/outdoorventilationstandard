@@ -11,7 +11,7 @@ instrument_preset: "wall-48"
 citations: ["rb-008", "rb-001", "rb-006"]
 ---
 
-A 48-inch wall-mounted hood over a 60,000 BTU grill needs at least **1,200 CFM**; **1,500 CFM** is the recommended target under moderate wind exposure, and a fully exposed site should size for **2,100 CFM**. These are minimums for reliable plume capture, not comfort margins — undersized exhaust is the single most common cause of smoke escape.
+A 48-inch wall-mounted hood over a 60,000 BTU grill needs at least **1,200 CFM**; **1,500 CFM** is the recommended target under moderate wind exposure, and a fully exposed site should size for **1,800 CFM**. These are minimums for reliable plume capture, not comfort margins — undersized exhaust is the single most common cause of smoke escape.
 
 ## Why island installs need more
 
@@ -27,7 +27,7 @@ CFM scales with the hood's width and its mount type, not with how deep the hood 
 
 ## Wind pushes the number up further
 
-Moderate exposure already assumes some breeze. Sites that are consistently windy — open yards, elevated decks, waterfront — should size for the high-wind tier shown above, or add side panels to bring the effective wind speed down instead of chasing CFM with a larger blower. See the wind and side-panel questions for how much a panel actually buys back.
+Moderate exposure already assumes some breeze. The "fully exposed" figure above (1,800 CFM on the 48-inch wall example) is the exposed-site setting — RB-008's 1.5&times; band. Sites that are consistently windy on top of that — open yards, elevated decks, waterfront — should size to the instrument's high-wind design margin instead (2,100 CFM for the same hood, a 1.75&times; multiplier), or add side panels to bring the effective wind speed down rather than chasing CFM with a larger blower. See the wind and side-panel questions for how much a panel actually buys back.
 
 ## The bottom line
 

@@ -222,6 +222,19 @@ pre code {
   max-width: 65ch;
 }
 
+/* Long unbroken tokens in prose — full citation URLs (some auto-linkified
+   by goldmark's Linkify extension), inline `code` spans quoting a URL —
+   have no spaces for the UA line-breaker to use, so at narrow viewports
+   they push the whole block (and, since nothing upstream clips it, the
+   page) wider than the viewport instead of wrapping. Scoped to inline
+   code/links inside prose rather than globally so normal short link text
+   elsewhere keeps ordinary word-boundary wrapping. */
+.ovs-prose code,
+.ovs-prose a {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 .ovs-prose > :last-child {
   margin-bottom: 0;
 }

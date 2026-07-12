@@ -52,11 +52,42 @@
   color: var(--muted);
 }
 
-.ovs-nav {
+.ovs-nav-wrap {
+  position: relative;
   margin-left: auto;
+  min-width: 0;
+  /* overflow: hidden (not just visible+min-width:0) is what makes this
+     flex item eligible for flexbox's automatic-minimum-size-zero rule --
+     without it the wrap refuses to shrink below its content's natural
+     width and pushes the header (and the whole page) wider than the
+     viewport instead of leaving the scrolling to .ovs-nav inside it. */
+  overflow: hidden;
+}
+
+.ovs-nav {
   display: flex;
   gap: 0.25rem;
   overflow-x: auto;
+}
+
+/* Scroll affordance: .ovs-nav can overflow-x at narrow widths (more menu
+   items than fit) with no visible scrollbar on most platforms, so nothing
+   hints there's more to the right. A fade over the last ~20px, keyed off
+   the same 900px breakpoint the .ovs-edition badge uses (below that width
+   is where the nav gets tight enough to clip), signals it without a
+   scrollbar. It's on the wrapper, not .ovs-nav itself, so it stays put as
+   an overlay instead of scrolling away with the nav's own content. */
+@media (max-width: 899px) {
+  .ovs-nav-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to right, transparent, var(--ground));
+    pointer-events: none;
+  }
 }
 
 .ovs-nav a {
@@ -118,6 +149,20 @@
   .ovs-footer-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Not a heading: a footer column label styled to match the site's h4
+   look (mono, uppercase, faint) without breaking the h1-h3 hierarchy
+   below it (h4 is a real heading level used inside research-paper prose,
+   so it isn't safe to reuse here). */
+.ovs-foot-head {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+  text-transform: uppercase;
+  margin: 1.5rem 0 0.7rem;
 }
 
 .ovs-footer-grid ul {
@@ -458,7 +503,7 @@ a.ovs-chip:hover {
   border-bottom: 1px solid var(--line);
 }
 
-.ovs-askbox-head h3 {
+.ovs-askbox-head h2 {
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -792,6 +837,16 @@ a.ovs-chip:hover {
   grid-template-columns: 1fr;
   gap: 2rem;
   align-items: start;
+}
+
+/* Grid items default to min-width:auto, i.e. their own min-content size --
+   a wide markdown table (even one wrapped in .ovs-table-wrap's
+   overflow-x:auto a few levels down) still counts toward that min-content
+   floor unless the item's own min-width is pinned to 0. Without this the
+   article column — and the whole page — grows to fit the widest table
+   instead of letting .ovs-table-wrap scroll it internally. */
+.ovs-research-article {
+  min-width: 0;
 }
 
 @media (min-width: 980px) {
@@ -1133,11 +1188,24 @@ a.ovs-chip:hover {
   white-space: nowrap;
 }
 
+/* 44px is the box height (hit area, per WCAG 2.5.5/2.5.8) — the native
+   track/thumb are explicitly kept thin below so the visual weight on
+   desktop doesn't grow with it; both track pseudo-elements are centered
+   in the box by the browser by default. */
 .ovs-i-range {
   width: 100%;
-  height: 22px;
+  height: 44px;
+  margin: 0;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+.ovs-i-range::-webkit-slider-runnable-track {
+  height: 4px;
+}
+
+.ovs-i-range::-moz-range-track {
+  height: 4px;
 }
 
 .ovs-i-range:focus-visible {
@@ -1160,6 +1228,11 @@ a.ovs-chip:hover {
 }
 
 .ovs-i-segmented-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  box-sizing: border-box;
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.02em;

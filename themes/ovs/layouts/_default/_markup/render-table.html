@@ -1,0 +1,60 @@
+{{- /*
+  render-table.html — table render hook (Task 19, finding B.2).
+
+  Markdown tables in page prose (research papers have up to 36 apiece) were
+  rendering bare: no wrapper, so a wide table pushed the whole document out
+  to the right at narrow viewports (scrollWidth > clientWidth). This hook
+  wraps every markdown-rendered table in .ovs-table-wrap (the same
+  overflow-x:auto utility used by the homepage/research-list .ovs-table —
+  see base.css) so the TABLE scrolls internally instead of the page.
+
+  It re-emits the same thead/tbody/alignment structure Hugo's builtin table
+  renderer produces — this is deliberately NOT given the .ovs-table class:
+  that class carries mono-font/tier-chip styling meant for the curated
+  designation tables in index.html / research/list.html, and forcing it
+  onto 30+ prose tables per paper would be a visual restyle nobody asked
+  for. Only the overflow behavior changes; typography stays the browser
+  default it already was.
+*/ -}}
+<div class="ovs-table-wrap">
+  <table>
+    {{- with .THead }}
+    <thead>
+      {{- range . }}
+      <tr>
+        {{- range . }}
+        {{- $cell := . }}
+        {{- if eq $cell.Alignment "left" }}
+        <th scope="col" style="text-align: left">{{ $cell.Text }}</th>
+        {{- else if eq $cell.Alignment "right" }}
+        <th scope="col" style="text-align: right">{{ $cell.Text }}</th>
+        {{- else if eq $cell.Alignment "center" }}
+        <th scope="col" style="text-align: center">{{ $cell.Text }}</th>
+        {{- else }}
+        <th scope="col">{{ $cell.Text }}</th>
+        {{- end }}
+        {{- end }}
+      </tr>
+      {{- end }}
+    </thead>
+    {{- end }}
+    <tbody>
+      {{- range .TBody }}
+      <tr>
+        {{- range . }}
+        {{- $cell := . }}
+        {{- if eq $cell.Alignment "left" }}
+        <td style="text-align: left">{{ $cell.Text }}</td>
+        {{- else if eq $cell.Alignment "right" }}
+        <td style="text-align: right">{{ $cell.Text }}</td>
+        {{- else if eq $cell.Alignment "center" }}
+        <td style="text-align: center">{{ $cell.Text }}</td>
+        {{- else }}
+        <td>{{ $cell.Text }}</td>
+        {{- end }}
+        {{- end }}
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>
