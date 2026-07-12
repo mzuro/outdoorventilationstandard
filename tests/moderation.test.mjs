@@ -75,3 +75,22 @@ test('parseModelResponse: empty/non-string input degrades gracefully', () => {
   assert.equal(parseModelResponse('').offTopic, false);
   assert.equal(parseModelResponse(undefined).answer, '');
 });
+
+test('parseModelResponse: structured-path answer is scrubbed of markdown-link syntax (W3 review MINOR-1)', () => {
+  const raw = JSON.stringify({
+    answer: 'A 48-inch island hood needs 1,450 CFM — see [the calculator](https://evil.example.com/steal) for details.',
+    citations: [],
+    followups: [],
+    off_topic: false,
+  });
+  const r = parseModelResponse(raw);
+  assert.equal(r.structured, true);
+  assert.equal(r.answer, 'A 48-inch island hood needs 1,450 CFM — see the calculator for details.');
+  assert.ok(!r.answer.includes('evil.example.com'));
+});
+
+test('parseModelResponse: structured-path answer without links is untouched', () => {
+  const raw = JSON.stringify({ answer: 'Plain answer [not a link, no parens].', citations: [], followups: [], off_topic: false });
+  const r = parseModelResponse(raw);
+  assert.equal(r.answer, 'Plain answer [not a link, no parens].');
+});

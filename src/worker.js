@@ -5,6 +5,7 @@ import { checkDailyCap } from './lib/costcap.mjs';
 import { askCacheKey } from './lib/normalize.mjs';
 import { clampParams, paramsCacheKey } from './lib/params.mjs';
 import { computeState, PAPER_MAP } from './lib/explain-state.mjs';
+import { validateNarration, templateNarration } from './lib/narration.mjs';
 
 const ASK_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const ASK_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -486,10 +487,23 @@ async function handleFetch(request, env) {
           temperature: 0.2
         });
 
-        const explanation = (aiResponse.response || '').trim();
-        const responseBody = JSON.stringify({ explanation, citations, state });
+        // MAJOR-1 (W3 review): the narration is model free-text, so it is
+        // POST-VALIDATED against the state sheet before it can be shown —
+        // every numeral in the prose must trace back to a state-sheet
+        // value (src/lib/narration.mjs documents the exact matching
+        // rules). A narration that fails degrades honestly to a
+        // deterministic template built only from state-sheet values;
+        // unvalidated model prose is NEVER returned to the client.
+        const modelText = (aiResponse.response || '').trim();
+        const check = validateNarration(modelText, state);
+        const validated = modelText.length > 0 && check.ok;
+        const explanation = validated ? modelText : templateNarration(state);
+        const responseBody = JSON.stringify({ explanation, citations, state, narration_source: validated ? 'model' : 'template' });
 
-        if (env.QUESTION_CLICKS && explanation) {
+        // Only cache validated model narrations: pinning a degraded
+        // template for 30 days would suppress a perfectly good narration
+        // on the next request for the same config.
+        if (env.QUESTION_CLICKS && validated) {
           try {
             await env.QUESTION_CLICKS.put(cacheKey, responseBody, { expirationTtl: EXPLAIN_CACHE_TTL });
           } catch (e) { /* cache-write failure should never block the response */ }

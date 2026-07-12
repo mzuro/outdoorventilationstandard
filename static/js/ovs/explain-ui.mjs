@@ -41,11 +41,53 @@ function escapeHtml(s) {
   ));
 }
 
+// Authoritative readout rows (W3 review MAJOR-1): the server ships the
+// deterministic, physics-computed numbers as `state` alongside the model
+// narration. These rows render state.outputs directly — same monospace
+// readout classes the instrument engine emits (ovs-i-readout*, see
+// viz.mjs + components.css) — so the correct numbers are ALWAYS on
+// screen in the site's own voice, regardless of what the narration says.
+// Labels mirror the instruments' own readout labels (i01.mjs / i02.mjs).
+const nfmt = (v) => (typeof v === 'number' ? v.toLocaleString('en-US') : String(v));
+const STATE_READOUTS = {
+  i01: [
+    { key: 'capturePct', label: 'PLUME CAPTURE', fmt: (v) => nfmt(v) + '%', hero: true },
+    { key: 'deflectionIn', label: 'DEFLECTION AT HOOD', fmt: (v) => nfmt(v) + '″' },
+    { key: 'effectiveWindMph', label: 'EFFECTIVE WIND', fmt: (v) => nfmt(v) + ' mph' },
+    { key: 'plumeWidthAtHoodIn', label: 'PLUME WIDTH AT HOOD', fmt: (v) => nfmt(v) + '″' },
+  ],
+  i02: [
+    { key: 'recommendedCfm', label: 'RECOMMENDED', fmt: (v) => nfmt(v) + ' CFM', hero: true },
+    { key: 'minimumCfm', label: 'MINIMUM', fmt: (v) => nfmt(v) + ' CFM' },
+    { key: 'highWindCfm', label: 'HIGH-WIND', fmt: (v) => nfmt(v) + ' CFM' },
+  ],
+};
+
+function renderStateReadout(state) {
+  if (!state || !state.outputs) return '';
+  const rows = STATE_READOUTS[state.instrument] || [];
+  const rowsHtml = rows
+    .filter((r) => state.outputs[r.key] != null)
+    .map((r) =>
+      '<div class="' + (r.hero ? 'ovs-i-readout ovs-i-readout--hero' : 'ovs-i-readout') + '">' +
+        '<span class="ovs-i-readout-label">' + escapeHtml(r.label) + '</span>' +
+        '<span class="ovs-i-readout-value">' + escapeHtml(r.fmt(state.outputs[r.key])) + '</span>' +
+      '</div>')
+    .join('');
+  if (!rowsHtml) return '';
+  return '<div class="ovs-explain-state ovs-i-readouts">' + rowsHtml + '</div>';
+}
+
 function renderResult(resultEl, data) {
   const citationsHtml = (data.citations || [])
     .map((c) => '<a class="ovs-chip ovs-chip--accent" href="' + encodeURI(c.url) + '">' + escapeHtml(c.rb || c.url) + '</a>')
     .join('');
+  // State readout first (authoritative, server-computed), narration after
+  // (already server-validated against the same state sheet; degrades to a
+  // deterministic template server-side if validation fails — see
+  // src/lib/narration.mjs).
   resultEl.innerHTML =
+    renderStateReadout(data.state) +
     '<p class="ovs-explain-text">' + escapeHtml(data.explanation) + '</p>' +
     '<div class="ovs-explain-citations">' + citationsHtml + '</div>';
   resultEl.hidden = false;

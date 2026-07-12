@@ -35,12 +35,26 @@
 {{- $maxFactLen := 200 }}
 {{- $maxFactsPerSection := 2 }}
 
-{{- $unescape := dict "&amp;" "&" "&lt;" "<" "&gt;" ">" "&#39;" "'" "&#34;" "\"" "&quot;" "\"" "&rsquo;" "’" "&mdash;" "—" "&ndash;" "–" "&times;" "×" }}
+{{- /*
+  Entity cleanup. Two gotchas found the hard way (W3 review MINOR-3):
+  1. Hugo's `truncate` HTML-escapes plain-string input on the way out, so
+     unescaping and THEN truncating re-introduced `&gt;`/`&#34;`/`&amp;…`
+     into the emitted facts. Facts are therefore cut with `substr` (which
+     never escapes) instead of `truncate` — see $cut below.
+  2. Hugo ranges dicts in sorted key order, so "&amp;" (sorting before
+     "&gt;"/"&lt;"/named entities) is decoded first and a double-encoded
+     "&amp;lt;" correctly collapses to "<" in a single pass.
+  The map also covers the typographic entities Goldmark actually emits in
+  this corpus (ldquo/rdquo/lsquo/hellip were missing before).
+*/ -}}
+{{- $unescape := dict "&amp;" "&" "&lt;" "<" "&gt;" ">" "&#39;" "'" "&#34;" "\"" "&quot;" "\"" "&rsquo;" "’" "&lsquo;" "‘" "&ldquo;" "“" "&rdquo;" "”" "&hellip;" "…" "&mdash;" "—" "&ndash;" "–" "&times;" "×" "&nbsp;" " " }}
 
 {{- $questions := slice }}
 {{- range where site.RegularPages "Section" "questions" }}
   {{- if and .Title (ne .RelPermalink "/questions/") }}
     {{- $text := .Plain | strings.TrimSpace }}
+    {{- /* .Plain retains HTML entities (&rsquo; etc.) — decode them here too (MINOR-3). */}}
+    {{- range $k, $v := $unescape }}{{ $text = replace $text $k $v }}{{ end }}
     {{- $questions = $questions | append (dict
       "url" .RelPermalink
       "title" .Title
@@ -76,10 +90,13 @@
               {{- range $k, $v := $unescape }}{{ $plain = replace $plain $k $v }}{{ end }}
               {{- $plain = replaceRE `\s+` " " $plain | strings.TrimSpace }}
               {{- if gt (len $plain) 0 }}
+                {{- /* substr, NOT truncate: truncate HTML-escapes plain strings,
+                       which re-encoded the entities this template just decoded. */}}
+                {{- if gt (len $plain) $maxFactLen }}{{ $plain = printf "%s …" (substr $plain 0 $maxFactLen | strings.TrimSpace) }}{{ end }}
                 {{- $facts = $facts | append (dict
                   "section" $title
                   "url" (printf "%s#%s" $url $id)
-                  "text" ($plain | truncate $maxFactLen)
+                  "text" $plain
                 ) }}
                 {{- $sectionCount = add $sectionCount 1 }}
               {{- end }}

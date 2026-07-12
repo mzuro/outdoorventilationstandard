@@ -40,7 +40,13 @@ export function parseModelResponse(rawText) {
         return {
           structured: true,
           offTopic: parsed.off_topic === true,
-          answer: parsed.answer,
+          // W3 review MINOR-1: on the structured path the model is told to
+          // put links in `citations`, not the answer — but a non-compliant
+          // model can still embed [label](url) markdown in `answer`, which
+          // the client renders via textContent as inert raw-URL noise.
+          // Strip the syntax, keep the label; the citations array (which
+          // is whitelist-validated downstream) is the only link channel.
+          answer: stripMarkdownLinks(parsed.answer),
           citations: Array.isArray(parsed.citations) ? parsed.citations : [],
           followups: Array.isArray(parsed.followups)
             ? parsed.followups.filter((f) => typeof f === 'string' && f.trim()).slice(0, 3).map((f) => f.trim().slice(0, 140))
@@ -76,6 +82,11 @@ export function parseModelResponse(rawText) {
     citations: links.map((l) => ({ rb: null, section: null, url: l.url, label: l.label })),
     followups: [],
   };
+}
+
+/** Replace [label](url) markdown links with just their label text. */
+function stripMarkdownLinks(text) {
+  return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
 }
 
 /** Strip a ```json fenced block if present; otherwise return the trimmed text if it looks like an object. */

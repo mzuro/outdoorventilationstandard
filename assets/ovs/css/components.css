@@ -1138,6 +1138,19 @@ a.ovs-chip:hover {
   display: none;
 }
 
+/* Authoritative server-computed readout inside the explain result (W3
+   review MAJOR-1). Reuses the instrument engine's .ovs-i-readout* row
+   classes for exact visual consistency; this wrapper just re-fits the
+   engine's .ovs-i-readouts container (surface-2 bg + top border) to sit
+   inside the result panel, separated from the narration below it. */
+.ovs-explain-state.ovs-i-readouts {
+  background: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 0.7rem;
+  margin: 0 0 0.7rem;
+}
+
 .ovs-explain-text {
   font-size: 0.9rem;
   color: var(--ink);
