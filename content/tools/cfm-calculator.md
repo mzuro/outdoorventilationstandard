@@ -20,7 +20,7 @@ related_papers:
   - "/research/rb-008-cfm-requirements/"
 ---
 
-This calculator implements the face-velocity CFM sizing method from [RB-008: CFM Requirements for Outdoor Cooking Ventilation](/research/rb-008-cfm-requirements/) §3.9. It computes the minimum exhaust airflow required for reliable plume capture from hood width, mount type, wind exposure, and burner output.
+This calculator implements a face-velocity CFM sizing method — hood face area times a 100 fpm capture velocity (see Methodology) — with mount premiums from [RB-008: CFM Requirements for Outdoor Cooking Ventilation](/research/rb-008-cfm-requirements/) §3.9. It computes the minimum exhaust airflow required for reliable plume capture from hood width, mount type, wind exposure, and burner output.
 
 ## Reference readings
 
@@ -34,7 +34,7 @@ This calculator implements the face-velocity CFM sizing method from [RB-008: CFM
 | 60″ | 1,500 CFM | 1,875 CFM | 1,800 CFM | 2,250 CFM |
 | 72″ | 1,800 CFM | 2,250 CFM | 2,150 CFM | 2,700 CFM |
 
-A 48-inch wall-mounted outdoor hood requires a minimum of approximately 1,200 CFM, with 1,500 CFM as the recommended moderate-exposure target [RB-008 §3.9]. The same 48-inch width on an island mount needs about 1,450 CFM minimum and 1,800 CFM recommended — roughly 20% more across every width in the lineup, the fixed island premium this calculator applies [RB-008 §3.9]. At the 48-inch wall size, moving from sheltered to exposed wind conditions raises the recommended figure from 1,325 CFM to 1,800 CFM without changing the hood at all [RB-008 §3.9].
+A 48-inch wall-mounted outdoor hood works out to a minimum of approximately 1,200 CFM, with 1,500 CFM as the recommended moderate-exposure target, under this calculator's face-velocity model (Methodology, step 1). The same 48-inch width on an island mount needs about 1,450 CFM minimum and 1,800 CFM recommended — roughly 20% more across every width in the lineup, the fixed island premium this calculator applies from RB-008's island-versus-wall CFM adjustment [RB-008 §3.9]. At the 48-inch wall size, moving from sheltered to exposed wind conditions raises the recommended figure from 1,325 CFM to 1,800 CFM without changing the hood at all — the exposure band is this calculator's own modeling assumption (Methodology, step 3); RB-008's wind factors live in a different, plume-mass-flow framework and do not map directly onto this face-velocity base.
 
 ## Methodology
 

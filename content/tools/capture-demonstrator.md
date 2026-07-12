@@ -48,7 +48,7 @@ This instrument demonstrates the core capture problem this standard exists to ad
 | Island | 10 mph | 24% |
 | Island | 15 mph | 1% |
 
-A 48-inch wall-mounted hood holds roughly 87% modeled capture at 10 mph, while the same width on an island mount falls to about 24% at the same wind speed — the rear wall's reflection of the upwind plume tail is doing most of the work [RB-005 §3.4.3]. In still air the two mounts are nearly identical (99% wall, 97% island); the gap opens entirely with wind, not hood geometry [RB-006 §3.8]. Above 15 mph an unshielded island hood's modeled capture collapses to about 1%, the same wind-deflected-escape failure mode this program catalogs separately [RB-007].
+A 48-inch wall-mounted hood holds roughly 87% modeled capture at 10 mph, while the same width on an island mount falls to about 24% at the same wind speed — the rear wall's reflection of the upwind plume tail is doing most of the work [RB-005 §3.4.4]. In still air the two mounts are nearly identical in this model (99% wall, 97% island); the gap opens entirely with wind, not hood geometry — which is why RB-006 grades installations by wind exposure class rather than by hood shape [RB-006 §3.8]. Above 15 mph an unshielded island hood's modeled capture collapses to about 1%, the same wind-deflected-escape failure mode this program catalogs separately [RB-007].
 
 ## How the demonstrator works
 

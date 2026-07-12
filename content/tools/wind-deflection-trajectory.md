@@ -38,7 +38,7 @@ This diagram shows how ambient crosswind deflects the buoyant cooking plume away
 | 30″ | 7.8″ | 13.0″ | 20.8″ | 31.2″ | 51.9″ |
 | 48″ | 14.0″ | 23.3″ | 37.2″ | 55.8″ | 93.1″ |
 
-At a 30-inch mounting height, a 5 mph crosswind deflects the plume centerline about 13 inches — approaching the 17-inch recommended overhang margin — and an 8 mph crosswind deflects it about 21 inches, beyond any reasonable overhang [RB-006 §3.1]. The same crosswind deflects a plume roughly 1.8× farther at a 48-inch mounting height than at 30 inches, because the plume has more time to drift sideways before it reaches a higher hood [RB-006 §3.1]. Deflection scales linearly with wind speed at a fixed mounting height in this model: at 30 inches, the 12 mph deflection (31.2 inches) is almost exactly four times the 3 mph deflection (7.8 inches), matching the model's linear wind term [RB-006 §3.1].
+At a 30-inch mounting height, a 5 mph crosswind deflects the plume centerline about 13 inches — approaching the 17-inch overhang RB-005 recommends for a medium gas grill at that mounting height [RB-005 §3.1] — and an 8 mph crosswind deflects it about 21 inches, beyond any reasonable overhang [RB-006 §3.1]. The same crosswind deflects a plume roughly 1.8× farther at a 48-inch mounting height than at 30 inches, because the plume has more time to drift sideways before it reaches a higher hood [RB-006 §3.1]. Deflection scales linearly with wind speed at a fixed mounting height in this model: at 30 inches, the 12 mph deflection (31.2 inches) is almost exactly four times the 3 mph deflection (7.8 inches), matching the model's linear wind term [RB-006 §3.1].
 
 ## Key Findings
 

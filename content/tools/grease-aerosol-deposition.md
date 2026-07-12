@@ -40,7 +40,7 @@ When the buoyant cooking plume escapes the hood (partially or fully), grease aer
 | 26″ | 60% |
 | 30″ | 54% |
 
-This instrument's vertical intensity strip holds at its maximum from the grill surface to about 9 inches, then falls to roughly 54% by 30 inches — the same height range over which centerline velocity itself decays fastest. That vertical falloff is a distinct measurement axis from RB-011's own finding that the coarse droplet mode (>10 micron), which carries the majority of total grease mass, settles predominantly within a few meters of the source regardless of hood height [RB-011 §3.3]. Near-field hood capture effectiveness for that coarse mode is 70-98% for standard baffle filters, which is why effective hood operation — not distance from the grill — is the primary lever on near-field deposition [RB-011 §3.9].
+This instrument's vertical intensity strip holds at its maximum from the grill surface to about the 12-inch reference height, then falls to roughly 54% by 30 inches — the same height range over which centerline velocity itself decays fastest. That vertical falloff is a distinct measurement axis from RB-011's own finding that the coarse droplet mode (>10 micron), which carries the majority of total grease mass, settles predominantly within a few meters of the source regardless of hood height [RB-011 §4.2]. Near-field hood capture effectiveness for that coarse mode is 70-98% for standard baffle filters, which is why effective hood operation — not distance from the grill — is the primary lever on near-field deposition [RB-011 §4.2].
 
 ## The Three Deposition Zones
 

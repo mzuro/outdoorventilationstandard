@@ -40,7 +40,7 @@ This diagram compares three hood configurations over the same cooking source, sh
 | 60″ | 96% | 46% |
 | 72″ | 96% | 46% |
 
-At an 8 mph crosswind, widening the hood from 42 to 72 inches moves wall-mount capture only from 95% to 96%, and moves island-mount capture not at all — capture holds flat at 46% across the entire lineup [RB-006 §3.1]. That is because width only buys lateral coverage; in this model a crosswind pushes the plume off the hood's front-to-back axis, and no amount of extra width recovers axial capture lost to wind [RB-005 §2.2]. The 50-point gap between wall (96%) and island (46%) at the same width and wind speed is the Coanda wall-reflection effect quantified in RB-005 [RB-005 §3.4.3].
+At an 8 mph crosswind, widening the hood from 42 to 72 inches moves wall-mount capture only from 95% to 96%, and moves island-mount capture not at all — in this model, capture holds flat at 46% across the entire lineup. That is because width only buys lateral coverage; a crosswind pushes the plume off the hood's front-to-back axis [RB-006 §3.1], and no amount of extra width recovers axial capture lost to wind [RB-005 §2.2]. The 50-point gap between wall (96%) and island (46%) at the same width and wind speed is the wall-mount advantage RB-005 describes — rear-boundary redirection and Coanda wall attachment [RB-005 §3.4.4].
 
 ## Key Findings
 

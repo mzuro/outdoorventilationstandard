@@ -43,7 +43,7 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 | 8 mph | 46% |
 | 12 mph | 10% |
 
-In still air, this 48-inch island hood models at 97% capture — close to the near-100% indoor baseline RB-004 describes, since none of the four indoor advantages are wind-related [RB-004 §2.1]. Introducing an 8 mph crosswind, with no other change to the hood, drops modeled capture to about 46%, squarely inside the 40-60% outdoor range RB-004 reports as the real-world consequence of losing wall confinement, ceiling redirection, and pressure assist [RB-004 §2.1]. By 12 mph, modeled capture falls to about 10%, the same order of magnitude RB-008 uses to justify a 5.75x wind-exposure multiplier over the sheltered CFM baseline [RB-008 §3.9].
+In still air, this 48-inch island hood models at 97% capture — close to the near-100% indoor baseline RB-004 describes, because still air grants the outdoor hood the one indoor advantage this instrument isolates: an environment free of crosswind and ambient turbulence [RB-004 §2.1]. Introducing an 8 mph crosswind, with no other change to the hood, drops modeled capture to about 46% — below even the 50-65% first-pass capture RB-004 estimates for a UL 710-rated hood operated outdoors, depending on wind conditions and installation geometry [RB-004 §3.3.2]. By 12 mph — the top of the wind band RB-008 classifies as Exposed with no panels — modeled capture falls to about 10%; for that class RB-008 sets the CFM multiplier over bare plume mass flow at 5.75x, versus 3.0x for a sheltered installation, a 92% increase in required exhaust for the same hood [RB-008 §3.2, §3.6].
 
 ## The Four Indoor Advantages
 
@@ -57,7 +57,7 @@ In still air, this 48-inch island hood models at 97% capture — close to the ne
 
 ## The Capture Efficiency Gap
 
-The combined effect of these four differences reduces outdoor capture efficiency from near-100% (indoor, properly sized hood) to approximately 40-60% (outdoor, same hood design). This is the central finding of [RB-004](/research/rb-004-indoor-vs-outdoor-assumptions/) and the fundamental reason that indoor ventilation standards cannot be directly applied to outdoor cooking installations.
+The combined effect of these four differences reduces outdoor capture efficiency from near-100% (indoor, properly sized hood) to approximately 50-70% (outdoor, same hood, same CFM) [RB-004 §4.3]. This is the central finding of [RB-004](/research/rb-004-indoor-vs-outdoor-assumptions/) and the fundamental reason that indoor ventilation standards cannot be directly applied to outdoor cooking installations.
 
 ## Implications for Hood Sizing
 

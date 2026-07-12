@@ -40,7 +40,7 @@ This diagram shows the dramatic improvement in capture performance when side pan
 | 12 mph | 10% | 80% |
 | 16 mph | 1% | 65% |
 
-On a 48-inch island hood in an 8 mph breeze, this model's capture rises from about 46% with no side panels to about 91% with panels on both sides — the same panel configuration the calculator above defaults to [RB-009 §2.1]. Panels on both sides cut the wind speed the plume actually experiences to 40% of ambient, which is why the capture gap between panels and no panels widens rather than narrows as wind speed increases (from 0 points at 0 mph to 64 points at 16 mph) [RB-009 §2.1]. Even at 16 mph — well above the "Exposed" threshold — a panel-equipped hood in this model still holds 65% capture, while the unshielded hood has collapsed to about 1% [RB-006 §3.8].
+On a 48-inch island hood in an 8 mph breeze, this model's capture rises from about 46% with no side panels to about 91% with panels on both sides — a configuration you can toggle to in the calculator above, which starts with no panels [RB-009 §2.1]. Panels on both sides cut the wind speed the plume actually experiences to 40% of ambient, which is why the capture gap between panels and no panels widens rather than narrows as wind speed increases (from 0 points at 0 mph to 64 points at 16 mph) [RB-009 §2.1]. Even at 16 mph — well above the "Exposed" threshold — a panel-equipped hood in this model still holds 65% capture, while the unshielded hood has collapsed to about 1% [RB-006 §3.8].
 
 ## Key Findings
 

@@ -41,7 +41,7 @@ This chart shows how the buoyant cooking plume expands laterally as it rises fro
 | 36″ | 35.9″ |
 | 48″ | 38.6″ |
 
-At the cooking surface the reference plume is already 28 inches across; by a 30-inch mounting height it has widened to about 34.6 inches, and by 48 inches to about 38.6 inches [RB-002 §2.7]. The plume gains roughly 0.22 inch of diameter for every additional inch of mounting height in this model, a linear entrainment rate calibrated against RB-002's measured per-source width data [RB-002 §2.7]. Because the plume is already wider than most single-grill cooking surfaces at the grill itself, a hood with zero overhang misses plume material even at the lowest standard mounting height [RB-002 §3.4].
+At the cooking surface this instrument's reference plume is already 28 inches across; by a 30-inch mounting height it has widened to about 34.6 inches, and by 48 inches to about 38.6 inches. The plume gains roughly 0.22 inch of diameter for every additional inch of mounting height in this model — linear growth of the same form as the MTT linear model in RB-002, which puts the diameter slope slightly higher, at 0.24 (Heskestad) to 0.264 (MTT) inch per inch of rise [RB-002 §2.7]. Because the plume is already wider than most single-grill cooking surfaces at the grill itself, a hood with zero overhang misses plume material even at the lowest standard mounting height [RB-002 §3.4].
 
 ## Key Findings
 
@@ -57,7 +57,7 @@ The live instrument above draws one reference plume's lateral spread, not a sepa
 
 > d<sub>capture</sub> = 28 + 0.22 &middot; z (inches)
 
-where z is height above the cooking surface, in inches. As with the velocity-decay instrument above, this is a single representative plume — the source-type width differences described in Key Findings (charcoal/wood vs. gas) are RB-002's own measured comparisons, not separate D<sub>eff</sub>/z<sub>0</sub> curves this instrument computes.
+where z is height above the cooking surface, in inches. As with the velocity-decay instrument above, this is a single representative plume — the source-type width differences described in Key Findings (charcoal/wood vs. gas) are RB-002's own modeled comparisons, not separate D<sub>eff</sub>/z<sub>0</sub> curves this instrument computes.
 
 ## Source Papers
 
