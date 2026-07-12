@@ -41,6 +41,12 @@
   "datePublished": {{ $published | jsonify | safeJS }},
   "dateModified": {{ $updated | jsonify | safeJS }},
   "url": {{ .Permalink | jsonify | safeJS }},
+  {{- if .Params.reviewed }}
+  "reviewedBy": {
+    "@type": "Person",
+    "name": "Mark Zuro"
+  },
+  {{- end }}
   "author": {
     "@type": "Organization",
     "name": {{ $siteName | jsonify | safeJS }},
@@ -70,6 +76,12 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  {{- if .Params.reviewed }}
+  "reviewedBy": {
+    "@type": "Person",
+    "name": "Mark Zuro"
+  },
+  {{- end }}
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -129,6 +141,11 @@
   "jobTitle": "Outdoor Ventilation Product Specialist",
   "description": {{ "Outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods." | jsonify | safeJS }},
   "url": {{ .Permalink | jsonify | safeJS }},
+  "worksFor": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify | safeJS }},
+    "url": {{ $baseURL | jsonify | safeJS }}
+  },
   "knowsAbout": ["Outdoor kitchen ventilation", "Range hood engineering", "Buoyant plume capture physics"]
 }
 </script>
