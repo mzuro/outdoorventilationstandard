@@ -9,6 +9,11 @@ categories: ["Tools"]
 ShowToc: false
 weight: 3
 instrument_id: "i03"
+related_questions:
+  - "/questions/does-wind-affect-my-hood/"
+related_papers:
+  - "/research/rb-006-wind-interaction-crossflow/"
+  - "/research/rb-009-side-panel-effectiveness/"
 ---
 
 This diagram shows how ambient crosswind deflects the buoyant cooking plume away from the hood's capture zone. Even moderate breezes (5 mph) can push the plume to the edge of hood coverage, and winds above 8 mph cause outright capture failure for unshielded installations.
@@ -22,6 +27,18 @@ This diagram shows how ambient crosswind deflects the buoyant cooking plume away
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same wind-coupled deflection model (`physics/wind.mjs`, `physics/capture.mjs`) driving the instrument above, no side panels; live values update as you move the controls.*
+
+| Mounting rise | 3 mph | 5 mph | 8 mph | 12 mph | 20 mph |
+|---|---|---|---|---|---|
+| 18″ | 4.3″ | 7.1″ | 11.4″ | 17.1″ | 28.5″ |
+| 30″ | 7.8″ | 13.0″ | 20.8″ | 31.2″ | 51.9″ |
+| 48″ | 14.0″ | 23.3″ | 37.2″ | 55.8″ | 93.1″ |
+
+At a 30-inch mounting height, a 5 mph crosswind deflects the plume centerline about 13 inches — approaching the 17-inch overhang RB-005 recommends for a medium gas grill at that mounting height [RB-005 §3.1] — and an 8 mph crosswind deflects it about 21 inches, beyond any reasonable overhang [RB-006 §3.1]. The same crosswind deflects a plume roughly 1.8× farther at a 48-inch mounting height than at 30 inches, because the plume has more time to drift sideways before it reaches a higher hood [RB-006 §3.1]. Deflection scales linearly with wind speed at a fixed mounting height in this model: at 30 inches, the 12 mph deflection (31.2 inches) is almost exactly four times the 3 mph deflection (7.8 inches), matching the model's linear wind term [RB-006 §3.1].
 
 ## Key Findings
 

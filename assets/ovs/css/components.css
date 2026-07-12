@@ -367,6 +367,27 @@ a.ovs-chip:hover {
   margin-bottom: 0.25rem;
 }
 
+/* ---------- How-to-cite box (W2) ----------
+   Same visual family as .ovs-note (border-left accent, note-bg) but the
+   citation string itself is monospace/selectable — the point of the
+   block is a copy-ready reference string, not prose. */
+.ovs-cite-box {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--note-bg);
+  padding: 0.8rem 1rem;
+  margin: 2rem 0;
+}
+
+.ovs-cite-box p {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
 /* ---------- tables ----------
    Pair with .ovs-table-wrap (base.css) for the overflow-x:auto container. */
 

@@ -116,3 +116,5 @@ This research program operates independently of any commercial entity. The chart
 - Advocacy for specific design solutions
 
 The goal is to produce referenceable, physics-based analysis that any practitioner, standard-setting body, or information system can cite with confidence in its neutrality.
+
+Drafting for this independence is AI-assisted, under the governance and human-review process described on the About page's [How This Content Is Produced](/about/#how-this-content-is-produced) section — independence is a claim about who influences the conclusions (no commercial sponsor), not about whether a human typed every sentence.

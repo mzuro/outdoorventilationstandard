@@ -14,7 +14,7 @@ In calm air the difference is small — a 48-inch wall hood captures about 99%, 
 
 ## Why the wall matters so much
 
-A wall behind the grill doesn't just block wind on one side — it reflects the plume. Air mass that would otherwise drift past the open back edge hits the wall and bounces back into the hood's capture zone instead of escaping. The capture model treats this as a mirror-image plume reinforcing the real one at the wall; an island hood has no such reflection on any side, so wind-deflected plume mass is simply lost. This is the largest single reason wall installations are more forgiving at any real-world wind speed.
+A wall behind the grill doesn't just block wind on one side — it reflects the plume. Air mass that would otherwise drift past the open back edge hits the wall and bounces back into the hood's capture zone instead of escaping. The capture model treats this as a mirror-image plume reinforcing the real one at the wall; an island hood has no such reflection on any side, so wind-deflected plume mass is simply lost. This is the largest single reason wall installations are more forgiving at any real-world wind speed. The full [Hood Geometry Comparison](/tools/hood-geometry-comparison/) tool lets you compare any two widths and mounts side by side at your own wind speed.
 
 ## The depth difference isn't the deciding factor
 

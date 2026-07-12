@@ -23,6 +23,18 @@ description: "Models the effect of ambient wind on buoyant cooking plume traject
 summary: "This paper is the most practically important analysis in the Outdoor Ventilation Standard for real-world outdoor installations. It extends the still-air plume characterization of RB-001 and the CFM analysis of RB-003 into the wind-exposed environment that defines outdoor cooking. Using Briggs bent-plume trajectory equations, Froude number analysis, and wind momentum ratio formulations, it quantifies lateral plume deflection at every combination of source type, mounting height, and wind speed from 0 to 15 mph. It identifies the critical wind speeds at which standard hoods lose reliable capture, quantifies the CFM and geometric compensation required, and delivers a four-tier wind exposure classification system with specific design recommendations per class."
 tags: ["wind effects", "plume physics", "crossflow"]
 categories: ["P1 — Core"]
+dataset:
+  name: "RB-006 Wind Exposure and Plume Deflection Tables"
+  description: "Tabulated model outputs from RB-006 quantifying how ambient wind affects buoyant cooking plume trajectory and hood capture: crosswind Froude-number regime classification, entrainment-coefficient adjustment factors by Froude number, terrain-based gust factors and turbulence intensity by terrain class, and near-ground wind-shear profiles by installation setting. Values are derived from Briggs plume-rise and crossflow jet theory, not field-measured wind data collected for this application."
+  csv: "/data/rb-006-crosswind-froude-number.csv"
+  csvDescription: "Table 3.3 (Gas Grill Medium, Q_c = 8.2 kW): crosswind Froude number Fr = U_w / u_0(z) at 5 mounting heights x 5 wind speeds — transcribed verbatim from the paper body."
+  variableMeasured:
+    - "Crosswind Froude number regime"
+    - "Entrainment coefficient adjustment factor (wind-affected)"
+    - "Terrain gust factor"
+    - "Turbulence intensity by terrain class"
+    - "Wind shear profile ratio by installation setting"
+  measurementTechnique: "Briggs plume-rise and crossflow jet-theory model output; not field-measured for this application"
 ---
 
 **Research Program:** Outdoor Ventilation Standard

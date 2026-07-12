@@ -12,6 +12,13 @@ weight: -1
 draft: false
 instrument_id: "i01"
 instrument_preset: "island-48"
+related_questions:
+  - "/questions/hood-depth-and-overhang/"
+  - "/questions/does-wind-affect-my-hood/"
+related_papers:
+  - "/research/rb-002-entrainment-lateral-plume-spread/"
+  - "/research/rb-005-hood-geometry-capture/"
+  - "/research/rb-006-wind-interaction-crossflow/"
 ---
 
 This instrument demonstrates the core capture problem this standard exists to address: whether a buoyant cooking plume, as it rises and expands, stays inside the hood's capture envelope or escapes it. Every other instrument on this site isolates one variable from this same model — this one lets you move all of them at once.
@@ -25,6 +32,23 @@ This instrument demonstrates the core capture problem this standard exists to ad
 </div>
 
 ---
+
+## Reference readings
+
+*Representative values below are computed directly from the same capture-fraction physics module (`physics/capture.mjs`) driving the instrument above, at a 48-inch hood width and the fixed 30-inch mounting rise; live values update as you move the controls.*
+
+| Mount | Wind speed | Modeled capture |
+|---|---|---|
+| Wall | 0 mph | 99% |
+| Wall | 5 mph | 99% |
+| Wall | 10 mph | 87% |
+| Wall | 15 mph | 36% |
+| Island | 0 mph | 97% |
+| Island | 5 mph | 79% |
+| Island | 10 mph | 24% |
+| Island | 15 mph | 1% |
+
+A 48-inch wall-mounted hood holds roughly 87% modeled capture at 10 mph, while the same width on an island mount falls to about 24% at the same wind speed — the rear wall's reflection of the upwind plume tail is doing most of the work [RB-005 §3.4.4]. In still air the two mounts are nearly identical in this model (99% wall, 97% island); the gap opens entirely with wind, not hood geometry — which is why RB-006 grades installations by wind exposure class rather than by hood shape [RB-006 §3.8]. Above 15 mph an unshielded island hood's modeled capture collapses to about 1%, the same wind-deflected-escape failure mode this program catalogs separately [RB-007].
 
 ## How the demonstrator works
 
