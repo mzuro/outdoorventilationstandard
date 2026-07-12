@@ -1,0 +1,663 @@
+{{- /*
+  search.html — /search/ (content/search.md declares layout: "search").
+
+  Two modes, one shared history:
+    - Keyword search: Fuse.js (vendored at static/js/vendor/fuse.min.js,
+      v7.0.0 — the only fuzzy-search dependency sitewide, no CDN) indexed
+      over /index.json (themes/ovs/layouts/_default/index.json).
+    - AI search: same /api/ask + Turnstile + localStorage history contract
+      as the homepage ask box (themes/ovs/layouts/index.html §1.2) — the
+      history key `ovs_question_history` is SHARED between the two pages;
+      do not rename without updating both.
+
+  Restyled on ovs tokens/components (tokens.css, components.css); the
+  segmented mode toggle and result rows are page-specific chrome kept in
+  a scoped <style> block here, matching the convention used by the other
+  single-purpose root-migrated pages (downloads.html).
+*/ -}}
+{{- define "main" }}
+
+<style>
+/* ---------- segmented mode toggle (mockup-style pill switch) ---------- */
+.ovs-search-modes {
+  display: inline-flex;
+  margin-bottom: 1.4rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px;
+}
+.ovs-search-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--muted);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.ovs-search-mode-btn.active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.ovs-search-mode-btn:not(.active):hover {
+  color: var(--ink);
+}
+
+/* ---------- keyword search box ---------- */
+#ovs-searchbox.hidden {
+  display: none;
+}
+.ovs-search-input {
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  padding: 0.75rem 0.9rem;
+  border-radius: 2px;
+}
+.ovs-search-input::placeholder {
+  color: var(--faint);
+}
+
+/* clause-numbered result rows */
+.ovs-search-results {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.ovs-search-results:empty {
+  display: none;
+}
+.ovs-search-row {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0.2rem 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.ovs-search-row:last-child {
+  border-bottom: none;
+}
+.ovs-search-row.focus,
+.ovs-search-row:hover {
+  background: var(--accent-wash);
+}
+.ovs-search-num {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  padding-top: 0.15rem;
+}
+.ovs-search-row a {
+  font-weight: 600;
+  text-decoration: none;
+  display: block;
+}
+.ovs-search-row a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+.ovs-search-row-meta {
+  grid-column: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+.ovs-search-row-desc {
+  grid-column: 2;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+.ovs-search-empty {
+  padding: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--faint);
+}
+
+/* ---------- AI search ---------- */
+.ovs-ai-search-box {
+  display: none;
+}
+.ovs-ai-search-box.visible {
+  display: block;
+}
+.ovs-ai-input-wrap {
+  display: flex;
+  gap: 0;
+}
+.ovs-ai-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-right: none;
+  padding: 0.75rem 0.9rem;
+  border-radius: 2px 0 0 2px;
+}
+.ovs-ai-input::placeholder {
+  color: var(--faint);
+}
+.ovs-ai-submit {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  padding: 0.75rem 1.1rem;
+  border-radius: 0 2px 2px 0;
+  white-space: nowrap;
+}
+.ovs-ai-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.ovs-ai-hint {
+  font-size: 0.74rem;
+  color: var(--faint);
+  margin-top: 0.6rem;
+}
+.ovs-ai-result {
+  display: none;
+  margin-top: 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 1.1rem;
+}
+.ovs-ai-result.visible {
+  display: block;
+}
+.ovs-ai-result-answer {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.7;
+  margin-bottom: 0.9rem;
+}
+.ovs-ai-result-label {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.ovs-ai-result-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ovs-ai-result-source {
+  font-size: 0.7rem;
+  color: var(--faint);
+  margin-top: 0.7rem;
+}
+.ovs-ai-result-another {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.9rem;
+  font-family: inherit;
+}
+.ovs-ai-result-another:hover {
+  border-color: var(--accent);
+}
+.ovs-ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.ovs-ai-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: ovs-search-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes ovs-search-spin {
+  to { transform: rotate(360deg); }
+}
+.ovs-ai-history {
+  margin-top: 1rem;
+}
+.ovs-ai-history-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.ovs-ai-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ovs-ai-history-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ovs-ai-history-item:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.ovs-ai-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 620px) {
+  .ovs-ai-input-wrap {
+    flex-direction: column;
+  }
+  .ovs-ai-input {
+    border-right: 1px solid var(--line-strong);
+    border-radius: 2px 2px 0 0;
+  }
+  .ovs-ai-submit {
+    border-radius: 0 0 2px 2px;
+  }
+}
+</style>
+
+<header style="margin-bottom:1.5rem">
+  <p class="ovs-clause">SEARCH</p>
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <p class="ovs-prose">{{ . }}</p>
+  {{- end }}
+</header>
+
+<div class="ovs-search-modes" role="tablist" aria-label="Search mode">
+  <button type="button" class="ovs-search-mode-btn active" id="ovs-mode-keyword" role="tab" aria-selected="true">Keyword Search</button>
+  <button type="button" class="ovs-search-mode-btn" id="ovs-mode-ai" role="tab" aria-selected="false">AI Search</button>
+</div>
+
+<div id="ovs-searchbox">
+  <input id="ovs-search-input" class="ovs-search-input" autofocus
+    placeholder="{{ .Params.placeholder | default (printf "%s ↵" .Title) }}"
+    aria-label="Keyword search" type="search" autocomplete="off" maxlength="64">
+  <ul id="ovs-search-results" class="ovs-search-results" aria-label="Search results"></ul>
+</div>
+
+<div class="ovs-ai-search-box" id="ovs-ai-search-box">
+  <div class="ovs-ai-input-wrap">
+    <input type="text" class="ovs-ai-input" id="ovs-ai-input"
+      placeholder="Ask a question about outdoor cooking ventilation..."
+      maxlength="500" aria-label="AI search">
+    <input type="text" name="website" class="ovs-ai-honey" id="ovs-ai-honey" autocomplete="off" tabindex="-1" aria-hidden="true">
+    <button type="button" class="ovs-ai-submit" id="ovs-ai-submit">Ask AI</button>
+  </div>
+  <p class="ovs-ai-hint">Ask in natural language. AI answers are generated from our published research.</p>
+
+  <div class="ovs-ai-result" id="ovs-ai-result">
+    <div class="ovs-ai-result-answer" id="ovs-ai-result-answer"></div>
+    <p class="ovs-ai-result-label" id="ovs-ai-result-label">RECOMMENDED READING</p>
+    <div class="ovs-ai-result-links" id="ovs-ai-result-links"></div>
+    <p class="ovs-ai-result-source" id="ovs-ai-result-source"></p>
+    <button type="button" class="ovs-ai-result-another" id="ovs-ai-result-another">Ask another question</button>
+  </div>
+
+  <div class="ovs-ai-history" id="ovs-ai-history" style="display:none">
+    <div class="ovs-ai-history-label">Recent AI questions</div>
+    <div class="ovs-ai-history-list" id="ovs-ai-history-list"></div>
+  </div>
+</div>
+
+<div id="ovs-search-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+
+{{- /* vendored Fuse.js — the site's only fuzzy-search dependency, no CDN
+   (static/js/vendor/fuse.min.js, v7.0.0, UMD build -> window.Fuse). */}}
+<script src="{{ "js/vendor/fuse.min.js" | relURL }}"></script>
+<script>
+(function() {
+  "use strict";
+
+  /* ================= mode toggle ================= */
+  var modeKeyword = document.getElementById('ovs-mode-keyword');
+  var modeAi = document.getElementById('ovs-mode-ai');
+  var keywordBox = document.getElementById('ovs-searchbox');
+  var aiBox = document.getElementById('ovs-ai-search-box');
+  var searchInput = document.getElementById('ovs-search-input');
+  var aiInput = document.getElementById('ovs-ai-input');
+
+  modeKeyword.addEventListener('click', function() {
+    modeKeyword.classList.add('active');
+    modeKeyword.setAttribute('aria-selected', 'true');
+    modeAi.classList.remove('active');
+    modeAi.setAttribute('aria-selected', 'false');
+    keywordBox.classList.remove('hidden');
+    aiBox.classList.remove('visible');
+    searchInput.focus();
+  });
+
+  modeAi.addEventListener('click', function() {
+    modeAi.classList.add('active');
+    modeAi.setAttribute('aria-selected', 'true');
+    modeKeyword.classList.remove('active');
+    modeKeyword.setAttribute('aria-selected', 'false');
+    keywordBox.classList.add('hidden');
+    aiBox.classList.add('visible');
+    aiInput.focus();
+  });
+
+  /* ================= keyword search (Fuse.js over /index.json) ================= */
+  var fuse;
+  var resultsEl = document.getElementById('ovs-search-results');
+  var first, last, currentElem = null;
+  var resultsAvailable = false;
+
+  var fuseOptions = {
+    isCaseSensitive: {{ .Site.Params.fuseOpts.isCaseSensitive | default false }},
+    shouldSort: {{ .Site.Params.fuseOpts.shouldSort | default true }},
+    location: {{ .Site.Params.fuseOpts.location | default 0 }},
+    distance: {{ .Site.Params.fuseOpts.distance | default 100 }},
+    threshold: {{ .Site.Params.fuseOpts.threshold | default 0.4 }},
+    minMatchCharLength: {{ .Site.Params.fuseOpts.minMatchCharLength | default 1 }},
+    ignoreLocation: true,
+    {{- /* jsonify inside a <script> gets contextually re-escaped by Hugo
+       into a JS STRING literal unless piped through safeJS — without it,
+       `keys` becomes '["title",...]' (a string) and `new Fuse` throws.
+       The numeric/boolean interpolations above are emitted as bare
+       literals and don't need it. */}}
+    keys: {{ .Site.Params.fuseOpts.keys | default (slice "title" "url" "summary" "content") | jsonify | safeJS }}
+  };
+
+  {{- /* relURL, not absURL: the fetch must be same-origin on every host
+     (workers.dev branch previews included) or CORS kills keyword search. */}}
+  fetch('{{ "index.json" | relURL }}')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data) { fuse = new Fuse(data, fuseOptions); }
+    })
+    .catch(function(err) {
+      console.error('Keyword search unavailable:', err);
+    });
+
+  function sectionLabel(section) {
+    if (!section) return '';
+    return section.charAt(0).toUpperCase() + section.slice(1);
+  }
+
+  function activeToggle(rowEl) {
+    var focused = resultsEl.querySelectorAll('.focus');
+    for (var i = 0; i < focused.length; i++) { focused[i].classList.remove('focus'); }
+    if (rowEl) {
+      currentElem = rowEl;
+      rowEl.classList.add('focus');
+      var link = rowEl.querySelector('a');
+      if (link) link.focus();
+    }
+  }
+
+  function reset() {
+    resultsAvailable = false;
+    resultsEl.innerHTML = '';
+    searchInput.value = '';
+    searchInput.focus();
+  }
+
+  searchInput.addEventListener('input', function() {
+    if (!fuse) return;
+    var query = this.value.trim();
+    if (!query) {
+      resultsAvailable = false;
+      resultsEl.innerHTML = '';
+      return;
+    }
+    var results = fuse.search(query, { limit: {{ .Site.Params.fuseOpts.limit | default 20 }} });
+    if (results.length === 0) {
+      resultsAvailable = false;
+      resultsEl.innerHTML = '<li class="ovs-search-empty">No results for &ldquo;' + query.replace(/</g, '&lt;') + '&rdquo;.</li>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < results.length; i++) {
+      var item = results[i].item;
+      var num = String(i + 1).padStart(2, '0');
+      html += '<li class="ovs-search-row">' +
+        '<span class="ovs-search-num">' + num + '</span>' +
+        '<div><a href="' + item.url + '">' + item.title + '</a>' +
+        '<div class="ovs-search-row-meta"><span class="ovs-chip">' + sectionLabel(item.section) + '</span></div>' +
+        (item.summary || item.description ? '<div class="ovs-search-row-desc">' + (item.summary || item.description) + '</div>' : '') +
+        '</div></li>';
+    }
+    resultsEl.innerHTML = html;
+    resultsAvailable = true;
+    first = resultsEl.firstChild;
+    last = resultsEl.lastChild;
+  });
+
+  searchInput.addEventListener('search', function() {
+    if (!this.value) reset();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (!keywordBox || keywordBox.classList.contains('hidden')) return;
+    var active = document.activeElement;
+    var inBox = keywordBox.contains(active);
+    var key = e.key;
+
+    if (active === searchInput) {
+      var focused = resultsEl.querySelectorAll('.focus');
+      for (var i = 0; i < focused.length; i++) { focused[i].classList.remove('focus'); }
+    }
+
+    if (key === 'Escape') {
+      reset();
+      return;
+    }
+    if (!resultsAvailable || !inBox) return;
+
+    if (key === 'ArrowDown') {
+      e.preventDefault();
+      if (active === searchInput) {
+        activeToggle(first);
+      } else if (currentElem && currentElem !== last) {
+        activeToggle(currentElem.nextSibling);
+      }
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentElem === first) {
+        currentElem = null;
+        searchInput.focus();
+      } else if (currentElem) {
+        activeToggle(currentElem.previousSibling);
+      }
+    }
+  });
+
+  /* ================= AI search ================= */
+  var aiSubmit = document.getElementById('ovs-ai-submit');
+  var aiResultEl = document.getElementById('ovs-ai-result');
+  var aiAnswer = document.getElementById('ovs-ai-result-answer');
+  var aiLabel = document.getElementById('ovs-ai-result-label');
+  var aiLinks = document.getElementById('ovs-ai-result-links');
+  var aiSource = document.getElementById('ovs-ai-result-source');
+  var aiAnother = document.getElementById('ovs-ai-result-another');
+  var aiHistoryEl = document.getElementById('ovs-ai-history');
+  var aiHistoryList = document.getElementById('ovs-ai-history-list');
+
+  /* Turnstile */
+  var turnstileToken = null;
+  var turnstileWidgetId = null;
+  function initTurnstile() {
+    if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      turnstileWidgetId = turnstile.render('#ovs-search-turnstile', {
+        sitekey: '0x4AAAAAACcaq_joFScewE6d',
+        size: 'invisible',
+        callback: function(token) { turnstileToken = token; }
+      });
+    }
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(initTurnstile, 100);
+  } else {
+    window.addEventListener('load', function() { setTimeout(initTurnstile, 100); });
+  }
+
+  /* History (localStorage) — SHARED key with homepage ask box */
+  var HISTORY_KEY = 'ovs_question_history';
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function addToHistory(text) {
+    var h = getHistory();
+    h = h.filter(function(q) { return q !== text; });
+    h.unshift(text);
+    if (h.length > 5) h = h.slice(0, 5);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch (e) {}
+    renderHistory();
+  }
+  function renderHistory() {
+    var h = getHistory();
+    if (h.length === 0) { aiHistoryEl.style.display = 'none'; return; }
+    aiHistoryEl.style.display = '';
+    var html = '';
+    for (var i = 0; i < h.length; i++) {
+      html += '<button type="button" class="ovs-ai-history-item" title="' + h[i].replace(/"/g, '&quot;') + '">' + h[i] + '</button>';
+    }
+    aiHistoryList.innerHTML = html;
+    var items = aiHistoryList.querySelectorAll('.ovs-ai-history-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        aiInput.value = item.title;
+        askAI();
+      });
+    });
+  }
+  renderHistory();
+
+  aiAnother.addEventListener('click', function() {
+    aiInput.value = '';
+    aiInput.focus();
+  });
+
+  function buildResultLinks(links) {
+    var html = '';
+    for (var i = 0; i < links.length; i++) {
+      html += '<a class="ovs-chip ovs-chip--accent" href="' + links[i].url + '">' + links[i].label + '</a>';
+    }
+    aiLinks.innerHTML = html;
+  }
+
+  function askAI() {
+    var text = aiInput.value.trim();
+    if (!text) return;
+
+    addToHistory(text);
+    aiSubmit.disabled = true;
+
+    aiAnswer.innerHTML = '<span class="ovs-ai-loading"><span class="ovs-ai-spinner"></span> Searching research...</span>';
+    aiLinks.innerHTML = '';
+    aiSource.textContent = '';
+    aiLabel.style.display = 'none';
+    aiAnother.style.display = 'none';
+    aiResultEl.classList.remove('visible');
+    void aiResultEl.offsetHeight;
+    aiResultEl.classList.add('visible');
+
+    var honey = document.getElementById('ovs-ai-honey');
+    var honeyVal = honey ? honey.value : '';
+    var token = turnstileToken || '';
+
+    fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, cf_token: token, website: honeyVal })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('ai_failed');
+      return r.json();
+    })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      aiAnswer.textContent = data.answer;
+      aiLabel.style.display = '';
+      buildResultLinks(data.links || []);
+      aiSource.textContent = data.off_topic ? '' : 'Answered by AI from site research';
+      aiAnother.style.display = '';
+      aiSubmit.disabled = false;
+    })
+    .catch(function() {
+      aiAnswer.textContent = 'AI search is temporarily unavailable. Try the keyword search instead.';
+      aiLabel.style.display = '';
+      buildResultLinks([
+        { label: 'Browse all research', url: '/research/' },
+        { label: 'Explore instruments', url: '/tools/' }
+      ]);
+      aiAnother.style.display = '';
+      aiSubmit.disabled = false;
+    })
+    .finally(function() {
+      if (typeof turnstile !== 'undefined' && turnstileWidgetId) {
+        turnstileToken = null;
+        turnstile.reset(turnstileWidgetId);
+      }
+    });
+
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: 'ai_search', text: text })
+    }).catch(function() {});
+  }
+
+  aiSubmit.addEventListener('click', askAI);
+  aiInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') askAI();
+  });
+
+  if (new URLSearchParams(window.location.search).get('ai') === '1') {
+    modeAi.click();
+  }
+})();
+</script>
+
+{{- end }}{{/* end main */}}

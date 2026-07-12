@@ -1,18 +1,23 @@
 ---
 title: "Plume Width by Height"
-description: "Visualization of plume capture diameter expansion from cooking surface to hood mounting heights for four representative source types. Shows why hoods must be wider than the cooking surface."
+description: "Visualization of reference-plume capture diameter expansion from cooking surface to hood mounting height. Shows why hoods must be wider than the cooking surface."
 date: 2025-11-10
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["plume physics", "entrainment", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 2
+instrument_id: "i04"
 ---
 
 This chart shows how the buoyant cooking plume expands laterally as it rises from the cooking surface to the hood. The plume diameter at hood height — not the cooking surface width — determines the minimum hood size required for capture.
 
 <div style="max-width: 880px; margin: 0 auto;">
 
-![Plume Width by Height](/diagrams/plume-width-by-height.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
@@ -28,9 +33,11 @@ This chart shows how the buoyant cooking plume expands laterally as it rises fro
 
 ## Governing Equation
 
-> d<sub>capture</sub> = 0.48(z - z<sub>0</sub>) + D<sub>eff</sub>
+The live instrument above draws one reference plume's lateral spread, not a separate curve per source type. Capture diameter starts at 28 inches at the cooking surface (twice the 14-inch reference half-width) and widens linearly through entrainment:
 
-where z is the mounting height, z<sub>0</sub> is the virtual origin (negative for most sources), and D<sub>eff</sub> is the effective source diameter.
+> d<sub>capture</sub> = 28 + 0.22 &middot; z (inches)
+
+where z is height above the cooking surface, in inches. As with the velocity-decay instrument above, this is a single representative plume — the source-type width differences described in Key Findings (charcoal/wood vs. gas) are RB-002's own measured comparisons, not separate D<sub>eff</sub>/z<sub>0</sub> curves this instrument computes.
 
 ## Source Papers
 

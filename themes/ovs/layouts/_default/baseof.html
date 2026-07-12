@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="{{ .Site.LanguageCode | default "en" }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body class="ovs-body ovs-section-{{ .Section | default "home" }}">
+<a class="ovs-skip" href="#main">Skip to content</a>
+
+{{ partial "header.html" . }}
+
+<main id="main" class="ovs-wrap" tabindex="-1">
+{{ block "main" . }}{{ end }}
+</main>
+
+{{ partial "footer.html" . }}
+</body>
+</html>

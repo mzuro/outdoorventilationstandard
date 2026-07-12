@@ -1,7 +1,8 @@
 ---
 title: "RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources"
 date: 2025-08-14
-lastmod: 2025-09-03
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

@@ -2,17 +2,22 @@
 title: "Side Panel Effectiveness"
 description: "Before-and-after comparison showing how side panels restore partial confinement in outdoor installations, reducing required CFM by 28% and improving capture efficiency by 25-35 percentage points."
 date: 2025-12-20
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["side panels", "wind protection", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 6
+instrument_id: "i07"
 ---
 
 This diagram shows the dramatic improvement in capture performance when side panels are added to an outdoor hood installation. Panels are the single most effective post-installation intervention for wind-exposed sites.
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Side Panel Effectiveness](/diagrams/side-panel-effectiveness.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

@@ -1,0 +1,18 @@
+<header class="ovs-header">
+  <div class="ovs-wrap ovs-header-inner">
+    <a class="ovs-wordmark" href="{{ "/" | absURL }}" aria-label="{{ .Site.Title }} — home">
+      <span class="ovs-wordmark-text">{{ .Site.Title }}<small>INDEPENDENT RESEARCH BODY</small></span>
+    </a>
+    {{- $menu := .Site.Menus.main }}
+    {{- if $menu }}
+    <div class="ovs-nav-wrap">
+      <nav class="ovs-nav" aria-label="Primary">
+        {{- range $i, $item := $menu }}
+        <a href="{{ $item.URL | absURL }}"><span class="ovs-clause">{{ add $i 2 }}.0</span>{{ $item.Name }}</a>
+        {{- end }}
+      </nav>
+    </div>
+    {{- end }}
+    <span class="ovs-edition mono">OVS-H1 : 2026 &middot; ed. 1.2</span>
+  </div>
+</header>

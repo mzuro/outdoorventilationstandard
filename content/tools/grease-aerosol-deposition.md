@@ -2,17 +2,23 @@
 title: "Grease Aerosol Deposition Pattern"
 description: "Visualization of grease particle transport and deposition zones in the missed plume region, showing how particle size determines transport distance, deposition intensity, and health/fire risk."
 date: 2026-01-10
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["grease aerosol", "particle transport", "fire risk"]
 categories: ["Tools"]
 ShowToc: false
+weight: 9
+instrument_id: "i10"
+fallback_svg: "grease-aerosol-deposition"
 ---
 
 When the buoyant cooking plume escapes the hood (partially or fully), grease aerosol is carried into the surrounding environment. This diagram shows how particle size determines how far the grease travels and where it deposits.
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Grease Aerosol Deposition Pattern](/diagrams/grease-aerosol-deposition.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

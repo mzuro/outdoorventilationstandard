@@ -1,0 +1,106 @@
+{{- /*
+  research/single.html — paper template (Task 11).
+
+  TechArticle schema is emitted by partials/schema.html (section "research")
+  and is NOT duplicated here. This template owns: clause-numbered TOC (from
+  goldmark's auto-numbered ## headings -> .TableOfContents), the tier chip
+  (derived from .Params.categories, the reliable field per Task 10),
+  published/updated dates, and the
+  byline partial (E-E-A-T contract from Task 9, renders only when
+  reviewed:true). The paper body — including its own reference list — is
+  rendered as-is from .Content.
+*/ -}}
+{{- define "main" }}
+{{- $tier := "" }}
+{{- with .Params.categories }}{{ $tier = replaceRE "^.*\\s" "" (index . 0) }}{{ end }}
+{{- $toc := .TableOfContents }}
+{{- /* .TableOfContents renders <nav id="TableOfContents">; rendering it
+       twice (rail + mobile disclosure) would duplicate that id, so the
+       mobile copy gets its id rewritten. */}}
+{{- $tocMobile := "" }}
+{{- if $toc }}{{ $tocMobile = replaceRE `id="TableOfContents"` `id="TableOfContentsMobile"` (printf "%s" $toc) | safeHTML }}{{ end }}
+
+<div class="ovs-research-layout">
+  <article class="ovs-research-article">
+    <header style="margin-bottom:1.5rem">
+      {{- if .Params.research_id }}
+      <p class="ovs-clause">{{ .Params.research_id }}{{ with .Params.priority }} &middot; {{ . }}{{ end }}</p>
+      {{- end }}
+
+      <h1>{{ .Title }}</h1>
+
+      <p class="ovs-research-meta">
+        {{- if $tier }}
+        <span class="ovs-chip{{ if eq $tier "Foundation" }} ovs-chip--accent{{ end }}">{{ upper $tier }}</span>
+        {{- end }}
+        {{- if .Date }}
+        <span>Published <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time></span>
+        {{- end }}
+        {{- if .Lastmod }}
+        <span>Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006-01-02" }}</time></span>
+        {{- end }}
+      </p>
+
+      {{- with (.Params.summary | default .Description) }}
+      <div class="ovs-note">
+        <span class="ovs-note-label">SUMMARY</span>
+        {{ . }}
+      </div>
+      {{- end }}
+
+      {{ partial "byline.html" . }}
+    </header>
+
+    {{- if $toc }}
+    {{- /* Mobile disclosure — hidden on desktop via CSS (.ovs-toc-mobile). */}}
+    <details class="ovs-toc-mobile">
+      <summary>Contents</summary>
+      {{ $tocMobile }}
+    </details>
+    {{- end }}
+
+    <div class="ovs-prose">
+      {{ .Content }}
+    </div>
+  </article>
+
+  {{- if $toc }}
+  {{- /* Desktop sticky side rail — hidden on mobile via CSS (.ovs-toc-rail). */}}
+  <aside class="ovs-toc-rail" aria-label="Table of contents">
+    <p class="ovs-toc-label">Contents</p>
+    {{ $toc }}
+  </aside>
+  {{- end }}
+</div>
+<script>
+/* Long papers use content-visibility:auto on .ovs-table-wrap (components.css)
+   so first render skips below-fold table layout. That makes anchor positions
+   estimates, and the sitewide scroll-behavior:smooth animation aborts when
+   passing blocks render mid-flight — TOC jumps land short. Escape hatch:
+   before any in-page anchor scroll (TOC click, hashchange, or arriving with
+   a #fragment), stamp .ovs-anchored on the article — CSS switches the wraps
+   back to content-visibility:visible — and force a reflow so the scroll is
+   computed against the real, fully-laid-out positions. One-way: once a
+   reader navigates by anchor the whole paper stays rendered, which is fine
+   (first paint already happened). */
+(function () {
+  var article = document.querySelector('.ovs-research-article');
+  if (!article) return;
+  function reveal() {
+    if (article.classList.contains('ovs-anchored')) return;
+    article.classList.add('ovs-anchored');
+    void article.offsetHeight; /* force synchronous layout */
+  }
+  if (location.hash) {
+    reveal();
+    /* Re-aim the initial fragment scroll now that positions are exact. */
+    var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (t) t.scrollIntoView();
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('a[href^="#"]')) reveal();
+  }, true);
+  window.addEventListener('hashchange', reveal);
+})();
+</script>
+{{- end }}

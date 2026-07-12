@@ -2,7 +2,7 @@
 title: "About"
 description: "About the Outdoor Ventilation Standard Research Program."
 date: 2025-08-01
-lastmod: 2026-02-13
+lastmod: 2026-07-11
 weight: 30
 ---
 
@@ -47,6 +47,26 @@ The research program covers:
 - CFM sizing methodology for outdoor applications
 - Standards gap analysis identifying where existing codes fall short
 - Grease aerosol transport and thermal radiation at hood surfaces
+
+## Who Runs This Site
+
+The Outdoor Ventilation Standard is an independent research program. It is not affiliated with, sponsored by, or written on behalf of any hood, grill, or ventilation equipment manufacturer. The program is maintained by a small technical editorial team; day-to-day content production and publication decisions are made under the governance documents linked above, not by any single commercial interest.
+
+## Editorial Policy
+
+Every technical claim published here traces to a numbered research brief (the RB-series papers) grounded in cited fire science, fluid dynamics, and ventilation engineering literature — Heskestad plume correlations, Morton-Taylor-Turner entrainment theory, Briggs plume rise equations, and the relevant ASHRAE/ACGIH/IMC provisions. Pages are updated when the underlying physics, source standards, or reconciliation against cited papers changes; a `lastmod` date and, where applicable, a technical review byline accompany that update. No page recommends a specific product or brand, and no page is written or edited in exchange for compensation from an equipment maker or retailer.
+
+## Funding Independence
+
+This program accepts no manufacturer sponsorship, no paid placement, and no affiliate revenue tied to specific products or brands. It is not monetized by comparison-shopping links, and no page's content or conclusions are influenced by advertising relationships. The program's only commitment is to the physics — where the analysis and a manufacturer's marketing claim disagree, the analysis is what gets published.
+
+## Technical Review
+
+Pages that carry engineering claims — CFM sizing, mounting-height velocity, capture geometry, wind deflection, and the interactive tools built on that analysis — are reviewed for physical accuracy and practical soundness against outdoor hood installation practice.
+
+**Reviewed by Mark Zuro**, outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods.
+
+The review confirms that the underlying research briefs are correctly applied to real installation scenarios; it does not substitute for the research briefs' own citations and derivations, which remain the primary technical record. Every reviewed page shows a "Reviewed by" line with the publish and update dates directly beneath the claim it applies to.
 
 ## Additional Resources
 

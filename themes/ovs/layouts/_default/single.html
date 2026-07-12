@@ -1,0 +1,22 @@
+{{- define "main" }}
+<article>
+  <header class="ovs-article-head" style="margin-bottom:1.5rem">
+    {{- if .Params.research_id }}
+    <p class="ovs-clause">{{ .Params.research_id }}{{ with .Params.priority }} &middot; {{ . }}{{ end }}</p>
+    {{- end }}
+    <h1>{{ .Title }}</h1>
+    {{- with (.Params.summary | default .Description) }}
+    <div class="ovs-note">
+      <span class="ovs-note-label">SUMMARY</span>
+      {{ . }}
+    </div>
+    {{- end }}
+  </header>
+
+  {{ partial "byline.html" . }}
+
+  <div class="ovs-prose">
+    {{ .Content }}
+  </div>
+</article>
+{{- end }}

@@ -1,0 +1,181 @@
+{{- /*
+  schema.html — JSON-LD emitted by page type (E-E-A-T signals).
+
+    Organization    — site-wide identity, emitted on the home page.
+    TechArticle     — section "research"
+    WebApplication  — section "tools"
+    FAQPage         — section "questions"
+    BreadcrumbList  — every page
+
+  Site name is fixed to "Outdoor Ventilation Standard"; all URLs are built
+  from .Site.BaseURL / .Permalink so they stay correct across environments.
+*/ -}}
+{{- $siteName := "Outdoor Ventilation Standard" }}
+{{- $baseURL := .Site.BaseURL }}
+{{- $section := .Section }}
+
+{{- /* ---------- Organization (home page only) ---------- */}}
+{{- if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ $siteName | jsonify | safeJS }},
+  "url": {{ $baseURL | jsonify | safeJS }},
+  "description": {{ (.Site.Params.description | default "") | jsonify | safeJS }},
+  "logo": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
+}
+</script>
+{{- end }}
+
+{{- /* ---------- TechArticle (research briefs) ---------- */}}
+{{- if and (eq $section "research") .IsPage }}
+{{- $published := .Date.Format "2006-01-02" }}
+{{- $updated := (.Lastmod | default .Date).Format "2006-01-02" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Params.summary | default .Description | default "") | jsonify | safeJS }},
+  "datePublished": {{ $published | jsonify | safeJS }},
+  "dateModified": {{ $updated | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  {{- if .Params.reviewed }}
+  "reviewedBy": {
+    "@type": "Person",
+    "name": "Mark Zuro"
+  },
+  {{- end }}
+  "author": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify | safeJS }},
+    "url": {{ $baseURL | jsonify | safeJS }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify | safeJS }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
+    }
+  }
+}
+</script>
+{{- end }}
+
+{{- /* ---------- WebApplication (interactive tools) ---------- */}}
+{{- if and (eq $section "tools") .IsPage }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Description | default .Params.summary | default "") | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  {{- if .Params.reviewed }}
+  "reviewedBy": {
+    "@type": "Person",
+    "name": "Mark Zuro"
+  },
+  {{- end }}
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+{{- end }}
+
+{{- /* ---------- FAQPage (question-answer pages) ----------
+   Sensible fallback: if the page declares a `faq` front-matter list
+   (each item with `question`/`answer`), use it; otherwise fall back to a
+   single-entry FAQPage built from the page title and description/summary
+   so the type is still valid once the questions section (a later task)
+   exists. */}}
+{{- if and (eq $section "questions") .IsPage }}
+{{- $faq := .Params.faq }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- if $faq }}
+    {{- range $i, $item := $faq }}
+    {{- if $i }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $item.question | jsonify | safeJS }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $item.answer | jsonify | safeJS }}
+      }
+    }
+    {{- end }}
+    {{- else }}
+    {
+      "@type": "Question",
+      "name": {{ .Title | jsonify | safeJS }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ (.Params.summary | default .Description | default .Title) | jsonify | safeJS }}
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+
+{{- /* ---------- Person (reviewer entity, About page) ---------- */}}
+{{- if eq .RelPermalink "/about/" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Mark Zuro",
+  "jobTitle": "Outdoor Ventilation Product Specialist",
+  "description": {{ "Outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods." | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  "worksFor": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify | safeJS }},
+    "url": {{ $baseURL | jsonify | safeJS }}
+  },
+  "knowsAbout": ["Outdoor kitchen ventilation", "Range hood engineering", "Buoyant plume capture physics"]
+}
+</script>
+{{- end }}
+
+{{- /* ---------- BreadcrumbList (every page) ---------- */}}
+{{- $items := slice (dict "name" "Home" "item" $baseURL) }}
+{{- if not .IsHome }}
+  {{- $currentSection := .CurrentSection }}
+  {{- if and $currentSection (not $currentSection.IsHome) }}
+    {{- $items = $items | append (dict "name" $currentSection.Title "item" $currentSection.Permalink) }}
+  {{- end }}
+  {{- if ne . $currentSection }}
+    {{- $items = $items | append (dict "name" .Title "item" .Permalink) }}
+  {{- end }}
+{{- end }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{- range $i, $it := $items }}
+    {{- if $i }},{{ end }}
+    {
+      "@type": "ListItem",
+      "position": {{ add $i 1 }},
+      "name": {{ $it.name | jsonify | safeJS }},
+      "item": {{ $it.item | jsonify | safeJS }}
+    }
+    {{- end }}
+  ]
+}
+</script>

@@ -1,0 +1,42 @@
+{{- /*
+  questions/single.html — answer-first question page (Task 12).
+
+  Layout: the 2-3 sentence answer (front matter `summary`, falling back to
+  `.Description`) renders first and prominently as an ANSWER note box,
+  ahead of the embedded instrument (via the shared partials/instrument-
+  figure.html, only when `instrument_id` is set) and the full .Content.
+  partials/citations.html renders a numbered reference list from front
+  matter `citations: [rb-005, rb-008]`. FAQPage schema is emitted by
+  partials/schema.html for every page in the "questions" section and is
+  not duplicated here.
+
+  content/questions/ has no pages in this repo yet (Task 17) — this
+  template is verified against a scratch page outside the repo (Task 12).
+*/ -}}
+{{- define "main" }}
+<article class="ovs-question-article">
+  <header style="margin-bottom:1.5rem">
+    <p class="ovs-clause">QUESTION</p>
+    <h1>{{ .Title }}</h1>
+  </header>
+
+  {{- with (.Params.summary | default .Description) }}
+  <div class="ovs-note">
+    <span class="ovs-note-label">ANSWER</span>
+    {{ . }}
+  </div>
+  {{- end }}
+
+  {{ partial "byline.html" . }}
+
+  {{- with .Params.instrument_id }}
+  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "") "fallback" $.Params.fallback_svg) }}
+  {{- end }}
+
+  <div class="ovs-prose">
+    {{ .Content }}
+  </div>
+
+  {{ partial "citations.html" . }}
+</article>
+{{- end }}

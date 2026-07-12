@@ -1,0 +1,47 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+
+{{- /* ---------- title ---------- */}}
+{{- $siteTitle := .Site.Title }}
+{{- if .IsHome }}
+<title>{{ $siteTitle }}</title>
+{{- else }}
+<title>{{ .Title }} · {{ $siteTitle }}</title>
+{{- end }}
+
+{{- /* ---------- description ---------- */}}
+{{- $description := .Description | default (.Params.summary) | default .Site.Params.description }}
+<meta name="description" content="{{ $description }}">
+
+{{- /* ---------- canonical ---------- */}}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* ---------- favicon ---------- */}}
+<link rel="icon" href="{{ "favicon.svg" | absURL }}" type="image/svg+xml">
+
+{{- /* ---------- Open Graph ---------- */}}
+{{- $ogImage := .Site.Params.images | default (slice "/og-image.png") }}
+{{- $ogImageURL := index $ogImage 0 | absURL }}
+<meta property="og:site_name" content="{{ $siteTitle }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ $siteTitle }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ $ogImageURL }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ if .IsHome }}{{ $siteTitle }}{{ else }}{{ .Title }}{{ end }}">
+<meta name="twitter:description" content="{{ $description }}">
+<meta name="twitter:image" content="{{ $ogImageURL }}">
+
+{{- /* ---------- structured data (Task 9: Organization / TechArticle / WebApplication / FAQPage / BreadcrumbList) ---------- */}}
+{{ partial "schema.html" . }}
+
+{{- /* ---------- CSS bundle (Hugo Pipes: tokens.css + base.css + components.css) ----------
+   No JS is emitted from head — the instrument shortcode (Task 12) loads its
+   own ES module per-instrument. */}}
+{{- $tokens := resources.Get "ovs/css/tokens.css" }}
+{{- $base := resources.Get "ovs/css/base.css" }}
+{{- $components := resources.Get "ovs/css/components.css" }}
+{{- $bundle := slice $tokens $base $components | resources.Concat "ovs/css/bundle.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">

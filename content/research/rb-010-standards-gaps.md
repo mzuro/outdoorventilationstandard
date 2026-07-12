@@ -1,12 +1,13 @@
 ---
 title: "RB-010: Gaps in Existing Standards, Codes, and Consumer Guidance"
 date: 2026-01-08
-lastmod: 2026-01-26
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"
 research_id: "RB-010"
-priority: "P3 — Guidance"
+priority: "P3 — Frontier"
 status: "Complete"
 version: "1.0"
 charter_version: "2.6"
@@ -24,7 +25,7 @@ categories: ["P3 — Frontier"]
 **Research Program:** Outdoor Ventilation Standard
 **Charter Version:** 2.6
 **Glossary Version:** 1.1
-**Priority Tier:** P3 — Guidance
+**Priority Tier:** P3 — Frontier
 **Author Role:** Standards & Codes Analysis Agent
 **Date:** 2026-02-08
 **Depends On:** RB-004: Why Indoor Ventilation Assumptions Fail Outdoors; RB-007: Failure Modes of Outdoor BBQ Hoods

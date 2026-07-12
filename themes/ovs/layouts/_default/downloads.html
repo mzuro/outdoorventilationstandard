@@ -1,0 +1,431 @@
+{{- /*
+  downloads.html — /downloads/ (content/downloads.md declares layout:
+  "downloads"). Migrated from the root layouts/ (Task 13) and restyled
+  on ovs tokens — the PaperMod-era `--primary`/`--border`/`--theme`/
+  `--entry`/`--content`/`--secondary` custom properties are gone; this
+  page now uses the same --accent/--line/--surface/--ink/--muted/--faint
+  vocabulary as the rest of the theme (tokens.css).
+*/ -}}
+{{- define "main" }}
+
+<style>
+/* Mobile-first downloads page */
+.ovs-dl-hero {
+  padding: 20px 0 16px;
+  border-bottom: 2px solid var(--line-strong);
+  margin-bottom: 20px;
+}
+
+.ovs-dl-hero h1 {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+
+.ovs-dl-intro {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.ovs-dl-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+/* Compact paper list */
+.ovs-dl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 80px;
+}
+
+.ovs-dl-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 14px 16px;
+}
+
+.ovs-dl-card:hover {
+  border-color: var(--accent);
+}
+
+.ovs-dl-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ovs-dl-id {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.ovs-dl-priority {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--faint);
+  font-weight: 500;
+}
+
+.ovs-dl-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.ovs-dl-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.dl-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid var(--line);
+}
+
+.dl-btn-summary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.dl-btn-full {
+  background: var(--surface);
+  color: var(--accent);
+  border-color: var(--line);
+}
+
+.dl-btn:hover {
+  filter: brightness(1.05);
+}
+
+.dl-label {
+  white-space: nowrap;
+}
+
+/* Size indicators */
+.dl-size {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  font-weight: 400;
+}
+
+/* Section headers for priority groups */
+.ovs-dl-priority-section {
+  margin: 28px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.ovs-dl-priority-section h2 {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+.ovs-dl-priority-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Mobile: smaller buttons */
+@media (max-width: 768px) {
+  .dl-btn {
+    padding: 7px 8px;
+    font-size: 0.7rem;
+    gap: 3px;
+  }
+
+  .dl-size {
+    font-size: 0.65rem;
+  }
+}
+
+/* Desktop: 2-column layout */
+@media (min-width: 769px) {
+  .ovs-dl-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .ovs-dl-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .ovs-dl-card {
+    padding: 16px 18px;
+  }
+
+  .ovs-dl-title {
+    font-size: 0.95rem;
+    min-height: 2.8em;
+  }
+
+  .dl-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .ovs-dl-priority-section {
+    grid-column: 1 / -1;
+    margin-top: 32px;
+  }
+}
+
+/* Very large screens: 3-column */
+@media (min-width: 1200px) {
+  .ovs-dl-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ovs-dl-priority-section {
+    grid-column: 1 / -1;
+  }
+}
+</style>
+
+<article>
+  <header class="ovs-dl-hero">
+    <h1>Research Downloads</h1>
+    <p class="ovs-dl-intro">{{ .Content }}</p>
+    <p class="ovs-dl-count">12 research papers &middot; 24 PDFs available</p>
+  </header>
+
+  <div class="ovs-dl-list">
+    {{- /* P0 — Foundation */ -}}
+    <div class="ovs-dl-priority-section">
+      <h2>P0 &mdash; Foundation</h2>
+      <p class="ovs-dl-priority-desc">Core physics and plume behavior</p>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-001</span>
+        <span class="ovs-dl-priority">P0</span>
+      </div>
+      <div class="ovs-dl-title">Buoyant Plume Behavior from BBQ Sources</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-001-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-001-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(700K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-002</span>
+        <span class="ovs-dl-priority">P0</span>
+      </div>
+      <div class="ovs-dl-title">Entrainment and Lateral Plume Spread</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-002-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-002-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.1M)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-003</span>
+        <span class="ovs-dl-priority">P0</span>
+      </div>
+      <div class="ovs-dl-title">Velocity Decay and Capture Physics</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-003-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-003-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.1M)</span></span>
+        </a>
+      </div>
+    </div>
+
+    {{- /* P1 — Critical Design Factors */ -}}
+    <div class="ovs-dl-priority-section">
+      <h2>P1 &mdash; Critical Design Factors</h2>
+      <p class="ovs-dl-priority-desc">Hood sizing, CFM requirements, and failure modes</p>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-004</span>
+        <span class="ovs-dl-priority">P1</span>
+      </div>
+      <div class="ovs-dl-title">Why Indoor Assumptions Fail Outdoors</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-004-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-004-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(714K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-005</span>
+        <span class="ovs-dl-priority">P1</span>
+      </div>
+      <div class="ovs-dl-title">Hood Geometry and Capture Envelope</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-005-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-005-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.1M)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-006</span>
+        <span class="ovs-dl-priority">P1</span>
+      </div>
+      <div class="ovs-dl-title">Wind Interaction and Cross-Flow Effects</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-006-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-006-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.3M)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-007</span>
+        <span class="ovs-dl-priority">P1</span>
+      </div>
+      <div class="ovs-dl-title">Failure Mode Taxonomy for Outdoor Hoods</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-007-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-007-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(711K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-008</span>
+        <span class="ovs-dl-priority">P1</span>
+      </div>
+      <div class="ovs-dl-title">CFM Requirements for Outdoor Ventilation</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-008-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-008-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.1M)</span></span>
+        </a>
+      </div>
+    </div>
+
+    {{- /* P2 — Design Optimization */ -}}
+    <div class="ovs-dl-priority-section">
+      <h2>P2 &mdash; Design Optimization</h2>
+      <p class="ovs-dl-priority-desc">Advanced topics and system optimization</p>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-009</span>
+        <span class="ovs-dl-priority">P2</span>
+      </div>
+      <div class="ovs-dl-title">Side Panel Effects on Plume Containment</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-009-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-009-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(887K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-010</span>
+        <span class="ovs-dl-priority">P2</span>
+      </div>
+      <div class="ovs-dl-title">Blower Types and Exhaust Configurations</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-010-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-010-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(661K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-011</span>
+        <span class="ovs-dl-priority">P2</span>
+      </div>
+      <div class="ovs-dl-title">Grease Aerosol Transport and Deposition</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-011-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-011-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(769K)</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ovs-dl-card">
+      <div class="ovs-dl-card-head">
+        <span class="ovs-dl-id">RB-012</span>
+        <span class="ovs-dl-priority">P2</span>
+      </div>
+      <div class="ovs-dl-title">Thermal Radiation at Hood Surfaces</div>
+      <div class="ovs-dl-actions">
+        <a href="/downloads/summaries/RB-012-Summary.pdf" class="dl-btn dl-btn-summary" download>
+          <span class="dl-label">PDF Summary <span class="dl-size">(2p)</span></span>
+        </a>
+        <a href="/downloads/papers/RB-012-Full.pdf" class="dl-btn dl-btn-full" download>
+          <span class="dl-label">Full PDF <span class="dl-size">(1.0M)</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</article>
+
+{{- end }}

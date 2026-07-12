@@ -2,17 +2,22 @@
 title: "Heat Release Rate Comparison"
 description: "Comprehensive comparison of total and convective heat release rates for all 12 outdoor cooking source types analyzed in the research program. Shows how convective fraction varies by fuel type."
 date: 2025-10-20
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["heat release rate", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 8
+instrument_id: "i09"
 ---
 
 This chart compares the total and convective heat release rates for every source type analyzed in the research program. The convective fraction (Q<sub>c</sub>) — not the total heat output — is the parameter that drives plume buoyancy, velocity, and entrainment.
 
 <div style="max-width: 880px; margin: 0 auto;">
 
-![Heat Release Rate Comparison](/diagrams/heat-release-rate-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

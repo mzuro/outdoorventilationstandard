@@ -96,8 +96,7 @@ RESPONSE FORMAT:
 Research context:
 `;
 
-export default {
-  async fetch(request, env) {
+async function handleFetch(request, env) {
     const url = new URL(request.url);
 
     // API: track question clicks (requires KV binding)
@@ -318,5 +317,23 @@ export default {
 
     // Everything else: serve static assets
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request, env) {
+    const resp = await handleFetch(request, env);
+
+    // Staging previews (wrangler.preview.jsonc: vars.PREVIEW="1", or any
+    // *.workers.dev host — git-integration branch previews and the
+    // production workers.dev mirror) must never be indexed; only the custom
+    // domain stays indexable. This is the only difference from production
+    // worker behavior.
+    if (env.PREVIEW === '1' || new URL(request.url).hostname.endsWith('.workers.dev')) {
+      const previewResp = new Response(resp.body, resp);
+      previewResp.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return previewResp;
+    }
+
+    return resp;
   }
 };

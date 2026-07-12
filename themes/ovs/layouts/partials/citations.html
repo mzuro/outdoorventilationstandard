@@ -1,0 +1,37 @@
+{{- /*
+  citations.html — numbered reference list rendered from front matter
+
+    citations: [rb-005, rb-008]
+
+  Each code is matched case-insensitively against the `research_id` param
+  of every page in the research section (fetched once via
+  .Site.GetPage "section" "research" -> .RegularPages) and linked with the
+  paper's real permalink and title (the "RB-0NN: " title prefix is
+  stripped, matching the homepage library table's convention). Codes that
+  don't resolve to a published research page render a plain "reference
+  not found" line rather than a broken link, since a Task 12 mismatch
+  between a citation code and RB-numbering shouldn't be a hard build error.
+  Renders nothing when the page declares no `citations`.
+*/ -}}
+{{- $citations := .Params.citations }}
+{{- if $citations }}
+{{- $section := $.Site.GetPage "section" "research" }}
+{{- $papers := $section.RegularPages }}
+<section class="ovs-cite" aria-labelledby="ovs-cite-heading">
+  <h2 id="ovs-cite-heading">References</h2>
+  <ol class="ovs-cite-list">
+    {{- range $citations }}
+    {{- $code := . }}
+    {{- $match := false }}
+    {{- range $papers }}
+      {{- if eq (lower .Params.research_id) (lower $code) }}{{ $match = . }}{{ end }}
+    {{- end }}
+    {{- with $match }}
+    <li><span class="mono">{{ .Params.research_id }}</span> &mdash; <a href="{{ .RelPermalink }}">{{ replaceRE "^RB-[0-9]+:\\s*" "" .Title }}</a></li>
+    {{- else }}
+    <li><span class="mono">{{ upper $code }}</span> &mdash; <em>reference not found</em></li>
+    {{- end }}
+    {{- end }}
+  </ol>
+</section>
+{{- end }}

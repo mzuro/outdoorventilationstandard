@@ -1,0 +1,28 @@
+{{- /*
+  tools/list.html — instrument index (Task 12).
+
+  Mirrors the homepage "3.0 Instruments" section's card grid exactly
+  (.ovs-igrid / .ovs-icard / .ovs-card-num / .ovs-ihint), ordered by the
+  `weight` front matter Task 10 assigned (the single source of truth for
+  display order, per the homepage template's own comment).
+*/ -}}
+{{- define "main" }}
+<header style="margin-bottom:1.5rem">
+  <p class="ovs-clause">{{ .Section | humanize | upper }}</p>
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <p class="ovs-prose">{{ . }}</p>
+  {{- end }}
+</header>
+
+{{- $tools := where .Site.RegularPages "Section" "tools" }}
+<div class="ovs-igrid">
+  {{- range $i, $p := $tools.ByWeight }}
+  <a class="ovs-icard" href="{{ $p.RelPermalink }}">
+    <span class="ovs-card-num">I-{{ printf "%02d" (add $i 1) }}</span>
+    <h3>{{ $p.Title }}</h3>
+    <span class="ovs-ihint">{{ ($p.Params.summary | default $p.Description) | truncate 100 }}</span>
+  </a>
+  {{- end }}
+</div>
+{{- end }}

@@ -2,17 +2,22 @@
 title: "Failure Mode Taxonomy"
 description: "Visual reference card classifying the six primary failure modes of outdoor BBQ hood installations, with root causes, observable symptoms, and correctable vs. design-locked classification."
 date: 2025-12-10
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["failure modes", "diagnostics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 10
+instrument_id: "i10"
 ---
 
 This reference card catalogs the six primary failure modes observed in outdoor barbecue hood installations. Each mode has a distinct physical root cause, observable symptom pattern, and corrective classification.
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Failure Mode Taxonomy](/diagrams/failure-mode-taxonomy.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

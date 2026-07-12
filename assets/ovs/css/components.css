@@ -1,0 +1,1479 @@
+/* ==========================================================================
+   OVS components — header/nav, footer, cards, clause numbers, chips, NOTE
+   boxes, tables, byline, and the ovs-viz instrument engine (Task 7,
+   static/js/ovs/viz.mjs). Depends on tokens.css + base.css.
+
+   Specificity is kept flat throughout: single-class selectors, one level
+   of descendant combinator at most, no `!important`. Accent (--accent) is
+   used only for interaction/data emphasis — clause numbers, links, active
+   chip state, hover washes, focus rings, control fills — never for plain
+   body copy.
+   ========================================================================== */
+
+/* ---------- header / nav ---------- */
+
+.ovs-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--ground);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.ovs-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 60px;
+}
+
+.ovs-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  color: var(--ink);
+}
+
+.ovs-wordmark-text {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 0.95rem;
+  line-height: 1.15;
+}
+
+.ovs-wordmark-text small {
+  display: block;
+  font-weight: 400;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ovs-nav-wrap {
+  position: relative;
+  margin-left: auto;
+  min-width: 0;
+  /* overflow: hidden (not just visible+min-width:0) is what makes this
+     flex item eligible for flexbox's automatic-minimum-size-zero rule --
+     without it the wrap refuses to shrink below its content's natural
+     width and pushes the header (and the whole page) wider than the
+     viewport instead of leaving the scrolling to .ovs-nav inside it. */
+  overflow: hidden;
+}
+
+.ovs-nav {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+/* Scroll affordance: .ovs-nav can overflow-x at narrow widths (more menu
+   items than fit) with no visible scrollbar on most platforms, so nothing
+   hints there's more to the right. A fade over the last ~20px, keyed off
+   the same 900px breakpoint the .ovs-edition badge uses (below that width
+   is where the nav gets tight enough to clip), signals it without a
+   scrollbar. It's on the wrapper, not .ovs-nav itself, so it stays put as
+   an overlay instead of scrolling away with the nav's own content. */
+@media (max-width: 899px) {
+  .ovs-nav-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to right, transparent, var(--ground));
+    pointer-events: none;
+  }
+}
+
+.ovs-nav a {
+  text-decoration: none;
+  font-size: 0.82rem;
+  color: var(--muted);
+  padding: 0.45rem 0.65rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.ovs-nav a:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.ovs-nav .ovs-clause {
+  margin-right: 0.35rem;
+}
+
+.ovs-edition {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.55rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .ovs-edition {
+    display: block;
+  }
+}
+
+/* ---------- footer ---------- */
+
+.ovs-footer {
+  border-top: 1px solid var(--line-strong);
+  margin-top: 1rem;
+}
+
+.ovs-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  padding: 2.5rem 0 2rem;
+}
+
+@media (max-width: 820px) {
+  .ovs-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .ovs-footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Not a heading: a footer column label styled to match the site's h4
+   look (mono, uppercase, faint) without breaking the h1-h3 hierarchy
+   below it (h4 is a real heading level used inside research-paper prose,
+   so it isn't safe to reuse here). */
+.ovs-foot-head {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+  text-transform: uppercase;
+  margin: 1.5rem 0 0.7rem;
+}
+
+.ovs-footer-grid ul {
+  list-style: none;
+  margin: 0;
+}
+
+.ovs-footer-grid li {
+  margin-bottom: 0.4em;
+}
+
+.ovs-footer-grid a {
+  font-size: 0.84rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.ovs-footer-grid a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ovs-footer-legal {
+  border-top: 1px solid var(--line);
+  padding: 1rem 0 2.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--faint);
+}
+
+/* ---------- cards ---------- */
+
+.ovs-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 920px) {
+  .ovs-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .ovs-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-card {
+  background: var(--surface);
+  padding: 1.15rem 1.15rem 1.05rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: var(--ink);
+}
+
+.ovs-card:hover {
+  background: var(--accent-wash);
+}
+
+.ovs-card h3 {
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.ovs-card:hover h3 {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.ovs-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  flex: 1;
+  margin: 0;
+}
+
+.ovs-card-refs {
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+}
+
+.ovs-card-refs b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ---------- clause numbers ---------- */
+
+.ovs-clause {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* clause section chrome: top rule + generous vertical rhythm between
+   homepage sections (2.0 Questions, 3.0 Instruments, 4.0 Library, 5.0 Trust) */
+.ovs-section {
+  border-top: 1px solid var(--line);
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+}
+
+/* section-heading grid: number | title, note spanning under the title */
+.ovs-clause-head {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 0 1rem;
+  align-items: baseline;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.ovs-clause-head .ovs-clause {
+  font-size: 0.95rem;
+}
+
+.ovs-clause-head h2 {
+  margin: 0;
+}
+
+.ovs-clause-head p {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 56ch;
+  margin: 0.45rem 0 0;
+}
+
+@media (max-width: 560px) {
+  .ovs-clause-head {
+    grid-template-columns: 1fr;
+  }
+  .ovs-clause-head p {
+    grid-column: 1;
+  }
+}
+
+/* ---------- chips ---------- */
+
+.ovs-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  border: 1px solid var(--line);
+  padding: 0.14rem 0.45rem;
+  border-radius: 2px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.ovs-chip--accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* interactive chip variant (e.g. answer citation links in the ask box) */
+a.ovs-chip {
+  text-decoration: none;
+}
+
+a.ovs-chip:hover {
+  background: var(--accent-wash);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* ---------- NOTE boxes ---------- */
+
+.ovs-note {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--note-bg);
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.ovs-note-label {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ---------- tables ----------
+   Pair with .ovs-table-wrap (base.css) for the overflow-x:auto container. */
+
+.ovs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+  font-size: 0.88rem;
+}
+
+.ovs-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+
+.ovs-table td {
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: baseline;
+}
+
+.ovs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ovs-table tbody tr:hover {
+  background: var(--accent-wash);
+}
+
+.ovs-table a {
+  text-decoration: none;
+  font-weight: 550;
+}
+
+/* title column in document-index tables (homepage §4.0, research/list.html,
+   governance/list.html) — let the title take the remaining width so the
+   designation/tier/date columns beside it stay compact */
+.ovs-table-ttl {
+  width: 100%;
+}
+
+.ovs-table tbody tr:hover a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* ==========================================================================
+   Homepage (Task 10) — hero, ask box, instruments grid, library tier chips,
+   trust strip. Extracted from docs/design/modern-standard-mockup.html.
+   ========================================================================== */
+
+/* ---------- hero ---------- */
+
+.ovs-hero {
+  padding: clamp(2.25rem, 5vw, 4rem) 0 clamp(2.5rem, 5vw, 4rem);
+}
+
+.ovs-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .ovs-hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-designation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
+}
+
+.ovs-designation .ovs-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.ovs-designation .ovs-sep {
+  color: var(--line);
+}
+
+.ovs-lede {
+  font-size: clamp(1rem, 1.5vw, 1.13rem);
+  color: var(--muted);
+  max-width: 52ch;
+  margin-bottom: 1.4rem;
+}
+
+.ovs-lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.ovs-hero .ovs-note {
+  border-left: 3px solid var(--accent);
+  margin-bottom: 1.6rem;
+  max-width: 52ch;
+}
+
+/* ---------- ask box ---------- */
+
+.ovs-askbox {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  max-width: 56ch;
+}
+
+.ovs-askbox-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.ovs-askbox-head h2 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.ovs-askform {
+  display: flex;
+  gap: 0;
+  padding: 0.9rem;
+}
+
+.ovs-askform input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-right: none;
+  padding: 0.65rem 0.8rem;
+  border-radius: 2px 0 0 2px;
+}
+
+.ovs-askform input[type="text"]::placeholder {
+  color: var(--faint);
+}
+
+.ovs-askform button {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  padding: 0.65rem 1.1rem;
+  border-radius: 0 2px 2px 0;
+}
+
+.ovs-askform button:hover {
+  filter: brightness(1.08);
+}
+
+.ovs-askform button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* honeypot — invisible to humans, bots fill it */
+.ovs-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.ovs-askmeta {
+  padding: 0 0.9rem 0.8rem;
+  font-size: 0.74rem;
+  color: var(--faint);
+  margin: 0;
+}
+
+.ovs-ask-answer {
+  border-top: 1px solid var(--line);
+  padding: 0.9rem;
+  display: none;
+  background: var(--surface-2);
+}
+
+.ovs-ask-answer.show {
+  display: block;
+}
+
+.ovs-ask-answer p {
+  font-size: 0.9rem;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+}
+
+.ovs-ask-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ovs-ask-source {
+  font-size: 0.7rem;
+  color: var(--faint);
+  margin: 0;
+}
+
+.ovs-ask-another {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.9rem;
+  font-family: inherit;
+}
+
+.ovs-ask-another:hover {
+  border-color: var(--accent);
+}
+
+.ovs-ask-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.ovs-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: ovs-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ovs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* question history — shared localStorage key with /search/ */
+.ovs-history {
+  margin-top: 0.7rem;
+  padding: 0 0.9rem 0.9rem;
+}
+
+.ovs-history-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.ovs-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ovs-history-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ovs-history-item:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* card clause number (question cards §2.0, instrument cards §3.0) */
+.ovs-card-num {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--accent);
+}
+
+/* ---------- instruments grid ---------- */
+
+.ovs-igrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 1080px) {
+  .ovs-igrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 880px) {
+  .ovs-igrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .ovs-igrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .ovs-igrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-icard {
+  background: var(--surface);
+  padding: 1rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 150px;
+  color: var(--ink);
+}
+
+.ovs-icard:hover {
+  background: var(--accent-wash);
+}
+
+.ovs-icard h3 {
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  flex: 1;
+  margin: 0;
+}
+
+.ovs-icard:hover h3 {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.ovs-icard .ovs-ihint {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+}
+
+.ovs-section-foot {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--faint);
+  max-width: 70ch;
+}
+
+/* ---------- library tier chips ---------- */
+
+.ovs-tierkey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  margin-top: 0.8rem;
+  font-size: 0.74rem;
+  color: var(--faint);
+}
+
+.ovs-tierkey b {
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- trust strip ---------- */
+
+.ovs-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 820px) {
+  .ovs-trust-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ovs-trust-cell {
+  background: var(--surface);
+  padding: 1.35rem 1.25rem;
+}
+
+.ovs-trust-cell h3 {
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  margin: 0.55rem 0;
+}
+
+.ovs-trust-cell p {
+  font-size: 0.87rem;
+  color: var(--muted);
+  margin-bottom: 0.55rem;
+}
+
+.ovs-trust-cell a {
+  font-size: 0.8rem;
+}
+
+/* ---------- research paper (Task 11) ----------
+   Two-column grid: article + clause-numbered TOC. Desktop gets a sticky
+   side rail (.ovs-toc-rail); narrow viewports get a <details> disclosure
+   (.ovs-toc-mobile) instead — both render the same .TableOfContents markup,
+   only one is visible at a given width. */
+
+.ovs-research-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Grid items default to min-width:auto, i.e. their own min-content size --
+   a wide markdown table (even one wrapped in .ovs-table-wrap's
+   overflow-x:auto a few levels down) still counts toward that min-content
+   floor unless the item's own min-width is pinned to 0. Without this the
+   article column — and the whole page — grows to fit the widest table
+   instead of letting .ovs-table-wrap scroll it internally. */
+.ovs-research-article {
+  min-width: 0;
+}
+
+/* Long papers (rb-006 is ~160 KB of HTML with 37 tables) pay a large
+   first-layout cost. content-visibility:auto lets the browser skip
+   layout/paint of below-fold table blocks until they approach the
+   viewport; contain-intrinsic-size supplies a placeholder height so the
+   scrollbar stays stable ("auto" pins it to the real height once a block
+   has rendered). 320px = the measured median table-wrap height on rb-006
+   (n=37, median 314, mean 316) — keeping the placeholder close to reality
+   keeps the scrollbar honest. No visual change. Scoped to research
+   articles only. */
+.ovs-research-article .ovs-table-wrap {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+/* Escape hatch for anchor navigation (see the inline script in
+   research/single.html): estimated positions + scroll-behavior:smooth
+   break TOC/fragment jumps, so the moment the reader navigates by anchor
+   the paper renders in full and positions become exact. */
+.ovs-research-article.ovs-anchored .ovs-table-wrap {
+  content-visibility: visible;
+}
+
+@media (min-width: 980px) {
+  .ovs-research-layout {
+    grid-template-columns: minmax(0, 7fr) minmax(200px, 3fr);
+  }
+}
+
+.ovs-research-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--faint);
+  margin: 0.9rem 0 1.1rem;
+}
+
+.ovs-research-meta time {
+  color: var(--faint);
+}
+
+.ovs-toc-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 0.7rem;
+}
+
+.ovs-toc-rail nav ul,
+.ovs-toc-mobile nav ul {
+  list-style: none;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.ovs-toc-rail nav > ul,
+.ovs-toc-mobile nav > ul {
+  border-left: 1px solid var(--line);
+  padding-left: 0.9rem;
+}
+
+.ovs-toc-rail nav ul ul,
+.ovs-toc-mobile nav ul ul {
+  margin: 0.3rem 0 0.5rem 0.9rem;
+  font-size: 0.76rem;
+}
+
+.ovs-toc-rail nav li,
+.ovs-toc-mobile nav li {
+  margin-bottom: 0.5rem;
+}
+
+.ovs-toc-rail nav a,
+.ovs-toc-mobile nav a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  line-height: 1.35;
+}
+
+.ovs-toc-rail nav a:hover,
+.ovs-toc-mobile nav a:hover {
+  color: var(--accent);
+}
+
+/* desktop rail: sticky under the 60px header */
+.ovs-toc-rail {
+  display: none;
+}
+
+@media (min-width: 980px) {
+  .ovs-toc-rail {
+    display: block;
+    position: sticky;
+    top: 76px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+}
+
+/* mobile disclosure: hidden once the rail takes over */
+.ovs-toc-mobile {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 980px) {
+  .ovs-toc-mobile {
+    display: none;
+  }
+}
+
+.ovs-toc-mobile summary {
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.ovs-toc-mobile nav {
+  padding: 0 1rem 1rem;
+}
+
+/* ---------- byline ---------- */
+
+.byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.byline strong {
+  color: var(--ink);
+}
+
+.byline time {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--faint);
+}
+
+/* ---------- instrument shortcode wrapper ----------
+   The <figure class="ovs-instrument"> mount point (Task 12 shortcode); the
+   engine (createInstrument) fills it with .ovs-i-instrument below. */
+
+.ovs-instrument {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+/* ---------- CLS reserve (pre-mount) ----------
+   createInstrument() stamps .ovs-i on the figure when it mounts; until
+   then the figure holds only the (JS-hidden) noscript fallback and
+   collapses to ~0px, so everything below jumps when the instrument
+   appears (Lighthouse CLS 0.31 on tool pages). Reserve each instrument's
+   typical mounted footprint — measured 2026-07-12 on the live build at
+   1280px and 390px viewports — via a min-height that is released on
+   mount, so the final layout stays exact. Values are rounded slightly
+   DOWN: any residual shift is a small downward settle, not an upward
+   snap. i10 is one module shared by two pages with very different
+   mounted heights (506px taxonomy / 1081px grease deposition), so it
+   gets the smaller of the two. */
+.ovs-instrument:not(.ovs-i) {
+  min-height: var(--i-reserve, 750px);
+}
+.ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
+.ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
+.ovs-instrument[data-instrument="i08"] { --i-reserve: 900px; }
+.ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
+.ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
+
+@media (max-width: 640px) {
+  .ovs-instrument:not(.ovs-i) {
+    min-height: var(--i-reserve-m, 760px);
+  }
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 860px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 860px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 730px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 580px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 980px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 495px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 845px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 615px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 595px; }
+}
+
+.ovs-instrument figcaption {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.74rem;
+  color: var(--faint);
+  border-top: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   Instrument engine (static/js/ovs/viz.mjs, createInstrument) — every
+   .ovs-i-* class the engine emits.
+   ========================================================================== */
+
+.ovs-i-instrument {
+  display: flex;
+  flex-direction: column;
+}
+
+.ovs-i-title {
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.ovs-i-scene {
+  background: var(--surface);
+}
+
+.ovs-i-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  background: var(--surface);
+}
+
+.ovs-i-svg text {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  fill: var(--muted);
+}
+
+/* SVG dimension-line helper (viz.mjs `dimensionLine`) */
+.ovs-i-dim-line,
+.ovs-i-dim-tick {
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 1;
+}
+
+.ovs-i-dim-label {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* SVG annotation box helper (viz.mjs `noteBox`) */
+.ovs-i-notebox-rect {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.ovs-i-notebox-text {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* Scene line-art primitives, shared by every instrument's spec.scene —
+   line-art hoods/appliances, plume envelopes, escape wisps, capture
+   planes, band-chart bars. Named generically (not per-instrument) so
+   I-03..I-10 reuse them instead of re-declaring their own. */
+.ovs-i-svg .ovs-i-fl {
+  stroke: var(--figure-line);
+  fill: none;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ovs-i-svg .ovs-i-fl-thin {
+  stroke: var(--figure-line);
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.85;
+}
+
+.ovs-i-svg .ovs-i-hoodfill {
+  fill: var(--surface);
+  stroke: var(--figure-line);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.ovs-i-svg .ovs-i-cap-plane {
+  stroke: var(--accent);
+  fill: none;
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  opacity: 0.6;
+}
+
+.ovs-i-svg .ovs-i-plume-fill {
+  fill: var(--plume);
+}
+
+.ovs-i-svg .ovs-i-plume-edge {
+  stroke: var(--plume-edge);
+  fill: none;
+  stroke-width: 1.3;
+  opacity: 0.9;
+}
+
+.ovs-i-svg .ovs-i-plume-center {
+  stroke: var(--plume-edge);
+  fill: none;
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.7;
+}
+
+.ovs-i-svg .ovs-i-wisp {
+  stroke: var(--faint);
+  fill: none;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+/* Flowing-away cue on escape wisps; neutralized by the global
+   prefers-reduced-motion override in base.css (animation-duration
+   0.01ms), so no separate JS branch is needed for the static case. */
+.ovs-i-svg .ovs-i-wisp-anim {
+  stroke-dasharray: 4 3;
+  animation: ovs-i-wisp-flow 1.1s linear infinite;
+}
+
+@keyframes ovs-i-wisp-flow {
+  to { stroke-dashoffset: -14; }
+}
+
+.ovs-i-svg .ovs-i-bar {
+  fill: var(--accent-wash);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+}
+
+.ovs-i-svg .ovs-i-bar-label {
+  fill: var(--muted);
+}
+
+/* controls */
+
+.ovs-i-controls {
+  border: 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.ovs-i-legend {
+  /* visually hidden: .ovs-i-title already shows the instrument name */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.ovs-i-control {
+  background: var(--surface);
+  padding: 0.8rem 0.9rem;
+}
+
+.ovs-i-control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ovs-i-control-label-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ovs-i-bubble {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 44px is the box height (hit area, per WCAG 2.5.5/2.5.8) — the native
+   track/thumb are explicitly kept thin below so the visual weight on
+   desktop doesn't grow with it; both track pseudo-elements are centered
+   in the box by the browser by default. */
+.ovs-i-range {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.ovs-i-range::-webkit-slider-runnable-track {
+  height: 4px;
+}
+
+.ovs-i-range::-moz-range-track {
+  height: 4px;
+}
+
+.ovs-i-range:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.ovs-i-segmented-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ovs-i-segmented-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ovs-i-segmented-input:checked + .ovs-i-segmented-label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.ovs-i-segmented-input:focus-visible + .ovs-i-segmented-label {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* readouts */
+
+.ovs-i-readouts {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 0.85rem 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.ovs-i-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: 1 1 160px;
+}
+
+.ovs-i-readout-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+}
+
+.ovs-i-readout-value {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* Hero-size readout (spec.readouts[].hero = true) — mockup's hero numeral. */
+.ovs-i-readout--hero .ovs-i-readout-value {
+  font-size: 1.9rem;
+}
+
+/* Disabled control (I-08: WIND is disabled indoors). The engine has no
+   native disable mechanism, so instrument modules reach into the DOM
+   post-mount to add this class + aria-disabled + the real `disabled`
+   attribute on the <input> — this class only supplies the visual dim. */
+.ovs-i-control--disabled {
+  opacity: 0.45;
+}
+
+.ovs-i-control--disabled .ovs-i-range {
+  cursor: not-allowed;
+}
+
+/* Assumptions list (I-08) — appended after .ovs-i-readouts, swapped per
+   environment by the instrument module. */
+.ovs-i-assumptions {
+  border-top: 1px solid var(--line);
+  padding: 0.85rem 0.9rem;
+  background: var(--surface);
+}
+
+/* class, not tag: i08.mjs injects this as an h3 (instrument title is an
+   h2 per T19 D.9) — targeting the class keeps the selector independent
+   of the heading level. */
+.ovs-i-assumptions-head {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.5rem;
+}
+
+.ovs-i-assumptions ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Failure-mode taxonomy tree (I-10) — HTML <details>/<summary>, not SVG,
+   styled with the same tokens as the rest of the instrument engine.
+   Lives inside .ovs-i-scene, toggled against the deposition <svg> by the
+   VIEW control. */
+.ovs-i-taxonomy {
+  padding: 0.9rem 0.9rem 0.3rem;
+  background: var(--surface);
+}
+
+.ovs-i-fm-branch {
+  border: 1px solid var(--line);
+  margin-bottom: 0.5rem;
+  background: var(--surface);
+}
+
+.ovs-i-fm-branch summary {
+  cursor: pointer;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.ovs-i-fm-branch summary::-webkit-details-marker {
+  display: none;
+}
+
+.ovs-i-fm-branch[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.ovs-i-fm-branch summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-fm-body {
+  padding: 0.7rem 0.9rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.ovs-i-fm-body p {
+  margin: 0 0 0.5rem;
+}
+
+.ovs-i-fm-body p:last-child {
+  margin-bottom: 0;
+}
+
+.ovs-i-fm-body strong {
+  color: var(--ink);
+}
+
+.ovs-i-fm-tag {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  color: var(--accent-ink);
+}
+
+.ovs-i-fm-tag--fail {
+  background: var(--fail);
+}
+
+.ovs-i-fm-tag--warn {
+  background: var(--warn);
+  color: var(--accent-ink);
+}
+
+.ovs-i-fm-tag--ok {
+  background: var(--ok);
+}

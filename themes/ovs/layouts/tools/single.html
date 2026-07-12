@@ -1,0 +1,93 @@
+{{- /*
+  tools/single.html — instrument tool page (Task 12).
+
+  Auto-embed: content/tools/*.md pages carry `instrument_id` (added Task
+  12) and this template renders it via the shared partials/instrument-
+  figure.html — pages don't need to call the "instrument" shortcode
+  themselves. "Method & assumptions" renders .Content as-is
+  (each tools/*.md already carries its own methodology + Source Papers
+  markdown from Task 10). Related questions/papers render only when the
+  front matter lists `related_questions` / `related_papers` are present —
+  none of the ten Task-10 tool pages set them yet, so this degrades to
+  nothing rather than fabricating links.
+
+  WebApplication schema is emitted by partials/schema.html for every page
+  in the "tools" section and is not duplicated here.
+
+  The I-xx clause number is this page's 1-based position in the tools
+  section ordered by `weight` — the same ordering the homepage
+  Instruments grid and tools/list.html use. Note this clause number is a
+  display position, not the `instrument_id` (module) the page embeds —
+  the two are independent per the Task 12 id mapping.
+*/ -}}
+{{- define "main" }}
+{{- $tools := where .Site.RegularPages "Section" "tools" }}
+{{- $sorted := $tools.ByWeight }}
+{{- $clause := "" }}
+{{- range $i, $p := $sorted }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $clause = printf "I-%02d" (add $i 1) }}{{ end }}{{ end }}
+
+<article class="ovs-tool-article">
+  <header style="margin-bottom:1.5rem">
+    {{- if $clause }}
+    <p class="ovs-clause">{{ $clause }}</p>
+    {{- end }}
+    <h1>{{ .Title }}</h1>
+    {{- with (.Params.summary | default .Description) }}
+    <div class="ovs-note">
+      <span class="ovs-note-label">SUMMARY</span>
+      {{ . }}
+    </div>
+    {{- end }}
+    {{ partial "byline.html" . }}
+  </header>
+
+  {{- with .Params.instrument_id }}
+  {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "") "fallback" $.Params.fallback_svg) }}
+  {{- end }}
+
+  {{- /* .ovs-clause-head is a `76px 1fr` grid (number | title); a bare
+         <h2> would land in the 76px number column and wrap one word per
+         line, so every heading needs its clause span. Sub-numbers hang
+         off the page's I-xx clause. */}}
+  <section class="ovs-section" aria-labelledby="ovs-method-heading">
+    <header class="ovs-clause-head">
+      <span class="ovs-clause">{{ with $clause }}{{ . }}.1{{ else }}&sect;{{ end }}</span>
+      <h2 id="ovs-method-heading">Method &amp; assumptions</h2>
+    </header>
+    <div class="ovs-prose">
+      {{ .Content }}
+    </div>
+  </section>
+
+  {{- $relatedQ := .Params.related_questions }}
+  {{- $relatedP := .Params.related_papers }}
+  {{- if or $relatedQ $relatedP }}
+  <section class="ovs-section" aria-labelledby="ovs-related-heading">
+    <header class="ovs-clause-head">
+      <span class="ovs-clause">{{ with $clause }}{{ . }}.2{{ else }}&sect;{{ end }}</span>
+      <h2 id="ovs-related-heading">Related</h2>
+    </header>
+    {{- with $relatedQ }}
+    <h3>Questions</h3>
+    <ul>
+      {{- range . }}
+      {{- with $.Site.GetPage . }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+    {{- end }}
+    {{- with $relatedP }}
+    <h3>Papers</h3>
+    <ul>
+      {{- range . }}
+      {{- with $.Site.GetPage . }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+    {{- end }}
+  </section>
+  {{- end }}
+</article>
+{{- end }}

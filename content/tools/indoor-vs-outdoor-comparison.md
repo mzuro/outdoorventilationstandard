@@ -2,17 +2,22 @@
 title: "Indoor vs. Outdoor Ventilation Comparison"
 description: "Side-by-side diagram showing why indoor ventilation assumptions fail in outdoor environments — wall confinement, pressure-assisted capture, and ceiling redirection do not exist outdoors."
 date: 2025-11-01
-lastmod: 2026-02-05
+lastmod: 2026-07-11
+reviewed: true
 tags: ["indoor vs outdoor", "open-boundary dilution", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 7
+instrument_id: "i08"
 ---
 
 This diagram contrasts plume capture in enclosed indoor environments versus open-boundary outdoor environments. The physics are fundamentally different — indoor hoods benefit from four structural advantages that do not exist outdoors.
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Indoor vs Outdoor Ventilation Comparison](/diagrams/indoor-vs-outdoor-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

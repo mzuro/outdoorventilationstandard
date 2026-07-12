@@ -1,0 +1,54 @@
+{{- /*
+  research/list.html — the research library, in document order (Task 11).
+
+  Same table/tier-chip pattern as the homepage's Library section
+  (themes/ovs/layouts/index.html §4.0), factored out so /research/ has its
+  own full 12-row index. Tier is derived from .Params.categories, not
+  .Params.priority — categories is the reliable field.
+*/ -}}
+{{- define "main" }}
+<header style="margin-bottom:1.5rem">
+  <p class="ovs-clause">{{ .Section | humanize | upper }}</p>
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <p class="ovs-prose">{{ . }}</p>
+  {{- end }}
+</header>
+
+<div class="ovs-prose">
+  {{ .Content }}
+</div>
+
+{{- /* .Pages defaults to date-descending (RB-012 first); ByParam
+       "research_id" sorts ascending on that string field, matching
+       document/numeric order RB-001..012 (same as the homepage Library
+       table in layouts/index.html). */}}
+{{- $research := .Pages.ByParam "research_id" }}
+{{- if $research }}
+<div class="ovs-table-wrap" style="margin-top:2rem">
+  <table class="ovs-table">
+    <thead>
+      <tr>
+        <th scope="col">Designation</th>
+        <th scope="col">Title</th>
+        <th scope="col">Tier</th>
+        <th scope="col">Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{- range $research }}
+      {{- $cat := "" }}
+      {{- with .Params.categories }}{{ $cat = index . 0 }}{{ end }}
+      {{- $tier := replaceRE "^.*\\s" "" $cat }}
+      <tr>
+        <td class="mono">{{ .Params.research_id }}</td>
+        <td class="ovs-table-ttl"><a href="{{ .RelPermalink }}">{{ replaceRE "^RB-[0-9]+:\\s*" "" .Title }}</a></td>
+        <td><span class="ovs-chip{{ if eq $tier "Foundation" }} ovs-chip--accent{{ end }}">{{ upper $tier }}</span></td>
+        <td class="mono">{{ .Lastmod.Format "2006-01-02" }}</td>
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>
+{{- end }}
+{{- end }}

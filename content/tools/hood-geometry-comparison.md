@@ -2,17 +2,22 @@
 title: "Hood Geometry Comparison"
 description: "Side-by-side comparison of three hood overhang configurations showing the capture performance difference between undersized, indoor-spec, and recommended outdoor hoods."
 date: 2025-12-01
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 tags: ["hood design", "capture envelope", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 4
+instrument_id: "i05"
 ---
 
 This diagram compares three hood configurations over the same cooking source, showing why overhang — the distance the hood extends beyond the cooking surface — is the single most important design parameter for outdoor capture performance.
 
 <div style="max-width: 960px; margin: 0 auto;">
 
-![Hood Geometry Comparison](/diagrams/hood-geometry-comparison.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 

@@ -1,0 +1,49 @@
+<footer class="ovs-footer">
+  <div class="ovs-wrap">
+    <div class="ovs-note" style="margin:1.5rem 0">
+      <span class="ovs-note-label">NOTE 1 &mdash; SCOPE LIMITATION</span>
+      No marketing language. No product recommendations. No ungrounded claims. Where the evidence is thin, this standard says so.
+    </div>
+
+    <div class="ovs-footer-grid">
+      <div>
+        <p class="ovs-foot-head">THE BODY</p>
+        <p>{{ .Site.Title }} is an independent research body publishing physics-grounded guidance on open-air cooking ventilation.</p>
+        <p class="mono" style="font-size:.68rem">outdoorventilationstandard.com</p>
+      </div>
+      <div>
+        <p class="ovs-foot-head">DOCUMENTS</p>
+        <ul>
+          <li><a href="{{ "/research/" | absURL }}">Research briefs</a></li>
+          <li><a href="{{ "/methodology/" | absURL }}">Methodology</a></li>
+          <li><a href="{{ "/references/" | absURL }}">References</a></li>
+          <li><a href="{{ "/downloads/" | absURL }}">Downloads</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ovs-foot-head">INSTRUMENTS</p>
+        <ul>
+          <li><a href="{{ "/tools/" | absURL }}">All instruments</a></li>
+          <li><a href="{{ "/search/" | absURL }}">Search</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ovs-foot-head">GOVERNANCE</p>
+        <ul>
+          <li><a href="{{ "/governance/" | absURL }}">Governance</a></li>
+          <li><a href="{{ "/legal/" | absURL }}">Terms of use</a></li>
+          {{- /* No standalone /contact/ page exists yet; the About page
+                 carries the contact-free equivalent (a "Contact" section
+                 pointing inquiries to the program administrators). */}}
+          <li><a href="{{ "/about/" | absURL }}">About &amp; contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ovs-footer-legal">
+      <span>OVS-H1 : 2026 &middot; LIVING STANDARD</span>
+      <span>&copy; {{ now.Year }} {{ .Site.Title | upper }}</span>
+      <span>CONTENT MAY BE CITED WITH ATTRIBUTION</span>
+    </div>
+  </div>
+</footer>

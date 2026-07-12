@@ -1,18 +1,23 @@
 ---
 title: "Velocity Decay Curves"
-description: "Centerline velocity decay visualization for buoyant cooking plumes across four source types, showing capture reliability thresholds at standard hood mounting heights."
+description: "Centerline velocity decay visualization for a reference buoyant cooking plume at standard hood mounting heights, with source-type variation discussed per RB-003."
 date: 2025-11-01
-lastmod: 2026-02-05
+lastmod: 2026-07-11
+reviewed: true
 tags: ["velocity decay", "plume physics", "visualization"]
 categories: ["Tools"]
 ShowToc: false
+weight: 5
+instrument_id: "i06"
 ---
 
-This diagram visualizes the centerline velocity decay from cooking surface to hood mounting heights for four representative outdoor cooking source types. The minimum capture velocity threshold (0.8 m/s) separates the reliable capture zone from conditions where capture becomes unreliable without compensating exhaust rates.
+This diagram visualizes centerline velocity decay from the cooking surface up to hood mounting height for a single reference plume, calibrated to a representative ~60,000 BTU gas grill (see Governing Equation below). Stronger and weaker sources — wood-fired at one end, pellet smokers at the other — shift the curve up or down without changing its shape; those source-type differences are quantified in [RB-003](/research/rb-003-velocity-decay-capture/) rather than drawn as separate curves here.
 
 <div style="max-width: 800px; margin: 0 auto;">
 
-![Velocity Decay Curves](/diagrams/velocity-decay-curves.svg)
+<!-- The figure below is auto-embedded by tools/single.html from this
+     page's `instrument_id` front matter; no shortcode call is needed
+     here. Left in prose form as a note for anyone reading the source. -->
 
 </div>
 
@@ -28,13 +33,12 @@ This diagram visualizes the centerline velocity decay from cooking surface to ho
 
 ## Governing Equation
 
-The velocity decay follows the Heskestad correlation for buoyant plumes:
+The live instrument above draws a single reference plume, calibrated to a representative ~60,000 BTU gas grill, not a separate curve per source type. Centerline velocity holds constant at w<sub>0</sub> = 400 fpm from the cooking surface up to a 12-inch reference height (z<sub>0</sub>), then decays with the cube root of height above that point:
 
-> u₀ = 1.03 · Q<sub>c</sub><sup>1/3</sup> · (z − z₀)<sup>−1/3</sup>
+> w(z) = 400 fpm, for z &le; 12 in
+> w(z) = 400 &middot; &#8731;(12 / z) fpm, for z &gt; 12 in
 
-where u₀ is the centerline velocity (m/s), Q<sub>c</sub> is the convective heat release rate (kW), z is the height above the cooking surface (m), and z₀ is the virtual origin.
-
-The −1/3 power law produces a gradual decay — velocity decreases slowly with height because the buoyant plume continuously converts thermal energy to kinetic energy even as it entrains ambient air.
+The cube-root law produces a gradual decay — velocity decreases slowly with height because the buoyant plume continuously converts thermal energy to kinetic energy even as it entrains ambient air. The per-source-type comparisons in Key Findings above (wood-fired vs. pellet, etc.) are RB-001's and RB-003's own measured differences between appliances — this single-plume instrument does not compute separate Q<sub>c</sub>/z<sub>0</sub> curves per source.
 
 ## Source Papers
 

@@ -1,7 +1,8 @@
 ---
 title: "RB-011: Grease Aerosol Transport and Deposition in Open Environments"
 date: 2026-01-23
-lastmod: 2026-02-07
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"

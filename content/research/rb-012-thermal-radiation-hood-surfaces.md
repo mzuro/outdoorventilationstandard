@@ -1,7 +1,8 @@
 ---
 title: "RB-012: Thermal Radiation and Plume Interaction at Hood Surfaces"
 date: 2026-02-05
-lastmod: 2026-02-09
+lastmod: 2026-07-11
+reviewed: true
 draft: false
 type: "research"
 series: "Outdoor Ventilation Standard"
