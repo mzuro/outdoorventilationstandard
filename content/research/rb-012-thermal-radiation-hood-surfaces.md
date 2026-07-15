@@ -826,9 +826,9 @@ This has two practical consequences:
 
 Outdoor hoods are frequently used with multiple cooking appliance types over their service life. A hood initially installed above a gas grill may later be used above a charcoal grill, smoker, or wood-fired setup. The material must be rated for the worst-case radiant loading scenario, not just the initial installation.
 
-The analysis shows that 304 stainless steel and copper are the only common hood materials that are unconditionally safe for all source types at all mounting heights including 18 inches. All other materials require minimum mounting height restrictions that depend on the source type.
+The analysis shows that 304 stainless steel, 430 stainless steel, and copper are the common hood materials that are unconditionally safe for all source types at all mounting heights including 18 inches. All other materials require minimum mounting height restrictions that depend on the source type.
 
-**Recommendation:** For permanent outdoor hood installations where the cooking source may change over time, specify 304 stainless steel or copper regardless of the initial source type. The additional material cost is small relative to the total installation cost and eliminates the risk of material degradation if the source configuration changes.
+**Recommendation:** For permanent outdoor hood installations where the cooking source may change over time, specify 304 stainless steel, 430 stainless steel, or copper regardless of the initial source type. The additional material cost is small relative to the total installation cost and eliminates the risk of material degradation if the source configuration changes.
 
 ### 4.3 The Thermal Boundary Layer Has No Practical Effect on Capture
 
