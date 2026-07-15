@@ -313,6 +313,9 @@ export function mount(figureEl) {
           const eff = Math.max(0, (x - 90) / 1.5);
           return Math.max(0, Math.min(16, Math.round(eff / factor)));
         },
+        // W5-T3 visible grip: this scene's arrow is drawn at the EFFECTIVE
+        // (post-panel) wind — ride that tip, exactly as update() draws it.
+        grip: (st) => ({ x: 90 + effectiveWind(Math.max(0, Math.min(16, st['i07-wind'])), st['i07-panels']) * 1.5 + 14, y: 48 }),
       },
     ],
 
@@ -334,13 +337,17 @@ export function mount(figureEl) {
     //     Results" (content/research/rb-009-side-panel-effectiveness.md),
     //     the U_eff = U_w · (1 − R_panel) attenuation that effectiveWind()
     //     implements — apter than the previous RB-006 (F2 review F-4). ------
+    //     W5-T3 (UX P1-3): explanation on-surface (`plain` + threshold
+    //     line); engine adds the model-configuration footnote. ---------------
     verdict: (state, physics) => {
       const cap = physics ? physics.capWithPanels : 0;
       const grade = gradeCapture(cap);
+      const pct = Math.round(cap * 100);
       return {
         grade,
-        clauseRef: 'model criterion · capture per RB-009 §3.1',
-        detail: `Plume capture with panels ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (panel attenuation data: RB-009).`,
+        plain: `${pct}% captured with panels in this modeled scene`,
+        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-009 §3.1',
+        detail: `Plume capture with panels ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (panel attenuation data: RB-009).`,
       };
     },
   };

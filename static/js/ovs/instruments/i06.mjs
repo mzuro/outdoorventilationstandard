@@ -175,6 +175,12 @@ export function mount(figureEl) {
       {
         target: '.ovs-i-drag-tracer', control: 'i06-distance', axis: 'x', cursor: 'ew-resize',
         toValue: (x) => Math.max(6, Math.min(MAX_Z_IN, Math.round((((x - X0) / (X1 - X0)) * MAX_Z_IN) / 2) * 2)),
+        // W5-T3 visible grip: ride the tracer dot on the curve (same xFor/
+        // yFor/centerlineVelocity update() positions the dot with).
+        grip: (st) => {
+          const z = Math.max(6, Math.min(MAX_Z_IN, st['i06-distance']));
+          return { x: xFor(z), y: yFor(centerlineVelocity(z)) };
+        },
       },
     ],
 

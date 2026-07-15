@@ -255,12 +255,20 @@ export function mount(figureEl) {
   function paintStamp(el, cap) {
     if (!el) return;
     const grade = gradeCapture(cap);
+    const pct = Math.round(cap * 100);
     el.dataset.grade = grade;
     el.replaceChildren();
     const g = document.createElement('span');
     g.className = 'ovs-i-stamp-grade';
     g.textContent = grade;
     el.appendChild(g);
+    // W5-T3 (UX P1-3): explanation ON the stamp, not in a title tooltip —
+    // same plain-line + threshold-line shape the engine renders for
+    // spec.verdict instruments.
+    const p = document.createElement('span');
+    p.className = 'ovs-i-stamp-plain';
+    p.textContent = `${pct}% captured in this modeled scene`;
+    el.appendChild(p);
     const c = document.createElement('span');
     c.className = 'ovs-i-stamp-clause';
     // The 0.85/0.60 grade bands are this instrument's MODEL CRITERIA — no
@@ -269,9 +277,9 @@ export function mount(figureEl) {
     // citation is where the capture reasoning lives: RB-005 §4.3 "Island
     // Versus Wall-Mount: A Significant Performance Gap" (content/research/
     // rb-005-hood-geometry-capture.md) — exactly this A/B comparison.
-    c.textContent = 'model criterion · capture per RB-005 §4.3';
+    c.textContent = 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-005 §4.3';
     el.appendChild(c);
-    el.title = `Plume capture ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`;
+    el.title = `Plume capture ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`;
   }
   function slamStamp(el) {
     if (!el || reducedMode) return;
@@ -424,6 +432,18 @@ export function mount(figureEl) {
     // cached, no re-derivation).
     paintStamp(stampA, lastCapA);
     paintStamp(stampB, lastCapB);
+
+    // W5-T3 (UX P1-3): graded instruments carry the model-configuration
+    // footnote. The engine adds this for spec.verdict instruments; this
+    // instrument's stamps are custom (no spec.verdict), so it appends the
+    // same element itself — identical class and wording.
+    const inst = container.querySelector('.ovs-i-instrument');
+    if (inst && !inst.querySelector('.ovs-i-verdict-foot')) {
+      const foot = document.createElement('p');
+      foot.className = 'ovs-i-verdict-foot';
+      foot.textContent = 'Grades apply to the model configuration, not to any product.';
+      inst.appendChild(foot);
+    }
 
     if (typeof IntersectionObserver === 'function') {
       io = new IntersectionObserver((entries) => {

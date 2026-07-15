@@ -1181,9 +1181,19 @@ a.ovs-chip:hover {
   flex-direction: column;
   justify-content: flex-end;
 }
+/* W5-T3 re-calibration (2026-07-15): the signifier pass added real height
+   to mounted instruments — the "TRY:" chip row grew (0.68->0.78rem type +
+   row label, extra wrap row at 390) and graded instruments (i01/i05/i07/
+   i08) gained the .ovs-i-verdict-foot line. Each reserve below is the F3
+   value PLUS the measured W5 delta at the same widths (1280 / 390, tool
+   pages, baseline 7ba3549 vs this build), preserving F3's calibration —
+   same residual settle, no new whitespace at tablet widths. */
+.ovs-instrument[data-instrument="i01"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
-.ovs-instrument[data-instrument="i08"] { --i-reserve: 900px; }
+.ovs-instrument[data-instrument="i05"] { --i-reserve: 780px; }
+.ovs-instrument[data-instrument="i07"] { --i-reserve: 780px; }
+.ovs-instrument[data-instrument="i08"] { --i-reserve: 930px; }
 .ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
 .ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
 
@@ -1191,14 +1201,15 @@ a.ovs-chip:hover {
   .ovs-instrument:not(.ovs-i) {
     min-height: var(--i-reserve-m, 760px);
   }
-  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 860px; }
-  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 860px; }
-  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 730px; }
-  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 580px; }
-  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 980px; }
-  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 495px; }
-  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 845px; }
-  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 615px; }
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 905px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 900px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 810px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 660px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 1065px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 535px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 805px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 930px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 655px; }
   .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 595px; }
 }
 
@@ -1761,6 +1772,49 @@ a.ovs-chip:hover {
    ew-resize, so their cursor is set inline per-instrument (spec.drag
    `cursor`); touch-action:none still applies via .ovs-i-draggable above. */
 
+/* ---- W5-T3 (UX P1-1): visible drag grips ----
+   Engine-emitted (viz.mjs makeGripGlyph/positionGrips): a small pad with
+   three grip ticks — dimension-line drawing language — riding every drag
+   target so the affordance is visible on touch, not hover-cursor-only.
+   pointer-events:none — the transparent hit strip beneath still takes the
+   pointer. Accent-on-surface: ~8.5:1 light / ~9:1 dark, well past the 3:1
+   WCAG 1.4.11 floor for meaningful non-text graphics. */
+.ovs-i-svg .ovs-i-grip {
+  pointer-events: none;
+}
+
+.ovs-i-svg .ovs-i-grip-pad {
+  fill: var(--surface);
+  fill-opacity: 0.92;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+}
+
+.ovs-i-svg .ovs-i-grip-tick {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* one-time hint pulse (viz.mjs adds/removes --hint once per session on
+   first viewport entry; skipped entirely under reduced motion, and the
+   global base.css override neutralizes the keyframes as a second guard).
+   The pulse lives on the INNER group: the outer group's transform is the
+   engine's positioning translate and must never be animated over. */
+.ovs-i-grip-inner {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ovs-i-grip--hint .ovs-i-grip-inner {
+  animation: ovs-i-grip-pulse 0.9s ease-in-out 2;
+}
+
+@keyframes ovs-i-grip-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
 /* ---- mobile hit-strip scale-up (F3 QA F-6) ----
    The strips are authored 44+ units in viewBox space, so on a ~345px-wide
    render (375px viewport) they shrink to ~21-43 CSS px. Scale each strip's
@@ -1819,13 +1873,27 @@ a.ovs-chip:hover {
   background: var(--surface);
 }
 
+/* W5-T3 (UX P1-2): a visible row label so the chips read as invitations
+   ("TRY:"), mono + muted — stays in the metadata voice while the chips
+   themselves get button weight below. */
+.ovs-i-presets-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+  align-self: center;
+}
+
+/* W5-T3 (UX P1-2): button weight — ink text at a legible size (was 0.68rem
+   ≈10.9px muted, which read as metadata tags), stronger border. Mono stays
+   (standards voice); active/hover/44px-hit-area treatments unchanged. */
 .ovs-i-preset {
   font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.03em;
-  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 2px;
   padding: 0.4rem 0.7rem;
   min-height: 34px;
@@ -1947,6 +2015,90 @@ a.ovs-chip:hover {
      0.95 keeps the de-emphasis while passing both themes (F3 QA F-4). */
   opacity: 0.95;
   white-space: nowrap;
+}
+
+/* W5-T3 (UX P1-3): the plain-language explanation line, ON the stamp —
+   the old title-tooltip was invisible in practice (Tse's rule). Wraps to
+   a narrow measure so the stamp stays a stamp at 375px. Same composited
+   color as the grade (>= the clause line's checked ratios at a larger
+   size, opacity 1). */
+.ovs-i-stamp-plain {
+  font-size: 0.6rem;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  max-width: 24ch;
+  text-align: center;
+  white-space: normal;
+}
+
+/* the paired dual stamps (i05) are --small; tighten the plain line so the
+   two stamps keep clear of each other over the narrower mini-scenes */
+.ovs-i-stamp--small .ovs-i-stamp-plain {
+  font-size: 0.54rem;
+  max-width: 18ch;
+}
+
+/* Narrow widths: the scene renders ~160px tall at 375, so the stamp must
+   shrink and its lines must wrap to a narrow measure or it papers over
+   the entire drawing (found in the W5-T3 verification screenshots). The
+   paired --small stamps (i05) tighten further so left+right clear each
+   other over the mini-scenes. */
+@media (max-width: 640px) {
+  .ovs-i-stamp {
+    bottom: 10px;
+    right: 10px;
+    border-width: 2px;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .ovs-i-stamp-grade {
+    font-size: 0.85rem;
+  }
+
+  .ovs-i-stamp-plain {
+    font-size: 0.54rem;
+    max-width: 24ch;
+  }
+
+  .ovs-i-stamp-clause {
+    white-space: normal;
+    max-width: 30ch;
+    text-align: center;
+    line-height: 1.25;
+    font-size: 0.52rem;
+  }
+
+  .ovs-i-stamp--small {
+    padding: 0.14rem 0.35rem;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-grade {
+    font-size: 0.72rem;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-plain {
+    font-size: 0.5rem;
+    max-width: 13ch;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-clause {
+    max-width: 15ch;
+    font-size: 0.48rem;
+  }
+}
+
+/* W5-T3 (UX P1-3): static footnote on every graded instrument, appended
+   by the engine (or by i05 itself) after the readouts — defuses "PASS
+   reads as product certification". Continues the readouts' surface. */
+.ovs-i-verdict-foot {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  margin: 0;
+  padding: 0.45rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
 /* The one orchestrated moment: the stamp slams on settle. Neutralized under

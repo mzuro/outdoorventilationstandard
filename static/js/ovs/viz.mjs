@@ -470,6 +470,9 @@ export function createInstrument(rootEl, spec) {
       const gs = spec.smoke(st);
       if (gs) smokeField.update(gs);
     }
+    // W5-T3: keep the visible drag grips glued to their (just re-measured)
+    // hit strips / grip anchors.
+    positionGrips();
   }
 
   function refreshBubble(id) {
@@ -568,7 +571,13 @@ export function createInstrument(rootEl, spec) {
     const row = document.createElement('div');
     row.className = 'ovs-i-presets';
     row.setAttribute('role', 'group');
-    row.setAttribute('aria-label', 'Scenario presets');
+    row.setAttribute('aria-label', 'Try a scenario');
+    // W5-T3 (UX P1-2): a visible "TRY:" row label so the chips read as
+    // invitations, not metadata tags.
+    const rowLabel = document.createElement('span');
+    rowLabel.className = 'ovs-i-presets-label';
+    rowLabel.textContent = 'TRY:';
+    row.appendChild(rowLabel);
     for (const preset of spec.presets) {
       const chip = document.createElement('button');
       chip.type = 'button';
@@ -613,6 +622,14 @@ export function createInstrument(rootEl, spec) {
     stampEl.setAttribute('aria-live', 'polite');
     // Positioned over the scene; svgWrap is the positioning context.
     svgWrap.appendChild(stampEl);
+
+    // W5-T3 (UX P1-3): a graded instrument also carries a static visible
+    // footnote so PASS can never read as product certification. Wording per
+    // the v2.2 UX report.
+    const foot = document.createElement('p');
+    foot.className = 'ovs-i-verdict-foot';
+    foot.textContent = 'Grades apply to the model configuration, not to any product.';
+    article.appendChild(foot);
   }
 
   function updateVerdict(animate) {
@@ -637,6 +654,15 @@ export function createInstrument(rootEl, spec) {
     g.className = 'ovs-i-stamp-grade';
     g.textContent = v.grade;
     stampEl.appendChild(g);
+    // W5-T3 (UX P1-3): the plain-language line renders ON the stamp — the
+    // old title-tooltip carried the explanation and (per Tse's rule) no one
+    // would ever see it. `plain` is supplied by the instrument's verdict().
+    if (v.plain) {
+      const p = document.createElement('span');
+      p.className = 'ovs-i-stamp-plain';
+      p.textContent = v.plain;
+      stampEl.appendChild(p);
+    }
     if (v.clauseRef) {
       const c = document.createElement('span');
       c.className = 'ovs-i-stamp-clause';
@@ -660,6 +686,58 @@ export function createInstrument(rootEl, spec) {
 
   // ---- v2.1 direct manipulation (opt-in via spec.drag) -------------------
   const dragCleanups = [];
+
+  // ---- W5-T3 (UX P1-1): visible drag handles ------------------------------
+  // The hit strips are transparent, so on touch there was ZERO indication a
+  // drag exists ("unless users have prior knowledge that a gesture exists,
+  // they won't try"). Every wired drag target now gets a small grip glyph —
+  // a pad with three grip ticks, in the site's dimension-line drawing
+  // language — always visible, engine-positioned after every update().
+  // Default anchor: the center of the hit strip's authored geometry (the
+  // instruments re-measure the strips live, so this tracks hood lips and
+  // measuring lines for free). Drags whose visual anchor is NOT the strip
+  // center (wind-arrow tips, i06's tracer dot) supply spec.drag[].grip:
+  // (state) => ({x, y}) in viewBox coordinates. pointer-events:none — the
+  // strip beneath still takes the pointer; aria-hidden — the grip
+  // duplicates the sliders, which remain the accessible path.
+  const grips = [];
+  function makeGripGlyph(axis) {
+    const g = el('g', { class: 'ovs-i-grip', 'aria-hidden': 'true' });
+    // rotation and hint-pulse animation live on separate nested groups so
+    // the CSS pulse (a transform) can never clobber the rotate.
+    const rot = el('g', axis === 'y' ? { transform: 'rotate(90)' } : {});
+    const inner = el('g', { class: 'ovs-i-grip-inner' });
+    inner.appendChild(el('rect', {
+      class: 'ovs-i-grip-pad', x: -10, y: -13, width: 20, height: 26, rx: 3,
+    }));
+    for (const off of [-4.5, 0, 4.5]) {
+      inner.appendChild(el('line', {
+        class: 'ovs-i-grip-tick', x1: off, y1: -6.5, x2: off, y2: 6.5,
+      }));
+    }
+    rot.appendChild(inner);
+    g.appendChild(rot);
+    return g;
+  }
+  function positionGrips() {
+    if (!grips.length) return;
+    const st = currentNumericState();
+    for (const gr of grips) {
+      let x;
+      let y;
+      if (typeof gr.d.grip === 'function') {
+        const p = gr.d.grip(st);
+        if (!p) continue;
+        x = Number(p.x);
+        y = Number(p.y);
+      } else {
+        x = Number(gr.handle.getAttribute('x') || 0) + Number(gr.handle.getAttribute('width') || 0) / 2;
+        y = Number(gr.handle.getAttribute('y') || 0) + Number(gr.handle.getAttribute('height') || 0) / 2;
+      }
+      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      gr.el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+    }
+  }
   function clientToUser(evt) {
     if (typeof svg.getScreenCTM !== 'function') return { x: 0, y: 0 };
     const ctm = svg.getScreenCTM();
@@ -676,6 +754,10 @@ export function createInstrument(rootEl, spec) {
     if (!handle) continue;
     handle.classList.add('ovs-i-draggable');
     if (d.cursor) handle.style.cursor = d.cursor;
+    // visible grip glyph for this drag target (W5-T3, see above)
+    const gripEl = makeGripGlyph(d.axis);
+    svg.appendChild(gripEl);
+    grips.push({ el: gripEl, handle, d });
     let dragging = false;
     const apply = (evt) => {
       const u = clientToUser(evt);
@@ -704,6 +786,27 @@ export function createInstrument(rootEl, spec) {
       handle.removeEventListener('pointerup', onUp);
       handle.removeEventListener('pointercancel', onUp);
     });
+  }
+
+  // W5-T3 (UX P1-1): one-time grip hint pulse on first viewport entry —
+  // once per session (sessionStorage), never under reduced motion (the
+  // engine skips it AND base.css neutralizes the keyframes).
+  if (grips.length && !reduced && typeof IntersectionObserver === 'function') {
+    let hinted = false;
+    try { hinted = window.sessionStorage.getItem('ovs-grip-hint') === '1'; } catch { /* storage blocked */ }
+    if (!hinted) {
+      const hintIo = new IntersectionObserver((entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        hintIo.disconnect();
+        try { window.sessionStorage.setItem('ovs-grip-hint', '1'); } catch { /* storage blocked */ }
+        for (const gr of grips) gr.el.classList.add('ovs-i-grip--hint');
+        window.setTimeout(() => {
+          for (const gr of grips) gr.el.classList.remove('ovs-i-grip--hint');
+        }, 2000);
+      }, { threshold: 0.4 });
+      hintIo.observe(svgWrap);
+      dragCleanups.push(() => hintIo.disconnect());
+    }
   }
 
   // ---- smoke lifecycle: pause off-viewport and when the tab is hidden ----

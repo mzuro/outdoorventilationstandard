@@ -361,13 +361,18 @@ export function mount(figureEl) {
     //     (content/research/rb-004-indoor-vs-outdoor-assumptions.md) —
     //     first-pass capture is the only capture outdoors, exactly what
     //     this instrument grades in both environments. ----------------------
+    //     W5-T3 (UX P1-3): explanation on-surface (`plain` + threshold
+    //     line); engine adds the model-configuration footnote. ---------------
     verdict: (state, physics) => {
       const cap = physics ? physics.capFrac : 0;
       const grade = gradeCapture(cap);
+      const pct = Math.round(cap * 100);
+      const env = physics ? physics.env : 'outdoor';
       return {
         grade,
-        clauseRef: 'model criterion · capture per RB-004 §2.3',
-        detail: `Plume capture ${Math.round(cap * 100)}% (${physics ? physics.env : 'outdoor'}) — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-004).`,
+        plain: `${pct}% captured in this modeled ${env} scene`,
+        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-004 §2.3',
+        detail: `Plume capture ${pct}% (${env}) — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-004).`,
       };
     },
   };

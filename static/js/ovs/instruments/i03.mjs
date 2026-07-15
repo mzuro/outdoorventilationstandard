@@ -257,6 +257,8 @@ export function mount(figureEl) {
       {
         target: 'wind-arrow', control: 'i03-wind', axis: 'x', cursor: 'ew-resize',
         toValue: (x) => Math.max(0, Math.min(20, Math.round((x - 90) / 1.5))),
+        // W5-T3 visible grip: ride the arrow tip (shaftX = 90 + mph*1.5).
+        grip: (st) => ({ x: 90 + Math.max(0, Math.min(20, st['i03-wind'])) * 1.5 + 14, y: 136 }),
       },
     ],
 

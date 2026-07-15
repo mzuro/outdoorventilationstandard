@@ -344,6 +344,9 @@ export function mount(figureEl) {
       {
         target: 'wind-arrow', control: 'i01-wind', axis: 'x', cursor: 'ew-resize',
         toValue: (x) => Math.max(0, Math.min(20, Math.round((x - 90) / 1.5))),
+        // W5-T3 visible grip: ride the arrow tip (shaftX = 90 + mph*1.5),
+        // not the hit strip's static center.
+        grip: (st) => ({ x: 90 + Math.max(0, Math.min(20, st['i01-wind'])) * 1.5 + 14, y: 136 }),
       },
     ],
 
@@ -367,13 +370,20 @@ export function mount(figureEl) {
     //     Capture Envelope Geometry" (content/research/
     //     rb-005-hood-geometry-capture.md), the paper behind this
     //     instrument's width/mount capture envelope. ------------------------
+    //     W5-T3 (UX P1-3): the explanation renders ON the stamp (`plain` +
+    //     threshold line) instead of a title tooltip nobody hovers; the
+    //     engine also adds the static "Grades apply to the model
+    //     configuration, not to any product." footnote for every graded
+    //     instrument. ---------------------------------------------------------
     verdict: (state, physics) => {
       const cap = physics ? physics.capFrac : 0;
       const grade = gradeCapture(cap);
+      const pct = Math.round(cap * 100);
       return {
         grade,
-        clauseRef: 'model criterion · capture per RB-005 §2.2',
-        detail: `Plume capture ${Math.round(cap * 100)}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`,
+        plain: `${pct}% of smoke captured in this modeled scene`,
+        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-005 §2.2',
+        detail: `Plume capture ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`,
       };
     },
   };
