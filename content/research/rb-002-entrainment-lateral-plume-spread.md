@@ -509,7 +509,7 @@ The following tables provide the primary engineering deliverable of this paper. 
 
 1. **Minimum hood width (W_min):** The absolute minimum width to capture the time-averaged plume in quiescent conditions. Equal to d_capture from the Heskestad formula. Using a hood this narrow provides no margin for any variability and is not recommended for outdoor installations.
 
-2. **Recommended hood width (W_rec):** The recommended width accounting for turbulent intermittency, puffing, and light wind. Equal to K_margin_outdoor * d_capture, using K = 1.70 for standard outdoor conditions. This is the primary sizing recommendation.
+2. **Recommended hood width (W_rec):** The recommended width accounting for turbulent intermittency and puffing. Equal to K_margin_quiescent * d_capture (the M_1 * M_2 margin = 1.25 * 1.10 = 1.38); across every source type and mounting height the tabulated W_rec values fall at 1.37 to 1.39 * d_capture. This is the primary sizing recommendation for sheltered and typical installations. For open or wind-exposed sites, scale the width up using the additional wind margin from Section 3.5 (K rises toward 1.70 for light wind and 2.00 for moderate wind).
 
 3. **Minimum hood depth (D_min):** The front-to-back dimension. For rectangular cooking surfaces, this equals the recommended width scaled by the cooking surface aspect ratio. For square or circular cooking surfaces, depth equals width. Where the cooking surface is wider than deep, the depth is computed using the same capture formula applied to the depth dimension of the cooking surface.
 
@@ -635,7 +635,7 @@ All values are provided in both metric and imperial units.
 
 For rapid engineering reference, the following consolidated table presents the recommended hood width (W_rec) for all source types at the three most common mounting heights (24", 30", 36").
 
-#### Table 3.7: Recommended Minimum Hood Width W_rec (inches) — Outdoor Conditions (K = 1.70)
+#### Table 3.7: Recommended Minimum Hood Width W_rec (inches) — Base Margin (K ≈ 1.38)
 
 | Source Type | 24" Height | 30" Height | 36" Height |
 |---|---|---|---|
@@ -651,7 +651,7 @@ For rapid engineering reference, the following consolidated table presents the r
 | Pellet Smoker Medium | 50" | 54" | 58" |
 | Pellet Smoker High | 50" | 54" | 58" |
 
-**How to use this table:** Select the source type and mounting height. The recommended width is the minimum hood width dimension (side to side, parallel to the long axis of the grill) for reliable plume capture in typical outdoor conditions with light wind. The hood depth (front to back) should be at least 6 inches less than the width for rectangular cooking surfaces, or equal to the width for circular sources (kettle grills).
+**How to use this table:** Select the source type and mounting height. The recommended width is the minimum hood width dimension (side to side, parallel to the long axis of the grill) for reliable plume capture in typical installations (the K ≈ 1.38 base margin covering turbulent intermittency and puffing). For open or wind-exposed sites, increase the width using the additional wind margin from Section 3.5. The hood depth (front to back) should be at least 6 inches less than the width for rectangular cooking surfaces, or equal to the width for circular sources (kettle grills).
 
 **Key insight:** The recommended hood widths for outdoor installations are substantially larger than what indoor ventilation practice would suggest. A 30-inch cooking surface at a 30-inch mounting height requires a hood width of at least 57 to 67 inches (depending on source type) for reliable outdoor capture. This is approximately twice the cooking surface width. The physics demands this: the plume at 30 inches is already wider than the cooking surface, and the wind and turbulence margins add further to the required hood extent.
 
@@ -983,8 +983,8 @@ All source-specific parameters (Q_c, D_eff, z_0) are taken directly from RB-001 
 | Heskestad capture diameter (98% flux) | d_capture = 0.48 * (z - z_0) + D_eff | Heskestad (2016); includes source |
 | 99th percentile instantaneous diameter | d_99 = 0.72 * (z - z_0) + D_eff | 3.0 * b_T radius, both sides, plus D_eff |
 | Puffing frequency | f_puff = 0.47 * (g / D_eff)^(1/2) | Cetegen & Kasper (1996) |
-| Outdoor margin factor (recommended) | K = 1.70 | This paper, Section 3.5 |
-| Recommended hood width | W_rec = K * d_capture | This paper |
+| Base margin factor (applied to sizing tables) | K ≈ 1.38 (M_1 * M_2) | This paper, Sections 3.5-3.6 |
+| Recommended hood width | W_rec = K * d_capture (K ≈ 1.38) | This paper |
 | Required overhang per side | OH = (W_rec - cooking surface width) / 2 | Geometric |
 
 ### A.4 Cooking Surface Dimensions Used
