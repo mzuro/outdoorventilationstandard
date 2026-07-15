@@ -1,6 +1,6 @@
 ---
 title: "What size outdoor range hood do I need for my grill?"
-description: "Size to the plume, not the grill: the papers put its capture diameter at 41 inches over a medium gas grill at a 30-inch mount — why outdoor hoods run wide."
+description: "Size to the plume, not the grill: a medium gas grill's plume is 41 inches across at a 30-inch mount, so the recommended hood runs about 57 inches."
 summary: "The plume sets the width, not the grill. In the capture model behind the instruments it is about 28 inches across at the cooking surface and roughly 34.6 inches by a 30-inch mounting height, before any wind; the research papers, which size the plume per source, put the capture diameter over a medium gas grill at 41 inches at that height (RB-002). A hood sized by the familiar '+6 inches per side' retail rule covers the still-air plume with little or nothing to spare; the papers' outdoor tables run wider — on the order of twice the cooking surface width for reliable open-air capture."
 date: 2026-07-15
 lastmod: 2026-07-15
@@ -24,7 +24,7 @@ The ubiquitous retail rule — hood 6 inches wider than the grill on each side �
 
 ## What the papers recommend
 
-RB-002's engineering tables size hood width from the plume capture diameter times a 1.70 outdoor margin factor. At a 30-inch mount that works out to 51 inches over a small gas grill, 57 inches over a medium, 62 inches over a large, and up to 71 inches over a large wood-fired source (RB-002 Table 3.7) — roughly twice the cooking surface width (RB-002 §3.7). In overhang terms: 15-20 inches per side at 30 inches for all source types, so a 24-inch cooking surface points to a 54-64 inch hood and a 36-inch surface to a 66-76 inch hood (RB-005 §3.1). Hood widths are commonly manufactured in 6-inch increments, so in practice you round the derived requirement up to the next available width; this program does not test or recommend products, so which manufacturer's width you round to is not a question it answers.
+RB-002's engineering tables apply a 1.70 outdoor margin factor to the plume and publish the recommended hood widths directly. At a 30-inch mount the tables give 51 inches over a small gas grill, 57 inches over a medium, 62 inches over a large, and up to 71 inches over a large wood-fired source (RB-002 Table 3.7) — roughly twice the cooking surface width (RB-002 §3.7). In overhang terms: 15-20 inches per side at 30 inches for all source types, so a 24-inch cooking surface points to a 54-64 inch hood and a 36-inch surface to a 66-76 inch hood (RB-005 §3.1). Hood widths are commonly manufactured in 6-inch increments, so in practice you round the derived requirement up to the next available width; this program does not test or recommend products, so which manufacturer's width you round to is not a question it answers.
 
 ## Once the plume is covered, width stops paying
 

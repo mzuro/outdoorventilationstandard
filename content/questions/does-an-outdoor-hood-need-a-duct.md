@@ -6,10 +6,10 @@ date: 2026-07-15
 lastmod: 2026-07-15
 reviewed: true
 weight: 13
-citations: ["rb-004", "rb-002", "rb-011", "rb-008"]
+citations: ["rb-004", "rb-002", "rb-003", "rb-011", "rb-008"]
 ---
 
-In the open, often **no** — under open sky, escaped or discharged cooking effluent is diluted to imperceptible levels within a few meters through open-boundary dispersion (RB-004 §2.1), so an installation with nothing above the outlet can release exhaust directly at the hood and let the atmosphere finish the job. The real question is routing: does the hood's discharge reach open air? Put a roof in the way and the answer flips: the covered volume needs the exhaust taken *out* of it, and that is exactly what a duct is for.
+In the open, often **no** — under open sky, escaped cooking effluent is diluted to imperceptible levels within a few meters through open-boundary dispersion (RB-004 §2.1), and the same open-boundary physics acts on a hood's discharge regardless of why the material left the appliance, so an installation with nothing above the outlet can release exhaust directly at the hood and let the atmosphere finish the job. The real question is routing: does the hood's discharge reach open air? Put a roof in the way and the answer flips: the covered volume needs the exhaust taken *out* of it, and that is exactly what a duct is for.
 
 ## Why "ductless" is an indoor idea
 
