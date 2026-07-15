@@ -368,6 +368,10 @@ export function mount(figureEl) {
       { id: 'captureB', label: 'CAPTURE B', format: 'pct', hero: true },
       { id: 'deltaCapture', label: 'Δ CAPTURE (A − B)', format: 'pct' },
     ],
+    // W5-T2 sticky strip: both sides' hero captures. No spec.verdict here
+    // (the dual stamps are custom, see header note), so the strip carries
+    // the two values only — copied verbatim by the engine.
+    stickyReadout: ['captureA', 'captureB'],
     scene: buildScene,
     update,
 

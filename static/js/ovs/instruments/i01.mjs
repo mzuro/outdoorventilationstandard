@@ -306,6 +306,10 @@ export function mount(figureEl) {
       { id: 'deflection', label: 'DEFLECTION AT HOOD', format: 'in' },
       { id: 'effWind', label: 'EFFECTIVE WIND', format: 'mph' },
     ],
+    // W5-T2: mirror the hero readout (+ verdict grade, added automatically)
+    // in the narrow-viewport sticky strip. Values are copied from the real
+    // readout by the engine, never recomputed.
+    stickyReadout: ['capture'],
     scene: buildScene,
     update,
 

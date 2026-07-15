@@ -232,6 +232,9 @@ export function mount(figureEl) {
       { id: 'deflection', label: 'DEFLECTION AT HOOD PLANE', format: 'in', hero: true },
       { id: 'effWind', label: 'EFFECTIVE WIND', format: 'mph' },
     ],
+    // W5-T2 sticky strip: hero readout only (no verdict on this
+    // instrument). Values are copied verbatim from the real readout.
+    stickyReadout: ['deflection'],
     scene: buildScene,
     update,
 

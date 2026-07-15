@@ -280,6 +280,9 @@ export function mount(figureEl) {
       { id: 'captureWithoutPanels', label: 'CAPTURE — WITHOUT PANELS', format: 'pct' },
       { id: 'effWind', label: 'EFFECTIVE WIND', format: 'mph' },
     ],
+    // W5-T2 sticky strip: hero readout + verdict grade (engine adds the
+    // grade automatically because spec.verdict exists). Copied verbatim.
+    stickyReadout: ['captureWithPanels'],
     scene: buildScene,
     update,
 

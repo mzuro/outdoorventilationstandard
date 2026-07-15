@@ -223,6 +223,9 @@ export function mount(figureEl) {
       { id: 'minimum', label: 'MINIMUM', format: 'cfm' },
       { id: 'highWind', label: 'HIGH-WIND', format: 'cfm' },
     ],
+    // W5-T2 sticky strip: hero + minimum (no verdict on this instrument —
+    // see the header comment). Engine copies values verbatim.
+    stickyReadout: ['recommended', 'minimum'],
     scene: buildScene,
     update,
 

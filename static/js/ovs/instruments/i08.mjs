@@ -323,6 +323,9 @@ export function mount(figureEl) {
       { id: 'capture', label: 'CAPTURE', format: 'pct', hero: true },
       { id: 'assumptionCount', label: 'ASSUMPTIONS IN PLAY' },
     ],
+    // W5-T2 sticky strip: hero readout + verdict grade (engine adds the
+    // grade automatically because spec.verdict exists). Copied verbatim.
+    stickyReadout: ['capture'],
     scene: buildScene,
     update,
 

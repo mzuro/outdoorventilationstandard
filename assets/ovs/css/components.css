@@ -1961,3 +1961,94 @@ a.ovs-chip:hover {
   60% { transform: rotate(-6deg) scale(0.9); opacity: 1; }
   100% { transform: rotate(-6deg) scale(1); opacity: 1; }
 }
+
+/* ==========================================================================
+   W5-T2 (UX P0-2) — sticky mobile readout strip. Engine-emitted (viz.mjs,
+   spec.stickyReadout): a one-line, viewport-bottom, fixed-position mirror
+   of the instrument's hero readout(s) + verdict grade, shown only while
+   the instrument is in the viewport at <=760px. aria-hidden (the real
+   readouts announce via aria-live); values are copied verbatim from the
+   real readouts, never recomputed. position:fixed = zero layout impact.
+   ========================================================================== */
+
+.ovs-i-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30; /* over content; above the sticky header's 20 */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 1.1rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding: 0.5rem clamp(16px, 4vw, 40px);
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  background: var(--surface-2);
+  border-top: 2px solid var(--line-strong);
+  font-family: var(--mono);
+}
+
+.ovs-i-strip[hidden] {
+  display: none;
+}
+
+/* strips only exist at narrow widths; belt-and-braces with the engine's
+   matchMedia in case a resize listener is ever missed */
+@media (min-width: 761px) {
+  .ovs-i-strip {
+    display: none;
+  }
+}
+
+.ovs-i-strip-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.ovs-i-strip-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ovs-i-strip-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* mini verdict grade — same data-grade color language as the stamp */
+.ovs-i-strip-grade {
+  margin-left: auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.14rem 0.45rem;
+  border: 2px solid var(--ok);
+  border-radius: 2px;
+  color: var(--ok);
+  white-space: nowrap;
+}
+
+.ovs-i-strip-grade[hidden] {
+  display: none;
+}
+
+.ovs-i-strip-grade[data-grade="MARGINAL"] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.ovs-i-strip-grade[data-grade="FAIL"] {
+  border-color: var(--fail);
+  color: var(--fail);
+}

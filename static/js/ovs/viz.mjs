@@ -343,10 +343,74 @@ export function createInstrument(rootEl, spec) {
 
   rootEl.appendChild(article);
 
+  // ---- W5-T2 sticky mobile readout strip (opt-in via spec.stickyReadout) --
+  // At narrow widths an instrument stack is ~2 viewports tall, so a control
+  // change updates readouts the user cannot see. While the instrument is in
+  // the viewport at <=760px, a one-line fixed strip pinned to the viewport
+  // bottom mirrors the named readouts (+ the verdict grade when the
+  // instrument has one). It NEVER computes anything: setReadout() copies the
+  // exact formatted string it just wrote into the real readout, and
+  // updateVerdict() copies the exact grade — physics-honest by construction.
+  // aria-hidden: the real readouts already announce via aria-live; the strip
+  // must not double-announce. position:fixed overlays content — CLS 0.
+  let strip = null;
+  let stripIo = null;
+  let stripMq = null;
+  let stripMqHandler = null;
+  const stripCells = new Map(); // readout id -> value <span>
+  let stripGrade = null;
+  if (
+    Array.isArray(spec.stickyReadout) && spec.stickyReadout.length
+    && typeof IntersectionObserver === 'function'
+    && typeof window.matchMedia === 'function'
+  ) {
+    strip = document.createElement('div');
+    strip.className = 'ovs-i-strip';
+    strip.setAttribute('aria-hidden', 'true');
+    strip.hidden = true;
+    for (const rid of spec.stickyReadout) {
+      const r = (spec.readouts || []).find((x) => x.id === rid);
+      if (!r) continue;
+      const cell = document.createElement('span');
+      cell.className = 'ovs-i-strip-cell';
+      const lab = document.createElement('span');
+      lab.className = 'ovs-i-strip-label';
+      lab.textContent = r.label;
+      const val = document.createElement('span');
+      val.className = 'ovs-i-strip-value';
+      cell.appendChild(lab);
+      cell.appendChild(val);
+      strip.appendChild(cell);
+      stripCells.set(rid, val);
+    }
+    if (typeof spec.verdict === 'function') {
+      stripGrade = document.createElement('span');
+      stripGrade.className = 'ovs-i-strip-grade';
+      strip.appendChild(stripGrade);
+    }
+    document.body.appendChild(strip);
+
+    stripMq = window.matchMedia('(max-width: 760px)');
+    let stripInView = false;
+    const syncStrip = () => { strip.hidden = !(stripInView && stripMq.matches); };
+    stripIo = new IntersectionObserver((entries) => {
+      stripInView = entries.some((e) => e.isIntersecting);
+      syncStrip();
+    }, { threshold: 0 });
+    stripIo.observe(article);
+    stripMqHandler = syncStrip;
+    if (stripMq.addEventListener) stripMq.addEventListener('change', stripMqHandler);
+    else if (stripMq.addListener) stripMq.addListener(stripMqHandler);
+  }
+
   function setReadout(id, value) {
     const r = readoutEls.get(id);
     if (!r) return;
     r.el.textContent = fmt(value, r.format);
+    // Mirror the SAME formatted string into the sticky strip (W5-T2) —
+    // never a recomputation, so the strip cannot disagree with the readout.
+    const cell = stripCells.get(id);
+    if (cell) cell.textContent = r.el.textContent;
   }
 
   const ctx = { svg, setReadout, reduced, physics: null };
@@ -554,6 +618,17 @@ export function createInstrument(rootEl, spec) {
   function updateVerdict(animate) {
     if (!stampEl) return;
     const v = spec.verdict(get(), ctx.physics);
+    // Mirror the exact grade into the sticky strip (W5-T2) before any early
+    // return, so strip and stamp can never disagree.
+    if (stripGrade) {
+      if (v && v.grade) {
+        stripGrade.hidden = false;
+        stripGrade.textContent = v.grade;
+        stripGrade.dataset.grade = v.grade;
+      } else {
+        stripGrade.hidden = true;
+      }
+    }
     if (!v || !v.grade) { stampEl.hidden = true; return; }
     stampEl.hidden = false;
     stampEl.dataset.grade = v.grade;
@@ -685,6 +760,13 @@ export function createInstrument(rootEl, spec) {
       rafId = null;
     }
     if (io) { io.disconnect(); io = null; }
+    if (stripIo) { stripIo.disconnect(); stripIo = null; }
+    if (stripMq && stripMqHandler) {
+      if (stripMq.removeEventListener) stripMq.removeEventListener('change', stripMqHandler);
+      else if (stripMq.removeListener) stripMq.removeListener(stripMqHandler);
+      stripMq = null; stripMqHandler = null;
+    }
+    if (strip) { strip.remove(); strip = null; }
     if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
     if (smokeField) { smokeField.destroy(); smokeField = null; }
     for (const cleanup of dragCleanups) cleanup();
