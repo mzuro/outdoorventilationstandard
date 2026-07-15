@@ -4,19 +4,63 @@ description: "Three places: the hood's filters and tray if captured; surfaces wi
 summary: "Three destinations. Captured grease ends up in the hood's filters and tray — baffles catch 70-98% of the coarse droplets that carry most of the mass (85-98% for those above 20 micrometers). Escaped coarse droplets land close: above 50 micrometers within about a meter, 20-50 micrometers within 1-5 meters downwind. The fine fraction disperses too widely to deposit locally. So the grease film on the hood, deck, and downwind furniture is a direct readout of how much the hood missed."
 date: 2026-07-15
 lastmod: 2026-07-15
-reviewed: true
+reviewed: false
 weight: 14
+draft: true
 instruments: true
 instrument_id: "i10"
 fallback_svg: "grease-aerosol-deposition"
 citations: ["rb-011", "rb-012"]
 ---
 
-Cooking grease leaves the grill as an aerosol, and particle size decides everything that happens next. Most of the mass — 50 to 80% — rides in coarse droplets larger than 2.5 micrometers (RB-011 §2.2), and coarse droplets don't travel: those above 50 micrometers settle within about a meter of the escape point, the 20-50 micrometer band within 1 to 5 meters downwind, and the 10-20 micrometer band within 5 to 30 meters (RB-011 §3.3). Particles below 5 micrometers disperse too broadly to matter for local deposition. What the hood captures ends up in its filters and grease tray — standard baffle filters hold 70-98% of that mass-dominant coarse mode, 85-98% for droplets above 20 micrometers (RB-011 §3.1, §4.2); what it misses becomes the film on the hood exterior, the deck, and whatever sits downwind.
+<!--
+DRAFT — W5 safety/YMYL page (where does grill grease go). HELD FOR MARK
+ZURO'S PERSONAL REVIEW (draft: true), same gate as the G3 clearance page
+and the W4 covered-patio trio. Do not publish without Mark flipping the
+draft flag. `reviewed` is deliberately false until that review actually
+happens (W5 review2 finding): flip BOTH `draft` and `reviewed` together
+after Mark's review, so the E-E-A-T byline never attests a review that
+has not occurred.
+
+WHY THIS PAGE IS GATED (the YMYL trigger, per W5 review2 Major):
+The page carries actionable fire-prevention guidance, not just staining
+physics — a dedicated H2 ("Why the 'where' matters: fire, not just
+staining") plus prescriptive cleaning cadences: an ignitable film
+(5-20 g/m²) forms within 1-2 seasons if never cleaned; "clean the deck
+within half a meter of the grill after every session and out to 2 meters
+monthly"; "filter cleaning is a fire-prevention measure." That
+fire-prevention cleaning-cadence language is the YMYL trigger.
+
+MARK'S DECISION (one of two):
+  (a) KEEP the fire language and publish as SAFETY GUIDANCE — then it
+      stays gated in the safety-review cluster and ships only after your
+      personal review, alongside the G3/W4 safety pages; OR
+  (b) STRIP the fire/cleaning-cadence language down to pure deposition
+      physics (where the grease goes, capture as the control knob) —
+      then it is no longer YMYL and can publish as a normal
+      non-safety question page.
+Until you choose, it stays draft:true.
+
+WHAT ELSE WAS SOFTENED THIS ROUND (W5 review2 minors, still in place):
+1. Baffle 70-98% capture is now scoped to droplets >10 µm (per RB-011
+   §4.2), not the whole >2.5 µm coarse mode (§3.1 gives 20-40% at
+   1-5 µm, 50-70% at 5-10 µm — the old wording over-claimed).
+2. §3.4/§3.5 deposition fluxes now carry the "modeled engineering
+   estimates, not field-validated" qualifier RB-011 §5.2 requires.
+3. The 5-12 g/m²/season figure now states the 2-hour/session basis
+   RB-011 §3.4/§3.6.2 uses, so the arithmetic closes.
+
+BACKLINK: the grease-aerosol-deposition tool's related_questions entry to
+this page is commented out while this is draft (avoids an empty "Questions"
+section); uncomment it AT PUBLISH. The theme's related render already uses
+.Site.GetPage, so no link 404s regardless.
+-->
+
+Cooking grease leaves the grill as an aerosol, and particle size decides everything that happens next. Most of the mass — 50 to 80% — rides in coarse droplets larger than 2.5 micrometers (RB-011 §2.2), and coarse droplets don't travel: those above 50 micrometers settle within about a meter of the escape point, the 20-50 micrometer band within 1 to 5 meters downwind, and the 10-20 micrometer band within 5 to 30 meters (RB-011 §3.3). Particles below 5 micrometers disperse too broadly to matter for local deposition. What the hood captures ends up in its filters and grease tray — standard baffle filters hold 70-98% of the droplets above 10 micrometers, which carry most of the coarse mass, and 85-98% of those above 20 micrometers (RB-011 §3.1, §4.2); what it misses becomes the film on the hood exterior, the deck, and whatever sits downwind.
 
 ## The deposition map
 
-The heaviest deposition lands on the hood's own outer surfaces — 500 to 2,000 mg/m² per hour, visible after a single session — followed by the decking directly below and around the grill at 100 to 450 mg/m² per hour (RB-011 §3.5). A horizontal surface 2 meters downwind collects roughly 50 to 120 mg/m² per cooking hour, which compounds to about 5 to 12 grams per square meter over a 50-session season (RB-011 §3.4). The instrument above shows the model's vertical intensity profile for the missed-plume region — brightest near the source and fading with height; in the module driving it, deposition intensity falls to roughly half its source value by 30 inches up.
+These deposition fluxes are modeled engineering estimates — derived from the dispersion model and published deposition velocities, not yet validated by field measurement (RB-011 §5.2). The heaviest deposition lands on the hood's own outer surfaces — 500 to 2,000 mg/m² per hour, visible after a single session — followed by the decking directly below and around the grill at 100 to 450 mg/m² per hour (RB-011 §3.5). A horizontal surface 2 meters downwind collects roughly 50 to 120 mg/m² per cooking hour, which over a 50-session season of roughly two-hour sessions compounds to about 5 to 12 grams per square meter (RB-011 §3.4). The instrument above shows the model's vertical intensity profile for the missed-plume region — brightest near the source and fading with height; in the module driving it, deposition intensity falls to roughly half its source value by 30 inches up.
 
 ## Capture efficiency is the control knob
 

@@ -11,7 +11,11 @@ weight: 9
 instrument_id: "i10"
 fallback_svg: "grease-aerosol-deposition"
 related_questions:
-  - "/questions/where-does-grill-grease-go/"
+  # Gated: where-does-grill-grease-go is draft:true (YMYL, held for Mark's
+  # review). Uncomment when that page publishes. Left commented so this
+  # tool does not render an empty "Questions" section while it is drafted;
+  # the theme uses .Site.GetPage so it would not 404 either way.
+  # - "/questions/where-does-grill-grease-go/"
 related_papers:
   - "/research/rb-011-grease-aerosol-transport/"
 ---
