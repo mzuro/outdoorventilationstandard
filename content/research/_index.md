@@ -17,7 +17,7 @@ All research is governed by the [Research Program Charter v2.6](/governance/rese
 These papers establish the core physical models. All subsequent research builds on these foundations.
 
 - [RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources](/research/rb-001-buoyant-plume-behavior/) — Quantitative plume characterization for gas, charcoal, wood-fired, and pellet sources using Heskestad correlations and McCaffrey zone classification
-- [RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments](/research/rb-002-entrainment-lateral-plume-spread/) — Morton-Taylor-Turner entrainment rates, plume diameter at representative hood heights, outdoor margin factor K=1.70
+- [RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments](/research/rb-002-entrainment-lateral-plume-spread/) — Morton-Taylor-Turner entrainment rates, plume diameter at representative hood heights, base sizing margin factor K≈1.38
 - [RB-003: Velocity Decay and Near-Field vs. Far-Field Capture](/research/rb-003-velocity-decay-capture/) — Heskestad velocity decay curves, CFM lookup tables by source type and height, maximum mounting height analysis
 
 ## P1 — Core

@@ -121,7 +121,7 @@
   <text x="480" y="107" text-anchor="middle" font-size="10" fill="#AA6600" font-weight="700">98% capture — still air only</text>
 
   <!-- ===== RIGHT PANEL: Recommended Outdoor ===== -->
-  <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Outdoor (K = 1.70)</text>
+  <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Outdoor (K ≈ 1.38)</text>
 
   <!-- Cooking surface — 24" -->
   <rect x="760" y="400" width="80" height="10" rx="2" fill="#444" stroke="#333" stroke-width="1"/>
@@ -168,7 +168,7 @@
   <!-- ===== BOTTOM COMPARISON BAR ===== -->
   <rect x="30" y="478" width="900" height="29" rx="5" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
   <text x="480" y="496" text-anchor="middle" font-size="9" fill="#555">
-    W_min = d_capture: 98% time-averaged capture, still air, no wind/turbulence margin (RB-005 §3.1, Table 3.1a) | W_rec: K = 1.70 outdoor margin (RB-002 Table 3.7; RB-005 Table 3.1b)
+    W_min = d_capture: 98% time-averaged capture, still air, no wind/turbulence margin (RB-005 §3.1, Table 3.1a) | W_rec: base margin K ≈ 1.38 (RB-002 Table 3.7; RB-005 Table 3.1b)
   </text>
 
   <!-- Source attribution -->

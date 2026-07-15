@@ -51,7 +51,7 @@ The no-JS fallback diagram for this instrument compares three hood widths over t
 
 **Minimum geometry (9-inch overhang per side).** Hood width equal to the plume capture diameter (W_min = d_capture, about a 42-inch hood here) corresponds to 98% time-averaged flux capture in quiescent conditions — but provides no margin for turbulence, wind, or instantaneous plume fluctuation [RB-005 §3.1, Table 3.1a].
 
-**Recommended outdoor (17-inch overhang per side).** The K = 1.70 outdoor margin factor from RB-002 yields a 57-inch recommended hood width for this source and height, providing margin for turbulent intermittency, puffing oscillations, and light wind deflection [RB-002 Table 3.7; RB-005 Table 3.1b].
+**Recommended outdoor (17-inch overhang per side).** The base width-sizing margin K ≈ 1.38 from RB-002 (turbulent intermittency × puffing oscillations) yields a 57-inch recommended hood width for this source and height; wind-exposed and open sites scale up toward the wind-inclusive margin K = 1.70 per RB-002 §3.5 [RB-002 Table 3.7; RB-005 Table 3.1b].
 
 ## Design Priority
 
@@ -60,4 +60,4 @@ RB-005 established the hierarchy: **geometry precedes airflow**. No amount of ex
 ## Source Papers
 
 - [RB-005: Hood Geometry and Capture](/research/rb-005-hood-geometry-capture/) — Complete geometric analysis
-- [RB-002: Entrainment and Lateral Plume Spread](/research/rb-002-entrainment-lateral-plume-spread/) — Plume width data and K=1.70 margin
+- [RB-002: Entrainment and Lateral Plume Spread](/research/rb-002-entrainment-lateral-plume-spread/) — Plume width data and hood width/overhang margins (base K≈1.38, wind-inclusive K=1.70)

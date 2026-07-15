@@ -51,7 +51,7 @@ The scope of this paper encompasses:
 
 ### Relationship to Prior Research
 
-RB-001 established the heat release rates and plume parameters for all outdoor cooking source types, finding that all hood mounting heights are in the far-field and that plume mass is 95-97% entrained ambient air at 30 inches. RB-002 established the outdoor margin factor K = 1.70, delivered hood sizing tables showing recommended widths of 51 to 71 inches at 30-inch mounting height, and quantified that **Open-Boundary Dilution** eliminates all secondary capture mechanisms available indoors. RB-003 established CFM requirements with outdoor correction factors of 1.7 to 2.5 times indoor values, maximum mounting heights, and the finding that **Momentum-Limited Capture** at the plume edge is the dominant outdoor failure mode. The present paper synthesizes these findings into a standards-focused analysis explaining precisely why indoor ventilation codes do not apply outdoors.
+RB-001 established the heat release rates and plume parameters for all outdoor cooking source types, finding that all hood mounting heights are in the far-field and that plume mass is 95-97% entrained ambient air at 30 inches. RB-002 established the base margin factor K ≈ 1.38, delivered hood sizing tables showing recommended widths of 51 to 71 inches at 30-inch mounting height, and quantified that **Open-Boundary Dilution** eliminates all secondary capture mechanisms available indoors. RB-003 established CFM requirements with outdoor correction factors of 1.7 to 2.5 times indoor values, maximum mounting heights, and the finding that **Momentum-Limited Capture** at the plume edge is the dominant outdoor failure mode. The present paper synthesizes these findings into a standards-focused analysis explaining precisely why indoor ventilation codes do not apply outdoors.
 
 ### Problem Framing
 
@@ -289,7 +289,7 @@ When the installation moves outdoors, both walls are lost (there is no "room" to
 
 RB-002 Section 3.9 established that the effective outdoor capture diameter (with turbulence and wind margins) is 1.3-1.4x the indoor capture diameter. For a back-wall installation, the wall effectively halves the required capture dimension in the front-to-back direction. Removing the wall and all outdoor margins increases the required hood depth by approximately 40-60%.
 
-For hood width (the side-to-side dimension), indoor side walls — when present — provide 10-20% width reduction. Even without side walls (island configuration), the room's finite volume constrains lateral plume dispersal. Outdoors, the absence of all confining surfaces requires the full outdoor margin factor K = 1.70 on the plume capture diameter (RB-002), compared to an indoor island canopy factor of approximately K = 1.0-1.2 (the plume width without outdoor margins).
+For hood width (the side-to-side dimension), indoor side walls — when present — provide 10-20% width reduction. Even without side walls (island configuration), the room's finite volume constrains lateral plume dispersal. Outdoors, the absence of all confining surfaces requires the base margin factor K ≈ 1.38 on the plume capture diameter (RB-002; scaled higher for wind-exposed sites), compared to an indoor island canopy factor of approximately K = 1.0-1.2 (the plume width without outdoor margins).
 
 **Net Effective Capture Area penalty for wall removal (indoor island to outdoor):**
 
@@ -383,7 +383,7 @@ These factors multiply the plume-based CFM requirement by 30-60% to compensate f
 
 ### 3.9 Indoor Versus Outdoor Comparison Table: Reference Case
 
-The following table provides a side-by-side quantitative comparison for a reference case: a 60,000 BTU large gas grill (Q_c = 12.3 kW, D_eff = 0.58 m) at a 30-inch mounting height. The indoor baseline uses ASHRAE 154 commercial kitchen recommendations for an island canopy hood. The outdoor values use RB-002 and RB-003 recommendations for standard outdoor conditions (K = 1.70, K_CFM = 3.0).
+The following table provides a side-by-side quantitative comparison for a reference case: a 60,000 BTU large gas grill (Q_c = 12.3 kW, D_eff = 0.58 m) at a 30-inch mounting height. The indoor baseline uses ASHRAE 154 commercial kitchen recommendations for an island canopy hood. The outdoor values use RB-002 and RB-003 recommendations for standard outdoor conditions (K ≈ 1.38, K_CFM = 3.0).
 
 | Parameter | Indoor (ASHRAE 154 Island Canopy) | Outdoor (RB-002/RB-003 Recommended) | Ratio Outdoor/Indoor |
 |---|---|---|---|
@@ -717,12 +717,12 @@ All plume parameters for the reference case (60,000 BTU large gas grill, Q_c = 1
 | Plume capture diameter d_capture | 1.14 m (45") | RB-001 Table 3.6 |
 | Plume mass flow m_dot_p | 0.107 kg/s | RB-001 Table 3.7 |
 | Plume mass flow (CFM) | 197 CFM | RB-003 Table 3.5 |
-| Recommended hood width (outdoor, K=1.70) | 1.57 m (62") | RB-002 Table 3.6c |
+| Recommended hood width (base margin, K≈1.38) | 1.57 m (62") | RB-002 Table 3.6c |
 | Recommended hood depth (outdoor) | 1.40 m (55") | RB-002 Table 3.6c |
 | Required overhang per side | 0.41 m (16") | RB-002 Table 3.6c |
 | Required CFM (standard outdoor, K_CFM=3.0) | 727 CFM | RB-003 Table 3.6a |
 | Required CFM (light wind, K_CFM=3.68) | 892 CFM | RB-003 Table 3.6b |
-| Outdoor margin factor K | 1.70 | RB-002 Section 3.5 |
+| Base margin factor K | ≈ 1.38 | RB-002 Sections 3.5-3.6 |
 | Outdoor CFM correction (sheltered) | 1.7x indoor | RB-003 Section 3.9 |
 | Outdoor CFM correction (standard) | 2.0x indoor | RB-003 Section 3.9 |
 | Outdoor CFM correction (exposed) | 2.5x indoor | RB-003 Section 3.9 |

@@ -70,7 +70,7 @@ The scope encompasses:
 
 RB-001 established the fundamental plume properties: heat release rates (Table 3.1), virtual origins (Table 3.2), centerline temperatures (Table 3.4), centerline velocities (Table 3.5), plume diameters (Table 3.6), and mass flow rates (Table 3.7). RB-001's key finding was that all hood heights are in the far-field and that plume centerline velocities (200-560 ft/min) far exceed minimum ASHRAE face velocities (50-100 fpm), meaning the challenge is not velocity magnitude but area coverage.
 
-RB-002 extended this with detailed entrainment analysis, plume spread quantification, turbulent intermittency margins, and recommended hood sizing with an outdoor margin factor K = 1.70. RB-002 delivered hood width lookup tables and the recommended hood dimensions for all source/height combinations.
+RB-002 extended this with detailed entrainment analysis, plume spread quantification, turbulent intermittency margins, and recommended hood sizing with a base width-sizing margin K ≈ 1.38 (rising toward 1.70 for wind-exposed sites per RB-002 Section 3.5). RB-002 delivered hood width lookup tables and the recommended hood dimensions for all source/height combinations.
 
 This paper builds on both predecessors by answering the question they raised but did not resolve: **given the plume's velocity and geometry at each height, how much exhaust flow (CFM) must the hood provide to reliably capture that plume, and at what mounting height does capture become impractical?** RB-001 showed the velocity is adequate; RB-002 showed the geometry is demanding. RB-003 synthesizes both into a CFM specification.
 
@@ -463,9 +463,9 @@ The minimum exhaust CFM for reliable outdoor plume capture must satisfy four sim
 
 > CFM_total_still = CFM_plume * F_inf
 
-For outdoor canopy hoods with recommended sizing (K = 1.70 margin):
+For outdoor canopy hoods, the infiltration model adopts an effective hood-to-plume area-basis ratio K_inf = 1.70 (the open/wind-exposed sizing scale-up from RB-002 Section 3.5, distinct from RB-002's base width-sizing margin K ≈ 1.38):
 
-> F_inf = A_hood / A_plume approximately equals (K)^2 = (1.70)^2 = 2.89
+> F_inf = A_hood / A_plume approximately equals (K_inf)^2 = (1.70)^2 = 2.89
 
 However, not all of the hood area is actively drawing in ambient air — the center of the hood is occupied by the plume itself. A more refined estimate is:
 
@@ -977,7 +977,7 @@ All source-specific parameters are taken from RB-001 Tables 3.1 and 3.2:
 
 ### A.2 Hood Dimensions from RB-002
 
-Recommended hood dimensions (W_rec x D_rec, using K = 1.70) are taken from RB-002 Tables 3.6a-k. Hood areas A_hood used in momentum calculations are computed as W_rec * D_rec.
+Recommended hood dimensions (W_rec x D_rec, using the base width-sizing margin K ≈ 1.38) are taken from RB-002 Tables 3.6a-k. Hood areas A_hood used in momentum calculations are computed as W_rec * D_rec.
 
 ### A.3 Standard Ambient Conditions
 
@@ -1053,7 +1053,7 @@ The total CFM multiplier K_CFM = 3.0 is the product of three independent correct
 
 ### D.1 Infiltration Factor F_inf = 2.0
 
-**Physical basis:** The hood opening area A_hood exceeds the plume cross-sectional area A_plume at the **Plume Interception Plane** by a factor of approximately (K)^2 = (1.70)^2 = 2.89, where K = 1.70 is the outdoor margin factor from RB-002. The region of the hood opening outside the plume boundary draws in ambient air from the surrounding atmosphere. This ambient air infiltration must be exhausted along with the plume gas.
+**Physical basis:** The hood opening area A_hood exceeds the plume cross-sectional area A_plume at the **Plume Interception Plane** by a factor of approximately (K_inf)^2 = (1.70)^2 = 2.89, where K_inf = 1.70 is the infiltration area-basis ratio — the effective hood-to-plume linear-dimension ratio adopted for the makeup-air allowance. It corresponds to RB-002 Section 3.5's wind-inclusive (open-site) margin and is distinct from RB-002's base width-sizing margin K ≈ 1.38. The region of the hood opening outside the plume boundary draws in ambient air from the surrounding atmosphere. This ambient air infiltration must be exhausted along with the plume gas.
 
 **Calculation:** If the hood's exhaust flow rate is Q_exhaust, the flow is partitioned between plume gas (Q_plume) and infiltrated ambient air (Q_ambient):
 

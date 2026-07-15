@@ -54,7 +54,7 @@ The scope encompasses:
 
 7. **Geometry-CFM interaction.** How hood geometry and exhaust rate interact: the tradeoff between a wider hood at lower CFM versus a narrower hood at higher CFM, the concept of face velocity distribution, and the optimal balance between geometric coverage and exhaust velocity.
 
-8. **Design guideline tables.** The key engineering deliverable: for each source type, minimum hood dimensions (W x D) and minimum overhang at each mounting height, along with recommended dimensions incorporating the outdoor margin factor K = 1.70 from RB-002.
+8. **Design guideline tables.** The key engineering deliverable: for each source type, minimum hood dimensions (W x D) and minimum overhang at each mounting height, along with recommended dimensions incorporating the base margin factor K ≈ 1.38 from RB-002 (turbulent intermittency and puffing).
 
 ### Relationship to Foundation Papers
 
@@ -62,9 +62,9 @@ RB-001 established the plume physics: heat release rates, virtual origins, cente
 
 > d_capture = 0.48 * (z - z_0) + D_eff
 
-RB-002 extended this with entrainment analysis, turbulent intermittency margins, and the outdoor margin factor K = 1.70, delivering recommended hood width and depth tables. The recommended hood width is:
+RB-002 extended this with entrainment analysis, turbulent intermittency margins, and the base margin factor K ≈ 1.38 (turbulent intermittency and puffing), delivering recommended hood width and depth tables. The recommended hood width is:
 
-> W_rec = K * d_capture = 1.70 * [0.48 * (z - z_0) + D_eff]
+> W_rec = K * d_capture = 1.38 * [0.48 * (z - z_0) + D_eff]
 
 RB-003 established CFM requirements at each mounting height using K_CFM = 3.0 (standard outdoor) and K_CFM = 3.68 (sustained light wind), along with maximum mounting heights as a function of available blower capacity.
 
@@ -126,11 +126,11 @@ The required overhang per side is:
 
 > OH_required = (d_hood_required - W_cooking) / 2
 
-where d_hood_required is the required hood width from RB-002 and W_cooking is the cooking surface width. For the recommended outdoor margin K = 1.70:
+where d_hood_required is the required hood width from RB-002 and W_cooking is the cooking surface width. For the recommended base margin K ≈ 1.38:
 
-> OH_required = (1.70 * d_capture - W_cooking) / 2
+> OH_required = (1.38 * d_capture - W_cooking) / 2
 
-> OH_required = (1.70 * [0.48 * (z - z_0) + D_eff] - W_cooking) / 2
+> OH_required = (1.38 * [0.48 * (z - z_0) + D_eff] - W_cooking) / 2
 
 This formula shows that overhang increases with mounting height z (because d_capture grows with z), increases with source effective diameter D_eff (larger cooking surfaces produce wider plumes), and decreases with cooking surface width W_cooking (a wider cooking surface requires less additional overhang because the plume expansion is measured from a larger base).
 
@@ -217,7 +217,7 @@ Two overhang values are reported for each source/height combination:
 
 - **OH_min**: Using the minimum hood width W_min = d_capture (the Heskestad capture diameter, corresponding to 98% time-averaged flux capture in quiescent conditions). This provides no margin for turbulence, wind, or instantaneous plume fluctuation and is the absolute minimum for any capture.
 
-- **OH_rec**: Using the recommended hood width W_rec = 1.70 * d_capture (the outdoor margin from RB-002). This provides margin for turbulent intermittency, puffing, and light wind, and is the recommended value for outdoor installations.
+- **OH_rec**: Using the recommended hood width W_rec = 1.38 * d_capture (the base margin from RB-002). This provides margin for turbulent intermittency and puffing, and is the recommended value for typical installations; wind-exposed sites should scale up further per RB-002 Section 3.5.
 
 Cooking surface widths are taken from RB-002 Appendix A.4:
 
@@ -246,7 +246,7 @@ Based on W_min = d_capture from RB-001 Table 3.6 and RB-002 Tables 3.3a-f.
 
 #### Table 3.1b: Recommended Overhang Per Side — OH_rec (inches)
 
-Based on W_rec = 1.70 * d_capture from RB-002 Tables 3.6a-k. Values match the RB-002 engineering deliverable.
+Based on W_rec ≈ 1.38 * d_capture from RB-002 Tables 3.6a-k. Values match the RB-002 engineering deliverable.
 
 | Height | Gas Small | Gas Med | Gas Large | Gas High | Charcoal | Wood | Wood Lg | Pellet |
 |---|---|---|---|---|---|---|---|---|
@@ -260,7 +260,7 @@ Based on W_rec = 1.70 * d_capture from RB-002 Tables 3.6a-k. Values match the RB
 
 1. **Minimum overhang ranges from 3 to 16 inches** depending on source type and height. The absolute lowest minimum overhang (3 inches per side) occurs for the gas grill high-output at 18-inch mounting height. This seems counterintuitive — the largest source requires the least overhang — but it is because the gas high-output has the widest cooking surface (36 inches), and at 18 inches the plume has not expanded far beyond this base. The plume capture diameter is 46 inches, and the cooking surface is already 36 inches, leaving only 5 inches of expansion per side.
 
-2. **Recommended overhang ranges from 11 to 26 inches per side.** The outdoor margin factor K = 1.70 approximately doubles the minimum overhang. The largest recommended overhang (26 inches per side) is for the charcoal kettle at 48-inch mounting height, where the plume has expanded significantly from the 22-inch diameter cooking surface and the full outdoor turbulence and wind margin must be provided.
+2. **Recommended overhang ranges from 11 to 26 inches per side.** The base margin factor K ≈ 1.38 applied to the capture diameter approximately doubles the minimum overhang. The largest recommended overhang (26 inches per side) is for the charcoal kettle at 48-inch mounting height, where the plume has expanded significantly from the 22-inch diameter cooking surface and the full outdoor turbulence and wind margin must be provided.
 
 3. **Charcoal kettle consistently requires the most overhang** among all source types at every mounting height. This is because the charcoal kettle has a relatively small cooking surface (22-inch diameter) relative to its effective source diameter (D_eff = 0.56 m = 22 inches) and a strongly negative virtual origin (z_0 = -0.47 m), producing a wide plume relative to its cooking surface. The plume expands substantially, but the cooking surface is compact.
 
@@ -668,7 +668,7 @@ The comparison shows that the face velocity requirements are well-matched to the
 The following tables consolidate the geometric analysis of this paper into actionable design guidelines. For each source type at each standard mounting height, the tables specify:
 
 - **W_min**: Minimum hood width (absolute minimum for any capture in still air)
-- **W_rec**: Recommended hood width (outdoor margin K = 1.70)
+- **W_rec**: Recommended hood width (base margin K ≈ 1.38)
 - **D_rec_island**: Recommended hood depth for island (freestanding) installation
 - **D_rec_wall**: Recommended hood depth for wall-mount installation
 - **OH_rec**: Recommended overhang per side (symmetric)
@@ -931,7 +931,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 - Shaded region below 12" labeled "Insufficient overhang for outdoor capture — **Missed Plume Region** is significant"
 - Shaded region above 20" labeled "Large overhang — consider reducing mounting height"
 - Vertical dashed line at 30" labeled "Most common mounting height"
-- Figure caption: "Figure 5.1: Recommended overhang per side (outdoor conditions, K = 1.70) as a function of mounting height for all source types. The charcoal kettle requires the most overhang at every height due to its wide effective source diameter relative to cooking surface width."
+- Figure caption: "Figure 5.1: Recommended overhang per side (base margin, K ≈ 1.38) as a function of mounting height for all source types. The charcoal kettle requires the most overhang at every height due to its wide effective source diameter relative to cooking surface width."
 
 ### Diagram 6.2: Width Versus Depth — Asymmetric Requirements (Diagram Type 1 — Plan View)
 
@@ -946,7 +946,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 - Hood boundary shown as solid rectangle
 - Overhang dimensions labeled on all sides
 - For wall-mount, the wall shown as a shaded bar along the rear edge
-- Hatched region between plume boundary and hood edge labeled "Outdoor margin (K=1.70)"
+- Hatched region between plume boundary and hood edge labeled "Recommended margin (K≈1.38)"
 - **Missed Plume Region** labeled (if any portion of the plume extends beyond the hood)
 - Annotation: "Wall-mount saves approximately 12 inches of depth by exploiting the wall's blocking effect"
 - Figure caption: "Figure 5.2: Plan-view comparison of island (left) and wall-mount (right) hood configurations for a medium gas grill at 30 inches. The wall-mount configuration reduces the required depth by substituting the wall for rear overhang."
@@ -1037,7 +1037,7 @@ All source-specific parameters are taken from RB-001 Tables 3.1 and 3.2:
 
 | Parameter | Value | Source |
 |---|---|---|
-| Outdoor margin factor K | 1.70 | RB-002 Section 3.5 |
+| Base margin factor K | ≈ 1.38 | RB-002 Sections 3.5-3.6 |
 | Heskestad capture diameter | d_capture = 0.48*(z-z_0) + D_eff | RB-001 / RB-002 |
 | Recommended hood width | W_rec = K * d_capture | RB-002 |
 | Recommended overhang | OH = (W_rec - W_cooking) / 2 | RB-002 |

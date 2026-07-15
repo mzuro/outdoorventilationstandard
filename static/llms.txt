@@ -5,7 +5,7 @@
 ## Research (12 papers)
 
 - [RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources](https://outdoorventilationstandard.com/research/rb-001-buoyant-plume-behavior/) — Heat release rates, convective fractions, and centerline velocity/diameter for 12 outdoor cooking source types.
-- [RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments](https://outdoorventilationstandard.com/research/rb-002-entrainment-lateral-plume-spread/) — Morton-Taylor-Turner entrainment rates and plume diameter at hood height; the K=1.70 outdoor overhang margin.
+- [RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments](https://outdoorventilationstandard.com/research/rb-002-entrainment-lateral-plume-spread/) — Morton-Taylor-Turner entrainment rates and plume diameter at hood height; the base hood width/overhang margin K≈1.38, scaling toward 1.70 for wind-exposed sites.
 - [RB-003: Velocity Decay and Near-Field vs. Far-Field Capture](https://outdoorventilationstandard.com/research/rb-003-velocity-decay-capture/) — Centerline velocity decay curves and CFM-vs-mounting-height lookup tables by source type.
 - [RB-004: Why Indoor Ventilation Assumptions Fail Outdoors](https://outdoorventilationstandard.com/research/rb-004-indoor-vs-outdoor-assumptions/) — Where ASHRAE 154, IMC, and UL 710 indoor assumptions do not transfer to open-boundary environments.
 - [RB-005: Impact of Hood Geometry on Capture Performance](https://outdoorventilationstandard.com/research/rb-005-hood-geometry-capture/) — Overhang, lip height, canopy shape, and baffling effects on capture envelope and effective capture area.

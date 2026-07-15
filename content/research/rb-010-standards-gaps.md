@@ -167,7 +167,7 @@ This section is the core of the paper. It presents the systematic gap analysis o
 
 **Consequence:** Consumer outdoor hoods are manufactured with overhang comparable to indoor hoods (6 to 12 inches per side). Every installation with a medium or larger cooking source exhibits FM-1 (inadequate overhang) from the day of installation.
 
-**Proposed Resolution:** An outdoor overhang specification should be developed, referenced to the plume capture diameter at the mounting height (d_capture = 0.48 * (z - z_0) + D_eff, from RB-001) multiplied by the outdoor margin factor K = 1.70 (from RB-002). The specification should be expressed as a table of minimum overhang per side, indexed by source type and mounting height.
+**Proposed Resolution:** An outdoor overhang specification should be developed, referenced to the plume capture diameter at the mounting height (d_capture = 0.48 * (z - z_0) + D_eff, from RB-001) multiplied by the base margin factor K ≈ 1.38 (from RB-002). The specification should be expressed as a table of minimum overhang per side, indexed by source type and mounting height.
 
 #### Gap S-6: NFPA 96 Does Not Address Outdoor Fire Dynamics
 
