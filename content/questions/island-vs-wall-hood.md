@@ -1,8 +1,9 @@
 ---
-title: "Island or wall-mounted outdoor hood — which works better?"
+title: "Island or wall-mounted outdoor range hood — which works better?"
+description: "In an 8 mph breeze a 48-inch wall hood holds about 96% capture; an island hood drops to about 46%. The wall reflects the plume back into the capture zone."
 summary: "At the same 48-inch width and an 8 mph breeze, a wall hood holds about 96% capture while an island hood over the same grill drops to about 46%. The wall itself is doing most of the work — it reflects the plume back into the capture zone instead of letting wind carry it away."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 3
 instruments: true

@@ -1,8 +1,9 @@
 ---
-title: "How much overhang does an outdoor hood need?"
+title: "How far should an outdoor hood extend past the grill?"
+description: "The plume is already about 28 inches wide at the grill and 34.6 inches by a 30-inch mounting height. Overhang exists to stay ahead of that growth on every side."
 summary: "The plume itself is already about 28 inches wide at the grill surface and grows to roughly 34.6 inches wide by the time it reaches a 30-inch mounting height — wider than most single-grill cooking surfaces before it even leaves the near field. The hood has to overhang the grill on every side to stay ahead of that growth."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 4
 instruments: true
