@@ -2051,6 +2051,12 @@ a.ovs-chip:hover {
     padding: 0.2rem 0.5rem;
   }
 
+  /* --left pins to the left edge; without this it inherits right:10px above
+     and stretches across both mini-scenes (W5 review F1) */
+  .ovs-i-stamp--left {
+    right: auto;
+  }
+
   .ovs-i-stamp-grade {
     font-size: 0.85rem;
   }
