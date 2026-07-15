@@ -40,3 +40,6 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 ## Blocked pending new research papers (do not write around the evidence gap)
 
 - Makeup air, duct/blower sizing beyond RB-008, cleaning schedules, corrosion/materials, quantitative CO. Real demand (keyword report §6) the current papers cannot honestly serve.
+
+## W5 question-pages review — disposition (2026-07-15, pass 3)
+Three workflow review passes (8 major → 2 major → 2 major). Pass-3 "majors" were BOTH the same stale-`public/` build artifact of the draft grease page (source is correctly draft:true; a `--cleanDestinationDir` build excludes it — verified; Cloudflare git-integration builds fresh server-side so neither staging nor prod ships it). No source defect. Pass-3 minors were reviewer-acknowledged non-defects (faithful-to-paper, site convention, honestly-disclosed model labeling) except: (a) FIXED — what-size description called 41" the "plume" (it's the capture diameter; body was already correct); (b) DEFERRED to Mark's safety review — clearance description is 138 chars (band 140-160), page is draft-gated for him anyway.

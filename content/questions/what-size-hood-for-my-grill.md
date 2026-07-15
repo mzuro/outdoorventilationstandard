@@ -1,6 +1,6 @@
 ---
 title: "What size outdoor range hood do I need for my grill?"
-description: "Size to the plume, not the grill: a medium gas grill's plume is 41 inches across at a 30-inch mount, so the recommended hood runs about 57 inches."
+description: "Size to the plume, not the grill: over a medium gas grill at a 30-inch mount the capture diameter is 41 inches, so the recommended hood runs about 57 inches."
 summary: "The plume sets the width, not the grill. In the capture model behind the instruments it is about 28 inches across at the cooking surface and roughly 34.6 inches by a 30-inch mounting height, before any wind; the research papers, which size the plume per source, put the capture diameter over a medium gas grill at 41 inches at that height (RB-002). A hood sized by the familiar '+6 inches per side' retail rule covers the still-air plume with little or nothing to spare; the papers' outdoor tables run wider — on the order of twice the cooking surface width for reliable open-air capture."
 date: 2026-07-15
 lastmod: 2026-07-15
