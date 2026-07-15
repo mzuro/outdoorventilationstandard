@@ -1,8 +1,9 @@
 ---
 title: "Does wind really affect an outdoor range hood?"
+description: "Yes — capture at a 48-inch island hood falls from about 97% in still air to 79% at 5 mph and roughly 24% at 10 mph. Wind matters more than CFM or hood size."
 summary: "Yes — at a 48-inch island hood, capture drops from about 97% in still air to 79% at 5 mph, and to roughly 24% at 10 mph. Wind is the single largest variable in outdoor hood performance, larger than CFM or hood size."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 2
 instruments: true

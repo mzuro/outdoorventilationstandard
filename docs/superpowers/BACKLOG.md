@@ -16,7 +16,7 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 - [ ] **UX P0-1 Mobile disclosure nav** — at 375px only "2.0 Questions" is visible; Research/Standard/About/Search off-screen with no hamburger. Disclosure menu below ~640px in clause-numbered standards voice. (M)
 - [ ] **UX P0-2 Sticky mobile readout strip (W5-T2)** — instrument stacks ~2 viewports tall; control changes update readouts/verdicts off-screen. Pin a one-line readout+grade strip to viewport bottom while an instrument is in view. Same values, no new physics. (M)
 - [ ] **UX P1-1/2/3 Signifier pass (W5-T3)** — visible drag handles (touch gets none today), "Try:" label + larger type on preset chips, verdict threshold explanation on-surface instead of `title` tooltip, defuse "PASS reads as product certification". One coordinated pass. (M)
-- [ ] **KW on-page fixes (8)** — title/meta/H1 rewrites so pages speak query language; mounting-height and cfm-calculator first; add purpose-built `description` front matter to question pages (currently 280–400-char fallback summaries). Standards voice, no stuffing. (S)
+- [x] **KW on-page fixes (8)** — title/meta/H1 rewrites so pages speak query language; mounting-height and cfm-calculator first; add purpose-built `description` front matter to question pages (currently 280–400-char fallback summaries). Standards voice, no stuffing. (S) — **Done 2026-07-15** on `w5-keyword-onpage`: 9 files (6 question pages + questions index + cfm-calculator + capture-demonstrator), titles + 140–160-char descriptions, all numbers verified against page bodies; body-H2 suggestions from report §4 deliberately not taken (front-matter-only scope). See `.superpowers/sdd/task-w5kw-report.md`.
 
 ## P1 — next cycles
 

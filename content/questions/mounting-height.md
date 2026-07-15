@@ -1,8 +1,9 @@
 ---
-title: "How high should an outdoor hood be mounted?"
+title: "How high should an outdoor range hood be above the grill?"
+description: "Plume velocity falls from about 317 fpm at 24 inches to 277 fpm at 36, so capture margin shrinks as the hood rises. 30 inches is a reasonable default."
 summary: "Centerline plume velocity drops from about 317 fpm at 24 inches to about 295 fpm at 30 inches and about 277 fpm at 36 inches — all comfortably above the 100 fpm wall and 150 fpm island capture-velocity thresholds, but the margin shrinks as height increases."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 6
 instruments: true

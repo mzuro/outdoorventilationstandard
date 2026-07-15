@@ -1,8 +1,9 @@
 ---
 title: "What CFM does my outdoor kitchen hood need?"
+description: "A 48-inch wall hood over a 60,000 BTU grill needs 1,200 CFM minimum, 1,500 CFM recommended; the same hood on an island needs about 20% more (RB-008)."
 summary: "A 48-inch wall hood over a standard 60,000 BTU grill needs a minimum of 1,200 CFM, with 1,500 CFM as the recommended moderate-exposure target. The same width mounted on an island needs about 1,450 CFM minimum and 1,800 CFM recommended — roughly 20% more, because islands lose the back wall's free confinement."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 1
 instruments: true

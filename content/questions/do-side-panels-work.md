@@ -1,8 +1,9 @@
 ---
 title: "Do side panels actually help an outdoor hood?"
+description: "Yes — on a 48-inch island hood in an 8 mph breeze, panels on both sides lift capture from about 46% to 91%. A panel is a wind guard — it blocks wind, not plume."
 summary: "Yes, substantially. On a 48-inch island hood in an 8 mph breeze, capture rises from about 46% with no panels to about 91% with panels on both sides — the single largest performance gain available from any post-installation change."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 5
 instruments: true
