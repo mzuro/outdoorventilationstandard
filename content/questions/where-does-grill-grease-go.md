@@ -1,6 +1,6 @@
 ---
 title: "Where does the grease from an outdoor grill go?"
-description: "Three places: the hood's filters and tray if captured; nearby surfaces within about 5 meters for coarse droplets that escape; the wider air for the fine fraction."
+description: "Three places: the hood's filters and tray if captured; surfaces within about 5 meters for escaped coarse droplets; the wider air for the fine fraction."
 summary: "Three destinations. Captured grease ends up in the hood's filters and tray — baffles catch 85-98% of the coarse droplets that carry most of the mass. Escaped coarse droplets land close: above 50 micrometers within about a meter, 20-50 micrometers within 1-5 meters downwind. The fine fraction disperses too widely to deposit locally. So the grease film on the hood, deck, and downwind furniture is a direct readout of how much the hood missed."
 date: 2026-07-15
 lastmod: 2026-07-15
