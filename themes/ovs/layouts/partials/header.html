@@ -5,8 +5,19 @@
     </a>
     {{- $menu := .Site.Menus.main }}
     {{- if $menu }}
-    <div class="ovs-nav-wrap">
-      <nav class="ovs-nav" aria-label="Primary">
+    {{- /* W5-T1 (UX P0-1) disclosure toggle. Hidden by default (the `hidden`
+           attribute) so a no-JS render keeps the scrollable strip untouched;
+           the inline script below reveals it synchronously — same parse
+           task, before paint — so there is no post-paint header swap (CLS).
+           Standards voice: clause-number motif, "0.0 MENU". */}}
+    <button type="button" class="ovs-nav-toggle mono" id="ovs-nav-toggle"
+            aria-expanded="false" aria-controls="ovs-primary-nav" hidden>
+      <span class="ovs-nav-toggle-glyph" aria-hidden="true">&#9776;</span>
+      <span class="ovs-clause">0.0</span>
+      <span>MENU</span>
+    </button>
+    <div class="ovs-nav-wrap" id="ovs-nav-wrap">
+      <nav class="ovs-nav" id="ovs-primary-nav" aria-label="Primary">
         {{- range $i, $item := $menu }}
         <a href="{{ $item.URL | absURL }}"><span class="ovs-clause">{{ add $i 2 }}.0</span>{{ $item.Name }}</a>
         {{- end }}
@@ -16,3 +27,57 @@
     <span class="ovs-edition mono">OVS-H1 : 2026 &middot; ed. 1.2</span>
   </div>
 </header>
+{{- if .Site.Menus.main }}
+<script>
+/* W5-T1 (UX P0-1): mobile disclosure nav. Plain synchronous script placed
+   immediately after the header so the .ovs-header--js class lands in the
+   same parse task as the header markup (no post-paint swap, CLS 0). No JS:
+   the button stays [hidden] and the nav remains the scrollable strip.
+   Pattern: WAI-ARIA disclosure (not a modal dialog) — Escape closes and
+   restores focus to the button; focus leaving the header folds it away. */
+(function () {
+  'use strict';
+  var btn = document.getElementById('ovs-nav-toggle');
+  var wrap = document.getElementById('ovs-nav-wrap');
+  if (!btn || !wrap) return;
+  var header = btn.closest('.ovs-header');
+  if (!header) return;
+  header.classList.add('ovs-header--js');
+  btn.hidden = false;
+
+  function isOpen() { return btn.getAttribute('aria-expanded') === 'true'; }
+  function setOpen(open) {
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    header.classList.toggle('ovs-header--open', open);
+  }
+
+  btn.addEventListener('click', function () { setOpen(!isOpen()); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+
+  // Tap/click outside the header closes the disclosure.
+  document.addEventListener('pointerdown', function (e) {
+    if (isOpen() && !header.contains(e.target)) setOpen(false);
+  });
+
+  // Disclosure, not a focus trap: tabbing out of the header folds it away
+  // (relatedTarget is null on blur-to-body — leave it open in that case so
+  // e.g. devtools focus churn doesn't fight the user).
+  header.addEventListener('focusout', function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setOpen(false);
+  });
+
+  // Leaving the narrow range (rotate/resize) resets the disclosure so the
+  // wide strip never coexists with an asserted aria-expanded.
+  var mq = window.matchMedia('(max-width: 639.98px)');
+  var onMq = function () { if (!mq.matches) setOpen(false); };
+  if (mq.addEventListener) mq.addEventListener('change', onMq);
+  else if (mq.addListener) mq.addListener(onMq);
+})();
+</script>
+{{- end }}

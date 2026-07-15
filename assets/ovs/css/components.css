@@ -108,6 +108,98 @@
   margin-right: 0.35rem;
 }
 
+/* ---------- W5-T1 (UX P0-1): mobile disclosure nav ----------
+   Below 640px the scrollable strip hid 60% of the site (only "2.0
+   Questions" + a sliver visible at 375px). With JS (header gets
+   .ovs-header--js from the inline script in partials/header.html) the
+   strip is replaced by a "☰ 0.0 MENU" disclosure button that opens a
+   clause-numbered panel under the header. Without JS the button stays
+   [hidden] and the strip + fade behave exactly as before (graceful
+   fallback). The panel is absolutely positioned (header is the sticky
+   containing block), so opening it shifts no layout — CLS 0. */
+
+.ovs-nav-toggle {
+  display: none;
+}
+
+@media (max-width: 639.98px) {
+  .ovs-header--js .ovs-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-left: auto;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  /* [hidden] must keep winning even against the rule above (no-JS safety;
+     the attribute is removed by the inline script when JS runs). */
+  .ovs-nav-toggle[hidden] {
+    display: none;
+  }
+
+  .ovs-nav-toggle .ovs-clause {
+    font-size: 0.7rem;
+  }
+
+  .ovs-header--open .ovs-nav-toggle {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* The wrap becomes the dropdown panel: closed by default, opened via
+     .ovs-header--open. Absolutely positioned below the 60px header bar so
+     it overlays content instead of pushing it (CLS 0). */
+  .ovs-header--js .ovs-nav-wrap {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-left: 0;
+    display: none;
+    background: var(--ground);
+    border-top: 1px solid var(--line);
+    border-bottom: 2px solid var(--line-strong);
+  }
+
+  .ovs-header--js .ovs-nav-wrap::after {
+    content: none; /* the scroll-hint fade makes no sense on a column panel */
+  }
+
+  .ovs-header--open .ovs-nav-wrap {
+    display: block;
+  }
+
+  .ovs-header--js .ovs-nav {
+    flex-direction: column;
+    gap: 0;
+    overflow-x: visible;
+    padding: 0.25rem 0 0.4rem;
+  }
+
+  .ovs-header--js .ovs-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    padding: 0.55rem clamp(16px, 4vw, 40px);
+    border-radius: 0;
+  }
+
+  .ovs-header--js .ovs-nav a + a {
+    border-top: 1px solid var(--line);
+  }
+}
+
 .ovs-edition {
   font-family: var(--mono);
   font-size: 0.66rem;
