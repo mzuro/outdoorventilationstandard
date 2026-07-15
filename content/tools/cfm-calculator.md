@@ -12,6 +12,7 @@ instrument_id: "i02"
 aliases: ["/tools/cfm-calculator.html"]
 related_questions:
   - "/questions/what-cfm-do-i-need/"
+  - "/questions/does-an-outdoor-hood-need-a-duct/"
 related_papers:
   - "/research/rb-001-buoyant-plume-behavior/"
   - "/research/rb-003-velocity-decay-capture/"
