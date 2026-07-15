@@ -127,7 +127,7 @@
   <text x="480" y="107" text-anchor="middle" font-size="11" fill="#AA6600" font-weight="700">~75% capture</text>
 
   <!-- ===== RIGHT PANEL: Recommended Outdoor ===== -->
-  <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Outdoor (K=1.70)</text>
+  <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Open-Air (K=1.70)</text>
 
   <!-- Cooking surface — 36" grill -->
   <rect x="740" y="400" width="120" height="10" rx="2" fill="#444" stroke="#333" stroke-width="1"/>

@@ -48,7 +48,7 @@ At an 8 mph crosswind, widening the hood from 42 to 72 inches moves wall-mount c
 
 **Indoor-spec overhang (~8") = ~75% capture.** An indoor hood applied outdoors provides some improvement but still cannot contain the full plume, which has expanded to 41 inches at 30-inch height from a 36-inch grill. Without walls and ceiling to redirect spillage, the escaped plume is permanently lost.
 
-**Recommended outdoor overhang (17") = ~95% capture.** The K=1.70 outdoor margin factor from RB-002 accounts for turbulent intermittency, puffing oscillations, and light wind deflection. This is the minimum recommended overhang for outdoor installations.
+**Recommended outdoor overhang (17") = ~95% capture.** This open-air sizing uses RB-002 Section 3.5's wind-inclusive margin K=1.70, which scales the base margin K≈1.38 (turbulent intermittency and puffing) up for light wind deflection. It is the recommended overhang for typical open-air, wind-exposed installations; sheltered installations may use the smaller base margin.
 
 ## Design Priority
 
@@ -57,4 +57,4 @@ RB-005 established the hierarchy: **geometry precedes airflow**. No amount of ex
 ## Source Papers
 
 - [RB-005: Hood Geometry and Capture](/research/rb-005-hood-geometry-capture/) — Complete geometric analysis
-- [RB-002: Entrainment and Lateral Plume Spread](/research/rb-002-entrainment-lateral-plume-spread/) — Plume width data and K=1.70 margin
+- [RB-002: Entrainment and Lateral Plume Spread](/research/rb-002-entrainment-lateral-plume-spread/) — Plume width data and hood width/overhang margins (base K≈1.38, wind-inclusive K=1.70)
