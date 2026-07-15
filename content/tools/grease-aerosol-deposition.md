@@ -10,6 +10,8 @@ ShowToc: false
 weight: 9
 instrument_id: "i10"
 fallback_svg: "grease-aerosol-deposition"
+related_questions:
+  - "/questions/where-does-grill-grease-go/"
 related_papers:
   - "/research/rb-011-grease-aerosol-transport/"
 ---

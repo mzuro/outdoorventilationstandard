@@ -22,7 +22,7 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 
 - [ ] **i02 rated-CFM comparison input** (UX P1-4; also the deferred F2 verdict item) — optional "your hood's rated CFM" input graded against computed requirement. Pure comparison; neutrality intact.
 - [ ] **Contractor wayfinding** (UX P1-5) — sticky clause TOC on research pages (design spec §4 promised it; currently `position: static`), print stylesheet, copy-spec affordance.
-- [ ] **New question pages** from keyword gaps, physics-supported: G1 indoor-vs-outdoor difference, G2 hood size for grill size, G3 clearance to combustibles, G4 ducting (scoped), G6 grease deposition. Proven question-page format, instrument embeds per report §4.
+- [x] **New question pages** from keyword gaps, physics-supported: G1 indoor-vs-outdoor difference, G2 hood size for grill size, G3 clearance to combustibles, G4 ducting (scoped), G6 grease deposition. Proven question-page format, instrument embeds per report §4. — **Done 2026-07-15** on `w5-question-pages`: 5 pages in content/questions/ (G1 i08, G2 i05 preset wall-48, G3 i09, G4 no instrument per report, G6 i10); **G3 is draft-gated** (`draft: true`, YMYL fire-safety — publishes only after Mark's review, same gate as the W4 trio; it also links the draft W4 safety page, so ship the trio first or together). Tool-page related_questions backlinks added (indoor-vs-outdoor, hood-geometry, plume-width, heat-release, grease-deposition). See `.superpowers/sdd/task-w5qp-report.md`.
 - [ ] **G5 spec-literacy page** — NEEDS MARK's editorial call first.
 
 ## P2 — polish

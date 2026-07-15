@@ -11,6 +11,7 @@ weight: 2
 instrument_id: "i04"
 related_questions:
   - "/questions/hood-depth-and-overhang/"
+  - "/questions/what-size-hood-for-my-grill/"
 related_papers:
   - "/research/rb-002-entrainment-lateral-plume-spread/"
   - "/research/rb-001-buoyant-plume-behavior/"

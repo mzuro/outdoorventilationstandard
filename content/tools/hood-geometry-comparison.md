@@ -11,6 +11,7 @@ weight: 4
 instrument_id: "i05"
 related_questions:
   - "/questions/island-vs-wall-hood/"
+  - "/questions/what-size-hood-for-my-grill/"
 related_papers:
   - "/research/rb-005-hood-geometry-capture/"
   - "/research/rb-002-entrainment-lateral-plume-spread/"
