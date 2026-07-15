@@ -1,8 +1,8 @@
 ---
 title: "Hood Geometry Comparison"
-description: "Side-by-side comparison of three hood overhang configurations showing the capture performance difference between undersized, indoor-spec, and recommended outdoor hoods."
+description: "Side-by-side comparison of three hood overhang configurations — no overhang, minimum geometry, and the recommended outdoor margin — over the same cooking source."
 date: 2025-12-01
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 tags: ["hood design", "capture envelope", "visualization"]
 categories: ["Tools"]
@@ -45,11 +45,13 @@ At an 8 mph crosswind, widening the hood from 42 to 72 inches moves wall-mount c
 
 ## Key Findings
 
-**No overhang = ~50% capture.** A hood the same width as the grill misses the entire expanded plume perimeter. This is the most common failure mode (FM-1) in residential outdoor installations.
+The no-JS fallback diagram for this instrument compares three hood widths over the papers' reference source — a medium gas grill (24-inch cooking surface) at a 30-inch mounting height, where the plume capture diameter has grown to 41 inches [RB-002 Table 3.9]:
 
-**Indoor-spec overhang (~8") = ~75% capture.** An indoor hood applied outdoors provides some improvement but still cannot contain the full plume, which has expanded to 41 inches at 30-inch height from a 36-inch grill. Without walls and ceiling to redirect spillage, the escaped plume is permanently lost.
+**No overhang.** A hood the same width as the cooking surface (24 inches) sits 17 inches inside the 41-inch plume — escape on both sides is guaranteed by geometry alone. Inadequate overhang is failure mode FM-1, which RB-010 finds present from the day of installation in consumer hoods paired with medium or larger sources [RB-010 Gap S-5].
 
-**Recommended outdoor overhang (17") = ~95% capture.** The K=1.70 outdoor margin factor from RB-002 accounts for turbulent intermittency, puffing oscillations, and light wind deflection. This is the minimum recommended overhang for outdoor installations.
+**Minimum geometry (9-inch overhang per side).** Hood width equal to the plume capture diameter (W_min = d_capture, about a 42-inch hood here) corresponds to 98% time-averaged flux capture in quiescent conditions — but provides no margin for turbulence, wind, or instantaneous plume fluctuation [RB-005 §3.1, Table 3.1a].
+
+**Recommended outdoor (17-inch overhang per side).** The K = 1.70 outdoor margin factor from RB-002 yields a 57-inch recommended hood width for this source and height, providing margin for turbulent intermittency, puffing oscillations, and light wind deflection [RB-002 Table 3.7; RB-005 Table 3.1b].
 
 ## Design Priority
 
