@@ -603,7 +603,7 @@ The critical wind speed is the wind speed at which the plume centerline deflecti
 
 **Threshold 3 — 50% plume mass escape (unreliable capture).** The plume centerline is beyond the hood edge by approximately 1 * b_T. More than 50% of the plume mass is in the **Missed Plume Region**. The hood is functionally ineffective.
 
-The available overhang for each source type at each height is taken from the RB-002 recommended hood sizing (K = 1.70). The overhang on each side (OH) is listed in RB-002 Tables 3.6a through 3.6k.
+The available overhang for each source type at each height is taken from the RB-002 recommended hood sizing (base margin, K ≈ 1.38). The overhang on each side (OH) is listed in RB-002 Tables 3.6a through 3.6k.
 
 For the critical wind speed calculation, the deflection at which 25% escape occurs is approximately:
 
@@ -778,7 +778,7 @@ Based on the comprehensive analysis in Sections 3.2 through 3.7, the following f
 
 **Sheltered Class (< 3 mph at cooking height):**
 
-- Standard hood sizing per RB-002 recommended dimensions (K = 1.70)
+- Standard hood sizing per RB-002 recommended dimensions (base margin, K ≈ 1.38)
 - Standard CFM per RB-003 Table 3.8a (K_CFM = 3.0)
 - No wind-specific mitigation required
 - All mounting heights 18" to 36" are viable
@@ -1296,7 +1296,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 | 36" | 1.64 | 1.88 | 2.12 | 2.31 | 1.18 | 1.84 | 1.13 | 1.68 |
 | 48" | 1.49 | 1.71 | 1.93 | 2.10 | 1.07 | 1.67 | 1.02 | 1.53 |
 
-### A.3 Hood Overhang from RB-002 Tables 3.6a-k (K = 1.70)
+### A.3 Hood Overhang from RB-002 Tables 3.6a-k (K ≈ 1.38)
 
 | Source Type | OH at 18" | OH at 24" | OH at 30" | OH at 36" | OH at 48" |
 |---|---|---|---|---|---|

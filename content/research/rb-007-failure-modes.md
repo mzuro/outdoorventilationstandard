@@ -156,9 +156,9 @@ FM-1 is triggered when the hood overhang per side is less than the minimum requi
 
 > OH_installed < OH_min = (d_capture - W_cooking) / 2
 
-From RB-005 Table 3.1a, the minimum overhang per side ranges from 3 to 16 inches depending on source type and mounting height. The recommended overhang (with outdoor margin K = 1.70) ranges from 11 to 26 inches (RB-005 Table 3.1b).
+From RB-005 Table 3.1a, the minimum overhang per side ranges from 3 to 16 inches depending on source type and mounting height. The recommended overhang (with base margin K ≈ 1.38) ranges from 11 to 26 inches (RB-005 Table 3.1b).
 
-**Typical triggering scenario:** A homeowner installs a 42-inch or 48-inch outdoor hood over a medium gas grill (24-inch cooking surface) at 30-inch mounting height. The plume capture diameter at 30 inches is 41 inches (RB-001 Table 3.6), requiring a minimum hood width of 41 inches (zero margin) or a recommended width of 57 inches (K = 1.70 margin per RB-005 Table 3.8b). The 48-inch hood provides only 12 inches of overhang per side versus the recommended 17 inches. The plume extends beyond the hood by approximately 5 inches per side under still-air conditions, and substantially more in any wind.
+**Typical triggering scenario:** A homeowner installs a 42-inch or 48-inch outdoor hood over a medium gas grill (24-inch cooking surface) at 30-inch mounting height. The plume capture diameter at 30 inches is 41 inches (RB-001 Table 3.6), requiring a minimum hood width of 41 inches (zero margin) or a recommended width of 57 inches (K ≈ 1.38 margin per RB-005 Table 3.8b). The 48-inch hood provides only 12 inches of overhang per side versus the recommended 17 inches. The plume extends beyond the hood by approximately 5 inches per side under still-air conditions, and substantially more in any wind.
 
 **Quantitative threshold from RB-005:** At 30-inch mounting height, no standard consumer hood (36 to 48 inches wide) provides the recommended overhang for any source type larger than a small gas grill.
 
@@ -702,7 +702,7 @@ The following table consolidates the quantitative triggering thresholds for each
 
 | Parameter | Required Value (RB-002/RB-003/RB-005/RB-006) | Common Installed Value | Gap |
 |---|---|---|---|
-| Hood width | 57" (recommended, K = 1.70) | 36-48" (consumer hoods) | 9-21" deficit |
+| Hood width | 57" (recommended, K ≈ 1.38) | 36-48" (consumer hoods) | 9-21" deficit |
 | Hood depth (island) | 53" (recommended) | 24-30" (consumer hoods) | 23-29" deficit |
 | Overhang per side | 17" (recommended) | 6-12" (typical) | 5-11" deficit |
 | Exhaust CFM (standard outdoor) | 609 (K_CFM = 3.0) | 300-600 (typical blowers) | 9-309 CFM deficit |
