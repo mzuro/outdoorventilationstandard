@@ -12,6 +12,7 @@ instrument_id: "i09"
 related_questions:
   - "/questions/what-cfm-do-i-need/"
   - "/questions/mounting-height/"
+  - "/questions/hood-clearance-to-combustibles/"
 related_papers:
   - "/research/rb-001-buoyant-plume-behavior/"
 ---

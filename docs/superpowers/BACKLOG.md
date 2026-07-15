@@ -24,7 +24,7 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 
 - [ ] **i02 rated-CFM comparison input** (UX P1-4; also the deferred F2 verdict item) — optional "your hood's rated CFM" input graded against computed requirement. Pure comparison; neutrality intact.
 - [ ] **Contractor wayfinding** (UX P1-5) — sticky clause TOC on research pages (design spec §4 promised it; currently `position: static`), print stylesheet, copy-spec affordance.
-- [ ] **New question pages** from keyword gaps, physics-supported: G1 indoor-vs-outdoor difference, G2 hood size for grill size, G3 clearance to combustibles, G4 ducting (scoped), G6 grease deposition. Proven question-page format, instrument embeds per report §4.
+- [x] **New question pages** from keyword gaps, physics-supported: G1 indoor-vs-outdoor difference, G2 hood size for grill size, G3 clearance to combustibles, G4 ducting (scoped), G6 grease deposition. Proven question-page format, instrument embeds per report §4. — **Done 2026-07-15** on `w5-question-pages`: 5 pages in content/questions/ (G1 i08, G2 i05 preset wall-48, G3 i09, G4 no instrument per report, G6 i10); **G3 and G6 are draft-gated** (`draft: true`, YMYL fire-safety — publish only after Mark's review, same gate as the W4 trio; G3 also links the draft W4 safety page, so ship the trio first or together; G6 gated in W5 review2 — see Gated-on-Mark checklist). Tool-page related_questions backlinks added (indoor-vs-outdoor, hood-geometry, plume-width, heat-release, grease-deposition). See `.superpowers/sdd/task-w5qp-report.md`.
 - [ ] **G5 spec-literacy page** — NEEDS MARK's editorial call first.
 
 ## P2 — polish
@@ -34,9 +34,14 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 ## Gated on Mark (not agent-actionable)
 
 - **W4 covered-patio trio publish** — keyword strategy's single biggest opportunity; pages written, `draft: true`, awaiting Mark's review (7 flagged CO/field items in `.superpowers/sdd/task-w4-report.md`).
+- **G3 clearance page publish checklist** (from W5 fix pass, `.superpowers/sdd/task-w5qp-fix-report.md`): when Mark approves G3 (hood-clearance-to-combustibles), flip BOTH `draft: false` AND `reviewed: true` (reviewed is deliberately false until the review happens), ship the W4 trio first or together (G3 body-links is-it-safe), and add the deferred reciprocal body link from the published mounting-height page to G3 (cannot be added earlier — question-page body links are not draft-gated).
+- **G6 grease page publish checklist** (from W5 review2 pass, `.superpowers/sdd/task-w5qp-fix2-report.md`): coordinator decision — **G6 (where-does-grill-grease-go) is now draft-gated** (`draft: true`, `reviewed: false`), joining the safety-review cluster with G3 and the W4 trio. YMYL trigger = the fire-prevention cleaning-cadence language (dedicated fire H2 + prescriptive deck/filter cleaning cadences). **Mark's decision:** (a) keep the fire language → publish as safety guidance after your review; or (b) strip it to pure deposition physics → publish as a normal non-YMYL page. When approving, flip BOTH `draft: false` AND `reviewed: true` together, and uncomment the grease-aerosol-deposition tool's `related_questions` backlink to this page (commented out while drafted; theme uses `.Site.GetPage` so nothing 404s meanwhile).
 - GSC DNS TXT verification → then re-rank this backlog against real query data (keyword report §7.1).
 - Dataset CSV license choice; TURNSTILE_SECRET confirmation for /api/explain.
 
 ## Blocked pending new research papers (do not write around the evidence gap)
 
 - Makeup air, duct/blower sizing beyond RB-008, cleaning schedules, corrosion/materials, quantitative CO. Real demand (keyword report §6) the current papers cannot honestly serve.
+
+## W5 question-pages review — disposition (2026-07-15, pass 3)
+Three workflow review passes (8 major → 2 major → 2 major). Pass-3 "majors" were BOTH the same stale-`public/` build artifact of the draft grease page (source is correctly draft:true; a `--cleanDestinationDir` build excludes it — verified; Cloudflare git-integration builds fresh server-side so neither staging nor prod ships it). No source defect. Pass-3 minors were reviewer-acknowledged non-defects (faithful-to-paper, site convention, honestly-disclosed model labeling) except: (a) FIXED — what-size description called 41" the "plume" (it's the capture diameter; body was already correct); (b) DEFERRED to Mark's safety review — clearance description is 138 chars (band 140-160), page is draft-gated for him anyway.

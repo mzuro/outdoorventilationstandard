@@ -93,8 +93,8 @@
   <text x="240" y="331" text-anchor="middle" font-size="8" fill="#AA6600" font-style="italic">by room volume</text>
 
   <!-- Capture success indicator -->
-  <rect x="155" y="152" width="170" height="22" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
-  <text x="240" y="167" text-anchor="middle" font-size="10" fill="#227722" font-weight="600">100% Capture</text>
+  <rect x="140" y="152" width="200" height="22" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
+  <text x="240" y="167" text-anchor="middle" font-size="10" fill="#227722" font-weight="600">85-98% Capture (enclosed room)</text>
 
   <!-- ===== RIGHT PANEL: OUTDOOR ===== -->
   <text x="720" y="78" text-anchor="middle" font-size="15" font-weight="600" fill="#CC4444">Outdoor Environment</text>
@@ -126,7 +126,6 @@
   <line x1="520" y1="250" x2="590" y2="250" stroke="#4488CC" stroke-width="2" marker-end="url(#arrowBlue)"/>
   <line x1="520" y1="300" x2="580" y2="300" stroke="#4488CC" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
   <text x="540" y="180" font-size="10" fill="#4488CC" font-weight="500">Wind</text>
-  <text x="535" y="192" font-size="8" fill="#4488CC">5-10 mph</text>
 
   <!-- Outdoor entrainment arrows (unrestricted) -->
   <line x1="580" y1="330" x2="640" y2="330" stroke="#888" stroke-width="1" marker-end="url(#arrowGray)"/>
@@ -152,7 +151,7 @@
 
   <!-- Capture failure indicator -->
   <rect x="615" y="152" width="170" height="22" rx="4" fill="#FEE8E8" stroke="#CC4444" stroke-width="1"/>
-  <text x="700" y="167" text-anchor="middle" font-size="10" fill="#CC2222" font-weight="600">40-60% Capture</text>
+  <text x="700" y="167" text-anchor="middle" font-size="10" fill="#CC2222" font-weight="600">50-65% First-Pass Capture</text>
 
   <!-- Entrainment zone label outdoor -->
   <text x="700" y="355" text-anchor="middle" font-size="8" fill="#666">Unrestricted</text>

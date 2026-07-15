@@ -2,7 +2,7 @@
 title: "Is it safe to grill under a covered patio?"
 summary: "Only conditionally. A roof removes the open-sky dilution that makes open-air grilling forgiving — whatever the hood does not capture collects under the roof instead of dispersing. A correctly sized hood controls most of the plume at the source, but it does not make a covered space equivalent to open air; your appliance manual and local code authority set the binding rules."
 date: 2026-07-12
-lastmod: 2026-07-12
+lastmod: 2026-07-15
 reviewed: true
 weight: 7
 draft: true
@@ -57,4 +57,4 @@ A properly sized hood intercepts the plume at the source, before the roof turns 
 
 ## The honest checklist
 
-Before grilling under any roof: confirm your appliance's manual permits the placement; ask your local building or fire code authority what applies; keep combustible construction clear of the hood per the clearance principles in RB-012 §3.7; size the hood for capture rather than for looks (see [what CFM you need](/questions/what-cfm-do-i-need/)); and clean grease from the hood, filters, and surrounding surfaces on a schedule, because under a roof the deposits stay where they land (RB-011 §3.6). If the space is enclosed enough that it feels like a room, treat it as a room — which means treating this page as no longer applicable and your code authority as the only voice that counts.
+Before grilling under any roof: confirm your appliance's manual permits the placement; ask your local building or fire code authority what applies; keep combustible construction clear of the hood per the clearance principles in RB-012 §3.7 (see [how much clearance an outdoor hood needs](/questions/hood-clearance-to-combustibles/)); size the hood for capture rather than for looks (see [what CFM you need](/questions/what-cfm-do-i-need/)); and clean grease from the hood, filters, and surrounding surfaces on a schedule, because under a roof the deposits stay where they land (RB-011 §3.6). If the space is enclosed enough that it feels like a room, treat it as a room — which means treating this page as no longer applicable and your code authority as the only voice that counts.

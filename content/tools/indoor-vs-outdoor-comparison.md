@@ -10,6 +10,8 @@ ShowToc: false
 weight: 7
 instrument_id: "i08"
 related_questions:
+  - "/questions/can-i-use-an-indoor-range-hood-outside/"
+  - "/questions/does-an-outdoor-hood-need-a-duct/"
   - "/questions/what-cfm-do-i-need/"
   - "/questions/do-side-panels-work/"
 related_papers:

@@ -106,14 +106,14 @@
   <!-- Zone label -->
   <rect x="195" y="64" width="145" height="50" rx="4" fill="white" stroke="#8B6914" stroke-width="1" opacity="0.95"/>
   <text x="267" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#6B4913">ZONE 1</text>
-  <text x="267" y="90" text-anchor="middle" font-size="8" fill="#8B6914">Coarse Droplets (>20 um)</text>
-  <text x="267" y="102" text-anchor="middle" font-size="7.5" fill="#666">0-3 ft from source</text>
+  <text x="267" y="90" text-anchor="middle" font-size="8" fill="#8B6914">Coarse Droplets (&gt;50 um)</text>
+  <text x="267" y="102" text-anchor="middle" font-size="7.5" fill="#666">Within ~1 m of source</text>
 
   <!-- Zone 1 data -->
   <rect x="200" y="392" width="135" height="52" rx="3" fill="white" stroke="#8B6914" stroke-width="0.8"/>
-  <text x="267" y="405" text-anchor="middle" font-size="8" fill="#6B4913" font-weight="600">50-80% of grease mass</text>
-  <text x="267" y="418" text-anchor="middle" font-size="7.5" fill="#888">Settling: 0.01-0.3 m/s</text>
-  <text x="267" y="430" text-anchor="middle" font-size="7.5" fill="#888">Heavy surface contamination</text>
+  <text x="267" y="405" text-anchor="middle" font-size="8" fill="#6B4913" font-weight="600">Settling: 0.07-0.27 m/s</text>
+  <text x="267" y="418" text-anchor="middle" font-size="7.5" fill="#888">Drip pan, grill exterior,</text>
+  <text x="267" y="430" text-anchor="middle" font-size="7.5" fill="#888">adjacent countertop</text>
   <text x="267" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Rapid gravitational settling</text>
 
   <!-- ===== ZONE 2: Fine Aerosol (3-30 ft) ===== -->
@@ -146,7 +146,8 @@
   <!-- Lighter deposition on ground -->
   <rect x="350" y="376" width="300" height="4" rx="1" fill="#CC8844" opacity="0.18"/>
 
-  <!-- House/structure at ~25 ft -->
+  <!-- House/structure in the 5-30 m band (RB-011 §3.3: adjacent structures, property boundary) -->
+  <g transform="translate(115,0)">
   <rect x="575" y="260" width="55" height="120" rx="2" fill="#DDDDE8" stroke="#999" stroke-width="1.2"/>
   <rect x="588" y="290" width="12" height="18" rx="1" fill="#AABBDD" stroke="#999" stroke-width="0.5"/>
   <rect x="608" y="290" width="12" height="18" rx="1" fill="#AABBDD" stroke="#999" stroke-width="0.5"/>
@@ -157,20 +158,21 @@
 
   <!-- Grease deposit indicator on house -->
   <rect x="574" y="270" width="4" height="30" rx="1" fill="#CC8844" opacity="0.3"/>
-  <text x="575" y="262" font-size="6" fill="#AA6600" text-anchor="middle">Grease film</text>
+  <text x="568" y="282" font-size="6" fill="#AA6600" text-anchor="end">Grease film</text>
+  </g>
 
   <!-- Zone label -->
   <rect x="370" y="64" width="145" height="50" rx="4" fill="white" stroke="#CC8844" stroke-width="1" opacity="0.95"/>
   <text x="442" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#AA6622">ZONE 2</text>
-  <text x="442" y="90" text-anchor="middle" font-size="8" fill="#CC8844">Fine Aerosol (2.5-20 um)</text>
-  <text x="442" y="102" text-anchor="middle" font-size="7.5" fill="#666">3-30 ft from source</text>
+  <text x="442" y="90" text-anchor="middle" font-size="8" fill="#CC8844">Coarse Droplets (20-50 um)</text>
+  <text x="442" y="102" text-anchor="middle" font-size="7.5" fill="#666">1-5 m downwind</text>
 
   <!-- Zone 2 data -->
   <rect x="365" y="392" width="135" height="52" rx="3" fill="white" stroke="#CC8844" stroke-width="0.8"/>
-  <text x="432" y="405" text-anchor="middle" font-size="8" fill="#AA6622" font-weight="600">20-50% of grease mass</text>
-  <text x="432" y="418" text-anchor="middle" font-size="7.5" fill="#888">PM2.5 - PM10 range</text>
-  <text x="432" y="430" text-anchor="middle" font-size="7.5" fill="#888">Surface contamination zone</text>
-  <text x="432" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Wind-driven transport</text>
+  <text x="432" y="405" text-anchor="middle" font-size="8" fill="#AA6622" font-weight="600">Settling: ~0.01-0.07 m/s</text>
+  <text x="432" y="418" text-anchor="middle" font-size="7.5" fill="#888">Decking, furniture,</text>
+  <text x="432" y="430" text-anchor="middle" font-size="7.5" fill="#888">siding within 5 m</text>
+  <text x="432" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Gravitational settling</text>
 
   <!-- ===== ZONE 3: Ultrafine (<2.5 um, 30+ ft) ===== -->
 
@@ -201,26 +203,27 @@
   <!-- Zone label -->
   <rect x="680" y="64" width="145" height="50" rx="4" fill="white" stroke="#DDAA66" stroke-width="1" opacity="0.95"/>
   <text x="752" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#AA8822">ZONE 3</text>
-  <text x="752" y="90" text-anchor="middle" font-size="8" fill="#DDAA66">Ultrafine (&lt;2.5 um)</text>
-  <text x="752" y="102" text-anchor="middle" font-size="7.5" fill="#666">30+ ft from source</text>
+  <text x="752" y="90" text-anchor="middle" font-size="8" fill="#DDAA66">Coarse Droplets (10-20 um)</text>
+  <text x="752" y="102" text-anchor="middle" font-size="7.5" fill="#666">5-30 m downwind</text>
 
   <!-- Zone 3 data -->
   <rect x="680" y="392" width="135" height="52" rx="3" fill="white" stroke="#DDAA66" stroke-width="0.8"/>
-  <text x="747" y="405" text-anchor="middle" font-size="8" fill="#AA8822" font-weight="600">&lt;5% of grease mass</text>
-  <text x="747" y="418" text-anchor="middle" font-size="7.5" fill="#888">Behaves as gas tracer</text>
-  <text x="747" y="430" text-anchor="middle" font-size="7.5" fill="#CC3333" font-weight="500">Respiratory health concern</text>
-  <text x="747" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Atmospheric dispersion</text>
+  <text x="747" y="405" text-anchor="middle" font-size="8" fill="#AA8822" font-weight="600">Settling: ~0.003-0.011 m/s</text>
+  <text x="747" y="418" text-anchor="middle" font-size="7.5" fill="#888">Adjacent structures,</text>
+  <text x="747" y="430" text-anchor="middle" font-size="7.5" fill="#888">property boundary</text>
+  <text x="747" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Settling + turbulent diffusion</text>
 
   <!-- ===== DISTANCE SCALE ===== -->
   <line x1="190" y1="460" x2="345" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="267" y="472" text-anchor="middle" font-size="7.5" fill="#888">0-3 ft</text>
+  <text x="267" y="472" text-anchor="middle" font-size="7.5" fill="#888">0-1 m</text>
   <line x1="345" y1="460" x2="655" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="500" y="472" text-anchor="middle" font-size="7.5" fill="#888">3-30 ft</text>
+  <text x="500" y="472" text-anchor="middle" font-size="7.5" fill="#888">1-5 m</text>
   <line x1="655" y1="460" x2="930" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="792" y="472" text-anchor="middle" font-size="7.5" fill="#888">30+ ft</text>
+  <text x="792" y="472" text-anchor="middle" font-size="7.5" fill="#888">5-30 m</text>
+  <text x="480" y="484" text-anchor="middle" font-size="7" fill="#888">Coarse mode (2.5-100 um) carries 50-80% of grease mass; below ~5 um the fine fraction disperses with no significant local deposition (RB-011 §2.2, §3.3)</text>
 
   <!-- Deposition intensity gradient bar -->
-  <text x="480" y="490" text-anchor="middle" font-size="8" fill="#666">Deposition Intensity:</text>
+  <text x="340" y="501" text-anchor="end" font-size="8" fill="#666">Deposition Intensity:</text>
   <rect x="350" y="494" width="260" height="8" rx="2" fill="white" stroke="#DDD" stroke-width="0.5"/>
   <linearGradient id="deposBar" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#6B4913" stop-opacity="0.7"/>

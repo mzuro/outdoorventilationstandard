@@ -28,4 +28,4 @@ If width isn't the lever, wind exposure and mounting height are. A hood that's a
 
 ## Practical takeaway
 
-Size overhang to the plume's growth at your actual mounting height, not to the grill's dimensions alone — then spend any remaining budget on wind mitigation rather than extra width.
+Size overhang to the plume's growth at your actual mounting height, not to the grill's dimensions alone — then spend any remaining budget on wind mitigation rather than extra width. The side-to-side width half of the decision is covered in [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).
