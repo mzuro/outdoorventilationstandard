@@ -158,7 +158,7 @@
 
   <!-- Grease deposit indicator on house -->
   <rect x="574" y="270" width="4" height="30" rx="1" fill="#CC8844" opacity="0.3"/>
-  <text x="575" y="262" font-size="6" fill="#AA6600" text-anchor="middle">Grease film</text>
+  <text x="568" y="282" font-size="6" fill="#AA6600" text-anchor="end">Grease film</text>
   </g>
 
   <!-- Zone label -->

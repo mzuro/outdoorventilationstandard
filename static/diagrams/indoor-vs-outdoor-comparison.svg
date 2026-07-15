@@ -93,7 +93,7 @@
   <text x="240" y="331" text-anchor="middle" font-size="8" fill="#AA6600" font-style="italic">by room volume</text>
 
   <!-- Capture success indicator -->
-  <rect x="155" y="152" width="170" height="22" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
+  <rect x="140" y="152" width="200" height="22" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
   <text x="240" y="167" text-anchor="middle" font-size="10" fill="#227722" font-weight="600">85-98% Capture (enclosed room)</text>
 
   <!-- ===== RIGHT PANEL: OUTDOOR ===== -->
