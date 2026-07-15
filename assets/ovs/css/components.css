@@ -108,6 +108,98 @@
   margin-right: 0.35rem;
 }
 
+/* ---------- W5-T1 (UX P0-1): mobile disclosure nav ----------
+   Below 640px the scrollable strip hid 60% of the site (only "2.0
+   Questions" + a sliver visible at 375px). With JS (header gets
+   .ovs-header--js from the inline script in partials/header.html) the
+   strip is replaced by a "☰ 0.0 MENU" disclosure button that opens a
+   clause-numbered panel under the header. Without JS the button stays
+   [hidden] and the strip + fade behave exactly as before (graceful
+   fallback). The panel is absolutely positioned (header is the sticky
+   containing block), so opening it shifts no layout — CLS 0. */
+
+.ovs-nav-toggle {
+  display: none;
+}
+
+@media (max-width: 639.98px) {
+  .ovs-header--js .ovs-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-left: auto;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  /* [hidden] must keep winning even against the rule above (no-JS safety;
+     the attribute is removed by the inline script when JS runs). */
+  .ovs-nav-toggle[hidden] {
+    display: none;
+  }
+
+  .ovs-nav-toggle .ovs-clause {
+    font-size: 0.7rem;
+  }
+
+  .ovs-header--open .ovs-nav-toggle {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* The wrap becomes the dropdown panel: closed by default, opened via
+     .ovs-header--open. Absolutely positioned below the 60px header bar so
+     it overlays content instead of pushing it (CLS 0). */
+  .ovs-header--js .ovs-nav-wrap {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-left: 0;
+    display: none;
+    background: var(--ground);
+    border-top: 1px solid var(--line);
+    border-bottom: 2px solid var(--line-strong);
+  }
+
+  .ovs-header--js .ovs-nav-wrap::after {
+    content: none; /* the scroll-hint fade makes no sense on a column panel */
+  }
+
+  .ovs-header--open .ovs-nav-wrap {
+    display: block;
+  }
+
+  .ovs-header--js .ovs-nav {
+    flex-direction: column;
+    gap: 0;
+    overflow-x: visible;
+    padding: 0.25rem 0 0.4rem;
+  }
+
+  .ovs-header--js .ovs-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    padding: 0.55rem clamp(16px, 4vw, 40px);
+    border-radius: 0;
+  }
+
+  .ovs-header--js .ovs-nav a + a {
+    border-top: 1px solid var(--line);
+  }
+}
+
 .ovs-edition {
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -367,6 +459,27 @@ a.ovs-chip:hover {
   margin-bottom: 0.25rem;
 }
 
+/* ---------- How-to-cite box (W2) ----------
+   Same visual family as .ovs-note (border-left accent, note-bg) but the
+   citation string itself is monospace/selectable — the point of the
+   block is a copy-ready reference string, not prose. */
+.ovs-cite-box {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--note-bg);
+  padding: 0.8rem 1rem;
+  margin: 2rem 0;
+}
+
+.ovs-cite-box p {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
 /* ---------- tables ----------
    Pair with .ovs-table-wrap (base.css) for the overflow-x:auto container. */
 
@@ -599,6 +712,42 @@ a.ovs-chip:hover {
   font-size: 0.7rem;
   color: var(--faint);
   margin: 0;
+}
+
+/* three tappable follow-up chips (AI #6) — refill + re-submit the ask box */
+.ovs-ask-followups,
+.ovs-ai-result-followups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ovs-followups-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-transform: uppercase;
+  margin-right: 0.2rem;
+}
+
+.ovs-followup-chip {
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ovs-followup-chip:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-wash);
 }
 
 .ovs-ask-another {
@@ -1023,10 +1172,28 @@ a.ovs-chip:hover {
    gets the smaller of the two. */
 .ovs-instrument:not(.ovs-i) {
   min-height: var(--i-reserve, 750px);
+  /* Pin any authored <figcaption> to the BOTTOM of the reserved box
+     pre-mount: post-mount it sits below the instrument, so without this
+     it rides from the top of the reserve to the bottom when the mount
+     fills in — the homepage hero's only CLS source (0.0768, F3 QA F-1).
+     Figures without a figcaption are unaffected (empty flex column). */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
+/* W5-T3 re-calibration (2026-07-15): the signifier pass added real height
+   to mounted instruments — the "TRY:" chip row grew (0.68->0.78rem type +
+   row label, extra wrap row at 390) and graded instruments (i01/i05/i07/
+   i08) gained the .ovs-i-verdict-foot line. Each reserve below is the F3
+   value PLUS the measured W5 delta at the same widths (1280 / 390, tool
+   pages, baseline 7ba3549 vs this build), preserving F3's calibration —
+   same residual settle, no new whitespace at tablet widths. */
+.ovs-instrument[data-instrument="i01"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
-.ovs-instrument[data-instrument="i08"] { --i-reserve: 900px; }
+.ovs-instrument[data-instrument="i05"] { --i-reserve: 780px; }
+.ovs-instrument[data-instrument="i07"] { --i-reserve: 780px; }
+.ovs-instrument[data-instrument="i08"] { --i-reserve: 930px; }
 .ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
 .ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
 
@@ -1034,14 +1201,15 @@ a.ovs-chip:hover {
   .ovs-instrument:not(.ovs-i) {
     min-height: var(--i-reserve-m, 760px);
   }
-  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 860px; }
-  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 860px; }
-  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 730px; }
-  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 580px; }
-  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 980px; }
-  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 495px; }
-  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 845px; }
-  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 615px; }
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 905px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 900px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 810px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 660px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 1065px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 535px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 805px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 930px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 655px; }
   .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 595px; }
 }
 
@@ -1050,6 +1218,84 @@ a.ovs-chip:hover {
   font-size: 0.74rem;
   color: var(--faint);
   border-top: 1px solid var(--line);
+}
+
+/* ---------- "Explain this configuration" (AI #7, i01/i02 only) ---------- */
+.ovs-explain {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.ovs-explain-honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.ovs-explain-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.55rem 1rem;
+  /* hosts the shared ::after tap-target expansion (see .ovs-i-preset) */
+  position: relative;
+}
+
+.ovs-explain-btn:hover {
+  border-color: var(--accent);
+}
+
+.ovs-explain-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ovs-explain-result {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+}
+
+.ovs-explain-result[hidden] {
+  display: none;
+}
+
+/* Authoritative server-computed readout inside the explain result (W3
+   review MAJOR-1). Reuses the instrument engine's .ovs-i-readout* row
+   classes for exact visual consistency; this wrapper just re-fits the
+   engine's .ovs-i-readouts container (surface-2 bg + top border) to sit
+   inside the result panel, separated from the narration below it. */
+.ovs-explain-state.ovs-i-readouts {
+  background: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 0.7rem;
+  margin: 0 0 0.7rem;
+}
+
+.ovs-explain-text {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 0.7rem;
+}
+
+.ovs-explain-citations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 /* ==========================================================================
@@ -1476,4 +1722,491 @@ a.ovs-chip:hover {
 
 .ovs-i-fm-tag--ok {
   background: var(--ok);
+}
+
+/* ==========================================================================
+   v2.1 fun-physics (F1) — living smoke, preset chips, verdict stamp, and
+   direct-manipulation drag affordances. All additive to the engine above;
+   only appear when an instrument opts into the matching spec key.
+   ========================================================================== */
+
+/* ---- living smoke (static/js/ovs/smoke.mjs) ----
+   Captured parcels fade into the hood in neutral --smoke; parcels whose
+   trajectory exits the aperture render ember-orange (--smoke-escape),
+   agreeing with the capture readout by construction. */
+.ovs-i-svg .ovs-i-smoke {
+  fill: var(--smoke);
+  stroke: none;
+}
+
+.ovs-i-svg .ovs-i-smoke--escape {
+  fill: var(--smoke-escape);
+}
+
+/* prefers-reduced-motion fallback: one filled plume-density silhouette from
+   the plumeRadius envelope + deflected centerline (no particles). */
+.ovs-i-svg .ovs-i-smoke-silhouette {
+  fill: var(--plume);
+  stroke: none;
+}
+
+/* ---- direct-manipulation handles ----
+   Transparent SVG hit strips over the hood lip / wind arrow. touch-action:
+   none so a drag never fights page scroll on touch devices. */
+.ovs-i-svg .ovs-i-draggable {
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.ovs-i-svg .ovs-i-drag-hood-edge:hover,
+.ovs-i-svg .ovs-i-drag-wind:hover,
+.ovs-i-svg .ovs-i-drag-height:hover,
+.ovs-i-svg .ovs-i-drag-tracer:hover,
+.ovs-i-svg .ovs-i-drag-hood-edge-a:hover,
+.ovs-i-svg .ovs-i-drag-hood-edge-b:hover {
+  fill: var(--accent-wash);
+}
+
+/* v2.1 (F2) rollout: i04's measuring-line handle and i06's tracer handle
+   drag vertically/horizontally rather than the wind-arrow's fixed
+   ew-resize, so their cursor is set inline per-instrument (spec.drag
+   `cursor`); touch-action:none still applies via .ovs-i-draggable above. */
+
+/* ---- W5-T3 (UX P1-1): visible drag grips ----
+   Engine-emitted (viz.mjs makeGripGlyph/positionGrips): a small pad with
+   three grip ticks — dimension-line drawing language — riding every drag
+   target so the affordance is visible on touch, not hover-cursor-only.
+   pointer-events:none — the transparent hit strip beneath still takes the
+   pointer. Accent-on-surface: ~8.5:1 light / ~9:1 dark, well past the 3:1
+   WCAG 1.4.11 floor for meaningful non-text graphics. */
+.ovs-i-svg .ovs-i-grip {
+  pointer-events: none;
+}
+
+.ovs-i-svg .ovs-i-grip-pad {
+  fill: var(--surface);
+  fill-opacity: 0.92;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+}
+
+.ovs-i-svg .ovs-i-grip-tick {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* one-time hint pulse (viz.mjs adds/removes --hint once per session on
+   first viewport entry; skipped entirely under reduced motion, and the
+   global base.css override neutralizes the keyframes as a second guard).
+   The pulse lives on the INNER group: the outer group's transform is the
+   engine's positioning translate and must never be animated over. */
+.ovs-i-grip-inner {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ovs-i-grip--hint .ovs-i-grip-inner {
+  animation: ovs-i-grip-pulse 0.9s ease-in-out 2;
+}
+
+@keyframes ovs-i-grip-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+/* ---- mobile hit-strip scale-up (F3 QA F-6) ----
+   The strips are authored 44+ units in viewBox space, so on a ~345px-wide
+   render (375px viewport) they shrink to ~21-43 CSS px. Scale each strip's
+   deficient axis back up around its own box (transform-box: fill-box) so
+   every strip is >=44 CSS px both ways at 375px. They are invisible
+   affordances (transparent fill; :hover wash grows with them, which only
+   shows on hover-capable small windows) and drag math reads the pointer,
+   not the rect, so geometry-only scaling is safe. Strips authored near
+   y=0 (i02 gauge, i04 measuring line, wind arrows) anchor to their top
+   edge so the enlarged box is not clipped by the SVG viewport. */
+@media (max-width: 760px) {
+  .ovs-i-svg .ovs-i-drag-hood-edge,
+  .ovs-i-svg .ovs-i-drag-hood-edge-a,
+  .ovs-i-svg .ovs-i-drag-hood-edge-b {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    /* x: 44 -> 96.8 units (~21px -> ~46px); y: the 92-unit strips render
+       43.6px at 375 — a hair under 44 — so nudge y too */
+    transform: scale(2.2, 1.05);
+  }
+
+  .ovs-i-svg .ovs-i-drag-tracer {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transform: scale(2.2, 1); /* 44 -> 96.8 units: ~21px -> ~46px wide; full-height strip */
+  }
+
+  .ovs-i-svg .ovs-i-drag-wind {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    transform: scale(1.2, 2.2); /* 90x48 -> 108x105.6: ~43x23px -> ~52x51px */
+  }
+
+  .ovs-i-svg .ovs-i-drag-height {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    transform: scale(1, 1.5); /* 160x44 @480 viewBox: ~115x32px -> ~115x47px */
+  }
+
+  /* i02's width-gauge strip is 44x44 (both axes deficient) */
+  .ovs-i-svg .ovs-i-drag-hood-edge.ovs-i-drag-hood-edge--square {
+    transform-origin: 50% 0;
+    transform: scale(2.2, 2.2);
+  }
+}
+
+/* ---- preset chips ----
+   A wrap-friendly row above the controls; each chip animates every control
+   to its scenario. Active chip = current committed state matches the preset. */
+.ovs-i-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.75rem 0.9rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+/* W5-T3 (UX P1-2): a visible row label so the chips read as invitations
+   ("TRY:"), mono + muted — stays in the metadata voice while the chips
+   themselves get button weight below. */
+.ovs-i-presets-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+  align-self: center;
+}
+
+/* W5-T3 (UX P1-2): button weight — ink text at a legible size (was 0.68rem
+   ≈10.9px muted, which read as metadata tags), stronger border. Mono stays
+   (standards voice); active/hover/44px-hit-area treatments unchanged. */
+.ovs-i-preset {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.4rem 0.7rem;
+  min-height: 34px;
+  cursor: pointer;
+  white-space: nowrap;
+  /* hosts the ::after tap-target expansion below */
+  position: relative;
+}
+
+/* ---- >=44px effective tap target (F3 QA F-5) ----
+   The chip stays 34px visually; a transparent ::after overlay expands the
+   hit area symmetrically to exactly 44px tall (clicks/taps on a pseudo-
+   element dispatch to its originating element). min(0px, ...) keeps it a
+   no-op if a chip ever renders >=44px on its own. Same treatment for the
+   explain button (39px visual). */
+.ovs-i-preset::after,
+.ovs-explain-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: min(0px, calc((100% - 44px) / 2));
+  bottom: min(0px, calc((100% - 44px) / 2));
+}
+
+/* :not(--active) matters: :hover's specificity (class+pseudo-class) beats
+   --active's (single class) regardless of source order, so without this
+   exclusion hovering the ACTIVE chip paints --accent text on an --accent
+   background (invisible) — found in the F2 rollout once presets existed on
+   10 pages instead of 1; pre-existing since F1, fixed here as a tiny,
+   in-scope CSS correction rather than carrying it forward untouched. */
+.ovs-i-preset:hover:not(.ovs-i-preset--active) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ovs-i-preset:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ovs-i-preset--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---- verdict stamp ----
+   A standards-voice rubber-stamp slammed over the scene on settle. The scene
+   wrapper is its positioning context. */
+.ovs-i-scene {
+  position: relative;
+}
+
+.ovs-i-stamp {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.3rem 0.75rem;
+  border: 3px solid var(--ok);
+  border-radius: 4px;
+  color: var(--ok);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  font-family: var(--mono);
+  line-height: 1.05;
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+
+.ovs-i-stamp[data-grade="MARGINAL"] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.ovs-i-stamp[data-grade="FAIL"] {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
+/* v2.1 (F2): i05 needs TWO stamps (one per A/B side) rather than the
+   engine's single centered spec.verdict stamp, so it builds its own pair
+   directly (see i05.mjs) reusing this same visual language. --small keeps
+   them from crowding the narrower mini-scenes; --left/--right pin them
+   under their own side instead of the single-stamp default corner. */
+.ovs-i-stamp--small {
+  padding: 0.18rem 0.5rem;
+  border-width: 2px;
+}
+
+.ovs-i-stamp--small .ovs-i-stamp-grade {
+  font-size: 0.8rem;
+}
+
+.ovs-i-stamp--left {
+  left: 16px;
+  right: auto;
+}
+
+.ovs-i-stamp--right {
+  right: 16px;
+  left: auto;
+}
+
+.ovs-i-stamp-grade {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.ovs-i-stamp-clause {
+  font-size: 0.54rem;
+  letter-spacing: 0.02em;
+  /* 0.95, not 0.85: at 0.85 the MARGINAL --warn clause composited to
+     4.31:1 in the light theme (< 4.5:1 WCAG for this sub-18px text);
+     0.95 keeps the de-emphasis while passing both themes (F3 QA F-4). */
+  opacity: 0.95;
+  white-space: nowrap;
+}
+
+/* W5-T3 (UX P1-3): the plain-language explanation line, ON the stamp —
+   the old title-tooltip was invisible in practice (Tse's rule). Wraps to
+   a narrow measure so the stamp stays a stamp at 375px. Same composited
+   color as the grade (>= the clause line's checked ratios at a larger
+   size, opacity 1). */
+.ovs-i-stamp-plain {
+  font-size: 0.6rem;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  max-width: 24ch;
+  text-align: center;
+  white-space: normal;
+}
+
+/* the paired dual stamps (i05) are --small; tighten the plain line so the
+   two stamps keep clear of each other over the narrower mini-scenes */
+.ovs-i-stamp--small .ovs-i-stamp-plain {
+  font-size: 0.54rem;
+  max-width: 18ch;
+}
+
+/* Narrow widths: the scene renders ~160px tall at 375, so the stamp must
+   shrink and its lines must wrap to a narrow measure or it papers over
+   the entire drawing (found in the W5-T3 verification screenshots). The
+   paired --small stamps (i05) tighten further so left+right clear each
+   other over the mini-scenes. */
+@media (max-width: 640px) {
+  .ovs-i-stamp {
+    bottom: 10px;
+    right: 10px;
+    border-width: 2px;
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* --left pins to the left edge; without this it inherits right:10px above
+     and stretches across both mini-scenes (W5 review F1) */
+  .ovs-i-stamp--left {
+    right: auto;
+  }
+
+  .ovs-i-stamp-grade {
+    font-size: 0.85rem;
+  }
+
+  .ovs-i-stamp-plain {
+    font-size: 0.54rem;
+    max-width: 24ch;
+  }
+
+  .ovs-i-stamp-clause {
+    white-space: normal;
+    max-width: 30ch;
+    text-align: center;
+    line-height: 1.25;
+    font-size: 0.52rem;
+  }
+
+  .ovs-i-stamp--small {
+    padding: 0.14rem 0.35rem;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-grade {
+    font-size: 0.72rem;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-plain {
+    font-size: 0.5rem;
+    max-width: 13ch;
+  }
+
+  .ovs-i-stamp--small .ovs-i-stamp-clause {
+    max-width: 15ch;
+    font-size: 0.48rem;
+  }
+}
+
+/* W5-T3 (UX P1-3): static footnote on every graded instrument, appended
+   by the engine (or by i05 itself) after the readouts — defuses "PASS
+   reads as product certification". Continues the readouts' surface. */
+.ovs-i-verdict-foot {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  margin: 0;
+  padding: 0.45rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* The one orchestrated moment: the stamp slams on settle. Neutralized under
+   prefers-reduced-motion by the global override in base.css (and the engine
+   also skips adding this class when reduced), so it just appears at rest. */
+.ovs-i-stamp--slam {
+  animation: ovs-i-stamp-slam 0.42s cubic-bezier(0.2, 1.4, 0.3, 1) both;
+}
+
+@keyframes ovs-i-stamp-slam {
+  0% { transform: rotate(-6deg) scale(2.4); opacity: 0; }
+  60% { transform: rotate(-6deg) scale(0.9); opacity: 1; }
+  100% { transform: rotate(-6deg) scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   W5-T2 (UX P0-2) — sticky mobile readout strip. Engine-emitted (viz.mjs,
+   spec.stickyReadout): a one-line, viewport-bottom, fixed-position mirror
+   of the instrument's hero readout(s) + verdict grade, shown only while
+   the instrument is in the viewport at <=760px. aria-hidden (the real
+   readouts announce via aria-live); values are copied verbatim from the
+   real readouts, never recomputed. position:fixed = zero layout impact.
+   ========================================================================== */
+
+.ovs-i-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30; /* over content; above the sticky header's 20 */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 1.1rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding: 0.5rem clamp(16px, 4vw, 40px);
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  background: var(--surface-2);
+  border-top: 2px solid var(--line-strong);
+  font-family: var(--mono);
+}
+
+.ovs-i-strip[hidden] {
+  display: none;
+}
+
+/* strips only exist at narrow widths; belt-and-braces with the engine's
+   matchMedia in case a resize listener is ever missed */
+@media (min-width: 761px) {
+  .ovs-i-strip {
+    display: none;
+  }
+}
+
+.ovs-i-strip-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.ovs-i-strip-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ovs-i-strip-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* mini verdict grade — same data-grade color language as the stamp */
+.ovs-i-strip-grade {
+  margin-left: auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.14rem 0.45rem;
+  border: 2px solid var(--ok);
+  border-radius: 2px;
+  color: var(--ok);
+  white-space: nowrap;
+}
+
+.ovs-i-strip-grade[hidden] {
+  display: none;
+}
+
+.ovs-i-strip-grade[data-grade="MARGINAL"] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.ovs-i-strip-grade[data-grade="FAIL"] {
+  border-color: var(--fail);
+  color: var(--fail);
 }

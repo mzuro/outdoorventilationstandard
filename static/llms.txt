@@ -1,0 +1,41 @@
+# Outdoor Ventilation Standard
+
+> Independent, physics-grounded research on outdoor cooking ventilation — buoyant plume behavior, entrainment, hood capture, wind interaction, and CFM sizing. No brand affiliation, no product recommendations. Values are physics-model outputs (Heskestad plume correlations, Morton-Taylor-Turner entrainment, Briggs crosswind theory), clearly labeled as such, not field measurements.
+
+## Research (12 papers)
+
+- [RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources](https://outdoorventilationstandard.com/research/rb-001-buoyant-plume-behavior/) — Heat release rates, convective fractions, and centerline velocity/diameter for 12 outdoor cooking source types.
+- [RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments](https://outdoorventilationstandard.com/research/rb-002-entrainment-lateral-plume-spread/) — Morton-Taylor-Turner entrainment rates and plume diameter at hood height; the base hood width/overhang margin K≈1.38, scaling toward 1.70 for wind-exposed sites.
+- [RB-003: Velocity Decay and Near-Field vs. Far-Field Capture](https://outdoorventilationstandard.com/research/rb-003-velocity-decay-capture/) — Centerline velocity decay curves and CFM-vs-mounting-height lookup tables by source type.
+- [RB-004: Why Indoor Ventilation Assumptions Fail Outdoors](https://outdoorventilationstandard.com/research/rb-004-indoor-vs-outdoor-assumptions/) — Where ASHRAE 154, IMC, and UL 710 indoor assumptions do not transfer to open-boundary environments.
+- [RB-005: Impact of Hood Geometry on Capture Performance](https://outdoorventilationstandard.com/research/rb-005-hood-geometry-capture/) — Overhang, lip height, canopy shape, and baffling effects on capture envelope and effective capture area.
+- [RB-006: Wind Interaction and Cross-Flow Effects](https://outdoorventilationstandard.com/research/rb-006-wind-interaction-crossflow/) — Briggs bent-plume deflection tables, Froude number regimes, and a four-tier wind exposure classification.
+- [RB-007: Failure Modes of Outdoor BBQ Hoods](https://outdoorventilationstandard.com/research/rb-007-failure-modes/) — Six-mode failure taxonomy with diagnostic criteria and correctable-vs-design-locked classification.
+- [RB-008: CFM Requirements for Outdoor Cooking Ventilation](https://outdoorventilationstandard.com/research/rb-008-cfm-requirements/) — Unified CFM sizing methodology and lookup tables across source type, mounting height, and wind exposure.
+- [RB-009: Side Panel and Wind Baffle Effectiveness](https://outdoorventilationstandard.com/research/rb-009-side-panel-effectiveness/) — Panel configuration analysis, wind reduction coefficients, and CFM-equivalent savings.
+- [RB-010: Gaps in Existing Standards, Codes, and Consumer Guidance](https://outdoorventilationstandard.com/research/rb-010-standards-gaps/) — Where ASHRAE 154, IMC, and UL 710 are silent or misleading for outdoor applications.
+- [RB-011: Grease Aerosol Transport and Deposition in Open Environments](https://outdoorventilationstandard.com/research/rb-011-grease-aerosol-transport/) — Particle size distribution, Stokes settling velocity, deposition patterns, and fire risk.
+- [RB-012: Thermal Radiation and Plume Interaction at Hood Surfaces](https://outdoorventilationstandard.com/research/rb-012-thermal-radiation-hood-surfaces/) — Radiant heat flux from cooking sources and material temperature requirements for hood surfaces.
+
+## Interactive tools (11)
+
+- [Capture Demonstrator](https://outdoorventilationstandard.com/tools/capture-demonstrator/) — Combined mounting-height, hood-width, and wind-speed plume capture model.
+- [CFM Sizing Calculator](https://outdoorventilationstandard.com/tools/cfm-calculator/) — Minimum exhaust airflow from hood width, mount type, wind exposure, and burner rating.
+- [Plume Width by Height](https://outdoorventilationstandard.com/tools/plume-width-by-height/) — Capture-diameter growth from the cooking surface to hood mounting height.
+- [Wind Deflection Trajectories](https://outdoorventilationstandard.com/tools/wind-deflection-trajectory/) — Crosswind plume deflection from still air to 20 mph at any mounting height.
+- [Hood Geometry Comparison](https://outdoorventilationstandard.com/tools/hood-geometry-comparison/) — Side-by-side capture comparison of two hood widths and mount types.
+- [Velocity Decay Curves](https://outdoorventilationstandard.com/tools/velocity-decay-curves/) — Centerline velocity decay from cooking surface to hood height.
+- [Side Panel Effectiveness](https://outdoorventilationstandard.com/tools/side-panel-effectiveness/) — Capture with vs. without side panels across the wind-speed range.
+- [Indoor vs. Outdoor Ventilation Comparison](https://outdoorventilationstandard.com/tools/indoor-vs-outdoor-comparison/) — Why the same hood captures worse outdoors as wind speed rises.
+- [Heat Release Rate Comparison](https://outdoorventilationstandard.com/tools/heat-release-rate-comparison/) — Plume rise velocity by appliance burner rating.
+- [Grease Aerosol Deposition Pattern](https://outdoorventilationstandard.com/tools/grease-aerosol-deposition/) — Particle transport and deposition zones for escaped grease aerosol.
+- [Failure Mode Taxonomy](https://outdoorventilationstandard.com/tools/failure-mode-taxonomy/) — Six-mode diagnostic reference for outdoor hood smoke-escape symptoms.
+
+## Questions (6)
+
+- [What CFM does my outdoor kitchen hood need?](https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/) — Minimum and recommended exhaust airflow by hood width, mount type, and burner rating.
+- [Does wind really affect an outdoor range hood?](https://outdoorventilationstandard.com/questions/does-wind-affect-my-hood/) — Modeled capture loss from 0 to 10+ mph crosswind.
+- [Island or wall-mounted outdoor hood — which works better?](https://outdoorventilationstandard.com/questions/island-vs-wall-hood/) — Capture comparison between wall and island mounts at the same width and wind speed.
+- [How much overhang does an outdoor hood need?](https://outdoorventilationstandard.com/questions/hood-depth-and-overhang/) — Required hood overhang from plume-width growth with height.
+- [Do side panels actually help an outdoor hood?](https://outdoorventilationstandard.com/questions/do-side-panels-work/) — Capture gain from one- and two-panel configurations in wind.
+- [How high should an outdoor hood be mounted?](https://outdoorventilationstandard.com/questions/mounting-height/) — Centerline velocity margin above capture threshold by mounting height.

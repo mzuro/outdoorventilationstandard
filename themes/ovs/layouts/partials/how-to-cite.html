@@ -1,0 +1,27 @@
+{{- /*
+  how-to-cite.html — copy-ready citation block (W2, AI report #8).
+
+  Renders a single, self-contained, monospace citation string derived
+  entirely from front matter — no invented edition/series numbering. For
+  research papers this reuses the exact format already published on
+  /research/ under "How to Cite" (OVS-<research_id> (<year>). "<title>."
+  *Outdoor Ventilation Standard — Applied Physics Research.* <url>) so
+  there is exactly one citation convention site-wide, not two. Tool pages
+  get a parallel, honestly-labeled "Interactive Tool" variant since they
+  have no research_id/version of their own.
+
+  No copy-to-clipboard JS: the string is plain selectable/mono text, which
+  keeps it visible to non-JS crawlers (the whole point of this block) and
+  avoids adding a client script for a feature select-all already covers.
+*/ -}}
+{{- $year := .Date.Format "2006" }}
+{{- $url := .Permalink }}
+{{- $bareTitle := replaceRE "^RB-[0-9]+:\\s*" "" .Title }}
+<section class="ovs-cite-box" aria-labelledby="ovs-cite-box-heading">
+  <span class="ovs-note-label" id="ovs-cite-box-heading">HOW TO CITE</span>
+  {{- if .Params.research_id }}
+  <p class="mono">OVS-{{ .Params.research_id }} ({{ $year }}). &ldquo;{{ $bareTitle }}.&rdquo; <em>Outdoor Ventilation Standard &mdash; Applied Physics Research.</em> {{ $url }}</p>
+  {{- else }}
+  <p class="mono">Outdoor Ventilation Standard ({{ $year }}). &ldquo;{{ .Title }}.&rdquo; <em>Interactive Tool, Outdoor Ventilation Standard.</em> {{ $url }}</p>
+  {{- end }}
+</section>

@@ -56,6 +56,14 @@ enableGitInfo = false
   url = "/about/"
   weight = 50
 
+# W5-T1 (UX P0-1): Search gets a permanent header slot — previously it was
+# reachable only from the footer, and at narrow widths the header hid most
+# of the nav with no menu affordance.
+[[menu.main]]
+  name = "Search"
+  url = "/search/"
+  weight = 60
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
@@ -64,7 +72,13 @@ enableGitInfo = false
     endLevel = 4
     startLevel = 2
 
+[outputFormats.AIContext]
+  mediaType = "application/json"
+  baseName = "ai-context"
+  isPlainText = true
+  notAlternative = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "AIContext"]
   section = ["HTML", "RSS"]
   page = ["HTML"]

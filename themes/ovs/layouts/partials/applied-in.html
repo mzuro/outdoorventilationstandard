@@ -1,0 +1,55 @@
+{{- /*
+  applied-in.html — "Where this research is applied" (W2, SEO report §2c).
+
+  Deliberately reverse-derived at build time from data that already exists
+  elsewhere, rather than a new front-matter list on each paper (which
+  would be a second copy of the same fact, free to drift out of sync).
+  Two sources, both already required by other parts of the site:
+
+    - Questions: `citations: [rb-005, rb-008]` front matter (matched the
+      same case-insensitive way partials/citations.html matches it).
+    - Tools: `related_papers: [/research/rb-008-.../, ...]` front matter
+      (W2; resolved via .Site.GetPage, same convention tools/single.html
+      uses for its own Related section).
+
+  Renders nothing if no question or tool cites this paper — a paper with
+  no downstream citations yet should show nothing, not a fabricated link.
+*/ -}}
+{{- $rid := lower .Params.research_id }}
+{{- if $rid }}
+{{- $questions := where site.RegularPages "Section" "questions" }}
+{{- $citingQuestions := where $questions "Params.citations" "intersect" (slice $rid) }}
+{{- $tools := where site.RegularPages "Section" "tools" }}
+{{- $citingTools := slice }}
+{{- range $tools }}
+  {{- $tool := . }}
+  {{- $isCiting := false }}
+  {{- range $tool.Params.related_papers }}
+    {{- with site.GetPage . }}
+      {{- if eq .File.Path $.File.Path }}{{ $isCiting = true }}{{ end }}
+    {{- end }}
+  {{- end }}
+  {{- if $isCiting }}{{ $citingTools = $citingTools | append $tool }}{{ end }}
+{{- end }}
+{{- if or $citingQuestions $citingTools }}
+<section class="ovs-section ovs-applied-in" aria-labelledby="ovs-applied-in-heading">
+  <h2 id="ovs-applied-in-heading">Where this research is applied</h2>
+  {{- with $citingTools }}
+  <h3>Interactive tools</h3>
+  <ul>
+    {{- range . }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+  {{- end }}
+  {{- with $citingQuestions }}
+  <h3>Questions</h3>
+  <ul>
+    {{- range . }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+  {{- end }}
+</section>
+{{- end }}
+{{- end }}

@@ -26,6 +26,17 @@ downstream_topics:
   - "RB-009: Side Panel and Wind Baffle Effectiveness"
   - "RB-010: Blower and Duct Sizing for Outdoor Installations"
   - "RB-012: Thermal Radiation and Plume Interaction at Hood Surfaces"
+dataset:
+  name: "RB-008 CFM Sizing Tables for Outdoor Cooking Hoods"
+  description: "Consolidated CFM (required exhaust airflow) lookup tables for outdoor cooking hood sizing, covering gas, charcoal, wood-fired, and pellet source types, standard mounting heights from 18 to 48 inches, and four wind exposure classes (Sheltered, Moderate, Exposed, Severe). Derived from plume mass-flow, hood-geometry correction, and wind-exposure correction factors developed in RB-001, RB-003, RB-005, and RB-006. These are physics-model outputs, not measured airflow data from installed hoods."
+  csv: "/data/rb-008-cfm-sizing-tables.csv"
+  csvDescription: "Tables 3.2a-3.2d combined: required CFM by source type, mounting height, and wind exposure class — transcribed verbatim from the paper body."
+  variableMeasured:
+    - "Required exhaust airflow (CFM)"
+    - "Wind exposure correction factor (K_CFM)"
+    - "Height-scaling CFM ratio"
+    - "Convective heat release rate (kW)"
+  measurementTechnique: "Physics-based sizing model combining Heskestad plume correlations, hood-geometry capture factors, and wind-exposure correction factors; not field-measured airflow data"
 ---
 
 **Research Program:** Outdoor Ventilation Standard
@@ -109,7 +120,7 @@ where K_CFM is the composite CFM multiplier. This multiplier is the product of t
 
 > K_CFM = F_inf * F_wind * F_safety
 
-**Infiltration factor (F_inf).** When the hood is sized per the RB-002 recommended dimensions (K = 1.70 overhang margin), the hood face area exceeds the plume cross-sectional area by a factor of approximately (1.70)^2 = 2.89. The excess area draws in ambient air from beyond the plume boundary. RB-003 derived F_inf = 2.0 as the engineering value for outdoor canopy hoods, accounting for the partial occupation of hood area by the plume itself and the fraction of edge air that is actively drawn in (f_edge approximately 0.6).
+**Infiltration factor (F_inf).** The infiltration model adopts an effective hood-to-plume area-basis ratio K_inf = 1.70 (the open/wind-exposed sizing scale-up from RB-002 Section 3.5, distinct from RB-002's base width-sizing margin K ≈ 1.38), so the hood face area exceeds the plume cross-sectional area by a factor of approximately (1.70)^2 = 2.89. The excess area draws in ambient air from beyond the plume boundary. RB-003 derived F_inf = 2.0 as the engineering value for outdoor canopy hoods, accounting for the partial occupation of hood area by the plume itself and the fraction of edge air that is actively drawn in (f_edge approximately 0.6).
 
 **Wind correction factor (F_wind).** This factor accounts for the additional CFM needed to capture a wind-deflected, wind-widened plume. It varies with wind exposure class:
 
@@ -921,7 +932,7 @@ The recommended simplified K_outdoor values from Section 3.5 (1.7 Sheltered, 2.0
 | Plume mass flow (z > L_f) | m_dot_p = 0.071 * Q_c^(1/3) * z^(5/3) + 0.0018 * Q_c | RB-001 Section 2.2 (Heskestad) |
 | Centerline velocity | u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) | RB-001 Section 2.2 (Heskestad) |
 | Plume capture diameter | d_capture = 0.48 * (z - z_0) + D_eff | RB-001 Section 3.6 |
-| Recommended hood width | W_rec = 1.70 * d_capture | RB-002 |
+| Recommended hood width | W_rec = 1.38 * d_capture | RB-002 |
 | Required CFM | CFM_req = K_CFM * CFM_plume | This paper, Section 2.2 |
 | K_CFM (Sheltered) | F_inf * F_wind * F_safety = 2.0 * 1.3 * 1.15 = 3.0 | RB-003 Section 3.6 |
 | K_CFM (Moderate) | 2.0 * 1.6 * 1.15 = 3.68 | RB-003 Section 3.7 |

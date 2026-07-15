@@ -1,11 +1,26 @@
 {{- /*
   schema.html — JSON-LD emitted by page type (E-E-A-T signals).
 
-    Organization    — site-wide identity, emitted on the home page.
+    Organization    — site-wide identity, full node on the home page only;
+                       every other page references it by @id (compact form).
+    Person          — reviewer identity, full node on /about/reviewer/ only
+                       (as the ProfilePage's mainEntity); every other page
+                       references it by @id (compact form).
+    ProfilePage     — /about/reviewer/ only.
     TechArticle     — section "research"
+    Dataset         — section "research", opt-in via `dataset` front matter
     WebApplication  — section "tools"
     FAQPage         — section "questions"
     BreadcrumbList  — every page
+
+  Entity graph: Organization and Person each carry one stable @id, declared
+  as a full node exactly once site-wide and referenced everywhere else as
+  {"@type": "...", "@id": "..."} — never re-declared with duplicate
+  properties. This lets author/publisher/reviewedBy/worksFor across all
+  pages resolve to the same two entities instead of disconnected islands.
+  Do not add `sameAs` or `contactPoint` values unless they correspond to a
+  real, existing profile/page — see the Organization block below for the
+  current state (none exist; flagged for Mark rather than fabricated).
 
   Site name is fixed to "Outdoor Ventilation Standard"; all URLs are built
   from .Site.BaseURL / .Permalink so they stay correct across environments.
@@ -13,17 +28,31 @@
 {{- $siteName := "Outdoor Ventilation Standard" }}
 {{- $baseURL := .Site.BaseURL }}
 {{- $section := .Section }}
+{{- $orgID := printf "%s#organization" $baseURL }}
+{{- $personID := printf "%sabout/reviewer/#person" $baseURL }}
+{{- $orgRef := dict "@type" "Organization" "@id" $orgID }}
+{{- $personRef := dict "@type" "Person" "@id" $personID }}
 
-{{- /* ---------- Organization (home page only) ---------- */}}
+{{- /* ---------- Organization (full node, home page only) ----------
+   Enrichment fields present here (legalName, foundingDate, sameAs,
+   contactPoint) are intentionally OMITTED: nothing in governance/about
+   content states a legal name or founding date, and no genuine external
+   profile (GitHub org page, social profile, Wikidata entry) exists yet for
+   sameAs, nor a published contact channel (email/phone) for contactPoint —
+   About's "Contact" section names no address. Fabricating any of these
+   would violate the no-invented-authority-signals constraint. knowsAbout
+   below is drawn verbatim from the About page's "Approach" section. */}}
 {{- if .IsHome }}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": {{ $orgID | jsonify | safeJS }},
   "name": {{ $siteName | jsonify | safeJS }},
   "url": {{ $baseURL | jsonify | safeJS }},
   "description": {{ (.Site.Params.description | default "") | jsonify | safeJS }},
-  "logo": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
+  "logo": {{ ("logo.svg" | absURL) | jsonify | safeJS }},
+  "knowsAbout": {{ (slice "Fire science" "Fluid dynamics" "Atmospheric dispersion" "Ventilation engineering" "Outdoor cooking ventilation") | jsonify | safeJS }}
 }
 </script>
 {{- end }}
@@ -42,24 +71,44 @@
   "dateModified": {{ $updated | jsonify | safeJS }},
   "url": {{ .Permalink | jsonify | safeJS }},
   {{- if .Params.reviewed }}
-  "reviewedBy": {
-    "@type": "Person",
-    "name": "Mark Zuro"
-  },
+  "reviewedBy": {{ $personRef | jsonify | safeJS }},
   {{- end }}
-  "author": {
-    "@type": "Organization",
-    "name": {{ $siteName | jsonify | safeJS }},
-    "url": {{ $baseURL | jsonify | safeJS }}
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": {{ $siteName | jsonify | safeJS }},
-    "logo": {
-      "@type": "ImageObject",
-      "url": {{ ("logo.svg" | absURL) | jsonify | safeJS }}
-    }
+  "author": {{ $orgRef | jsonify | safeJS }},
+  "publisher": {{ $orgRef | jsonify | safeJS }}
+}
+</script>
+{{- end }}
+
+{{- /* ---------- Dataset (research briefs with a `dataset` front-matter
+   block — template-driven opt-in; a paper only gets this markup if it
+   explicitly declares one). `license` falls back to the site's Terms of
+   Use page (the closest real statement — "citation and reference" with
+   attribution, see /legal/) rather than inventing a formal license. */}}
+{{- if and (eq $section "research") .IsPage .Params.dataset }}
+{{- $ds := .Params.dataset }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": {{ $ds.name | jsonify | safeJS }},
+  "description": {{ $ds.description | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  "creator": {{ $orgRef | jsonify | safeJS }},
+  "license": {{ ($ds.license | default ("legal/" | absURL)) | jsonify | safeJS }},
+  "isAccessibleForFree": true
+  {{- with $ds.variableMeasured }},
+  "variableMeasured": {{ . | jsonify | safeJS }}
+  {{- end }}
+  {{- with $ds.measurementTechnique }},
+  "measurementTechnique": {{ . | jsonify | safeJS }}
+  {{- end }}
+  {{- with $ds.csv }},
+  "distribution": {
+    "@type": "DataDownload",
+    "encodingFormat": "text/csv",
+    "contentUrl": {{ (. | absURL) | jsonify | safeJS }}
   }
+  {{- end }}
 }
 </script>
 {{- end }}
@@ -77,10 +126,7 @@
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
   {{- if .Params.reviewed }}
-  "reviewedBy": {
-    "@type": "Person",
-    "name": "Mark Zuro"
-  },
+  "reviewedBy": {{ $personRef | jsonify | safeJS }},
   {{- end }}
   "offers": {
     "@type": "Offer",
@@ -131,22 +177,30 @@
 </script>
 {{- end }}
 
-{{- /* ---------- Person (reviewer entity, About page) ---------- */}}
-{{- if eq .RelPermalink "/about/" }}
+{{- /* ---------- Person (reviewer entity, full node) + ProfilePage ----------
+   Declared exactly once, on the dedicated reviewer profile page
+   (/about/reviewer/) created for this purpose — see R4. Every other
+   reference to the reviewer (TechArticle/WebApplication reviewedBy above,
+   the About page's Technical Review section, the byline partial) links to
+   this @id/URL rather than redeclaring the Person's properties. sameAs is
+   omitted for the same reason as Organization's: no genuine external
+   profile exists yet. */}}
+{{- if eq .RelPermalink "/about/reviewer/" }}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Mark Zuro",
-  "jobTitle": "Outdoor Ventilation Product Specialist",
-  "description": {{ "Outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods." | jsonify | safeJS }},
-  "url": {{ .Permalink | jsonify | safeJS }},
-  "worksFor": {
-    "@type": "Organization",
-    "name": {{ $siteName | jsonify | safeJS }},
-    "url": {{ $baseURL | jsonify | safeJS }}
-  },
-  "knowsAbout": ["Outdoor kitchen ventilation", "Range hood engineering", "Buoyant plume capture physics"]
+  "@type": "ProfilePage",
+  "dateModified": {{ (.Lastmod | default .Date).Format "2006-01-02" | jsonify | safeJS }},
+  "mainEntity": {
+    "@type": "Person",
+    "@id": {{ $personID | jsonify | safeJS }},
+    "name": "Mark Zuro",
+    "jobTitle": "Outdoor Ventilation Product Specialist",
+    "description": {{ "Outdoor ventilation product specialist with 15+ years designing and engineering outdoor-rated range hoods." | jsonify | safeJS }},
+    "url": {{ .Permalink | jsonify | safeJS }},
+    "worksFor": {{ $orgRef | jsonify | safeJS }},
+    "knowsAbout": ["Outdoor kitchen ventilation", "Range hood engineering", "Buoyant plume capture physics"]
+  }
 }
 </script>
 {{- end }}

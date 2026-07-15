@@ -12,6 +12,17 @@
 // shaded like i01's plume fill; a horizontal measuring line at the
 // HEIGHT-OF-INTEREST control re-measures the envelope live via the engine's
 // dimensionLine helper.
+//
+// v2.1 (F2) adoption:
+//   - drag: the measuring line itself is the handle — grab it anywhere
+//     along its vertical travel to set HEIGHT OF INTEREST (target
+//     'hood-height' -> the engine's `.ovs-i-drag-height` selector).
+//   - presets: four site-voice heights.
+//   - verdict: SKIPPED, per the plan's explicit list (i04/i06/i09/i10 —
+//     "no pass/fail semantics"). Plume width at a height is a pure
+//     descriptive dimension with no standards threshold to grade against;
+//     nothing here is a compliance question.
+//   - smoke/other drag targets: not assigned by the plan.
 
 import { createInstrument } from '../viz.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
@@ -74,6 +85,13 @@ export function mount(figureEl) {
     // live measuring line at the selected height (rebuilt every update)
     refs.measureLine = H.el('g');
     svg.appendChild(refs.measureLine);
+
+    // drag hit strip, re-measured live onto the current measuring line —
+    // wide enough to grab regardless of the envelope's width at that height.
+    refs.dragHeight = H.el('rect', {
+      class: 'ovs-i-drag-height', x: GX - 80, y: 0, width: 160, height: 44, fill: 'transparent',
+    });
+    svg.appendChild(refs.dragHeight);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -124,6 +142,8 @@ export function mount(figureEl) {
     replaceChildren(refs.measureLine, H.dimensionLine(
       GX - mhw, my, GX + mhw, my, `${Math.round(widthAtHeight)}″ at ${Math.round(heightIn)}″`,
     ));
+
+    refs.dragHeight.setAttribute('y', (my - 22).toFixed(1));
   }
 
   const spec = {
@@ -138,6 +158,25 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- direct manipulation: grab the measuring line anywhere along its
+    //     vertical travel, 2in step to match the control. -------------------
+    drag: [
+      {
+        target: 'hood-height', control: 'i04-height', axis: 'y', cursor: 'ns-resize',
+        toValue: (y) => Math.max(0, Math.min(MAX_Z_IN, Math.round(((GY - y) / PX_PER_IN) / 2) * 2)),
+      },
+    ],
+
+    // --- story presets: four site-voice heights. ---------------------------
+    presets: [
+      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i04-height': 2 } },
+      { id: 'countertop-height', label: 'Countertop height', state: { 'i04-height': 12 } },
+      { id: 'standard-capture-zone', label: 'Standard capture zone', state: { 'i04-height': 30 } },
+      { id: 'near-a-tall-hood', label: 'Near a tall hood', state: { 'i04-height': 44 } },
+    ],
+
+    // No spec.verdict — see the header comment.
   };
 
   createInstrument(container, spec);

@@ -338,6 +338,7 @@
     <div class="ovs-ai-result-answer" id="ovs-ai-result-answer"></div>
     <p class="ovs-ai-result-label" id="ovs-ai-result-label">RECOMMENDED READING</p>
     <div class="ovs-ai-result-links" id="ovs-ai-result-links"></div>
+    <div class="ovs-ai-result-followups" id="ovs-ai-result-followups" style="display:none"></div>
     <p class="ovs-ai-result-source" id="ovs-ai-result-source"></p>
     <button type="button" class="ovs-ai-result-another" id="ovs-ai-result-another">Ask another question</button>
   </div>
@@ -348,7 +349,7 @@
   </div>
 </div>
 
-<div id="ovs-search-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+<div id="ovs-search-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-appearance="interaction-only"></div>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 
 {{- /* vendored Fuse.js — the site's only fuzzy-search dependency, no CDN
@@ -522,15 +523,34 @@
   var aiAnother = document.getElementById('ovs-ai-result-another');
   var aiHistoryEl = document.getElementById('ovs-ai-history');
   var aiHistoryList = document.getElementById('ovs-ai-history-list');
+  var aiFollowupsEl = document.getElementById('ovs-ai-result-followups');
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* Section text from a citation (e.g. "3.3 Primary Answer...") -> a
+     short chip-sized fragment ("§3.3"). Shared convention with the
+     homepage ask box (themes/ovs/layouts/index.html). */
+  function shortSection(section) {
+    if (!section) return '';
+    var m = /^([\d.]+)/.exec(section);
+    if (m) return '§' + m[1];
+    return section.length > 24 ? section.slice(0, 24) + '…' : section;
+  }
 
   /* Turnstile */
   var turnstileToken = null;
   var turnstileWidgetId = null;
   function initTurnstile() {
     if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      /* 'invisible' is not a valid Turnstile size (normal/flexible/compact);
+         invisible behavior = appearance:'interaction-only'. */
       turnstileWidgetId = turnstile.render('#ovs-search-turnstile', {
         sitekey: '0x4AAAAAACcaq_joFScewE6d',
-        size: 'invisible',
+        appearance: 'interaction-only',
         callback: function(token) { turnstileToken = token; }
       });
     }
@@ -579,12 +599,42 @@
     aiInput.focus();
   });
 
-  function buildResultLinks(links) {
+  /* Prefers the structured `citations` array (AI #6: {rb, section, url})
+     over the plain `links` shape ({label, url}) — same convention as the
+     homepage ask box. */
+  function buildResultLinks(citations, links) {
+    var items = (citations && citations.length) ? citations : (links || []);
+    var seen = {};
     var html = '';
-    for (var i = 0; i < links.length; i++) {
-      html += '<a class="ovs-chip ovs-chip--accent" href="' + links[i].url + '">' + links[i].label + '</a>';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (!it || !it.url || seen[it.url]) continue;
+      seen[it.url] = true;
+      var label = it.label || (it.rb ? (it.section ? it.rb + ' ' + shortSection(it.section) : it.rb) : it.url);
+      html += '<a class="ovs-chip ovs-chip--accent" href="' + encodeURI(it.url) + '">' + escapeHtml(label) + '</a>';
     }
     aiLinks.innerHTML = html;
+  }
+
+  function buildResultFollowups(followups) {
+    if (!followups || !followups.length) {
+      aiFollowupsEl.innerHTML = '';
+      aiFollowupsEl.style.display = 'none';
+      return;
+    }
+    var html = '<span class="ovs-followups-label">Ask next:</span>';
+    for (var i = 0; i < followups.length; i++) {
+      html += '<button type="button" class="ovs-followup-chip">' + escapeHtml(followups[i]) + '</button>';
+    }
+    aiFollowupsEl.innerHTML = html;
+    aiFollowupsEl.style.display = '';
+    var btns = aiFollowupsEl.querySelectorAll('.ovs-followup-chip');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        aiInput.value = this.textContent;
+        askAI();
+      });
+    }
   }
 
   function askAI() {
@@ -596,6 +646,7 @@
 
     aiAnswer.innerHTML = '<span class="ovs-ai-loading"><span class="ovs-ai-spinner"></span> Searching research...</span>';
     aiLinks.innerHTML = '';
+    buildResultFollowups([]);
     aiSource.textContent = '';
     aiLabel.style.display = 'none';
     aiAnother.style.display = 'none';
@@ -620,7 +671,8 @@
       if (data.error) throw new Error(data.error);
       aiAnswer.textContent = data.answer;
       aiLabel.style.display = '';
-      buildResultLinks(data.links || []);
+      buildResultLinks(data.citations, data.links || []);
+      buildResultFollowups(data.followups || []);
       aiSource.textContent = data.off_topic ? '' : 'Answered by AI from site research';
       aiAnother.style.display = '';
       aiSubmit.disabled = false;
@@ -628,10 +680,11 @@
     .catch(function() {
       aiAnswer.textContent = 'AI search is temporarily unavailable. Try the keyword search instead.';
       aiLabel.style.display = '';
-      buildResultLinks([
+      buildResultLinks(null, [
         { label: 'Browse all research', url: '/research/' },
         { label: 'Explore instruments', url: '/tools/' }
       ]);
+      buildResultFollowups([]);
       aiAnother.style.display = '';
       aiSubmit.disabled = false;
     })

@@ -1,8 +1,9 @@
 ---
 title: "Do side panels actually help an outdoor hood?"
+description: "Yes — on a 48-inch island hood in an 8 mph breeze, panels on both sides lift capture from about 46% to 91%. A panel is a wind guard — it blocks wind, not plume."
 summary: "Yes, substantially. On a 48-inch island hood in an 8 mph breeze, capture rises from about 46% with no panels to about 91% with panels on both sides — the single largest performance gain available from any post-installation change."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 5
 instruments: true
@@ -15,11 +16,11 @@ On a 48-inch island hood at a 30-inch mounting height in an 8 mph breeze, captur
 
 ## Why panels are so effective
 
-Side panels don't block the plume — they block the wind that's deflecting it. A panel on one side cuts the wind the plume actually experiences to about 65% of the ambient speed; panels on both sides cut it to about 40%. Less effective wind means less deflection at every height the plume has to rise through before reaching the hood, which is why the capture gain compounds rather than just adding up linearly. The instrument above is set to the island scenario with no panels by default — toggle the panel controls to see the same 8 mph breeze produce a dramatically different result.
+Side panels don't block the plume — they block the wind that's deflecting it. A panel on one side cuts the wind the plume actually experiences to about 65% of the ambient speed; panels on both sides cut it to about 40%. Less effective wind means less deflection at every height the plume has to rise through before reaching the hood, which is why the capture gain compounds rather than just adding up linearly. The instrument above is set to the island scenario with no panels by default — toggle the panel controls to see the same 8 mph breeze produce a dramatically different result. The full [Side Panel Effectiveness](/tools/side-panel-effectiveness/) tool compares the with/without capture gap across the whole wind range.
 
 ## This is the cheapest fix for a windy site
 
-Unlike overhang or mounting height, side panels can usually be added after installation. For a site that's already built and underperforming in wind, panels are very often the highest-leverage change available — more effective than a bigger blower, and far less disruptive than remounting the hood lower or rebuilding the structure to add a back wall.
+Unlike width and overhang — which are design-locked at installation (see [what size hood your grill needs](/questions/what-size-hood-for-my-grill/)) — side panels can usually be added after the fact. For a site that's already built and underperforming in wind, panels are very often the highest-leverage change available — more effective than a bigger blower, and far less disruptive than remounting the hood lower or rebuilding the structure to add a back wall.
 
 ## One panel vs. two
 

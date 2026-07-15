@@ -17,11 +17,41 @@
 // line reports the horizontal offset at the hood plane, matching the
 // deflection readout exactly (same plumeWind value feeds both — mirrors
 // i01's plumeWind consistency, RB-006 §wind interaction).
+//
+// v2.1 (F2) adoption:
+//   - smoke: this instrument has no hood/width/mount control at all — it
+//     isolates the deflection integrator by itself — so there is no real
+//     aperture to partition captured-vs-escaped smoke against. The smoke
+//     layer still rides the SAME wind/rise physics the readouts use
+//     (riseIn from the real RISE slider, windMph/panels from the real
+//     controls). SHARED RULE with i09 (F2 review F-5 fix): instruments
+//     with no on-page capture concept (no aperture control, no capture
+//     readout) give the smoke a deliberately OVERSIZED nominal aperture
+//     (NOMINAL_WIDTH_IN/NOMINAL_DEPTH_IN below) so every particle always
+//     registers as captured and none render ember-orange — an escape tint
+//     would imply a capture verdict this page's physics never computes.
+//     (An earlier revision tinted against a phantom 48in island aperture
+//     with no on-page counterpart, telling an escape story nothing here
+//     states or grades; that was inconsistent with i09 and is gone.)
+//     Deflection is this page's story, and the trajectory line already
+//     tells it. Documented explicitly per the smoke.mjs contract note:
+//     geom carries no hoodPlaneY, so the recycle plane is riseIn (the
+//     real slider value) in physics space, matching the dashed hood-plane
+//     line drawn at the same pxPerIn scale.
+//   - drag: the wind arrow (0-20 mph), same shape as i01's.
+//   - presets: four site-voice scenarios.
+//   - verdict: not assigned by the plan (no capture concept here to grade).
 
 import { createInstrument } from '../viz.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
 import { WIND_COUPLING } from '../physics/capture.mjs';
+
+// Deliberately oversized: every particle always registers as captured, no
+// escape tint — same rule and same values as i09 (see header note).
+const NOMINAL_WIDTH_IN = 4000;
+const NOMINAL_DEPTH_IN = 4000;
+const NOMINAL_MOUNT = 'island';
 
 const SAMPLE_STEP_IN = 2; // "sampled every 2in of rise" per brief
 const MAX_RISE_IN = 48; // control max — sets the fixed vertical scale
@@ -85,6 +115,11 @@ export function mount(figureEl) {
     refs.trajectory = H.el('path', { class: 'ovs-i-plume-edge', d: '' });
     svg.appendChild(refs.trajectory);
 
+    // living-smoke layer mount — sits over the trajectory, under the
+    // hood-plane annotation (see header note re: nominal aperture).
+    refs.smokeMount = H.el('g', { class: 'ovs-i-smoke-mount' });
+    svg.appendChild(refs.smokeMount);
+
     // hood-plane reference line (dashed, tracks the RISE slider)
     refs.hoodPlane = H.el('line', { class: 'ovs-i-cap-plane', x1: 0, y1: 0, x2: 0, y2: 0 });
     svg.appendChild(refs.hoodPlane);
@@ -102,6 +137,12 @@ export function mount(figureEl) {
     refs.windLabel = H.el('text', { x: 40, y: 106, text: '' });
     wind.appendChild(refs.windLabel);
     svg.appendChild(wind);
+
+    // drag hit strip over the wind arrow — same geometry as i01's.
+    refs.dragWind = H.el('rect', {
+      class: 'ovs-i-drag-wind', x: 36, y: 112, width: 90, height: 48, fill: 'transparent',
+    });
+    svg.appendChild(refs.dragWind);
 
     // dimension-line mount points (rebuilt every update())
     refs.dimOffset = H.el('g');
@@ -172,6 +213,8 @@ export function mount(figureEl) {
     const shaftX = 90 + windMph * 1.5;
     refs.windShaft.setAttribute('x2', shaftX.toFixed(1));
     refs.windArrow.setAttribute('d', `M${shaftX.toFixed(1)} 136 l-7 -4 m7 4 l-7 4`);
+    // wind drag strip spans the shaft's full travel (0..20 mph), same as i01.
+    refs.dragWind.setAttribute('width', (90 + 20 * 1.5 + 12 - 36).toFixed(1));
   }
 
   const spec = {
@@ -189,8 +232,43 @@ export function mount(figureEl) {
       { id: 'deflection', label: 'DEFLECTION AT HOOD PLANE', format: 'in', hero: true },
       { id: 'effWind', label: 'EFFECTIVE WIND', format: 'mph' },
     ],
+    // W5-T2 sticky strip: hero readout only (no verdict on this
+    // instrument). Values are copied verbatim from the real readout.
+    stickyReadout: ['deflection'],
     scene: buildScene,
     update,
+
+    // --- living smoke: real riseIn/windMph/panels; oversized nominal
+    //     aperture so nothing ever tints as escaping (see header note —
+    //     shared always-captured rule with i09). ---------------------------
+    smoke: (state) => ({
+      sourceX: GX, sourceY: GY, pxPerIn: PX_PER_IN_Y,
+      widthIn: NOMINAL_WIDTH_IN,
+      depthIn: NOMINAL_DEPTH_IN,
+      mount: NOMINAL_MOUNT,
+      riseIn: state['i03-rise'],
+      windMph: state['i03-wind'],
+      panels: state['i03-panels'],
+      w0: 400,
+    }),
+
+    // --- direct manipulation: the wind arrow, 0-20 mph. --------------------
+    drag: [
+      {
+        target: 'wind-arrow', control: 'i03-wind', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => Math.max(0, Math.min(20, Math.round((x - 90) / 1.5))),
+        // W5-T3 visible grip: ride the arrow tip (shaftX = 90 + mph*1.5).
+        grip: (st) => ({ x: 90 + Math.max(0, Math.min(20, st['i03-wind'])) * 1.5 + 14, y: 136 }),
+      },
+    ],
+
+    // --- story presets: four site-voice scenarios. -------------------------
+    presets: [
+      { id: 'calm-low-mount', label: 'Calm, low mount', state: { 'i03-wind': 0, 'i03-rise': 24, 'i03-panels': 'none' } },
+      { id: 'breezy-standard', label: 'Breezy, standard mount', state: { 'i03-wind': 8, 'i03-rise': 30, 'i03-panels': 'none' } },
+      { id: 'gusty-tall-mount', label: 'Gusty, tall mount', state: { 'i03-wind': 16, 'i03-rise': 42, 'i03-panels': 'none' } },
+      { id: 'sheltered-high-wind', label: 'Sheltered, high wind', state: { 'i03-wind': 16, 'i03-rise': 30, 'i03-panels': 'both' } },
+    ],
   };
 
   createInstrument(container, spec);

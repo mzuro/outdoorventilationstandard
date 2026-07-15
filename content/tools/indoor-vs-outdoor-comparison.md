@@ -9,6 +9,16 @@ categories: ["Tools"]
 ShowToc: false
 weight: 7
 instrument_id: "i08"
+related_questions:
+  - "/questions/can-i-use-an-indoor-range-hood-outside/"
+  - "/questions/does-an-outdoor-hood-need-a-duct/"
+  - "/questions/what-cfm-do-i-need/"
+  - "/questions/do-side-panels-work/"
+related_papers:
+  - "/research/rb-004-indoor-vs-outdoor-assumptions/"
+  - "/research/rb-005-hood-geometry-capture/"
+  - "/research/rb-008-cfm-requirements/"
+  - "/research/rb-009-side-panel-effectiveness/"
 ---
 
 This diagram contrasts plume capture in enclosed indoor environments versus open-boundary outdoor environments. The physics are fundamentally different — indoor hoods benefit from four structural advantages that do not exist outdoors.
@@ -23,6 +33,20 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 
 ---
 
+## Reference readings
+
+*Representative values below are computed directly from the same capture-fraction module (`physics/capture.mjs`) driving the instrument above, at a fixed 48-inch island hood — this instrument's only control is wind speed, since it isolates the outdoor wind-exposure effect from hood geometry; live values update as you move the control.*
+
+| Wind speed | Modeled outdoor capture |
+|---|---|
+| 0 mph (indoor-equivalent, still air) | 97% |
+| 3 mph | 92% |
+| 5 mph | 79% |
+| 8 mph | 46% |
+| 12 mph | 10% |
+
+In still air, this 48-inch island hood models at 97% capture — close to the near-100% indoor baseline RB-004 describes, because still air grants the outdoor hood the one indoor advantage this instrument isolates: an environment free of crosswind and ambient turbulence [RB-004 §2.1]. Introducing an 8 mph crosswind, with no other change to the hood, drops modeled capture to about 46% — below even the 50-65% first-pass capture RB-004 estimates for a UL 710-rated hood operated outdoors, depending on wind conditions and installation geometry [RB-004 §3.3.2]. By 12 mph — the top of the wind band RB-008 classifies as Exposed with no panels — modeled capture falls to about 10%; for that class RB-008 sets the CFM multiplier over bare plume mass flow at 5.75x, versus 3.0x for a sheltered installation, a 92% increase in required exhaust for the same hood [RB-008 §3.2, §3.6].
+
 ## The Four Indoor Advantages
 
 **1. Wall confinement.** Indoor walls physically prevent the plume from escaping laterally. Any spillage from the hood is redirected back toward the capture zone by room boundaries. Outdoors, escaped plume disperses freely in three dimensions.
@@ -35,7 +59,7 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 
 ## The Capture Efficiency Gap
 
-The combined effect of these four differences reduces outdoor capture efficiency from near-100% (indoor, properly sized hood) to approximately 40-60% (outdoor, same hood design). This is the central finding of [RB-004](/research/rb-004-indoor-vs-outdoor-assumptions/) and the fundamental reason that indoor ventilation standards cannot be directly applied to outdoor cooking installations.
+The combined effect of these four differences reduces outdoor capture efficiency from near-100% (indoor, properly sized hood) to approximately 50-70% (outdoor, same hood, same CFM) [RB-004 §4.3]. This is the central finding of [RB-004](/research/rb-004-indoor-vs-outdoor-assumptions/) and the fundamental reason that indoor ventilation standards cannot be directly applied to outdoor cooking installations.
 
 ## Implications for Hood Sizing
 

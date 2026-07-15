@@ -1,8 +1,9 @@
 ---
 title: "Does wind really affect an outdoor range hood?"
+description: "Yes — capture at a 48-inch island hood falls from about 97% in still air to 79% at 5 mph and roughly 24% at 10 mph. Wind matters more than CFM or hood size."
 summary: "Yes — at a 48-inch island hood, capture drops from about 97% in still air to 79% at 5 mph, and to roughly 24% at 10 mph. Wind is the single largest variable in outdoor hood performance, larger than CFM or hood size."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 2
 instruments: true
@@ -18,7 +19,7 @@ A buoyant plume rises straight up only in calm air. Any crosswind bends its path
 
 ## Why this catches people off guard
 
-Wind speeds that feel trivial standing next to a grill — a light, steady breeze — are not trivial at the top of the plume's rise. The instrument above shows the deflection trajectory directly: drag the wind control and watch how quickly the plume's path exits the hood's footprint. There's no "wind-rated" CFM number that solves this at open exposure; the geometry itself needs to change.
+Wind speeds that feel trivial standing next to a grill — a light, steady breeze — are not trivial at the top of the plume's rise. The instrument above shows the deflection trajectory directly: drag the wind control and watch how quickly the plume's path exits the hood's footprint. The full [Wind Deflection Trajectories](/tools/wind-deflection-trajectory/) tool isolates this same model at every standard mounting height, from 18 to 48 inches. There's no "wind-rated" CFM number that solves this at open exposure; the geometry itself needs to change.
 
 ## What actually helps
 

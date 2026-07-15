@@ -23,6 +23,18 @@ description: "Models the effect of ambient wind on buoyant cooking plume traject
 summary: "This paper is the most practically important analysis in the Outdoor Ventilation Standard for real-world outdoor installations. It extends the still-air plume characterization of RB-001 and the CFM analysis of RB-003 into the wind-exposed environment that defines outdoor cooking. Using Briggs bent-plume trajectory equations, Froude number analysis, and wind momentum ratio formulations, it quantifies lateral plume deflection at every combination of source type, mounting height, and wind speed from 0 to 15 mph. It identifies the critical wind speeds at which standard hoods lose reliable capture, quantifies the CFM and geometric compensation required, and delivers a four-tier wind exposure classification system with specific design recommendations per class."
 tags: ["wind effects", "plume physics", "crossflow"]
 categories: ["P1 — Core"]
+dataset:
+  name: "RB-006 Wind Exposure and Plume Deflection Tables"
+  description: "Tabulated model outputs from RB-006 quantifying how ambient wind affects buoyant cooking plume trajectory and hood capture: crosswind Froude-number regime classification, entrainment-coefficient adjustment factors by Froude number, terrain-based gust factors and turbulence intensity by terrain class, and near-ground wind-shear profiles by installation setting. Values are derived from Briggs plume-rise and crossflow jet theory, not field-measured wind data collected for this application."
+  csv: "/data/rb-006-crosswind-froude-number.csv"
+  csvDescription: "Table 3.3 (Gas Grill Medium, Q_c = 8.2 kW): crosswind Froude number Fr = U_w / u_0(z) at 5 mounting heights x 5 wind speeds — transcribed verbatim from the paper body."
+  variableMeasured:
+    - "Crosswind Froude number regime"
+    - "Entrainment coefficient adjustment factor (wind-affected)"
+    - "Terrain gust factor"
+    - "Turbulence intensity by terrain class"
+    - "Wind shear profile ratio by installation setting"
+  measurementTechnique: "Briggs plume-rise and crossflow jet-theory model output; not field-measured for this application"
 ---
 
 **Research Program:** Outdoor Ventilation Standard
@@ -591,7 +603,7 @@ The critical wind speed is the wind speed at which the plume centerline deflecti
 
 **Threshold 3 — 50% plume mass escape (unreliable capture).** The plume centerline is beyond the hood edge by approximately 1 * b_T. More than 50% of the plume mass is in the **Missed Plume Region**. The hood is functionally ineffective.
 
-The available overhang for each source type at each height is taken from the RB-002 recommended hood sizing (K = 1.70). The overhang on each side (OH) is listed in RB-002 Tables 3.6a through 3.6k.
+The available overhang for each source type at each height is taken from the RB-002 recommended hood sizing (base margin, K ≈ 1.38). The overhang on each side (OH) is listed in RB-002 Tables 3.6a through 3.6k.
 
 For the critical wind speed calculation, the deflection at which 25% escape occurs is approximately:
 
@@ -766,7 +778,7 @@ Based on the comprehensive analysis in Sections 3.2 through 3.7, the following f
 
 **Sheltered Class (< 3 mph at cooking height):**
 
-- Standard hood sizing per RB-002 recommended dimensions (K = 1.70)
+- Standard hood sizing per RB-002 recommended dimensions (base margin, K ≈ 1.38)
 - Standard CFM per RB-003 Table 3.8a (K_CFM = 3.0)
 - No wind-specific mitigation required
 - All mounting heights 18" to 36" are viable
@@ -1284,7 +1296,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 | 36" | 1.64 | 1.88 | 2.12 | 2.31 | 1.18 | 1.84 | 1.13 | 1.68 |
 | 48" | 1.49 | 1.71 | 1.93 | 2.10 | 1.07 | 1.67 | 1.02 | 1.53 |
 
-### A.3 Hood Overhang from RB-002 Tables 3.6a-k (K = 1.70)
+### A.3 Hood Overhang from RB-002 Tables 3.6a-k (K ≈ 1.38)
 
 | Source Type | OH at 18" | OH at 24" | OH at 30" | OH at 36" | OH at 48" |
 |---|---|---|---|---|---|

@@ -1,0 +1,42 @@
+source_type,q_c,wind_exposure_class,k_cfm,cfm_18in,cfm_24in,cfm_30in,cfm_36in,cfm_48in
+,kW,,dimensionless,CFM,CFM,CFM,CFM,CFM
+Gas Grill - Small,5.1,Sheltered,3.0,247,363,500,657,1037
+Gas Grill - Medium,8.2,Sheltered,3.0,312,448,609,792,1238
+Gas Grill - Large,12.3,Sheltered,3.0,388,544,727,937,1447
+Gas Grill - High-Output,16.4,Sheltered,3.0,456,628,830,1061,1623
+Charcoal Kettle,1.8,Sheltered,3.0,156,238,335,445,714
+Charcoal Kettle High,3.5,Sheltered,3.0,204,304,423,558,894
+Charcoal Kamado,3.3,Sheltered,3.0,198,295,412,543,870
+Wood-Fired,7.6,Sheltered,3.0,300,433,590,768,1203
+Wood-Fired Large,13.3,Sheltered,3.0,401,565,755,978,1513
+Pellet Smoker - Low,1.5,Sheltered,3.0,144,222,313,417,670
+Pellet Smoker - Medium,3.4,Sheltered,3.0,201,299,418,551,884
+Pellet Smoker - High,5.7,Sheltered,3.0,260,381,523,686,1080
+Gas Grill - Small,5.1,Moderate,3.68,303,445,613,805,1272
+Gas Grill - Medium,8.2,Moderate,3.68,383,550,747,972,1518
+Gas Grill - Large,12.3,Moderate,3.68,475,667,892,1150,1775
+Gas Grill - High-Output,16.4,Moderate,3.68,560,770,1019,1302,1991
+Charcoal Kettle,1.8,Moderate,3.68,191,292,411,546,876
+Charcoal Kettle High,3.5,Moderate,3.68,250,373,519,685,1097
+Charcoal Kamado,3.3,Moderate,3.68,243,362,505,666,1067
+Wood-Fired,7.6,Moderate,3.68,368,531,724,942,1476
+Wood-Fired Large,13.3,Moderate,3.68,492,693,926,1200,1856
+Pellet Smoker - Low,1.5,Moderate,3.68,177,272,384,511,822
+Pellet Smoker - Medium,3.4,Moderate,3.68,246,367,513,676,1084
+Pellet Smoker - High,5.7,Moderate,3.68,319,467,641,842,1325
+Gas Grill - Small,5.1,Exposed (no panels),5.75,473,695,959,1259,1989
+Gas Grill - Medium,8.2,Exposed (no panels),5.75,598,859,1169,1520,2373
+Gas Grill - Large,12.3,Exposed (no panels),5.75,743,1042,1394,1797,2774
+Gas Grill - High-Output,16.4,Exposed (no panels),5.75,875,1203,1591,2035,3112
+Charcoal Kettle,1.8,Exposed (no panels),5.75,299,456,643,854,1369
+Wood-Fired,7.6,Exposed (no panels),5.75,576,830,1132,1472,2306
+Pellet Smoker - Low,1.5,Exposed (no panels),5.75,276,426,600,799,1284
+Pellet Smoker - High,5.7,Exposed (no panels),5.75,499,730,1003,1316,2070
+Gas Grill - Small,5.1,Exposed (with side panels),4.14,340,501,691,907,1432
+Gas Grill - Medium,8.2,Exposed (with side panels),4.14,431,618,841,1094,1708
+Gas Grill - Large,12.3,Exposed (with side panels),4.14,535,750,1003,1294,1998
+Gas Grill - High-Output,16.4,Exposed (with side panels),4.14,630,866,1146,1466,2240
+Charcoal Kettle,1.8,Exposed (with side panels),4.14,215,328,463,615,986
+Wood-Fired,7.6,Exposed (with side panels),4.14,414,597,815,1060,1660
+Pellet Smoker - Low,1.5,Exposed (with side panels),4.14,199,306,432,575,924
+Pellet Smoker - High,5.7,Exposed (with side panels),4.14,359,526,722,947,1490

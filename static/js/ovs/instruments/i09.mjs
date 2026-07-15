@@ -15,10 +15,43 @@
 // brief — this is a deliberate visualization device, not a new physics
 // formula: nothing here recomputes what plumeStrength/plumeRadius already
 // compute.
+//
+// v2.1 (F2) adoption:
+//   - smoke: strength-scaled, per the plan. Rides the REAL w0 for the
+//     selected appliance (rise speed) and the real displayRiseIn, so the
+//     smoke's recycle plane matches the drawn envelope's top exactly.
+//     There is no hood/capture concept in this instrument at all — it
+//     isolates appliance heat output from hood geometry — so the smoke is
+//     given a deliberately oversized nominal aperture (NOMINAL_WIDTH_IN/
+//     NOMINAL_DEPTH_IN below) so every particle always registers as
+//     "captured" and none render ember-orange: there is no readout here
+//     an escape tint could agree or disagree with, so showing one would
+//     fabricate a capture story this instrument doesn't tell. This is the
+//     SHARED RULE for no-capture-concept instruments (i03 follows it too,
+//     same oversized values, since the F2 review's F-5 fix): never imply
+//     a capture verdict the page's physics doesn't compute. One known,
+//     cosmetic-only divergence: the drawn envelope's WIDTH is deliberately
+//     exaggerated by strengthScale beyond plumeRadius() (the visualization
+//     device described above), but smoke.mjs has no equivalent knob — the
+//     live smoke's lateral spread follows the real (unscaled)
+//     plumeRadius(z) at the real riseIn, so at the extremes (15k vs 120k
+//     BTU) the smoke will look narrower/wider than the exaggerated
+//     envelope outline it rides inside. That is a divergence between two
+//     decorative layers, not a physics disagreement — neither layer has a
+//     width/capture readout to contradict.
+//   - presets: four site-voice appliance scenarios.
+//   - verdict: SKIPPED, per the plan's explicit list — heat release rate
+//     is an input to hood/CFM sizing (see i02), not itself a graded
+//     compliance quantity.
+//   - drag: not assigned by the plan (segmented control only, no
+//     continuous handle to grab).
 
 import { createInstrument } from '../viz.mjs';
 import { plumeStrength } from '../physics/heat.mjs';
 import { plumeRadius } from '../physics/plume.mjs';
+
+const NOMINAL_WIDTH_IN = 4000; // deliberately oversized: see header note (no capture concept here)
+const NOMINAL_DEPTH_IN = 4000;
 
 const BASELINE_W0 = 400; // calibration amendment: plumeStrength(60000) === 400
 const DISPLAY_RISE_IN = 36; // envelope height at strengthScale = 1 (the baseline appliance)
@@ -80,6 +113,10 @@ export function mount(figureEl) {
     svg.appendChild(refs.envL);
     svg.appendChild(refs.envR);
     svg.appendChild(refs.envC);
+
+    // living-smoke layer mount — over the envelope (see header note).
+    refs.smokeMount = H.el('g', { class: 'ovs-i-smoke-mount' });
+    svg.appendChild(refs.smokeMount);
 
     refs.scaleNote = H.el('g');
     svg.appendChild(refs.scaleNote);
@@ -166,6 +203,32 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- living smoke: strength-scaled per the real w0/displayRiseIn for
+    //     the selected appliance (see header note re: nominal aperture). ----
+    smoke: (state) => {
+      const key = state['i09-appliance'];
+      const appliance = APPLIANCES.find((a) => a.value === key) || APPLIANCES[2];
+      const w0 = plumeStrength(appliance.btu);
+      const displayRiseIn = DISPLAY_RISE_IN * (w0 / BASELINE_W0);
+      return {
+        sourceX: GX, sourceY: GY, pxPerIn: PX_PER_IN,
+        widthIn: NOMINAL_WIDTH_IN, depthIn: NOMINAL_DEPTH_IN, mount: 'island',
+        riseIn: displayRiseIn,
+        windMph: 0, panels: 'none',
+        w0,
+      };
+    },
+
+    // --- story presets: four site-voice appliance scenarios. ---------------
+    presets: [
+      { id: 'weekend-portable', label: 'Weekend portable', state: { 'i09-appliance': 'portable15' } },
+      { id: 'family-3-burner', label: 'Family 3-burner', state: { 'i09-appliance': 'burner3-45' } },
+      { id: 'standard-4-burner', label: 'Standard 4-burner', state: { 'i09-appliance': 'burner4-60' } },
+      { id: 'pro-sear-station', label: 'Pro sear station', state: { 'i09-appliance': 'proSear120' } },
+    ],
+
+    // No spec.verdict — see the header comment.
   };
 
   createInstrument(container, spec);

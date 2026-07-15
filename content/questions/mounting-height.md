@@ -1,8 +1,9 @@
 ---
-title: "How high should an outdoor hood be mounted?"
+title: "How high should an outdoor range hood be above the grill?"
+description: "Plume velocity falls from about 317 fpm at 24 inches to 277 fpm at 36, so capture margin shrinks as the hood rises. 30 inches is a reasonable default."
 summary: "Centerline plume velocity drops from about 317 fpm at 24 inches to about 295 fpm at 30 inches and about 277 fpm at 36 inches — all comfortably above the 100 fpm wall and 150 fpm island capture-velocity thresholds, but the margin shrinks as height increases."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 6
 instruments: true
@@ -18,7 +19,7 @@ Mounting lower keeps velocity higher and gives wind less time to deflect the plu
 
 ## Why the margin, not just the minimum, matters
 
-A hood sized to just clear 150 fpm at 36 inches has far less room for error than one at 24 inches — a gusty day, a hotter-than-usual load, or a slightly undersized blower can push effective velocity below threshold with no more room to give. The instrument above traces centerline velocity continuously from grill surface to full rise; the two dashed reference lines mark the wall and island thresholds so the actual margin at any height is visible directly, not just implied by a single number.
+A hood sized to just clear 150 fpm at 36 inches has far less room for error than one at 24 inches — a gusty day, a hotter-than-usual load, or a slightly undersized blower can push effective velocity below threshold with no more room to give. The instrument above traces centerline velocity continuously from grill surface to full rise; the two dashed reference lines mark the wall and island thresholds so the actual margin at any height is visible directly, not just implied by a single number. The full [Velocity Decay Curves](/tools/velocity-decay-curves/) tool shows this same trace on its own page alongside the source-type comparisons.
 
 ## Practical guidance
 

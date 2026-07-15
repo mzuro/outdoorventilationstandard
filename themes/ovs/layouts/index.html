@@ -33,6 +33,7 @@
         <div class="ovs-ask-answer" id="ask-answer" role="region" aria-live="polite">
           <p id="ask-text"></p>
           <div class="ovs-ask-links" id="ask-links"></div>
+          <div class="ovs-ask-followups" id="ask-followups" style="display:none"></div>
           <p class="ovs-ask-source" id="ask-source"></p>
           <button type="button" class="ovs-ask-another" id="ask-another" style="display:none">Ask another question</button>
         </div>
@@ -40,7 +41,7 @@
           <div class="ovs-history-label">Recent questions</div>
           <div class="ovs-history-list" id="ask-history-list"></div>
         </div>
-        <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-size="invisible"></div>
+        <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAACcaq_joFScewE6d" data-appearance="interaction-only"></div>
       </div>
     </div>
 
@@ -221,15 +222,35 @@
   var historyEl = document.getElementById('ask-history');
   var historyList = document.getElementById('ask-history-list');
   var honey = document.getElementById('ask-honey');
+  var followupsEl = document.getElementById('ask-followups');
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* Section text from a citation (e.g. "3.3 Primary Answer...") ->
+     a short chip-sized fragment ("§3.3"), falling back to a truncated
+     version of the full section text when it doesn't start with a
+     clause number. */
+  function shortSection(section) {
+    if (!section) return '';
+    var m = /^([\d.]+)/.exec(section);
+    if (m) return '§' + m[1];
+    return section.length > 24 ? section.slice(0, 24) + '…' : section;
+  }
 
   /* ---------- Turnstile: render the invisible widget once the API loads ---------- */
   var turnstileToken = null;
   var turnstileWidgetId = null;
   function initTurnstile() {
     if (typeof turnstile !== 'undefined' && !turnstileWidgetId) {
+      /* 'invisible' is not a valid Turnstile size (normal/flexible/compact);
+         invisible behavior = appearance:'interaction-only'. */
       turnstileWidgetId = turnstile.render('#turnstile-container', {
         sitekey: '0x4AAAAAACcaq_joFScewE6d',
-        size: 'invisible',
+        appearance: 'interaction-only',
         callback: function(token) { turnstileToken = token; }
       });
     }
@@ -278,16 +299,44 @@
     input.focus();
   });
 
-  /* ---------- answer links, rendered as citation chips, deduped by URL ---------- */
-  function buildLinks(links) {
+  /* ---------- answer citations, rendered as RB-chips with section anchors,
+     deduped by URL. Prefers the structured `citations` array (AI #6:
+     {rb, section, url}); falls back to the plain `links` shape ({label,
+     url}) for a cached/older response or a graceful-failure fallback. ---------- */
+  function buildLinks(citations, links) {
+    var items = (citations && citations.length) ? citations : (links || []);
     var seen = {};
     var html = '';
-    for (var i = 0; i < links.length; i++) {
-      if (!links[i] || seen[links[i].url]) continue;
-      seen[links[i].url] = true;
-      html += '<a class="ovs-chip ovs-chip--accent" href="' + links[i].url + '">' + links[i].label + '</a>';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (!it || !it.url || seen[it.url]) continue;
+      seen[it.url] = true;
+      var label = it.label || (it.rb ? (it.section ? it.rb + ' ' + shortSection(it.section) : it.rb) : it.url);
+      html += '<a class="ovs-chip ovs-chip--accent" href="' + encodeURI(it.url) + '">' + escapeHtml(label) + '</a>';
     }
     linksEl.innerHTML = html;
+  }
+
+  /* ---------- three tappable follow-up chips; clicking one refills and re-submits the ask box ---------- */
+  function buildFollowups(followups) {
+    if (!followups || !followups.length) {
+      followupsEl.innerHTML = '';
+      followupsEl.style.display = 'none';
+      return;
+    }
+    var html = '<span class="ovs-followups-label">Ask next:</span>';
+    for (var i = 0; i < followups.length; i++) {
+      html += '<button type="button" class="ovs-followup-chip">' + escapeHtml(followups[i]) + '</button>';
+    }
+    followupsEl.innerHTML = html;
+    followupsEl.style.display = '';
+    var btns = followupsEl.querySelectorAll('.ovs-followup-chip');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        input.value = this.textContent;
+        askQuestion();
+      });
+    }
   }
 
   function reveal() {
@@ -306,6 +355,7 @@
 
     textEl.innerHTML = '<span class="ovs-ask-loading"><span class="ovs-spinner"></span> Searching research...</span>';
     linksEl.innerHTML = '';
+    buildFollowups([]);
     sourceEl.textContent = '';
     anotherBtn.style.display = 'none';
     reveal();
@@ -325,17 +375,19 @@
     .then(function(data) {
       if (data.error) throw new Error(data.error);
       textEl.textContent = data.answer;
-      buildLinks(data.links || []);
+      buildLinks(data.citations, data.links || []);
+      buildFollowups(data.followups || []);
       sourceEl.textContent = data.off_topic ? '' : 'Answered by AI from site research';
       anotherBtn.style.display = '';
       submitBtn.disabled = false;
     })
     .catch(function() {
       textEl.textContent = 'AI search is temporarily unavailable. Try browsing the research library or instruments below.';
-      buildLinks([
+      buildLinks(null, [
         { url: '/research/', label: 'Browse all research' },
         { url: '/tools/', label: 'Explore instruments' }
       ]);
+      buildFollowups([]);
       anotherBtn.style.display = '';
       submitBtn.disabled = false;
     })

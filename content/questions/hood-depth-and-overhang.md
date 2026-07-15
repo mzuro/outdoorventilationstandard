@@ -1,8 +1,9 @@
 ---
-title: "How much overhang does an outdoor hood need?"
+title: "How far should an outdoor hood extend past the grill?"
+description: "The plume is already about 28 inches wide at the grill and 34.6 inches by a 30-inch mounting height. Overhang exists to stay ahead of that growth on every side."
 summary: "The plume itself is already about 28 inches wide at the grill surface and grows to roughly 34.6 inches wide by the time it reaches a 30-inch mounting height — wider than most single-grill cooking surfaces before it even leaves the near field. The hood has to overhang the grill on every side to stay ahead of that growth."
 date: 2026-07-11
-lastmod: 2026-07-11
+lastmod: 2026-07-15
 reviewed: true
 weight: 4
 instruments: true
@@ -15,7 +16,7 @@ A cooking plume starts about 14 inches in radius at the grill surface — 28 inc
 
 ## Overhang isn't cosmetic
 
-Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower. The instrument above is set to a 54-inch island hood; note how much of that width is overhang beyond a typical grill footprint rather than grill coverage itself.
+Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower. The instrument above is set to a 54-inch island hood; note how much of that width is overhang beyond a typical grill footprint rather than grill coverage itself. Open the full [Capture Demonstrator](/tools/capture-demonstrator/) to move mounting height, width, and wind together and watch the capture boundary shift.
 
 ## Width matters less than people expect — at fixed wind
 
@@ -27,4 +28,4 @@ If width isn't the lever, wind exposure and mounting height are. A hood that's a
 
 ## Practical takeaway
 
-Size overhang to the plume's growth at your actual mounting height, not to the grill's dimensions alone — then spend any remaining budget on wind mitigation rather than extra width.
+Size overhang to the plume's growth at your actual mounting height, not to the grill's dimensions alone — then spend any remaining budget on wind mitigation rather than extra width. The side-to-side width half of the decision is covered in [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).

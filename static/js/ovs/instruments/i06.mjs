@@ -12,6 +12,18 @@
 // to the DISTANCE control; two dashed capture-plane-style reference lines
 // mark the wall (100 fpm) and island (150 fpm) minimum capture-velocity
 // thresholds — scene lines only, per the brief, not readouts.
+//
+// v2.1 (F2) adoption:
+//   - drag: the tracer dot itself, along its curve's x-axis (distance).
+//     There is no keyword in the engine's DRAG_SELECTORS map for a bare
+//     tracer, so this uses viz.mjs's documented raw-selector fallback
+//     (`DRAG_SELECTORS[d.target] || d.target`) with a custom class.
+//   - presets: four site-voice distances.
+//   - verdict: SKIPPED, per the plan's explicit list — a velocity reading
+//     at an arbitrary height has no PASS/FAIL threshold of its own (the
+//     wall/island lines drawn here are reference context, not a graded
+//     readout).
+//   - smoke: not assigned by the plan.
 
 import { createInstrument } from '../viz.mjs';
 import { centerlineVelocity } from '../physics/plume.mjs';
@@ -94,6 +106,13 @@ export function mount(figureEl) {
     svg.appendChild(refs.tracer);
     refs.dimLabel = H.el('g');
     svg.appendChild(refs.dimLabel);
+
+    // drag hit strip, re-measured live around the tracer — full chart
+    // height so the whole vertical curve stays grabbable at any distance.
+    refs.dragTracer = H.el('rect', {
+      class: 'ovs-i-drag-tracer', x: 0, y: Y_TOP, width: 44, height: Y_BOTTOM - Y_TOP, fill: 'transparent',
+    });
+    svg.appendChild(refs.dragTracer);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -134,6 +153,8 @@ export function mount(figureEl) {
     replaceChildren(refs.dimLabel, H.dimensionLine(
       X0, ty, tx, ty, `${Math.round(velocity)} fpm at ${Math.round(distanceIn)}″`,
     ));
+
+    refs.dragTracer.setAttribute('x', (tx - 22).toFixed(1));
   }
 
   const spec = {
@@ -147,6 +168,31 @@ export function mount(figureEl) {
     ],
     scene: buildScene,
     update,
+
+    // --- direct manipulation: grab the tracer, 2in step to match the
+    //     control, clamped to the chart's 6-60in range. ---------------------
+    drag: [
+      {
+        target: '.ovs-i-drag-tracer', control: 'i06-distance', axis: 'x', cursor: 'ew-resize',
+        toValue: (x) => Math.max(6, Math.min(MAX_Z_IN, Math.round((((x - X0) / (X1 - X0)) * MAX_Z_IN) / 2) * 2)),
+        // W5-T3 visible grip: ride the tracer dot on the curve (same xFor/
+        // yFor/centerlineVelocity update() positions the dot with).
+        grip: (st) => {
+          const z = Math.max(6, Math.min(MAX_Z_IN, st['i06-distance']));
+          return { x: xFor(z), y: yFor(centerlineVelocity(z)) };
+        },
+      },
+    ],
+
+    // --- story presets: four site-voice distances. --------------------------
+    presets: [
+      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i06-distance': 6 } },
+      { id: 'mid-plume', label: 'Mid-plume', state: { 'i06-distance': 24 } },
+      { id: 'near-a-wall-hood', label: 'Near a wall hood', state: { 'i06-distance': 42 } },
+      { id: 'near-a-tall-island-hood', label: 'Near a tall island hood', state: { 'i06-distance': 60 } },
+    ],
+
+    // No spec.verdict — see the header comment.
   };
 
   createInstrument(container, spec);

@@ -48,6 +48,26 @@
   --plume: rgba(23, 71, 196, 0.1);
   --plume-edge: #1747c4;
 
+  /* living smoke (v2.1) — --smoke is captured smoke fading into the hood;
+     --smoke-escape is the ember-orange tint on parcels whose trajectory
+     exits the aperture.
+
+     Contrast (deliberate, per F1 review): 2.2:1 / 2.8:1 against the light
+     surface is the token's OWN swatch ratio, measured BEFORE smoke.mjs's
+     draw()-time opacity falloff (fadeIn * (1 - frac*0.85) * 0.5 — see the
+     op calculation in smoke.mjs draw()); the actual rendered particles sit
+     lower still, around 1.5:1 at typical mid-plume opacity. Both figures
+     are BELOW the 3:1 WCAG 1.4.11 guideline for meaningful graphics. That
+     is acceptable because the particles are decorative REDUNDANCY:
+     every physical quantity they express is also presented as text (the
+     PLUME CAPTURE / DEFLECTION / EFFECTIVE WIND readouts) and as
+     higher-contrast graphics (the status-tinted plume fill and the
+     --faint escape wisps). Pushing smoke to 3:1 would need near-opaque
+     dark dots, which reads as noise, not smoke. Do not treat these two
+     tokens as "contrast-checked" for standalone meaning-bearing use. */
+  --smoke: rgba(88, 96, 108, 0.5);
+  --smoke-escape: rgba(198, 88, 20, 0.72);
+
   /* type stacks — system fonts only, no remote requests */
   --sans:
     "Helvetica Neue", Helvetica, "Inter", -apple-system, BlinkMacSystemFont,
@@ -82,5 +102,8 @@
     --figure-line: #aab2bd;
     --plume: rgba(143, 176, 255, 0.12);
     --plume-edge: #8fb0ff;
+
+    --smoke: rgba(178, 186, 198, 0.42);
+    --smoke-escape: rgba(255, 148, 68, 0.66);
   }
 }
