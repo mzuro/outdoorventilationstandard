@@ -2,7 +2,7 @@
 title: "Is it safe to grill under a covered patio?"
 summary: "Only conditionally. A roof removes the open-sky dilution that makes open-air grilling forgiving — whatever the hood does not capture collects under the roof instead of dispersing. A correctly sized hood controls most of the plume at the source, but it does not make a covered space equivalent to open air; your appliance manual and local code authority set the binding rules."
 date: 2026-07-12
-lastmod: 2026-07-12
+lastmod: 2026-07-15
 reviewed: true
 weight: 7
 draft: true

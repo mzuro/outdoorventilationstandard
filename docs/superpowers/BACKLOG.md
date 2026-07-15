@@ -32,6 +32,8 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 ## Gated on Mark (not agent-actionable)
 
 - **W4 covered-patio trio publish** — keyword strategy's single biggest opportunity; pages written, `draft: true`, awaiting Mark's review (7 flagged CO/field items in `.superpowers/sdd/task-w4-report.md`).
+- **G3 clearance page publish checklist** (from W5 fix pass, `.superpowers/sdd/task-w5qp-fix-report.md`): when Mark approves G3 (hood-clearance-to-combustibles), flip BOTH `draft: false` AND `reviewed: true` (reviewed is deliberately false until the review happens), ship the W4 trio first or together (G3 body-links is-it-safe), and add the deferred reciprocal body link from the published mounting-height page to G3 (cannot be added earlier — question-page body links are not draft-gated).
+- **G6 grease page YMYL classification ratify** — W5 review flagged the fire section; fix pass kept G6 published with the fire section scoped to paper-attributed physics (BACKLOG rule 4 gates only G3 in the recorded W5 decision). Mark to ratify or draft-gate.
 - GSC DNS TXT verification → then re-rank this backlog against real query data (keyword report §7.1).
 - Dataset CSV license choice; TURNSTILE_SECRET confirmation for /api/explain.
 

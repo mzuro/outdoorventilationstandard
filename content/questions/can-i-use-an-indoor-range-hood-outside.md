@@ -22,12 +22,12 @@ The plume coming off the grill doesn't know whether it's indoors or outdoors —
 The familiar indoor sizing rules understate outdoor requirements systematically, not marginally:
 
 - **CFM.** The indoor ASHRAE BTU method assigns 1 CFM per 100 BTU/hr — 600 CFM for a 60,000 BTU grill (RB-008 §2.3). The physics-based outdoor analysis shows that same grill at a 30-inch mount needs 727 CFM even sheltered and 892 CFM in moderate exposure — the indoor rule underspecifies by 21% to 49% (RB-008 §4.3), and across indoor exhaust-rate tables generally the shortfall is 1.7-2.5x (RB-004 §3.4, §4.1). See [what CFM you need](/questions/what-cfm-do-i-need/) for outdoor-derived figures.
-- **Capture ratings.** A UL 710 capture rating is measured in an enclosed test room with all six indoor assists present; a hood rated at 85% there may achieve only 50-65% first-pass capture outdoors, depending on wind and installation geometry (RB-004 §3.3.2).
+- **Capture ratings.** A UL 710 capture rating is measured in an enclosed test room with all six indoor assists present; a hood rated at 85% there may achieve only 50-65% first-pass capture outdoors, depending on wind and installation geometry (RB-004 §3.3.1-§3.3.2).
 - **Overhang.** Indoor practice sizes overhang at 6-9 inches per side; outdoor conditions call for 15-26 inches per side because the open-air plume spreads unconfined and wind deflects it (RB-004 §4.2). See [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).
 
-## Heat at the hood face is harsher than indoor duty assumes
+## Heat at the hood face is a materials question the spec sheet may not answer
 
-Grills radiate far more heat into the hood than indoor ranges do. At a 30-inch mounting height the modeled peak hood-surface temperature runs roughly 95-178&nbsp;°C depending on the source (RB-012 §3.7). Against the material ratings in RB-012 §3.4, standard powder coatings (rated around 175&nbsp;°C) and aluminum (recommended maximum 150&nbsp;°C) are marginal-to-failing over hotter sources at low mounts, while 304 stainless steel and copper are the only common hood materials the paper rates unconditionally safe for all sources at all mounting heights (RB-012 §4.2). Many indoor hoods use exactly the materials that sit on the wrong side of that line.
+At a 30-inch mounting height over an outdoor source, the modeled peak hood-surface temperature runs roughly 95-178&nbsp;°C depending on the source (RB-012 §3.7). Against the material ratings in RB-012 §3.4, standard powder coatings (rated around 175&nbsp;°C) and aluminum (recommended maximum 150&nbsp;°C) are marginal-to-failing over hotter sources at low mounts, while 304 stainless steel and copper are the only common hood materials the paper rates unconditionally safe for all sources at all mounting heights (RB-012 §4.2). The papers do not survey what indoor hood products are made of — but whether a given hood's coating or alloy sits on the wrong side of that line is precisely the question an indoor listing never had to ask, and an indoor spec sheet may not answer.
 
 ## What this page does not cover
 

@@ -20,7 +20,7 @@ Side panels don't block the plume — they block the wind that's deflecting it. 
 
 ## This is the cheapest fix for a windy site
 
-Unlike overhang or mounting height, side panels can usually be added after installation. For a site that's already built and underperforming in wind, panels are very often the highest-leverage change available — more effective than a bigger blower, and far less disruptive than remounting the hood lower or rebuilding the structure to add a back wall.
+Unlike width and overhang — which are design-locked at installation (see [what size hood your grill needs](/questions/what-size-hood-for-my-grill/)) — side panels can usually be added after the fact. For a site that's already built and underperforming in wind, panels are very often the highest-leverage change available — more effective than a bigger blower, and far less disruptive than remounting the hood lower or rebuilding the structure to add a back wall.
 
 ## One panel vs. two
 

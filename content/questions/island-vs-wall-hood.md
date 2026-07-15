@@ -23,7 +23,7 @@ Wall hoods in a standard outdoor lineup run 36 inches deep; island hoods run 40 
 
 ## When island still makes sense
 
-Island installs are often unavoidable — outdoor kitchens built around a peninsula or bar have no wall to mount against. In that case, treat wind mitigation as mandatory rather than optional: side panels recover most of what the missing wall would have provided (see the side-panel question), and a lower, wider hood reduces deflection distance before it becomes a problem.
+Island installs are often unavoidable — outdoor kitchens built around a peninsula or bar have no wall to mount against. In that case, treat wind mitigation as mandatory rather than optional: side panels recover most of what the missing wall would have provided (see [do side panels work](/questions/do-side-panels-work/)), and a lower, wider hood reduces deflection distance before it becomes a problem — sizing that width is covered in [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).
 
 ## Bottom line
 
