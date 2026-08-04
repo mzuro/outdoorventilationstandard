@@ -16,7 +16,7 @@ A 48-inch wall-mounted hood over a 60,000 BTU grill needs at least **1,200 CFM**
 
 ## Why island installs need more
 
-The same 48-inch hood on an island needs about **1,450 CFM minimum** and **1,800 CFM recommended** — roughly 20% more than the wall equivalent, the island multiplier established in RB-008. A wall behind the grill blocks one whole side of ambient infiltration and one whole wind direction for free; an island hood, open on all four sides, has to do that work with airflow alone. The instrument above is set to the wall scenario — switch its mount control to island to see the CFM figures move, or open the full [CFM Sizing Calculator](/tools/cfm-calculator/) to run your own width, mount, exposure, and BTU combination.
+The same 48-inch hood on an island needs about **1,450 CFM minimum** and **1,800 CFM recommended** — roughly 20% more than the wall equivalent, the island multiplier established in RB-008. A wall behind the grill blocks one whole side of ambient infiltration and one whole wind direction for free; an island hood, open on all four sides, has to do that work with airflow alone. The instrument above is set to the wall scenario — switch its mount control to island to see the CFM figures move, or open the full [Outdoor Range Hood CFM Calculator](/tools/cfm-calculator/) to run your own width, mount, exposure, and BTU combination.
 
 ## Adjusting for BTU
 

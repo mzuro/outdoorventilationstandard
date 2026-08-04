@@ -2042,8 +2042,10 @@ a.ovs-chip:hover {
    shrink and its lines must wrap to a narrow measure or it papers over
    the entire drawing (found in the W5-T3 verification screenshots). The
    paired --small stamps (i05) tighten further so left+right clear each
-   other over the mini-scenes. */
-@media (max-width: 640px) {
+   other over the mini-scenes. Breakpoint widened 640->760 to match the
+   sticky-strip breakpoint: the widened stamp clause text collided in the
+   641-745px band (UX review O8) until the compact rules covered it too. */
+@media (max-width: 760px) {
   .ovs-i-stamp {
     bottom: 10px;
     right: 10px;

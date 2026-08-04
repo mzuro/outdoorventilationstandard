@@ -16,7 +16,7 @@ On a 48-inch island hood at a 30-inch mounting height in an 8 mph breeze, captur
 
 ## Why panels are so effective
 
-Side panels don't block the plume — they block the wind that's deflecting it. A panel on one side cuts the wind the plume actually experiences to about 65% of the ambient speed; panels on both sides cut it to about 40%. Less effective wind means less deflection at every height the plume has to rise through before reaching the hood, which is why the capture gain compounds rather than just adding up linearly. The instrument above is set to the island scenario with no panels by default — toggle the panel controls to see the same 8 mph breeze produce a dramatically different result. The full [Side Panel Effectiveness](/tools/side-panel-effectiveness/) tool compares the with/without capture gap across the whole wind range.
+A side panel is really a wind guard: it doesn't block the plume — it blocks the wind that's deflecting it. A panel on one side cuts the wind the plume actually experiences to about 65% of the ambient speed; panels on both sides cut it to about 40%. Less effective wind means less deflection at every height the plume has to rise through before reaching the hood, which is why the capture gain compounds rather than just adding up linearly. The instrument above is set to the island scenario with no panels by default — toggle the panel controls to see the same 8 mph breeze produce a dramatically different result. The full [Side Panel Effectiveness](/tools/side-panel-effectiveness/) tool compares the with/without capture gap across the whole wind range.
 
 ## This is the cheapest fix for a windy site
 

@@ -17,7 +17,7 @@ A 48-inch island hood at a standard 30-inch mounting height captures about **97%
 
 A buoyant plume rises straight up only in calm air. Any crosswind bends its path sideways as it climbs, and the higher it has to rise before reaching the hood, the more time wind has to work on it. At a 30-inch rise, a 5 mph breeze deflects the plume about 13 inches sideways — the RB-006 wind-coupling coefficient applied to the plume's rise. That's roughly a third of the depth of a typical island hood, and by 10 mph the deflection doubles past the hood's downwind edge — which is why capture falls off so sharply between 0 and 10 mph rather than declining gradually.
 
-## Why this catches people off guard
+## Why smoke escapes on a breezy day
 
 Wind speeds that feel trivial standing next to a grill — a light, steady breeze — are not trivial at the top of the plume's rise. The instrument above shows the deflection trajectory directly: drag the wind control and watch how quickly the plume's path exits the hood's footprint. The full [Wind Deflection Trajectories](/tools/wind-deflection-trajectory/) tool isolates this same model at every standard mounting height, from 18 to 48 inches. There's no "wind-rated" CFM number that solves this at open exposure; the geometry itself needs to change.
 
