@@ -58,7 +58,7 @@ The demonstrator combines three results from the research program into a single 
 2. **Hood geometry and capture** — the Gaussian capture-fraction model from [RB-005](/research/rb-005-hood-geometry-capture/), which determines what fraction of that expanded plume the hood face actually intercepts.
 3. **Wind deflection** — the crosswind integrator from [RB-006](/research/rb-006-wind-interaction-crossflow/), which bends the plume trajectory before it reaches the capture plane.
 
-Default preset is a 48-inch island installation (`island-48`) — no wall, no side panels, so wind sensitivity is at its maximum. This is illustrative, not a design tool: it does not account for burner-specific heat release rate, so it should not be used to size a real installation. Use the [CFM Sizing Calculator](/tools/cfm-calculator/) for that.
+Default preset is a 48-inch island installation (`island-48`) — no wall, no side panels, so wind sensitivity is at its maximum. This is illustrative, not a design tool: it does not account for burner-specific heat release rate, so it should not be used to size a real installation. Use the [Outdoor Range Hood CFM Calculator](/tools/cfm-calculator/) for that.
 
 ## Source Papers
 
