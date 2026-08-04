@@ -30,7 +30,11 @@
 {{- $section := .Section }}
 {{- $orgID := printf "%s#organization" $baseURL }}
 {{- $personID := printf "%sabout/reviewer/#person" $baseURL }}
-{{- $orgRef := dict "@type" "Organization" "@id" $orgID }}
+{{- /* Org reference carries name+url inline, not just @id: Google's Dataset
+   validator wants creator.name/url present on the node itself and does not
+   resolve the @id to the Organization defined elsewhere on the page (GSC
+   WNC-10030322). Harmless/valid for the author/publisher/worksFor refs too. */}}
+{{- $orgRef := dict "@type" "Organization" "@id" $orgID "name" $siteName "url" $baseURL }}
 {{- $personRef := dict "@type" "Person" "@id" $personID }}
 
 {{- /* ---------- Organization (full node, home page only) ----------
