@@ -10,6 +10,11 @@
 //   spec.drag[]         -> direct manipulation of scene handles
 //   spec.presets[]      -> one-tap story chips (animated via the same tweens)
 //   spec.verdict(state, physics) -> PASS/MARGINAL/FAIL rubber-stamp on settle
+//   control.type: 'number' -> opt-in optional numeric entry alongside
+//     'range'/'segmented' (instant-commit like segmented; no tween, no
+//     bubble — the input itself shows the typed value; empty = null, so an
+//     instrument can offer an optional user-entered figure to grade
+//     without requiring one)
 
 import { createSmokeField } from './smoke.mjs';
 
@@ -178,6 +183,10 @@ function makeControl(control) {
     output.className = 'ovs-i-bubble';
     output.setAttribute('for', control.id);
     label.appendChild(output);
+  } else if (control.type === 'number') {
+    // Single input, same as 'range' — `for` links straight to the id. No
+    // bubble: the typed value is already visible in the input itself.
+    label.setAttribute('for', control.id);
   }
   wrap.appendChild(label);
 
@@ -238,6 +247,21 @@ function makeControl(control) {
     wrap.appendChild(group);
     bag.radios = radios;
     bag.group = group;
+  } else if (control.type === 'number') {
+    // Optional user-entered figure (e.g. i02's "rated CFM" checked against
+    // its computed bands) — a plain numeric input, no live-region bubble
+    // and no tween: it commits instantly like a segmented control.
+    input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'ovs-i-number';
+    input.id = control.id;
+    if (control.min != null) input.min = String(control.min);
+    if (control.max != null) input.max = String(control.max);
+    if (control.step != null) input.step = String(control.step);
+    if (control.value != null) input.value = String(control.value);
+    if (control.placeholder) input.placeholder = control.placeholder;
+    wrap.appendChild(input);
+    bag.input = input;
   }
 
   return bag;
@@ -316,6 +340,19 @@ export function createInstrument(rootEl, spec) {
         radio.addEventListener('change', handler);
         listeners.push({ target: radio, type: 'change', handler });
       }
+    } else if (c.type === 'number') {
+      // Optional field: empty -> null (the instrument must work exactly as
+      // it does with the field untouched). Ignore mid-typing invalid states
+      // (e.g. a lone "-" or ".") rather than committing NaN.
+      const handler = () => {
+        const raw = bag.input.value.trim();
+        if (raw === '') { handleChange(c.id, null); return; }
+        const value = Number(raw);
+        if (!Number.isFinite(value)) return;
+        handleChange(c.id, value);
+      };
+      bag.input.addEventListener('input', handler);
+      listeners.push({ target: bag.input, type: 'input', handler });
     }
   }
   article.appendChild(fieldset);
@@ -846,6 +883,11 @@ export function createInstrument(rootEl, spec) {
       const bag = controlBags.get(id);
       if (bag && bag.radios) {
         for (const radio of bag.radios) radio.checked = radio.value === String(value);
+      } else if (bag && bag.input) {
+        // Parity with the range/segmented branches: a programmatic .set()
+        // must not leave the visible <input> stale (e.g. a preset or test
+        // clearing a number control back to null).
+        bag.input.value = value == null ? '' : String(value);
       }
     }
     handleChange(id, value);

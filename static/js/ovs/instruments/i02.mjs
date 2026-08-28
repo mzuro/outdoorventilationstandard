@@ -22,24 +22,25 @@
 //     bands exclusively through requiredCfm().
 //   - presets: four site-voice scenarios landing exactly on their control
 //     values.
-//   - verdict: SKIPPED, documented. NOTE: this is a deliberate DEVIATION
-//     from the plan (docs/superpowers/plans/2026-07-12-v2.1-fun-physics.md
-//     lists i02 among the verdict instruments: "verdict: i01/i02/i05/i07/
-//     i08"). The deviation is the implementer's own call, on these merits:
-//     this instrument has no "installed/actual CFM" control — only the
-//     three physics bands (minimum, recommended, high-wind) computed FOR
-//     the configured hood. A PASS/FAIL stamp needs an actual airflow to
-//     grade against those bands, and every framing available from the
-//     current control set would be untruthful: grading the tool's own
-//     recommended output against its own recommended band is a tautology
-//     (always PASS); assuming the user's blower delivers the minimum (or
-//     any other number) fabricates an input the user never supplied. Both
-//     are less truthful than presenting the three bands as-is, which is
-//     already the complete, honest answer this instrument gives — so no
-//     spec.verdict is wired here. A non-tautological verdict would need a
-//     new user-entered "rated CFM" control graded on the recommended-met
-//     basis; that is a design change deferred to a future task, not
-//     something this rollout invents.
+//   - verdict: ADDED (this task; was previously SKIPPED — see git history
+//     for the original deferral note). This instrument still has no
+//     "installed/actual CFM" reading of its own — only the three physics
+//     bands (minimum, recommended, high-wind) computed FOR the configured
+//     hood. That's still true, and it's still why the verdict is NOT
+//     wired against the tool's own output: grading requiredCfm()'s
+//     recommended figure against its own recommended band would be a
+//     tautology (always PASS), and assuming a blower value the user never
+//     supplied would fabricate an input. Neither is honest. What changed:
+//     an optional "HOOD'S RATED CFM" control (its own "CHECK A HOOD"
+//     section, separate from the WIDTH/MOUNT/EXPOSURE/BTU spec inputs)
+//     lets a visitor type their candidate hood's own rated CFM — a real
+//     number they supplied, not one this tool invented — and spec.verdict
+//     grades THAT number against the already-computed bands. Left empty
+//     (the default), the field commits nothing and the stamp stays
+//     hidden: the instrument behaves exactly as it always has, three bars
+//     and no stamp. See the comment above spec.verdict below for why the
+//     PASS/MARGINAL/FAIL cut itself is this instrument's own comparison
+//     convention, not an RB-008 grading rubric.
 //   - smoke: not assigned to this instrument by the plan (it has no plume
 //     elevation to visualize).
 
@@ -52,6 +53,20 @@ const AXIS_MAX_CFM = 3500;
 // Local formatter (brief: extend fmt ONLY here, not in the engine):
 // 60000 -> "60k BTU".
 const fmtBtu = (btu) => `${Math.round(btu / 1000)}k BTU`;
+
+/**
+ * Grade a user-entered "rated CFM" against this instrument's own computed
+ * bands. Pure — no DOM, mirrors viz.mjs's gradeCapture (tested directly,
+ * see tests/i02.test.mjs). Boundaries inclusive on the upper side, same
+ * convention as gradeCapture: >= recommended -> PASS, >= minimum ->
+ * MARGINAL, else FAIL. `bands` is exactly what requiredCfm() returns —
+ * this function does no physics of its own, only compares.
+ */
+export function gradeRatedCfm(ratedCfm, bands) {
+  if (ratedCfm >= bands.recommended) return { grade: 'PASS' };
+  if (ratedCfm >= bands.minimum) return { grade: 'MARGINAL' };
+  return { grade: 'FAIL' };
+}
 
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i02Mounted === '1') return;
@@ -174,6 +189,11 @@ export function mount(figureEl) {
     setReadout('minimum', bands.minimum);
     setReadout('highWind', bands.highWind);
 
+    // expose physics to the engine's verdict stamp (spec.verdict) — same
+    // pattern as i01.mjs: hand over what update() already computed instead
+    // of spec.verdict recomputing it.
+    ctx.physics = bands;
+
     for (const [key, row] of Object.entries(refs.rows)) {
       const cfm = bands[key];
       const x = xFor(cfm);
@@ -217,14 +237,26 @@ export function mount(figureEl) {
         ],
       },
       { id: 'i02-btu', type: 'range', label: 'BURNER RATING', min: 30000, max: 150000, step: 10000, value: 60000 },
+      // Optional, separate from the four spec inputs above: does not drive
+      // requiredCfm() at all (it isn't read anywhere in update()'s bands
+      // computation) — it is only compared against the bands once typed.
+      // value: null so the instrument opens with the field empty and no
+      // stamp, matching this instrument's pre-existing behavior exactly.
+      // Pulled into its own "CHECK A HOOD" <fieldset> post-mount below so
+      // it never reads as a fifth required spec control.
+      {
+        id: 'i02-rated', type: 'number', label: "HOOD'S RATED CFM", value: null,
+        min: 0, step: 25, placeholder: 'e.g. 1500',
+      },
     ],
     readouts: [
       { id: 'recommended', label: 'RECOMMENDED', format: 'cfm', hero: true },
       { id: 'minimum', label: 'MINIMUM', format: 'cfm' },
       { id: 'highWind', label: 'HIGH-WIND', format: 'cfm' },
     ],
-    // W5-T2 sticky strip: hero + minimum (no verdict on this instrument —
-    // see the header comment). Engine copies values verbatim.
+    // W5-T2 sticky strip: hero + minimum, plus the verdict grade (added
+    // automatically by the engine whenever spec.verdict is a function).
+    // Engine copies values verbatim.
     stickyReadout: ['recommended', 'minimum'],
     scene: buildScene,
     update,
@@ -247,8 +279,53 @@ export function mount(figureEl) {
       { id: 'pro-outdoor-kitchen', label: 'Pro outdoor kitchen', state: { 'i02-width': 72, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 120000 } },
     ],
 
-    // No spec.verdict: see the header comment — this instrument has no
-    // installed/actual-CFM input to grade a stamp against.
+    // --- verdict stamp: grades the visitor's OWN typed "rated CFM" against
+    //     this instrument's already-computed bands (>= recommended PASS,
+    //     >= minimum MARGINAL, else FAIL — see gradeRatedCfm above). This
+    //     PASS/MARGINAL/FAIL cut is this instrument's MODEL CRITERION, not
+    //     an RB-008 grading rubric: RB-008 defines the minimum/recommended/
+    //     high-wind CFM figures themselves (requiredCfm(), content/research/
+    //     rb-008-*.md), but the paper does not define a scale for comparing
+    //     an arbitrary rated-CFM number against those figures — that
+    //     recommended-met/minimum-met split is this site's own comparison
+    //     convention, exactly the same "model criterion, cite the data not
+    //     a nonexistent rubric" pattern i01.mjs uses for its capture
+    //     thresholds (see the comment above i01's own verdict field). The
+    //     stamp never validates, certifies, or recommends a product — it
+    //     only compares the number the visitor typed to the bands already
+    //     on screen, and the engine's standard "Grades apply to the model
+    //     configuration, not to any product." footnote applies here too.
+    //     Returns { grade: null } (stamp hidden — see updateVerdict() in
+    //     viz.mjs) whenever the optional field is empty or not a finite,
+    //     positive number, so with the field untouched the three bars and
+    //     their readouts are computed exactly as before and no PASS/
+    //     MARGINAL/FAIL stamp ever appears. (The "CHECK A HOOD" input box
+    //     and the engine's standard grading footnote DO now render on the
+    //     page at all times once spec.verdict exists — that's the visible
+    //     surface of this feature, not a regression in the bars/readouts.)
+    verdict: (state, physics) => {
+      const rated = state['i02-rated'];
+      if (rated == null || !Number.isFinite(rated) || rated <= 0) return { grade: null };
+      const bands = physics || { minimum: 0, recommended: 0, highWind: 0 };
+      const { grade } = gradeRatedCfm(rated, bands);
+      const ratedStr = Math.round(rated).toLocaleString('en-US');
+      const recStr = Math.round(bands.recommended).toLocaleString('en-US');
+      const minStr = Math.round(bands.minimum).toLocaleString('en-US');
+      let plain;
+      if (grade === 'PASS') {
+        plain = `${ratedStr} CFM meets the recommended target for this configuration.`;
+      } else if (grade === 'MARGINAL') {
+        plain = `${ratedStr} CFM clears the minimum but falls short of the ${recStr} CFM recommended target.`;
+      } else {
+        plain = `${ratedStr} CFM is below the ${minStr} CFM minimum for this configuration.`;
+      }
+      return {
+        grade,
+        plain,
+        clauseRef: 'model criterion: ≥ recommended PASS · ≥ minimum MARGINAL — RB-008',
+        detail: `Rated CFM ${ratedStr} vs. this configuration's bands (minimum ${minStr}, recommended ${recStr}) — model-criterion thresholds, band figures from RB-008.`,
+      };
+    },
   };
 
   // Exposed on the figure element so the shared "Explain this
@@ -256,4 +333,34 @@ export function mount(figureEl) {
   // static/js/ovs/explain-ui.mjs) can read the live control state via
   // .get() without this module knowing anything about that feature.
   figureEl.ovsInstrument = createInstrument(container, spec);
+
+  // --- "CHECK A HOOD" section --------------------------------------------
+  // The engine (createInstrument) renders every spec.controls entry into
+  // one shared fieldset, so 'i02-rated' lands there like a fifth spec
+  // input. It isn't one: it doesn't drive requiredCfm() and is entirely
+  // optional. The engine has no grouping hook for this (same situation
+  // i08.mjs is in for its disabled-control styling), so — same established
+  // pattern — reach into the DOM post-mount and move that one control's
+  // wrap into its own labeled <fieldset>, positioned after the readouts so
+  // it reads as "now check a candidate hood against the numbers above."
+  const article = container.querySelector('.ovs-i-instrument');
+  const ratedLabel = article && article.querySelector('label[for="i02-rated"]');
+  const ratedWrap = ratedLabel && ratedLabel.closest('.ovs-i-control');
+  if (article && ratedWrap) {
+    const section = document.createElement('fieldset');
+    section.className = 'ovs-i-check-hood';
+    const legend = document.createElement('legend');
+    legend.className = 'ovs-i-check-hood-legend';
+    legend.textContent = 'CHECK A HOOD';
+    section.appendChild(legend);
+    const note = document.createElement('p');
+    note.className = 'ovs-i-check-hood-note';
+    note.textContent = "Optional — enter a candidate hood's rated CFM to see how it compares to the bands above. Doesn't change them.";
+    section.appendChild(note);
+    ratedWrap.classList.add('ovs-i-check-hood-control');
+    section.appendChild(ratedWrap); // moves it out of the main controls fieldset
+    const foot = article.querySelector('.ovs-i-verdict-foot');
+    if (foot) article.insertBefore(section, foot);
+    else article.appendChild(section);
+  }
 }
