@@ -323,7 +323,7 @@ export function mount(figureEl) {
         grade,
         plain,
         clauseRef: 'model criterion: ≥ recommended PASS · ≥ minimum MARGINAL — RB-008',
-        detail: `Rated CFM ${ratedStr} vs. this configuration's bands (minimum ${minStr}, recommended ${recStr}) — model-criterion thresholds, band figures from RB-008.`,
+        detail: `Rated CFM ${ratedStr} vs. this configuration's bands (minimum ${minStr}, recommended ${recStr}) — model-criterion thresholds; minimum from RB-008, recommended layers this site's own exposure-multiplier assumption on top.`,
       };
     },
   };
