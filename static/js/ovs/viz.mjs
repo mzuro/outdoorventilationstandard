@@ -10,6 +10,9 @@
 //   spec.drag[]         -> direct manipulation of scene handles
 //   spec.presets[]      -> one-tap story chips (animated via the same tweens)
 //   spec.verdict(state, physics) -> PASS/MARGINAL/FAIL rubber-stamp on settle
+//   spec.copyLine(state, physics) -> string|null  (W5-T6, UX P1-6: "carry-
+//     away" copy-spec-line button, rendered after .ovs-i-readouts — see the
+//     block below)
 
 import { createSmokeField } from './smoke.mjs';
 
@@ -82,6 +85,37 @@ export function fmt(value, spec) {
 }
 
 const hasDom = typeof document !== 'undefined' && typeof window !== 'undefined';
+
+/**
+ * execCommand('copy') fallback for browsers/contexts where
+ * navigator.clipboard is unavailable or its write rejects (e.g. an
+ * insecure context). Best-effort only: any failure (no execCommand,
+ * a throw, a false return) is swallowed and reported as `false` so the
+ * caller can show "Copy failed" instead of leaving the button silently
+ * broken. Never throws.
+ */
+function legacyCopy(text) {
+  if (!hasDom) return false;
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    // Off-screen, not display:none (some browsers refuse to select/copy a
+    // display:none node).
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = typeof document.execCommand === 'function' && document.execCommand('copy');
+    document.body.removeChild(ta);
+    return !!ok;
+  } catch {
+    return false;
+  }
+}
 
 function prefersReducedMotion() {
   if (!hasDom || typeof window.matchMedia !== 'function') return false;
@@ -340,6 +374,69 @@ export function createInstrument(rootEl, spec) {
     readoutEls.set(r.id, { el: output, format: r.format });
   }
   article.appendChild(readoutsWrap);
+
+  // ---- W5-T6 (UX P1-6) copy-spec-line "carry-away" button ----------------
+  // Opt-in via spec.copyLine(state, physics) -> string|null. Renders
+  // synchronously here (part of the initial mount, not appended later) so
+  // there is no post-load CLS. The click handler hands the formatter
+  // exactly get() (the engine's own committed control state) and
+  // ctx.physics (the same channel spec.verdict reads, populated by the
+  // instrument's own update()) — it is never given anything the formatter
+  // could use to recompute or diverge from the on-screen readouts, so the
+  // copied line is physics-honest by construction, same guarantee as
+  // spec.verdict/spec.stickyReadout above. Confirmation is a same-tick text
+  // swap (button label + an adjacent aria-live status, sr-only) — no CSS
+  // transition, so it is identical under prefers-reduced-motion.
+  let copyBtn = null;
+  let copyStatus = null;
+  let copyResetTimer = null;
+  const COPY_LABEL = 'Copy spec line';
+  if (typeof spec.copyLine === 'function') {
+    const copyWrap = document.createElement('div');
+    copyWrap.className = 'ovs-i-copyline';
+    copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'ovs-i-copyline-btn';
+    copyBtn.textContent = COPY_LABEL;
+    copyStatus = document.createElement('span');
+    copyStatus.className = 'ovs-i-copyline-status ovs-sr-only';
+    copyStatus.setAttribute('aria-live', 'polite');
+    copyWrap.appendChild(copyBtn);
+    copyWrap.appendChild(copyStatus);
+    article.appendChild(copyWrap);
+
+    const showCopyFeedback = (label) => {
+      copyBtn.textContent = label;
+      copyStatus.textContent = label;
+      if (copyResetTimer != null) window.clearTimeout(copyResetTimer);
+      copyResetTimer = window.setTimeout(() => {
+        copyBtn.textContent = COPY_LABEL;
+        copyStatus.textContent = '';
+        copyResetTimer = null;
+      }, 1500);
+    };
+
+    const copyHandler = () => {
+      let line = null;
+      try {
+        line = spec.copyLine(get(), ctx.physics);
+      } catch {
+        line = null;
+      }
+      if (!line) { showCopyFeedback('Copy failed'); return; }
+      const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : null;
+      if (clipboard && typeof clipboard.writeText === 'function') {
+        clipboard.writeText(line).then(
+          () => showCopyFeedback('Copied'),
+          () => showCopyFeedback(legacyCopy(line) ? 'Copied' : 'Copy failed'),
+        );
+      } else {
+        showCopyFeedback(legacyCopy(line) ? 'Copied' : 'Copy failed');
+      }
+    };
+    copyBtn.addEventListener('click', copyHandler);
+    listeners.push({ target: copyBtn, type: 'click', handler: copyHandler });
+  }
 
   rootEl.appendChild(article);
 
@@ -870,6 +967,7 @@ export function createInstrument(rootEl, spec) {
       stripMq = null; stripMqHandler = null;
     }
     if (strip) { strip.remove(); strip = null; }
+    if (copyResetTimer != null) { window.clearTimeout(copyResetTimer); copyResetTimer = null; }
     if (visHandler) { document.removeEventListener('visibilitychange', visHandler); visHandler = null; }
     if (smokeField) { smokeField.destroy(); smokeField = null; }
     for (const cleanup of dragCleanups) cleanup();

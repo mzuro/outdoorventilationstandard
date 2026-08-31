@@ -1189,7 +1189,11 @@ a.ovs-chip:hover {
    pages, baseline 7ba3549 vs this build), preserving F3's calibration —
    same residual settle, no new whitespace at tablet widths. */
 .ovs-instrument[data-instrument="i01"] { --i-reserve: 780px; }
-.ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
+/* +65px (W5-T6, 2026-08-31): the copy-spec-line button row added to i02
+   only (.ovs-i-copyline: ~44px button + ~19px vertical padding + 1px
+   border) — same "F3 value plus the measured delta" calibration as the
+   W5-T3 note above, just a second delta stacked on i02's alone. */
+.ovs-instrument[data-instrument="i02"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
 .ovs-instrument[data-instrument="i05"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i07"] { --i-reserve: 780px; }
@@ -1202,7 +1206,7 @@ a.ovs-chip:hover {
     min-height: var(--i-reserve-m, 760px);
   }
   .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 905px; }
-  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 900px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 965px; } /* +65px, W5-T6 copy-spec-line row */
   .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 810px; }
   .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 660px; }
   .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 1065px; }
@@ -2107,6 +2111,53 @@ a.ovs-chip:hover {
   font-size: 0.62rem;
   letter-spacing: 0.04em;
   color: var(--muted);
+}
+
+/* ---- W5-T6 (UX P1-6): "carry-away" copy-spec-line button ----
+   Engine-emitted (viz.mjs, spec.copyLine — i02.mjs only) directly after
+   .ovs-i-readouts, continuing its surface-2 band so the answer and its
+   carry-away action read as one block. Button weight matches the other
+   instrument-chrome actions (.ovs-explain-btn / .ovs-i-preset, W5-T3):
+   ink text, a real border, mono (readouts/verdict-foot voice). Sized to a
+   native 44px min-height instead of the chips' ::after trick — there is no
+   compact-visual constraint here. Confirmation is a plain text swap (see
+   viz.mjs) with no animation, so it is identical under
+   prefers-reduced-motion; .ovs-i-copyline-status duplicates the same text
+   into an aria-live region (sr-only) since the button's own accessible
+   name change is not reliably announced. */
+.ovs-i-copyline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 0.6rem 0.9rem;
+}
+
+.ovs-i-copyline-btn {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.5rem 0.9rem;
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+}
+
+.ovs-i-copyline-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ovs-i-copyline-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* The one orchestrated moment: the stamp slams on settle. Neutralized under

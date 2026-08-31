@@ -53,6 +53,40 @@ const AXIS_MAX_CFM = 3500;
 // 60000 -> "60k BTU".
 const fmtBtu = (btu) => `${Math.round(btu / 1000)}k BTU`;
 
+// This instrument's basis paper (RB-008, "Required Exhaust Airflow") — the
+// citation appended to the copy-spec-line output below. Not derived from
+// `bands`; it names the paper the whole instrument is built on, same as
+// every other RB-008 reference in this file's comments.
+const CITATION = 'RB-008';
+
+/**
+ * W5-T6 (UX P1-6, "carry-away"): build the one-line, physics-honest spec
+ * summary for the copy-spec-line button — e.g. "48 in island · 60k BTU ·
+ * moderate wind → min 1,450 / rec 1,800 CFM — outdoorventilationstandard.
+ * com/questions/what-cfm-do-i-need/ (RB-008)".
+ *
+ * Pure and DOM-free (no `location` read here — the caller passes `href`)
+ * so it stays unit-testable under plain node. `bands` must be the SAME
+ * object requiredCfm() returned for `state` (update() below hands it
+ * through via ctx.physics.bands) — this function only formats numbers, it
+ * never computes them, so the copied line can never disagree with what's
+ * on screen. Returns null if `bands` is missing (e.g. called before the
+ * first update()).
+ */
+export function buildSpecLine(state, bands, href) {
+  if (!bands) return null;
+  const width = Math.round(Number(state['i02-width']));
+  const mount = state['i02-mount'] === 'island' ? 'island' : 'wall';
+  const exposure = state['i02-exposure'] || 'moderate';
+  const min = Math.round(bands.minimum).toLocaleString('en-US');
+  const rec = Math.round(bands.recommended).toLocaleString('en-US');
+  // The report's own example drops the scheme ("outdoorventilationstandard
+  // .com/..." not "https://outdoorventilationstandard.com/...") — a spec
+  // line meant to be texted or read aloud doesn't need it.
+  const shownHref = String(href || '').replace(/^https?:\/\//, '');
+  return `${width} in ${mount} · ${fmtBtu(state['i02-btu'])} · ${exposure} wind → min ${min} / rec ${rec} CFM — ${shownHref} (${CITATION})`;
+}
+
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i02Mounted === '1') return;
   figureEl.dataset.i02Mounted = '1';
@@ -174,6 +208,12 @@ export function mount(figureEl) {
     setReadout('minimum', bands.minimum);
     setReadout('highWind', bands.highWind);
 
+    // Expose the exact requiredCfm() output on the shared ctx channel (same
+    // one spec.verdict reads elsewhere, e.g. i01/i07/i08) so the copy-spec-
+    // line button (spec.copyLine below) formats these numbers verbatim
+    // instead of recomputing them.
+    ctx.physics = { bands };
+
     for (const [key, row] of Object.entries(refs.rows)) {
       const cfm = bands[key];
       const x = xFor(cfm);
@@ -249,6 +289,16 @@ export function mount(figureEl) {
 
     // No spec.verdict: see the header comment — this instrument has no
     // installed/actual-CFM input to grade a stamp against.
+
+    // --- W5-T6 (UX P1-6): "carry-away" copy-spec-line button --------------
+    // The engine calls this with its own get()/ctx.physics — see viz.mjs's
+    // copyLine block. `href` is read from `location` right here (the one
+    // DOM touch), then handed to the pure, node-testable buildSpecLine().
+    copyLine: (state, physics) => buildSpecLine(
+      state,
+      physics && physics.bands,
+      typeof location !== 'undefined' ? location.origin + location.pathname : '',
+    ),
   };
 
   // Exposed on the figure element so the shared "Explain this
