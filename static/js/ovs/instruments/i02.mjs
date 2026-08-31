@@ -72,11 +72,28 @@ const CITATION = 'RB-008';
  * never computes them, so the copied line can never disagree with what's
  * on screen. Returns null if `bands` is missing (e.g. called before the
  * first update()).
+ *
+ * The mount fallback below is deliberately the exact same expression
+ * update() uses to derive `mountKey` (`MOUNT[state['i02-mount']] ? ... :
+ * 'island'`) — not the instrument's own inverted guess — so the two can
+ * never disagree about which mount a given `state['i02-mount']` value
+ * means. `MOUNT` (hood-presets.mjs) only defines 'wall' and 'island'; there
+ * is no 'peninsula' entry, matching every other MOUNT[...] fallback in this
+ * codebase (i01.mjs, i05.mjs) and this instrument's own segmented control
+ * (WALL/ISLAND only, no peninsula option — see the `controls` array below).
+ * requiredCfm()/MOUNT_MULT (cfm.mjs) DO carry a peninsula multiplier, but
+ * purely for the physics module's own direct-call API (see tests/cfm.test
+ * .mjs) — no instrument, including this one's update(), ever resolves
+ * 'peninsula' as a mountKey today, so labeling one here without update()
+ * also computing island-vs-peninsula bands would just recreate the exact
+ * label/numbers mismatch this fix removes. If a future task adds a
+ * peninsula option to MOUNT and this control, update() and buildSpecLine()
+ * must gain their peninsula handling together, in the same change.
  */
 export function buildSpecLine(state, bands, href) {
   if (!bands) return null;
   const width = Math.round(Number(state['i02-width']));
-  const mount = state['i02-mount'] === 'island' ? 'island' : 'wall';
+  const mount = MOUNT[state['i02-mount']] ? state['i02-mount'] : 'island';
   const exposure = state['i02-exposure'] || 'moderate';
   const min = Math.round(bands.minimum).toLocaleString('en-US');
   const rec = Math.round(bands.recommended).toLocaleString('en-US');

@@ -8,6 +8,7 @@
 // drift from the physics module (../static/js/ovs/physics/cfm.mjs).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { buildSpecLine } from '../static/js/ovs/instruments/i02.mjs';
 import { requiredCfm } from '../static/js/ovs/physics/cfm.mjs';
 
@@ -77,4 +78,80 @@ test('buildSpecLine returns null without bands (never fabricates a line before t
   const state = { 'i02-width': 48, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
   assert.equal(buildSpecLine(state, null, HREF), null);
   assert.equal(buildSpecLine(state, undefined, HREF), null);
+});
+
+// --- regression: MAJOR — copied line could mix a committed target value
+// with mid-tween physics ----------------------------------------------------
+//
+// buildSpecLine() itself was never the bug: it is a pure formatter that
+// faithfully renders whatever (state, bands) pair it is handed. The bug was
+// in viz.mjs's wiring — the click handler called
+// `spec.copyLine(get(), ctx.physics)`, where get() returns the committed
+// *target* state (set synchronously in handleChange(), before any tween
+// runs) while ctx.physics is derived from currentNumericState(), which for
+// a `type: 'range'` control is the *currently-tweening* `displayed` value.
+// For up to TWEEN_MS (200ms) after a width/BTU change, those two can
+// describe different widths — pairing them produced a line whose label and
+// CFM numbers described two different configurations.
+//
+// The fix (viz.mjs, runUpdate()) makes the engine write `ctx.state` and
+// `ctx.physics` together, from the exact same currentNumericState()
+// snapshot, on every call — so spec.copyLine(ctx.state, ctx.physics) can
+// never receive a mismatched pair. The two tests below document that
+// contract from both ends: what a mismatched pair would have produced
+// (so a future regression is visibly wrong, not silently "fine"), and that
+// viz.mjs's source is actually wired to the paired snapshot, not get().
+test('buildSpecLine contract: a mismatched (state, bands) pair — as the pre-fix get()+ctx.physics wiring could produce mid-tween — renders a self-inconsistent line', () => {
+  // Simulate exactly the pre-fix race: `targetState` is the committed
+  // target width (60in, what get() would have returned the instant the
+  // slider moved) while `midTweenBands` is requiredCfm() computed for the
+  // width the tween was still passing through (42in, what
+  // currentNumericState()'s `displayed` value would have been a frame or
+  // two into the 200ms tween).
+  const targetState = { 'i02-width': 60, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
+  const midTweenBands = requiredCfm({ widthIn: 42, mount: 'wall', btu: 60000, exposure: 'moderate' });
+  const correctBands = requiredCfm({ widthIn: 60, mount: 'wall', btu: 60000, exposure: 'moderate' });
+  // Precondition: the two widths must actually disagree on CFM, or this
+  // test would not be exercising anything.
+  assert.notEqual(midTweenBands.minimum, correctBands.minimum);
+
+  const mismatchedLine = buildSpecLine(targetState, midTweenBands, HREF);
+  const midMinStr = Math.round(midTweenBands.minimum).toLocaleString('en-US');
+  const correctMinStr = Math.round(correctBands.minimum).toLocaleString('en-US');
+  // The label says 60in (the target)...
+  assert.ok(mismatchedLine.startsWith('60 in wall'), mismatchedLine);
+  // ...but the numbers are the 42in figures, not the 60in ones — a line
+  // that matches no real hood configuration. This is what buildSpecLine
+  // MUST still do given a mismatched pair (it has no way to detect one —
+  // it is a pure formatter); guarding against ever constructing this pair
+  // is viz.mjs's job, verified in the next test.
+  assert.ok(mismatchedLine.includes(`min ${midMinStr}`), mismatchedLine);
+  assert.ok(!mismatchedLine.includes(`min ${correctMinStr}`), mismatchedLine);
+
+  // A properly matched pair (both from the same width) never has this
+  // problem — this is the invariant the ctx.state/ctx.physics wiring in
+  // viz.mjs's runUpdate() upholds by construction.
+  const consistentLine = buildSpecLine(targetState, correctBands, HREF);
+  assert.ok(consistentLine.includes(`min ${correctMinStr}`), consistentLine);
+});
+
+test('viz.mjs wires spec.copyLine to the paired ctx.state/ctx.physics snapshot, never to get() (regression for the MAJOR mid-tween mismatch)', () => {
+  // createInstrument() is an inert no-op under plain node (no DOM/rAF), so
+  // the mid-tween race cannot be exercised end-to-end here (see viz.mjs's
+  // module header and tests/viz.test.mjs's "imports cleanly under node"
+  // test for that guard). This source-level check is the next best thing:
+  // it pins the exact call shape the fix depends on, so a future refactor
+  // that reintroduces `get()` here — silently reopening the race — fails
+  // this test instead of shipping unnoticed.
+  const vizSrc = readFileSync(new URL('../static/js/ovs/viz.mjs', import.meta.url), 'utf8');
+  assert.match(
+    vizSrc,
+    /spec\.copyLine\(ctx\.state,\s*ctx\.physics\)/,
+    'spec.copyLine must be called with the ctx.state/ctx.physics pair written together (same currentNumericState() snapshot) by runUpdate()',
+  );
+  assert.doesNotMatch(
+    vizSrc,
+    /spec\.copyLine\(get\(\)/,
+    'spec.copyLine must never be called with get() (the committed TARGET state) — pairing it with ctx.physics (which can be mid-tween) is exactly the MAJOR bug this guards against',
+  );
 });

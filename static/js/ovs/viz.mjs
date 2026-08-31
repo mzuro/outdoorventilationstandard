@@ -93,11 +93,20 @@ const hasDom = typeof document !== 'undefined' && typeof window !== 'undefined';
  * a throw, a false return) is swallowed and reported as `false` so the
  * caller can show "Copy failed" instead of leaving the button silently
  * broken. Never throws.
+ *
+ * The textarea's removal is in a `finally` (not the last line of the try),
+ * because `execCommand('copy')` itself can throw rather than return false —
+ * observed under a Permissions-Policy block or inside a sandboxed iframe.
+ * A throw there would otherwise skip straight past `removeChild` to the
+ * outer `catch`, leaking the off-screen node into `document.body`
+ * permanently; repeated failures (e.g. every click in a policy-blocked
+ * embed) would accumulate one orphaned <textarea> per attempt.
  */
-function legacyCopy(text) {
+export function legacyCopy(text) {
   if (!hasDom) return false;
+  let ta = null;
   try {
-    const ta = document.createElement('textarea');
+    ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
     // Off-screen, not display:none (some browsers refuse to select/copy a
@@ -110,10 +119,14 @@ function legacyCopy(text) {
     ta.select();
     ta.setSelectionRange(0, text.length);
     const ok = typeof document.execCommand === 'function' && document.execCommand('copy');
-    document.body.removeChild(ta);
     return !!ok;
   } catch {
     return false;
+  } finally {
+    // Guard on parentNode (not just `ta`): createElement itself could throw
+    // before assignment, or appendChild could throw before ta ever entered
+    // the document — either way there is nothing to remove.
+    if (ta && ta.parentNode) ta.parentNode.removeChild(ta);
   }
 }
 
@@ -379,14 +392,24 @@ export function createInstrument(rootEl, spec) {
   // Opt-in via spec.copyLine(state, physics) -> string|null. Renders
   // synchronously here (part of the initial mount, not appended later) so
   // there is no post-load CLS. The click handler hands the formatter
-  // exactly get() (the engine's own committed control state) and
-  // ctx.physics (the same channel spec.verdict reads, populated by the
-  // instrument's own update()) — it is never given anything the formatter
-  // could use to recompute or diverge from the on-screen readouts, so the
-  // copied line is physics-honest by construction, same guarantee as
-  // spec.verdict/spec.stickyReadout above. Confirmation is a same-tick text
-  // swap (button label + an adjacent aria-live status, sr-only) — no CSS
-  // transition, so it is identical under prefers-reduced-motion.
+  // ctx.state and ctx.physics — the SAME pair runUpdate() just wrote
+  // together from a single currentNumericState() snapshot (see runUpdate()
+  // above). Deliberately NOT get(): get() returns the committed *target*
+  // state, set synchronously the instant a control changes, before any
+  // tween runs — while ctx.physics is derived from currentNumericState(),
+  // which for a range control is the currently-*tweening* displayed value.
+  // For up to TWEEN_MS after a slider/preset/keyboard change those two can
+  // differ, so pairing get() with ctx.physics could label a line with a
+  // target width while its CFM numbers reflect a different, mid-tween
+  // width — self-inconsistent, matching no real configuration. ctx.state
+  // and ctx.physics are written from the identical snapshot on every call,
+  // so this pair can never disagree, mid-tween or otherwise. It is still
+  // never given anything the formatter could use to recompute or diverge
+  // from the on-screen readouts, so the copied line stays physics-honest by
+  // construction, same guarantee as spec.verdict/spec.stickyReadout above.
+  // Confirmation is a same-tick text swap (button label + an adjacent
+  // aria-live status, sr-only) — no CSS transition, so it is identical
+  // under prefers-reduced-motion.
   let copyBtn = null;
   let copyStatus = null;
   let copyResetTimer = null;
@@ -419,7 +442,7 @@ export function createInstrument(rootEl, spec) {
     const copyHandler = () => {
       let line = null;
       try {
-        line = spec.copyLine(get(), ctx.physics);
+        line = spec.copyLine(ctx.state, ctx.physics);
       } catch {
         line = null;
       }
@@ -510,7 +533,7 @@ export function createInstrument(rootEl, spec) {
     if (cell) cell.textContent = r.el.textContent;
   }
 
-  const ctx = { svg, setReadout, reduced, physics: null };
+  const ctx = { svg, setReadout, reduced, physics: null, state: null };
 
   if (typeof spec.scene === 'function') {
     spec.scene(svg, HELPERS);
@@ -562,6 +585,14 @@ export function createInstrument(rootEl, spec) {
 
   function runUpdate() {
     const st = currentNumericState();
+    // Stash the EXACT snapshot handed to spec.update() alongside the
+    // ctx.physics it is about to populate from that same snapshot. This is
+    // the fix for the copy-spec-line race: ctx.state and ctx.physics are
+    // always written together, from the same currentNumericState() call, so
+    // any later reader of the pair (see copyHandler below) can never mix a
+    // committed target value (state[c.id]) with physics computed from a
+    // different, still-tweening displayed value.
+    ctx.state = st;
     if (typeof spec.update === 'function') spec.update(st, ctx);
     if (smokeField && typeof spec.smoke === 'function') {
       const gs = spec.smoke(st);
