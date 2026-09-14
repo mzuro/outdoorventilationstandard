@@ -2212,3 +2212,117 @@ a.ovs-chip:hover {
   border-color: var(--fail);
   color: var(--fail);
 }
+
+/* ==========================================================================
+   Print (minimal) — a contractor/verifier printing a question answer or a
+   research paper's method + references for a job folder should get the
+   prose, headings, answer/summary box, byline, and reference list with
+   visible URLs; nothing else. No nav, no footer, no ask box, no sticky
+   chrome, no live-instrument controls.
+
+   The instrument mount (.ovs-i-instrument, viz.mjs createInstrument) puts
+   its SVG scene, its slider/segmented controls, and its preset-chip row in
+   separate top-level children from the readouts and the verdict footnote —
+   so the interactive chrome can be hidden while the plain-text readout
+   values and .ovs-i-verdict-foot line (the same numbers already echoed in
+   the surrounding prose) keep printing.
+   ========================================================================== */
+@media print {
+  :root {
+    --ground: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --note-bg: #ffffff;
+    --ink: #000000;
+    --muted: #333333;
+    --faint: #555555;
+    --line: #999999;
+    --line-strong: #000000;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* primary chrome */
+  .ovs-header,
+  .ovs-footer,
+  .ovs-askbox,
+  .ovs-i-strip,
+  .ovs-toc-rail,
+  .ovs-toc-mobile {
+    display: none !important;
+  }
+
+  /* interactive instrument chrome — the SVG drawing (drag handles, wisps,
+     grips — everything scene-specific lives inside <svg class="ovs-i-svg">,
+     viz.mjs L284-289) and, on i10 only, its HTML failure-mode taxonomy tree
+     (a sibling of the svg inside .ovs-i-scene, i10.mjs L251-254), controls
+     (sliders/segmented inputs), preset chips, and the "Explain this
+     configuration" affordance. Readouts and the verdict footnote are left
+     alone (see comment above).
+
+     .ovs-i-scene ITSELF is deliberately left un-hidden here (no
+     display:none on it) — graded instruments (i01/i05/i07/i08) append
+     .ovs-i-stamp as a further child of .ovs-i-scene, alongside the svg
+     (viz.mjs L618-624, and i05's own two-stamp variant at i05.mjs
+     L418-427), not as a sibling of it. display:none on an ancestor
+     removes every descendant from rendering regardless of the
+     descendant's own display value, so hiding .ovs-i-scene wholesale (the
+     previous rule) silently hid the verdict stamp along with the drawing
+     it was layered over — the printed page kept the "grades apply to the
+     model configuration" disclaimer (.ovs-i-verdict-foot, a true sibling
+     of .ovs-i-scene that this block never touched) with no grade anywhere
+     on the page to explain. Hiding only the svg and the taxonomy tree
+     hides all of the actual interactive content while leaving
+     .ovs-i-scene itself, and its .ovs-i-stamp child, in the render tree. */
+  .ovs-i-svg,
+  .ovs-i-taxonomy,
+  .ovs-i-controls,
+  .ovs-i-presets,
+  .ovs-explain {
+    display: none !important;
+  }
+
+  /* .ovs-i-stamp is normally position:absolute, bottom/right, with
+     .ovs-i-scene (position:relative) as its containing block. With the
+     scene's only other content (the svg) now display:none, .ovs-i-scene
+     has no in-flow content left and collapses to zero height — an
+     absolutely positioned stamp would then anchor its bottom edge 16px
+     above that zero-height box, i.e. print it overlapping whatever
+     precedes .ovs-i-scene (the instrument title) instead of sitting in
+     its own space. Taking it out of absolute positioning puts it back in
+     normal flow: it lays out like any other block, and being the only
+     in-flow content left in .ovs-i-scene, gives that wrapper real height
+     again. The on-screen rubber-stamp tilt (transform: rotate(-6deg)) was
+     staged to sit crooked over the drawing it covered; flattened here so
+     a static in-flow box doesn't print with rotated corners overlapping
+     the readouts that immediately follow it. */
+  .ovs-i-stamp {
+    position: static !important;
+    transform: none !important;
+    margin: 0.6rem 0.9rem;
+  }
+
+  /* citation links (partials/citations.html) resolve href to a relative
+     /research/... RelPermalink with no visible URL text on screen, and a
+     printed page has no visible domain anywhere else either (the header —
+     the only element carrying the site's absolute root link — is itself
+     hidden above), so printing that relative path is unresolvable off the
+     page. data-print-href carries the same link's absolute .Permalink
+     (set alongside href in citations.html) instead. */
+  .ovs-cite-list a[data-print-href]::after {
+    content: " (" attr(data-print-href) ")";
+    font-size: 0.85em;
+  }
+
+  /* print hygiene: rows/callouts shouldn't split across a page break;
+     the table itself is left free to flow across pages. */
+  tr,
+  .ovs-note,
+  .ovs-cite-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
