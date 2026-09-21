@@ -27,7 +27,7 @@
       {{- if eq (lower .Params.research_id) (lower $code) }}{{ $match = . }}{{ end }}
     {{- end }}
     {{- with $match }}
-    <li><span class="mono">{{ .Params.research_id }}</span> &mdash; <a href="{{ .RelPermalink }}">{{ replaceRE "^RB-[0-9]+:\\s*" "" .Title }}</a></li>
+    <li><span class="mono">{{ .Params.research_id }}</span> &mdash; <a href="{{ .RelPermalink }}" data-print-href="{{ .Permalink }}">{{ replaceRE "^RB-[0-9]+:\\s*" "" .Title }}</a></li>
     {{- else }}
     <li><span class="mono">{{ upper $code }}</span> &mdash; <em>reference not found</em></li>
     {{- end }}
