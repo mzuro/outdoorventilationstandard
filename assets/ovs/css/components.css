@@ -2016,6 +2016,18 @@ a.ovs-chip:hover {
   position: relative;
 }
 
+/* [hidden] must keep winning even against the rule below — same
+   defeated-specificity problem as .ovs-nav-toggle[hidden] / .ovs-i-strip
+   [hidden] above (equal-specificity class-vs-attribute selectors, author
+   rule wins over the UA [hidden] default). i02's optional "rated CFM"
+   field is the first spec.verdict() that can legitimately return
+   {grade: null} on initial load (every other graded instrument always has
+   a real grade), which is what exposed this: without this rule, an empty
+   bordered stamp box rendered at rest on every i02 page. */
+.ovs-i-stamp[hidden] {
+  display: none;
+}
+
 .ovs-i-stamp {
   position: absolute;
   bottom: 16px;
