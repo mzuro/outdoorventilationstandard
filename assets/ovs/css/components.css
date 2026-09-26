@@ -1690,6 +1690,50 @@ a.ovs-chip:hover {
   padding: 0;
 }
 
+/* "COVERAGE CHECK" (i02 hood-width entry, physics Stage B): the width
+   control is NOT a CFM input (RB-008 §3.4.3 / Table 3.10 — a wider hood
+   needs less, not more), so i02.mjs pulls it out of the shared
+   .ovs-i-controls fieldset into its own dashed section — same visual
+   language as CHECK A HOOD below — with a live sentence from
+   coverageAdvisory() (the RB-008 Table 3.10 coverage band). */
+.ovs-i-coverage {
+  border: 1px dashed var(--line-strong);
+  border-radius: 2px;
+  margin: 0.85rem 0.9rem 0;
+  padding: 0.7rem 0.9rem 0.85rem;
+  background: var(--surface);
+}
+
+.ovs-i-coverage-legend {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0.3rem;
+}
+
+.ovs-i-coverage-note {
+  margin: 0.15rem 0 0.65rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.ovs-i-coverage-control.ovs-i-control {
+  background: transparent;
+  padding: 0;
+}
+
+/* the live Table 3.10 sentence — readout voice (mono, tabular), muted */
+.ovs-i-coverage-readout {
+  margin: 0.55rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
 /* Mirrors .ovs-i-range's box height (44px hit target, WCAG 2.5.5/2.5.8)
    but as a real bordered text field, matching the mono/uppercase/bordered
    language of .ovs-i-segmented-label rather than a native slider. */

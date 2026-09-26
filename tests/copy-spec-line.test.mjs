@@ -5,71 +5,87 @@
 // place that touches `location`) so it is directly testable under plain
 // node. Every CFM number asserted below comes from calling requiredCfm()
 // ourselves, not from a hardcoded guess, so this test cannot silently
-// drift from the physics module (../static/js/ovs/physics/cfm.mjs).
+// drift from the physics module (../static/js/ovs/physics/cfm.mjs); the
+// two literal cells are the RB-008 §3.3 / §3.9 rows the module reproduces.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildSpecLine } from '../static/js/ovs/instruments/i02.mjs';
 import { requiredCfm } from '../static/js/ovs/physics/cfm.mjs';
+import { SOURCES } from '../static/js/ovs/physics/heat.mjs';
 
 const HREF = 'https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/';
 
-test('buildSpecLine: 48in/wall/60k BTU/moderate — the site baseline (min 892 / rec 1,200, RB-008 §3.3)', () => {
-  // Stage A: i02 still calls requiredCfm() with its legacy {widthIn, btu}
-  // shape (STAGE-A SHIM in cfm.mjs); 60k BTU → Gas Large at the 30 in
-  // default height, so the bands are the RB-008 §3.3 flagship.
-  const bands = requiredCfm({ widthIn: 48, mount: 'wall', btu: 60000, exposure: 'moderate' });
+const bandsFor = (state) => requiredCfm({
+  src: SOURCES[state['i02-source']],
+  riseIn: state['i02-height'],
+  mount: state['i02-mount'],
+  exposure: state['i02-exposure'],
+  panels: state['i02-panels'],
+});
+
+test('buildSpecLine: Gas Large / 30 in / wall / moderate — the RB-008 §3.3 flagship (min 892 / blower 1,200)', () => {
+  const state = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 48 };
+  const bands = bandsFor(state);
   assert.equal(bands.minimum, 892);                                           // rb-008:310
-  assert.equal(bands.recommended, 1200);                                      // rb-008:310 (blower)
-  const state = { 'i02-width': 48, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
+  assert.equal(bands.blower, 1200);                                           // rb-008:310 (blower)
   const line = buildSpecLine(state, bands, HREF);
   assert.equal(
     line,
-    '48 in wall · 60k BTU · moderate wind → min 892 / rec 1,200 CFM — outdoorventilationstandard.com/questions/what-cfm-do-i-need/ (RB-008)',
+    '60k gas · 30 in · wall · moderate → min 892 / blower 1,200 CFM — outdoorventilationstandard.com/questions/what-cfm-do-i-need/ (RB-008 §3.3 / App A)',
   );
 });
 
-test('buildSpecLine: 48in/island reflects whatever requiredCfm() actually returns, not a hardcoded guess', () => {
-  const state = { 'i02-width': 48, 'i02-mount': 'island', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
-  const bands = requiredCfm({
-    widthIn: state['i02-width'], mount: state['i02-mount'],
-    btu: state['i02-btu'], exposure: state['i02-exposure'],
-  });
+test('buildSpecLine: island → 1,070 / 1,200 (RB-008 §3.9 application example)', () => {
+  const state = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'island', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 48 };
+  const bands = bandsFor(state);
+  assert.equal(bands.minimum, 1070);                                          // rb-008:567
+  assert.equal(bands.blower, 1200);                                           // rb-008:565-567
   const line = buildSpecLine(state, bands, HREF);
-  // Same formatting convention i02.mjs's own dimension-line code uses
-  // (Math.round(cfm).toLocaleString('en-US')) — reused here, not reinvented.
-  const minStr = Math.round(bands.minimum).toLocaleString('en-US');
-  const recStr = Math.round(bands.recommended).toLocaleString('en-US');
-  assert.ok(line.includes(`min ${minStr} / rec ${recStr} CFM`), line);
-  assert.ok(line.startsWith('48 in island · 60k BTU · moderate wind'), line);
-  // Island carries a real premium over wall at the same width/BTU/exposure
-  // — asserting the relationship (not a copied literal) keeps this test
-  // physics-honest even if requiredCfm()'s constants ever change.
-  const wallBands = requiredCfm({ widthIn: 48, mount: 'wall', btu: 60000, exposure: 'moderate' });
-  assert.ok(bands.minimum > wallBands.minimum, 'island minimum should exceed the wall baseline');
+  assert.ok(line.startsWith('60k gas · 30 in · island · moderate → min 1,070 / blower 1,200 CFM'), line);
 });
 
-test('buildSpecLine: a third configuration (60in/wall/90k BTU/exposed) also matches requiredCfm() exactly', () => {
-  const state = { 'i02-width': 60, 'i02-mount': 'wall', 'i02-btu': 90000, 'i02-exposure': 'exposed' };
-  const bands = requiredCfm({
-    widthIn: state['i02-width'], mount: state['i02-mount'],
-    btu: state['i02-btu'], exposure: state['i02-exposure'],
-  });
+test('buildSpecLine: the label is the SAME state the numbers were computed for, whatever the source/height/exposure', () => {
+  const state = { 'i02-source': 'charcoalKettle', 'i02-height': 36, 'i02-mount': 'peninsula', 'i02-exposure': 'exposed', 'i02-panels': 'both', 'i02-width': 60 };
+  const bands = bandsFor(state);
   const line = buildSpecLine(state, bands, HREF);
-  assert.ok(line.includes('60 in wall'), line);
-  assert.ok(line.includes('90k BTU'), line);
-  assert.ok(line.includes('exposed wind'), line);
-  assert.ok(line.includes(`min ${Math.round(bands.minimum).toLocaleString('en-US')}`), line);
-  assert.ok(line.includes(`rec ${Math.round(bands.recommended).toLocaleString('en-US')}`), line);
+  assert.ok(line.startsWith('15k charcoal · 36 in · peninsula · exposed + panels → '), line);
+  // Same formatting convention i02.mjs's own dimension-line code uses.
+  assert.ok(line.includes(`min ${bands.minimum.toLocaleString('en-US')} / blower ${bands.blower.toLocaleString('en-US')} CFM`), line);
+  // Exposed WITHOUT panels drops the "+ panels" suffix and moves to K_CFM 5.75.
+  const noPanels = { ...state, 'i02-panels': 'none' };
+  const np = buildSpecLine(noPanels, bandsFor(noPanels), HREF);
+  assert.ok(np.startsWith('15k charcoal · 36 in · peninsula · exposed → '), np);
+  assert.ok(bandsFor(noPanels).minimum > bands.minimum, 'no panels needs more (K_CFM 5.75 vs 4.14, rb-008:144-145)');
 });
 
-test('buildSpecLine embeds the href it is given, stripped of scheme, and cites RB-008', () => {
-  const bands = requiredCfm({ widthIn: 42, mount: 'wall', btu: 30000, exposure: 'sheltered' });
-  const state = { 'i02-width': 42, 'i02-mount': 'wall', 'i02-btu': 30000, 'i02-exposure': 'sheltered' };
+test('buildSpecLine: hood width never changes the line\'s CFM numbers (RB-008 §3.4.3)', () => {
+  const a = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 42 };
+  const b = { ...a, 'i02-width': 72 };
+  assert.equal(buildSpecLine(a, bandsFor(a), HREF), buildSpecLine(b, bandsFor(b), HREF));
+});
+
+test('buildSpecLine: segmented radio strings ("30") resolve exactly like numbers', () => {
+  const num = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none' };
+  const str = { ...num, 'i02-height': '30' };
+  assert.equal(buildSpecLine(str, bandsFor(num), HREF), buildSpecLine(num, bandsFor(num), HREF));
+});
+
+test('buildSpecLine: above the blower ladder the line says so rather than inventing a size', () => {
+  const state = { 'i02-source': 'gasHigh', 'i02-height': 48, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-panels': 'none' };
+  const bands = bandsFor(state);
+  assert.equal(bands.blower, null, 'precondition');
+  const line = buildSpecLine(state, bands, HREF);
+  assert.ok(line.includes(`min ${bands.minimum.toLocaleString('en-US')} / blower above 3,000 CFM`), line);
+});
+
+test('buildSpecLine embeds the href it is given, stripped of scheme, and cites RB-008 §3.3 / App A', () => {
+  const state = { 'i02-source': 'gasSmall', 'i02-height': 18, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-panels': 'none' };
+  const bands = bandsFor(state);
   const toolLine = buildSpecLine(state, bands, 'https://outdoorventilationstandard.com/tools/cfm-calculator/');
   assert.ok(toolLine.includes('outdoorventilationstandard.com/tools/cfm-calculator/'), toolLine);
   assert.ok(!toolLine.includes('https://'), 'scheme should be dropped from the displayed URL');
-  assert.ok(toolLine.endsWith('(RB-008)'), toolLine);
+  assert.ok(toolLine.endsWith('(RB-008 §3.3 / App A)'), toolLine);
   // A different page embedding the same instrument gets its OWN url — no
   // hardcoded page is baked into the formatter.
   const questionLine = buildSpecLine(state, bands, 'https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/');
@@ -78,7 +94,7 @@ test('buildSpecLine embeds the href it is given, stripped of scheme, and cites R
 });
 
 test('buildSpecLine returns null without bands (never fabricates a line before the first update())', () => {
-  const state = { 'i02-width': 48, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
+  const state = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none' };
   assert.equal(buildSpecLine(state, null, HREF), null);
   assert.equal(buildSpecLine(state, undefined, HREF), null);
 });
@@ -90,63 +106,41 @@ test('buildSpecLine returns null without bands (never fabricates a line before t
 // faithfully renders whatever (state, bands) pair it is handed. The bug was
 // in viz.mjs's wiring — the click handler called
 // `spec.copyLine(get(), ctx.physics)`, where get() returns the committed
-// *target* state (set synchronously in handleChange(), before any tween
-// runs) while ctx.physics is derived from currentNumericState(), which for
-// a `type: 'range'` control is the *currently-tweening* `displayed` value.
-// For up to TWEEN_MS (200ms) after a width/BTU change, those two can
-// describe different widths — pairing them produced a line whose label and
-// CFM numbers described two different configurations.
+// *target* state while ctx.physics is derived from currentNumericState(),
+// which for a `type: 'range'` control is the *currently-tweening* value.
+// (After the Stage B rebuild every CFM input on i02 is segmented — instant
+// commit, no tween — and the one remaining range control, width, no longer
+// moves CFM at all; the pair can still describe two different SOURCES if
+// the wiring regressed, so the contract is kept pinned.)
 //
 // The fix (viz.mjs, runUpdate()) makes the engine write `ctx.state` and
 // `ctx.physics` together, from the exact same currentNumericState()
 // snapshot, on every call — so spec.copyLine(ctx.state, ctx.physics) can
-// never receive a mismatched pair. The two tests below document that
-// contract from both ends: what a mismatched pair would have produced
-// (so a future regression is visibly wrong, not silently "fine"), and that
-// viz.mjs's source is actually wired to the paired snapshot, not get().
-test('buildSpecLine contract: a mismatched (state, bands) pair — as the pre-fix get()+ctx.physics wiring could produce mid-tween — renders a self-inconsistent line', () => {
-  // Simulate exactly the pre-fix race on the BTU slider (a `type: 'range'`
-  // control that tweens; width no longer moves CFM at all — RB-008 §3.4.3,
-  // so it cannot carry this test any more): `targetState` is the committed
-  // target BTU (60k, what get() would have returned the instant the slider
-  // moved) while `midTweenBands` is requiredCfm() computed for the BTU the
-  // tween was still passing through (30k, what currentNumericState()'s
-  // `displayed` value would have been a frame or two into the 200ms tween).
-  const targetState = { 'i02-width': 60, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
-  const midTweenBands = requiredCfm({ widthIn: 60, mount: 'wall', btu: 30000, exposure: 'moderate' });
-  const correctBands = requiredCfm({ widthIn: 60, mount: 'wall', btu: 60000, exposure: 'moderate' });
-  // Precondition: the two BTU values must actually disagree on CFM, or this
-  // test would not be exercising anything.
-  assert.notEqual(midTweenBands.minimum, correctBands.minimum);
+// never receive a mismatched pair.
+test('buildSpecLine contract: a mismatched (state, bands) pair renders a self-inconsistent line', () => {
+  const targetState = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none' };
+  const staleState = { ...targetState, 'i02-source': 'gasSmall' };
+  const staleBands = bandsFor(staleState);
+  const correctBands = bandsFor(targetState);
+  assert.notEqual(staleBands.minimum, correctBands.minimum);
 
-  const mismatchedLine = buildSpecLine(targetState, midTweenBands, HREF);
-  const midMinStr = Math.round(midTweenBands.minimum).toLocaleString('en-US');
-  const correctMinStr = Math.round(correctBands.minimum).toLocaleString('en-US');
-  // The label says 60k BTU (the target)...
-  assert.ok(mismatchedLine.includes('60k BTU'), mismatchedLine);
-  // ...but the numbers are the 30k figures, not the 60k ones — a line
-  // that matches no real hood configuration. This is what buildSpecLine
-  // MUST still do given a mismatched pair (it has no way to detect one —
-  // it is a pure formatter); guarding against ever constructing this pair
-  // is viz.mjs's job, verified in the next test.
-  assert.ok(mismatchedLine.includes(`min ${midMinStr}`), mismatchedLine);
+  const mismatchedLine = buildSpecLine(targetState, staleBands, HREF);
+  const staleMinStr = staleBands.minimum.toLocaleString('en-US');
+  const correctMinStr = correctBands.minimum.toLocaleString('en-US');
+  // The label says 60k gas (the target)...
+  assert.ok(mismatchedLine.startsWith('60k gas'), mismatchedLine);
+  // ...but the numbers are the 25k figures — a line that matches no real
+  // configuration. buildSpecLine MUST still do this given a mismatched
+  // pair (it is a pure formatter); guarding against ever constructing the
+  // pair is viz.mjs's job, verified in the next test.
+  assert.ok(mismatchedLine.includes(`min ${staleMinStr}`), mismatchedLine);
   assert.ok(!mismatchedLine.includes(`min ${correctMinStr}`), mismatchedLine);
 
-  // A properly matched pair (both from the same width) never has this
-  // problem — this is the invariant the ctx.state/ctx.physics wiring in
-  // viz.mjs's runUpdate() upholds by construction.
   const consistentLine = buildSpecLine(targetState, correctBands, HREF);
   assert.ok(consistentLine.includes(`min ${correctMinStr}`), consistentLine);
 });
 
 test('viz.mjs wires spec.copyLine to the paired ctx.state/ctx.physics snapshot, never to get() (regression for the MAJOR mid-tween mismatch)', () => {
-  // createInstrument() is an inert no-op under plain node (no DOM/rAF), so
-  // the mid-tween race cannot be exercised end-to-end here (see viz.mjs's
-  // module header and tests/viz.test.mjs's "imports cleanly under node"
-  // test for that guard). This source-level check is the next best thing:
-  // it pins the exact call shape the fix depends on, so a future refactor
-  // that reintroduces `get()` here — silently reopening the race — fails
-  // this test instead of shipping unnoticed.
   const vizSrc = readFileSync(new URL('../static/js/ovs/viz.mjs', import.meta.url), 'utf8');
   assert.match(
     vizSrc,
