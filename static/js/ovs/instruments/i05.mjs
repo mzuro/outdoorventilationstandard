@@ -211,6 +211,11 @@ export function mount(figureEl) {
     smokeB.setReduced(reducedMode);
   }
 
+  function replaceChildren(g, ...nodes) {
+    while (g.firstChild) g.removeChild(g.firstChild);
+    for (const n of nodes) g.appendChild(n);
+  }
+
   function paintSide(side, widthIn2, mountVal2, capFrac) {
     side.wall.setAttribute('opacity', mountVal2 === 'wall' ? '1' : '0');
 
@@ -289,7 +294,7 @@ export function mount(figureEl) {
     // §3.4 capture thresholds / §3.9.2 wall shelter) and labels the cut as
     // the OVS model criterion rather than attributing it to a section that
     // does not define it.
-    c.textContent = 'capture data: RB-005 §4.3, RB-006 §3.4 · thresholds: OVS model criterion (≥85% PASS · ≥60% MARGINAL)';
+    c.textContent = 'OVS model criterion ≥85% · ≥60% — data: RB-005 §4.3';
     el.appendChild(c);
     el.title = `Plume capture ${pct}% — capture data: RB-005 §4.3 / RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`;
   }
