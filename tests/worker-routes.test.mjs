@@ -255,9 +255,13 @@ test('explain: cached body is served under explain:<PHYSICS_VERSION>:<params key
   assert.equal(kv.puts.filter((p) => p.key.startsWith('ratelimit:')).length, 1, 'rate limit charged before the cache');
 });
 
-test('explain: a pre-rebase cache entry (explain:i01:…) is NOT served', async () => {
-  const { paramsCacheKey } = await import('../src/lib/params.mjs');
-  const stale = `explain:${paramsCacheKey('i01', OK_EXPLAIN.params)}`;
+test('explain: a pre-rebase cache entry (explain:i01:…, same params, no version prefix) is NOT served', async () => {
+  const { clampParams, paramsCacheKey } = await import('../src/lib/params.mjs');
+  // Seed the SAME clamped params (incl. the defaulted dir=side) so the only
+  // difference from the live key is the missing PHYSICS_VERSION segment.
+  const liveTail = paramsCacheKey('i01', clampParams('i01', OK_EXPLAIN.params).params);
+  const stale = `explain:${liveTail}`;
+  assert.equal(`explain:v2:${liveTail}`.replace(':v2:', ':'), stale);
   const kv = makeKv({ [stale]: JSON.stringify({ explanation: 'stale physics' }) });
   const res = await worker.fetch(post('/api/explain', OK_EXPLAIN), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
   assert.equal(res.status, 503);

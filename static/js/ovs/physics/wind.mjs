@@ -37,6 +37,11 @@ export function deflection(zIn, windMph, src = SOURCES.gasMedium) {
  */
 export function deflectionRate(zIn, windMph, src = SOURCES.gasMedium) {
   if (!(windMph > 0)) return 0;
+  // Smooth 0.0254 m/in mapping, whereas deflection() uses the papers'
+  // HEIGHT_M grid at the tabulated heights (30 in → 0.76 m, not 0.762 m).
+  // The slope therefore differs from d/dz of the gridded deflection() by
+  // ≤ 0.26 % at those heights — invisible in the smoke, and the integral of
+  // this rate still lands within 2 % of deflection() (tests/smoke.test.mjs).
   const z = Math.max(0, zIn) * 0.0254;
   const h = Math.max(z - src.z0M, 1e-6);
   const k = C_D * windMph * MS_PER_MPH / (1.03 * Math.cbrt(src.qcKw)); // δ = k · z · h^(1/3)

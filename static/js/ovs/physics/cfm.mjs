@@ -26,6 +26,13 @@ export const MOUNT_MULT = Object.freeze({ wall: 1.00, peninsula: 1.10, island: 1
 
 /** Blower selection: at least 1.1 × required (rb-008:870), smallest standard size (rb-008:614). */
 export const BLOWER_MARGIN = 1.1;
+/**
+ * RB-008 lists 600/900/1200/1500 CFM as common residential ratings
+ * (rb-008:614). Sizes above 1500 are a site extension of that ladder
+ * (owner decision 2, plan 2026-09-26) so the 1.1× rule can be applied
+ * honestly to minimums above 1364 CFM — e.g. Gas Large exposed 1394 → 1800,
+ * where the paper printed 1500 in violation of its own rule (erratum (j)).
+ */
 export const BLOWER_SIZES = Object.freeze([600, 900, 1200, 1500, 1800, 2100, 2400, 3000]);
 
 /** Bare plume mass flow at z metres, kg/s (rb-008:99). */

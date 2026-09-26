@@ -38,11 +38,18 @@ const clamp01 = (x) => Math.max(0, Math.min(1, x));
 export const SIGMA_PER_BT = 1.5;
 
 /**
- * Re-export of RB-006 §3.1's C_D for one release (plan §2). The deflection
- * now carries C_D itself; callers must NOT pre-multiply the wind by it.
- * STAGE-A SHIM in spirit: i01/i03/i07/i08 still import this name.
+ * STAGE-A SHIM, remove in Stage B. i01.mjs:185, i03.mjs:169, i07.mjs:172
+ * and i08.mjs:248 still compute `plumeWind = WIND_COUPLING * wind` and pass
+ * that to deflection() — a habit from the old integrator, which did not
+ * carry the coupling itself. wind.mjs deflection() now IS the RB-006 §3.1
+ * closed form 0.35·U·z/u_0 (rb-006:428), so any pre-multiplication would
+ * apply C_D twice and make the DEFLECTION readout, the verdict stamp and
+ * the drawn centreline 0.35× short of what /api/explain reports for the
+ * same inputs. Exporting 1 keeps those four call sites correct until
+ * Stage B deletes the multiplication and this export. The real constant is
+ * wind.mjs C_D.
  */
-export const WIND_COUPLING = C_D;
+export const WIND_COUPLING = 1;
 
 /** Resolve the legacy `panels` strings to the sidepanels.mjs options. */
 function panelsOpt(panels) {

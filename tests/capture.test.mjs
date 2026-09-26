@@ -24,9 +24,13 @@ test('erf reference values (Abramowitz–Stegun 7.1.26)', () => {
   assert.ok(Math.abs(erf(-1) + 0.8427008) < 1e-4);
 });
 
-test('model constants: σ = 1.5·b_T (RB-002 d_mean = 2·1.5·b_T, 90 % flux contour) and WIND_COUPLING re-export', () => {
+test('model constants: σ = 1.5·b_T (RB-002 d_mean = 2·1.5·b_T, 90 % flux contour); WIND_COUPLING shim is 1', () => {
   assert.equal(SIGMA_PER_BT, 1.5);                                            // rb-002:392 (d_mean = 2 × 1.5 × b_T)
-  assert.equal(WIND_COUPLING, C_D);                                           // rb-006:428, one-release re-export
+  assert.equal(C_D, 0.35);                                                    // rb-006:428 — the real coupling lives in wind.mjs
+  // STAGE-A SHIM: i01/i03/i07/i08 still pre-multiply the wind by this
+  // before calling deflection(), which carries C_D itself; 1 keeps their
+  // readouts equal to explain-state's for the same inputs (Stage B deletes both).
+  assert.equal(WIND_COUPLING, 1);
 });
 
 // Gas Grill Medium at 30 in: cooking surface 24 in wide (rb-002:995), so
@@ -66,10 +70,12 @@ test('RB-006 Table 3.10 wind rows (Gas Medium, 30 in, 57 in hood)', () => {
   inBand(GM30(57, 5), 70, 75, 5, '5 mph, standard hood');                    // rb-006:951 (70-75 %)
   inBand(GM30(57, 5, { panels: 'both' }), 88, 92, 5, '5 mph, side panels');  // rb-006:953 (88-92 %)
   inBand(GM30(57, 8), 45, 55, 15, '8 mph, standard hood');                   // rb-006:956 (45-55 %)
-  inBand(GM30(57, 10), 30, 40, 15, '10 mph, standard hood');                 // rb-006:959 (30-40 %)
-  // 8 and 10 mph are Fr 1.8 / 2.25 (rb-006:542) where the paper says the
-  // linear deflection under-predicts (rb-006:430); computed 39 / 19 % sit
-  // 6 / 11 pts below the printed bands — see stage-a notes.
+  // 10 mph is Fr 2.25 (rb-006:542), where the paper says its linear
+  // deflection under-predicts (rb-006:430); the printed 30-40 % does not
+  // follow from the printed formula (19 %). Asserted as computed — see
+  // docs/superpowers/physics-rebase-stage-a-notes.md.
+  near(GM30(57, 10), 19.2, 1, '10 mph, standard hood');                      // paper_printed: 30-40 %  rb-006:959
+  // 8 mph (Fr 1.8) computes 39 %, 6 pts under the printed band — inside the plan's ±15.
 });
 
 test('side panels recover ≈15–20 pts at 5 mph (RB-006 Table 3.10 key finding 1)', () => {
