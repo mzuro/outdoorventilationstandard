@@ -1,6 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { lerp, fmt, tweenProgress, createInstrument, gradeCapture, presetActiveId } from '../static/js/ovs/viz.mjs';
+import { lerp, fmt, tweenProgress, createInstrument, gradeCapture, presetActiveId, stripLabelFor } from '../static/js/ovs/viz.mjs';
+
+test('stripLabelFor prefers the short stripLabel and falls back to the readout label', () => {
+  assert.equal(stripLabelFor({ id: 'recommended', label: 'RECOMMENDED', stripLabel: 'REC' }), 'REC');
+  assert.equal(stripLabelFor({ id: 'highWind', label: 'HIGH-WIND' }), 'HIGH-WIND');
+  // empty/missing stripLabel never yields an empty cell while a label exists
+  assert.equal(stripLabelFor({ id: 'x', label: 'X', stripLabel: '' }), 'X');
+  assert.equal(stripLabelFor(null), '');
+});
 
 test('lerp', () => { assert.equal(lerp(0, 10, 0.5), 5); assert.equal(lerp(2, 2, 0.9), 2); });
 test('tweenProgress clamps to [0, 1]', () => {

@@ -50,6 +50,17 @@ export function gradeCapture(capFrac, { pass = 0.85, marginal = 0.6 } = {}) {
  * compared so segmented literals and numeric ranges compare uniformly).
  * Pure. Returns the preset id or null.
  */
+/**
+ * Label for a readout's cell in the sticky mobile strip: the readout's
+ * optional short `stripLabel`, else its full `label`. The strip is one
+ * line at <=760px with a grade badge on graded instruments, so long labels
+ * ("RECOMMENDED") ellipsized at 375px; values are never abbreviated.
+ */
+export function stripLabelFor(readout) {
+  if (!readout) return '';
+  return readout.stripLabel || readout.label || '';
+}
+
 export function presetActiveId(presets, state) {
   for (const p of presets || []) {
     let match = true;
@@ -340,6 +351,21 @@ export function createInstrument(rootEl, spec) {
 
   rootEl.innerHTML = '';
   rootEl.classList.add('ovs-i');
+  // Release the CLS reserve. components.css holds each instrument's
+  // pre-mount footprint with `.ovs-instrument:not(.ovs-i) { min-height }`
+  // on the OUTER <figure class="ovs-instrument"> (instrument-figure.html),
+  // but every instrument's mount() hands this factory an inner
+  // div.ovs-instrument-mount, not the figure — so the class above never
+  // reached the figure and the reserve was never released: every mounted
+  // figure kept its 715-1080px min-height, and at 641-1100px widths
+  // (content shorter than the reserve) the pre-mount `justify-content:
+  // flex-end` pushed the instrument down, leaving up to 262px of blank
+  // space above it (i04 worst) and a ~400px gap in print. Stamp the figure
+  // too; the mount-div class stays for anything keyed on it.
+  if (typeof rootEl.closest === 'function') {
+    const figure = rootEl.closest('figure.ovs-instrument');
+    if (figure) figure.classList.add('ovs-i');
+  }
 
   const article = document.createElement('div');
   article.className = 'ovs-i-instrument';
@@ -532,7 +558,7 @@ export function createInstrument(rootEl, spec) {
       cell.className = 'ovs-i-strip-cell';
       const lab = document.createElement('span');
       lab.className = 'ovs-i-strip-label';
-      lab.textContent = r.label;
+      lab.textContent = stripLabelFor(r);
       const val = document.createElement('span');
       val.className = 'ovs-i-strip-value';
       cell.appendChild(lab);
