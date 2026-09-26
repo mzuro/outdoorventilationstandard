@@ -1,7 +1,7 @@
 ---
 title: "RB-011: Grease Aerosol Transport and Deposition in Open Environments"
 date: 2026-01-23
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-011"
 priority: "P3 — Frontier"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -28,6 +28,17 @@ categories: ["P3 — Frontier"]
 **Author Role:** Environmental Conditions Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-006: Wind Interaction and Cross-Flow Effects; RB-007: Failure Modes of Outdoor BBQ Hoods
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 2.3: v_s = 0.0271 * d_p^2 [d_p in micrometers] → 2.71 x 10^(-5) * d_p^2; units erratum (0.0271 * 100^2 would give 271 m/s). The SI form and Table 3.3a were already correct.
+- Appendix B: Charcoal Kettle centerline velocity at 48" 1.07 → 1.05 m/s (RB-001 Table 3.5 v1.1); critical wind for 25% escape, Gas Medium at 30", 6.7 → 4.8 mph (RB-006 Table 3.4a v1.1).
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -144,7 +155,7 @@ Substituting standard values:
 
 Or equivalently:
 
-> v_s = 0.0271 * d_p^2 [m/s, with d_p in micrometers]
+> v_s = 2.71 x 10^(-5) * d_p^2 [m/s, with d_p in micrometers]
 
 **Cunningham slip correction.** For particles below approximately 1 micrometer, the mean free path of air molecules (approximately 0.066 micrometers at standard conditions) becomes comparable to the particle size, and the particle experiences reduced drag. The Cunningham slip correction factor C_c increases the settling velocity:
 
@@ -685,11 +696,11 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 | Quantity | Value | Source |
 |---|---|---|
 | Plume centerline velocity, Gas Medium at 30" | 1.99 m/s | RB-001 Table 3.5 |
-| Plume centerline velocity, Charcoal Kettle at 48" | 1.07 m/s | RB-001 Table 3.5 |
+| Plume centerline velocity, Charcoal Kettle at 48" | 1.05 m/s | RB-001 Table 3.5 |
 | Plume mass flow, Gas Medium at 30" | 0.093 kg/s (168 CFM) | RB-001 Table 3.7 |
 | Plume capture diameter, Gas Medium at 30" | 1.05 m (41") | RB-001 Table 3.6 |
 | Wind deflection, Gas Medium at 30", 5 mph | 12" (0.30 m) | RB-006 Table 3.2b |
-| Critical wind for 25% escape, Gas Medium at 30" | 6.7 mph | RB-006 Table 3.4a |
+| Critical wind for 25% escape, Gas Medium at 30" | 4.8 mph | RB-006 Table 3.4a |
 | Capture efficiency, standard hood, 5 mph, no panels | 70-75% | RB-006 Table 3.10 |
 | Capture efficiency, standard hood, 8 mph, no panels | 45-55% | RB-006 Table 3.10 |
 | Capture efficiency, side panels + rear wall, 5 mph | >95% | RB-006 Table 3.10 |
