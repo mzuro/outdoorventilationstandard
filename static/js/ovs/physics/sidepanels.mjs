@@ -79,10 +79,6 @@ export function panelReduction({ panels = 'none', f = F_DEFAULT, dir = 'side' } 
  * and does nothing.
  */
 export function effectiveWind(windMph, opts = {}) {
-  // STAGE-A SHIM, remove in Stage B: legacy string form
-  // effectiveWind(mph, 'none'|'one'|'both') used by i01/i03/i07. 'one' has
-  // no paper row (rb-009:369) and is treated as 'none'.
-  if (typeof opts === 'string') opts = { panels: opts === 'both' ? 'both' : 'none' };
   const { panels = 'none', f = F_DEFAULT, dir = 'side', mount = 'island' } = opts || {};
   let u = windMph * (1 - panelReduction({ panels, f, dir }));
   if (mount === 'wall' && dir === 'rear') u *= (1 - R_WALL);

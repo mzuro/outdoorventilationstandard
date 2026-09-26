@@ -8,7 +8,7 @@
 // measured to the nearest edge of the printed band.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { erf, captureFraction, criticalWinds, SIGMA_PER_BT, WIND_COUPLING } from '../static/js/ovs/physics/capture.mjs';
+import { erf, captureFraction, criticalWinds, SIGMA_PER_BT } from '../static/js/ovs/physics/capture.mjs';
 import { C_D } from '../static/js/ovs/physics/wind.mjs';
 import { SOURCES } from '../static/js/ovs/physics/heat.mjs';
 
@@ -24,13 +24,13 @@ test('erf reference values (Abramowitz–Stegun 7.1.26)', () => {
   assert.ok(Math.abs(erf(-1) + 0.8427008) < 1e-4);
 });
 
-test('model constants: σ = 1.5·b_T (RB-002 d_mean = 2·1.5·b_T, 90 % flux contour); WIND_COUPLING shim is 1', () => {
+test('model constants: σ = 1.5·b_T (RB-002 d_mean = 2·1.5·b_T, 90 % flux contour); the wind coupling lives ONLY in wind.mjs', async () => {
   assert.equal(SIGMA_PER_BT, 1.5);                                            // rb-002:392 (d_mean = 2 × 1.5 × b_T)
   assert.equal(C_D, 0.35);                                                    // rb-006:428 — the real coupling lives in wind.mjs
-  // STAGE-A SHIM: i01/i03/i07/i08 still pre-multiply the wind by this
-  // before calling deflection(), which carries C_D itself; 1 keeps their
-  // readouts equal to explain-state's for the same inputs (Stage B deletes both).
-  assert.equal(WIND_COUPLING, 1);
+  // Stage B deleted the WIND_COUPLING shim: nothing may pre-multiply the
+  // wind before deflection(), which carries C_D itself (rb-006:428).
+  const capture = await import('../static/js/ovs/physics/capture.mjs');
+  assert.equal('WIND_COUPLING' in capture, false);
 });
 
 // Gas Grill Medium at 30 in: cooking surface 24 in wide (rb-002:995), so
@@ -124,7 +124,7 @@ test('rear wind: a wall-mount is sheltered by its wall (rb-006:859) and beats th
   assert.ok(w(0) > w(5) && w(5) > w(15));
 });
 
-test('legacy call shape (STAGE-A SHIM): no windDir/src → side wind, Gas Medium; panels "one" behaves as "none"', () => {
+test('defaults: no windDir/src → side wind, Gas Medium; an unmodelled panels value ("one") falls back to none', () => {
   const a = captureFraction({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 5 });
   const b = captureFraction({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 5, windDir: 'side', src: SOURCES.gasMedium });
   assert.equal(a, b);

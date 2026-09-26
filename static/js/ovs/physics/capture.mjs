@@ -37,21 +37,7 @@ const clamp01 = (x) => Math.max(0, Math.min(1, x));
 /** σ / b_T for the Gaussian plume at hood height (rb-002:392). */
 export const SIGMA_PER_BT = 1.5;
 
-/**
- * STAGE-A SHIM, remove in Stage B. i01.mjs:185, i03.mjs:169, i07.mjs:172
- * and i08.mjs:248 still compute `plumeWind = WIND_COUPLING * wind` and pass
- * that to deflection() — a habit from the old integrator, which did not
- * carry the coupling itself. wind.mjs deflection() now IS the RB-006 §3.1
- * closed form 0.35·U·z/u_0 (rb-006:428), so any pre-multiplication would
- * apply C_D twice and make the DEFLECTION readout, the verdict stamp and
- * the drawn centreline 0.35× short of what /api/explain reports for the
- * same inputs. Exporting 1 keeps those four call sites correct until
- * Stage B deletes the multiplication and this export. The real constant is
- * wind.mjs C_D.
- */
-export const WIND_COUPLING = 1;
-
-/** Resolve the legacy `panels` strings to the sidepanels.mjs options. */
+/** Resolve a `panels` value to the sidepanels.mjs options ('one' is not modelled, rb-009:369). */
 function panelsOpt(panels) {
   return panels === 'both' || panels === 'three' ? panels : 'none';
 }

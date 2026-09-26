@@ -9,8 +9,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { plumeCfm, requiredCfm, coverageAdvisory, K_CFM, MOUNT_MULT, BLOWER_SIZES, BLOWER_MARGIN, RHO_PLUME, blowerFor } from '../static/js/ovs/physics/cfm.mjs';
 import { SOURCES } from '../static/js/ovs/physics/heat.mjs';
-import { plumeStrength } from '../static/js/ovs/physics/heat.mjs';
-import { depositionProfile } from '../static/js/ovs/physics/grease.mjs';
 
 const near = (got, want, tol, msg) => assert.ok(Math.abs(got - want) <= tol, `${msg}: got ${got}, want ${want} ±${tol}`);
 
@@ -125,23 +123,16 @@ test('coverageAdvisory: RB-008 Table 3.10 bands by % of the RB-002 recommended w
   near(c(48).recommendedWidthIn, 57, 1, 'W_rec');                             // rb-002:643
 });
 
-test('legacy call shape (STAGE-A SHIM): {btu, widthIn, mount, exposure} still returns minimum/recommended/highWind aliases', () => {
-  // i02.mjs still calls requiredCfm({ widthIn, mount, btu, exposure }) and
-  // reads .minimum/.recommended/.highWind until Stage B rebuilds it.
-  const r = requiredCfm({ widthIn: 48, mount: 'wall', btu: 60000, exposure: 'moderate' });
-  assert.equal(r.minimum, 892);                                               // rb-008:310 (60k BTU → Gas Large, default 30 in)
-  assert.equal(r.recommended, 1200);                                          // alias of .blower
-  assert.equal(r.highWind, r.tables.exposed);                                 // alias: exposed-no-panels table value
-  assert.ok(r.minimum <= r.recommended);
-});
-
-// STAGE-A SHIMS still imported by i09/i10 until Stage B
-test('plumeStrength (STAGE-A SHIM) is u_0 at 30 in for the nearest RB-001 gas row', () => {
-  near(plumeStrength(60000), 444, 1, 'Gas Large u_0 @30');                    // paper_printed: 443  rb-003:281 (hand-rounded; regenerated 444)
-  near(plumeStrength(40000), 393, 1, 'Gas Medium u_0 @30');                   // paper_printed: 392  rb-003:281
-});
-test('depositionProfile (STAGE-A SHIM) is normalized and non-increasing', () => {
-  const p = depositionProfile(30);
-  assert.equal(p[0].intensity, 1);
-  for (let i = 1; i < p.length; i++) assert.ok(p[i].intensity <= p[i - 1].intensity);
+// Stage B deleted the legacy {btu, widthIn} call shape and the
+// .recommended/.highWind aliases: requiredCfm() takes an RB-001 SOURCES
+// row and returns exactly { minimum, blower, kCfm, plumeCfm, mount,
+// mountMult, tables }.
+test('requiredCfm: no btu/width inputs, no recommended/highWind aliases (shim removed)', () => {
+  const r = requiredCfm({ src: SOURCES.gasLarge, riseIn: 30, mount: 'wall', exposure: 'moderate' });
+  assert.deepEqual(Object.keys(r).sort(), ['blower', 'kCfm', 'minimum', 'mount', 'mountMult', 'plumeCfm', 'tables']);
+  assert.equal(r.minimum, 892);                                               // rb-008:310
+  assert.equal(r.blower, 1200);                                               // rb-008:310
+  // a stray btu is ignored, never mapped: the default source (Gas Large) applies
+  const stray = requiredCfm({ btu: 25000, widthIn: 48, mount: 'wall', exposure: 'moderate' });
+  assert.equal(stray.minimum, 892);
 });

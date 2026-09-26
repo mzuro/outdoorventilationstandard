@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { SOURCES, convectiveKw, sourceForBtu, HEIGHT_M, heightM, BTU_PER_KW } from '../static/js/ovs/physics/heat.mjs';
 import {
   centerlineVelocity, plumeHalfWidthBT, captureDiameter, recommendedWidth,
-  K_BASE, K_INF, plumeRadius,
+  K_BASE, K_INF,
 } from '../static/js/ovs/physics/plume.mjs';
 
 const near = (got, want, tol, msg) => assert.ok(Math.abs(got - want) <= tol, `${msg}: got ${got}, want ${want} ±${tol}`);
@@ -169,12 +169,4 @@ test('W_rec = 1.38 · d_capture: RB-002 Table 3.7 at 30 in', () => {
 test('K_INF = 1.70 is the wind-inclusive infiltration lineage (RB-003 App D.1), distinct from K_BASE', () => {
   assert.equal(K_INF, 1.70);                                                  // rb-003:1056
   assert.ok(K_INF > K_BASE);
-});
-
-// STAGE-A SHIM: plumeRadius stays exported for i01/i04/i05/i07/i08/i09 until
-// Stage B rewires them to captureDiameter(); it is d_capture / 2 so the
-// drawn envelope is the paper's capture diameter, not the old 14 + 0.11 z.
-test('plumeRadius (STAGE-A SHIM) is half the RB-002 capture diameter', () => {
-  near(plumeRadius(30), captureDiameter(30, SOURCES.gasMedium) / 2, 1e-9, 'shim identity');
-  assert.ok(plumeRadius(48) > plumeRadius(30));
 });

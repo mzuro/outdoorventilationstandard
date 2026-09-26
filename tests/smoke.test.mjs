@@ -96,11 +96,11 @@ test('particleCaptured is the per-parcel form of the aperture partition', () => 
   assert.equal(particleCaptured({ windOff: 200 }, w), false);
 });
 
-test('deriveParams ignores the legacy w0 key and tolerates riseIn 0 (i08 indoor collapse)', () => {
-  const p = deriveParams({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 5, panels: 'none', w0: 400 });
+test('deriveParams carries no w0 key (no instrument sends one any more) and tolerates riseIn 0 (i08 indoor collapse)', () => {
+  const p = deriveParams({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 30, windMph: 5, panels: 'none' });
   assert.equal('w0' in p, false);
   assert.equal(p.xc, deflection(30, 5, SOURCES.gasMedium));
-  const z = deriveParams({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 0, windMph: 0, panels: 'none', w0: 1 });
+  const z = deriveParams({ widthIn: 48, depthIn: 40, mount: 'island', riseIn: 0, windMph: 0, panels: 'none' });
   assert.ok(Number.isFinite(z.sigma) && Number.isFinite(z.xc));
 });
 

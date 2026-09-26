@@ -67,15 +67,3 @@ export function sourceForBtu(btu, fuel = 'gas') {
   }
   return best;
 }
-
-/**
- * Centerline velocity at 30 in for the RB-001 row nearest `btu` (fpm).
- * STAGE-A SHIM, remove in Stage B — keeps i09's `plumeStrength(btu)` readout
- * numeric (it used to return a fictitious 400·∛(btu/60000) "w0"). The real
- * quantity is plume.mjs centerlineVelocity(zIn, src).
- */
-export function plumeStrength(btu) {
-  const src = sourceForBtu(btu);
-  const z = 0.76, u = 1.03 * Math.cbrt(src.qcKw) * Math.pow(z - src.z0M, -1 / 3);
-  return u * 196.85;
-}

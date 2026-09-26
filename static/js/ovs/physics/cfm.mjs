@@ -11,7 +11,7 @@
 // needs less, not more); coverageAdvisory() reports the RB-008 Table 3.10
 // coverage band for the UI instead. Pure module.
 
-import { SOURCES, sourceForBtu, heightM } from './heat.mjs';
+import { SOURCES, heightM } from './heat.mjs';
 import { recommendedWidth } from './plume.mjs';
 
 /** Plume-average density, kg/m³ (rb-008:105). */
@@ -65,14 +65,11 @@ export function kCfmFor(exposure = 'moderate', panels = 'none') {
  * Returns { minimum, blower, kCfm, plumeCfm, mount, mountMult,
  *           tables: { sheltered, moderate, exposedPanels, exposed } } where
  * `tables` are the wall-mount Table 3.2a–d values before the mount multiplier.
- *
- * STAGE-A SHIM, remove in Stage B: a legacy call {widthIn, btu, mount,
- * exposure} (i02.mjs, tests/copy-spec-line.test.mjs) is accepted — btu maps
- * to the nearest RB-001 gas row, widthIn is ignored — and the result also
- * carries `.recommended` (= blower) and `.highWind` (= tables.exposed).
+ * Hood width is not an input (see coverageAdvisory); a rated BTU is not
+ * either — callers name the RB-001 row (heat.mjs sourceForBtu maps one).
  */
-export function requiredCfm({ src, btu, riseIn = 30, mount = 'wall', exposure = 'moderate', panels = 'none' } = {}) {
-  const source = src ?? (Number.isFinite(btu) ? sourceForBtu(btu) : SOURCES.gasLarge);
+export function requiredCfm({ src, riseIn = 30, mount = 'wall', exposure = 'moderate', panels = 'none' } = {}) {
+  const source = src ?? SOURCES.gasLarge;
   const mountKey = MOUNT_MULT[mount] != null ? mount : 'wall';
   const mountMult = MOUNT_MULT[mountKey];
   const cfmPlume = plumeCfm(riseIn, source);
@@ -86,12 +83,7 @@ export function requiredCfm({ src, btu, riseIn = 30, mount = 'wall', exposure = 
   const table = Math.round(cfmPlume * kCfm);
   const minimum = Math.round(table * mountMult);
   const blower = blowerFor(minimum);
-  return {
-    minimum, blower, kCfm, plumeCfm: cfmPlume, mount: mountKey, mountMult, tables,
-    // STAGE-A SHIM aliases (i02 readouts), remove in Stage B
-    recommended: blower ?? minimum,
-    highWind: Math.round(tables.exposed * mountMult),
-  };
+  return { minimum, blower, kCfm, plumeCfm: cfmPlume, mount: mountKey, mountMult, tables };
 }
 
 /** RB-008 Table 3.10 coverage bands by % of the RB-002 recommended width (rb-008:584-591). */

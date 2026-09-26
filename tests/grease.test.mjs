@@ -4,7 +4,7 @@
 // reproduced against RB-011 Table 3.3a (rb-011:304-312).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { stokesSettling, groundContactDistance, cunninghamSlip, RHO_PARTICLE, MU_AIR, MEAN_FREE_PATH_UM, depositionProfile } from '../static/js/ovs/physics/grease.mjs';
+import { stokesSettling, groundContactDistance, cunninghamSlip, RHO_PARTICLE, MU_AIR, MEAN_FREE_PATH_UM } from '../static/js/ovs/physics/grease.mjs';
 
 const near = (got, want, tol, msg) => assert.ok(Math.abs(got - want) <= tol, `${msg}: got ${got}, want ${want} ±${tol}`);
 const rel = (got, want, frac, msg) => near(got, want, Math.abs(want) * frac, msg);
@@ -43,13 +43,9 @@ test('RB-011 Table 3.3a ground-contact distance x_ground = H·U/v_s, H = 1.5 m',
   assert.equal(groundContactDistance(100, 0), 0);
 });
 
-// STAGE-A SHIM (i10 still imports it): the old (v/400)² strip has no paper
-// basis; the shim keeps its shape (normalized, non-increasing) until Stage B
-// replaces i10's deposition view with particle-size zones.
-test('depositionProfile (STAGE-A SHIM) keeps its legacy shape', () => {
-  const p = depositionProfile(30, 8);
-  assert.equal(p.length, 8);
-  assert.equal(p[0].intensity, 1);
-  assert.equal(p[7].zIn, 30);
-  for (let i = 1; i < p.length; i++) assert.ok(p[i].intensity <= p[i - 1].intensity);
+// Stage B: the old (v/400)² depositionProfile shim is gone; i10 charts the
+// Table 3.3a rows above directly.
+test('depositionProfile (no paper basis) is no longer exported', async () => {
+  const grease = await import('../static/js/ovs/physics/grease.mjs');
+  assert.equal('depositionProfile' in grease, false);
 });

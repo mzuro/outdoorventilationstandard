@@ -72,12 +72,11 @@ test('three panels (sides + rear) use Table 3.1b', () => {
   near(panelReduction({ panels: 'three', f: 0.67, dir: 'front' }), 0.18, 1e-9, 'front');  // rb-009:258
 });
 
-// STAGE-A SHIM: the legacy `effectiveWind(windMph, 'none'|'one'|'both')`
-// string form is still called by i01/i03/i07 until Stage B.
-test('legacy string form (STAGE-A SHIM): "both" = f 0.67 lateral; "one" is dropped and behaves as "none"', () => {
-  assert.equal(effectiveWind(10, 'none'), 10);
-  near(effectiveWind(10, 'both'), 4.0, 1e-9, 'both');                        // rb-009:245
-  // RB-009 §3.5.1: a single windward panel can push plume gas out the open
-  // side (rb-009:369); there is no paper row for it, so it is not modelled.
-  assert.equal(effectiveWind(10, 'one'), 10);
+// The legacy string form effectiveWind(mph, 'none'|'one'|'both') is gone
+// (Stage B): the options object is the only API, and a single panel is
+// not modelled (rb-009:369) — 'one' resolves to no reduction.
+test('effectiveWind takes the options object only; "one" panel has no row and reduces nothing', () => {
+  near(effectiveWind(10, { panels: 'both', dir: 'side' }), 4.0, 1e-9, 'both, lateral');   // rb-009:245
+  assert.equal(effectiveWind(10, { panels: 'one', dir: 'side' }), 10);                     // rb-009:369
+  assert.equal(effectiveWind(10, { panels: 'none', dir: 'side' }), 10);
 });

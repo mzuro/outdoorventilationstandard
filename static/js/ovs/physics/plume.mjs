@@ -46,13 +46,3 @@ export function captureDiameter(zIn, src = SOURCES.gasMedium) {
 export function recommendedWidth(zIn, src = SOURCES.gasMedium) {
   return K_BASE * captureDiameter(zIn, src);
 }
-
-/**
- * STAGE-A SHIM, remove in Stage B. Old signature `plumeRadius(zIn)` is still
- * imported by i01/i04/i05/i07/i08/i09 to draw the plume envelope. It now
- * returns half the RB-002 capture diameter for Gas Medium so the drawn
- * envelope is the paper's, not the retired `14 + 0.11·z` cone.
- */
-export function plumeRadius(zIn) {
-  return captureDiameter(zIn, SOURCES.gasMedium) / 2;
-}
