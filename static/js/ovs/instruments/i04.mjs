@@ -46,6 +46,7 @@ const SOURCE_MENU = [
   { value: 'pelletHigh', label: 'PELLET' },
 ];
 const sourceFor = (v) => SOURCES[v] || SOURCES.gasMedium;
+const shortLabel = (src) => (SOURCE_MENU.find((o) => o.value === src.id) || { label: src.id }).label;
 
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i04Mounted === '1') return;
@@ -157,7 +158,7 @@ export function mount(figureEl) {
     refs.envFill.setAttribute('d', `${fill}Z`);
 
     // --- source-width note (constant) -----------------------------------
-    replaceChildren(refs.sourceNote, H.noteBox(20, 20, `${src.label.toUpperCase()} · d_capture AT GRATE ${Math.round(sourceWidth)}″`));
+    replaceChildren(refs.sourceNote, H.noteBox(20, 20, `${shortLabel(src)} · d_capture AT GRATE ${Math.round(sourceWidth)}″`));
 
     // --- live measuring line at the selected height ----------------------
     const my = yAt(heightIn);
