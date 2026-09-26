@@ -1,7 +1,7 @@
 ---
 title: "RB-006: Wind Interaction and Cross-Flow Effects"
 date: 2025-11-05
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-006"
 priority: "P1 — Core"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -44,6 +44,20 @@ dataset:
 **Author Role:** Environmental Conditions Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-003: Velocity Decay and Near-Field vs. Far-Field Capture
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.2 / Tables 3.2a-h, u_0 column: regenerated from the Heskestad formula, following RB-001 Table 3.5 v1.1 (Gas Medium 2.30/2.12/1.99/1.88/1.71 → 2.21/2.09/1.99/1.91/1.78 m/s; other sources likewise). The 2, 5 and 8 mph deflection cells are left as printed.
+- Section 3.2 / Table 3.2b, 10 and 15 mph columns: regenerated from delta_x = 0.35 * U_w * z / u_0(z) (10 mph: 0.33/0.47/0.63/0.81/1.24 m → 0.33/0.46/0.60/0.74/1.07 m; 15 mph: 0.60/0.87/1.17/1.52/2.39 m → 0.49/0.68/0.89/1.12/1.61 m); the v1.0 cells carried an unstated partial application of the Section 3.1 Froude correction. The 15 mph column is Fr > 2.7 at every height (Table 3.3) and is now marked as the disrupted regime, where the linear deflection is not a design value.
+- Section 3.4 / Tables 3.4a and 3.4b: the three critical-wind-speed columns re-derived from U_crit = delta * u_0(z) / (0.35 * z) with the printed base-margin (K = 1.38) overhang and the regenerated u_0 (Gas Medium 30": 6.7/9.7/12.6 → 4.8/7.0/9.3 mph; Gas High-Output 18": 8.0/12.5/16.7 → 6.9/10.9/15.0 mph; Charcoal Kettle 30": 5.0/6.7/8.4 → 3.7/5.1/6.6 mph; Pellet Smoker Low 30": 4.2/5.8/7.3 → 2.6/3.9/5.2 mph; all 40 rows likewise); v1.0 computed these columns with the wider K = 1.70 hood while labelling the base-margin overhang. The b_T cells for Gas Small, Wood-Fired and Pellet Smoker High are corrected from Gas Medium's values to their own (0.100 → 0.091, 0.098 and 0.091 m at 18", and so on). A basis note is added above Table 3.4a. The findings under the tables, the Section 3.11 answer to Key Question 1 (25% escape 6.7 → 4.8 mph; centerline exit 9.7 → 7.0 mph; practical thresholds 5/7/10 → 3/5/7 mph mean; high-output offsets 20-30% → 5-20% higher), Section 4.4 (11.1/9.7/8.1 → 9.8/7.0/5.4 mph; 37% → 82%; 0.5-0.8 → 0.4-0.9 mph per 6") and Section 4.5 (5.0/6.7 → 3.7/5.1 mph; 25-35% → 15-40% lower) follow.
+- Section 4.3 / Table 4.3: column added mapping each wind-speed band to the RB-008 exposure class and the class-representative F_wind it adopts (Sheltered 1.3, Moderate 1.6, Exposed 2.5 or 1.8 with side panels); note added that the speed-resolved values apply when wind speed at cooking height is measured. The RB-008 paragraph in Section 4.7 is reworded accordingly. No numbers change.
+- Section 3.1: drafting artifacts in the worked deflection example removed (editorial; no numbers change).
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -349,23 +363,9 @@ This equation is evaluated for each combination of:
 
 > = (2.24 / (1.03 * 2.017)) * 0.75 * [(1.13)^(4/3) - (0.37)^(4/3)]
 
-> = (2.24 / 2.078) * 0.75 * [1.178 - 0.267]
+> = (2.24 / 2.078) * 0.75 * [1.178 - 0.267] = 1.078 * 0.75 * 0.911 = 0.737 m
 
-> = 1.078 * 0.75 * 0.911
-
-> = 0.74 * 0.911 = 0.736 m... [correction below]
-
-Let me recalculate more carefully:
-
-> 1.03 * Q_c^(1/3) = 1.03 * (8.2)^(1/3) = 1.03 * 2.017 = 2.078
-
-> (z - z_0)^(4/3) = (0.76 + 0.37)^(4/3) = (1.13)^(4/3) = 1.178
-
-> (-z_0)^(4/3) = (0.37)^(4/3) = 0.267
-
-> delta_x = (2.24 / 2.078) * 0.75 * (1.178 - 0.267) = 1.078 * 0.75 * 0.911 = 0.737 m...
-
-This result of 0.74 m (29 inches) seems too large. The issue is that the simple integral formulation overestimates deflection because it does not account for the acceleration of the plume in the horizontal direction reducing the time spent at lower velocities. A more physically appropriate treatment uses the Briggs formulation adapted for area sources.
+This result of 0.74 m (29 inches) is too large. The issue is that the simple integral formulation overestimates deflection because it does not account for the acceleration of the plume in the horizontal direction reducing the time spent at lower velocities. A more physically appropriate treatment uses the Briggs formulation adapted for area sources.
 
 **Corrected approach using Briggs trajectory with initial momentum.** The cooking plume enters the crosswind with significant initial upward velocity u_0(0) at the cooking surface. The effective deflection accounting for this initial momentum is:
 
@@ -405,9 +405,9 @@ The deflection becomes:
 
 > u_0_repr = u_0(20") = 1.03 * (8.2)^(1/3) * (0.51 + 0.37)^(-1/3) = 2.078 * (0.88)^(-1/3) = 2.078 * 1.046 = 2.17 m/s
 
-> delta_x = 0.76 * 2.24 / (1.5 * 2.17) = 1.70 / 3.26 = 0.52 m...
+> delta_x = 0.76 * 2.24 / (1.5 * 2.17) = 1.70 / 3.26 = 0.52 m
 
-This remains large. The issue is that this simplified method tends to overestimate for low-to-moderate winds. Let me use the well-validated approach from the industrial ventilation literature.
+This remains large; the simplified method overestimates for low-to-moderate winds. The well-validated approach from the industrial ventilation literature is adopted instead.
 
 **Final adopted method.** Based on the body of experimental work on buoyant plumes in crossflow (Briggs 1984, Davidson 1986, Contini & Robins 2001), the deflection at height z for a buoyant source with convective power Q_c is well-approximated by:
 
@@ -439,81 +439,83 @@ The following tables present the lateral deflection of the plume centerline at h
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.01 | 0.07 m (3") | 0.18 m (7") | 0.29 m (11") | 0.39 m (15") | 0.72 m (28") |
-| 24" (0.61 m) | 1.85 | 0.10 m (4") | 0.26 m (10") | 0.41 m (16") | 0.55 m (22") | 1.03 m (41") |
+| 18" (0.46 m) | 1.94 | 0.07 m (3") | 0.18 m (7") | 0.29 m (11") | 0.39 m (15") | 0.72 m (28") |
+| 24" (0.61 m) | 1.83 | 0.10 m (4") | 0.26 m (10") | 0.41 m (16") | 0.55 m (22") | 1.03 m (41") |
 | 30" (0.76 m) | 1.74 | 0.14 m (5") | 0.34 m (13") | 0.55 m (22") | 0.74 m (29") | 1.39 m (55") |
-| 36" (0.91 m) | 1.64 | 0.17 m (7") | 0.43 m (17") | 0.70 m (28") | 0.94 m (37") | 1.80 m (71") |
-| 48" (1.22 m) | 1.49 | 0.26 m (10") | 0.64 m (25") | 1.06 m (42") | 1.44 m (57") | 2.83 m (111") |
+| 36" (0.91 m) | 1.66 | 0.17 m (7") | 0.43 m (17") | 0.70 m (28") | 0.94 m (37") | 1.80 m (71") |
+| 48" (1.22 m) | 1.54 | 0.26 m (10") | 0.64 m (25") | 1.06 m (42") | 1.44 m (57") | 2.83 m (111") |
 
 #### Table 3.2b: Plume Centerline Deflection — Gas Grill Medium (Q_c = 8.2 kW, z_0 = -0.37 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.30 | 0.06 m (2") | 0.16 m (6") | 0.25 m (10") | 0.33 m (13") | 0.60 m (24") |
-| 24" (0.61 m) | 2.12 | 0.09 m (4") | 0.23 m (9") | 0.36 m (14") | 0.47 m (19") | 0.87 m (34") |
-| 30" (0.76 m) | 1.99 | 0.12 m (5") | 0.30 m (12") | 0.48 m (19") | 0.63 m (25") | 1.17 m (46") |
-| 36" (0.91 m) | 1.88 | 0.15 m (6") | 0.38 m (15") | 0.61 m (24") | 0.81 m (32") | 1.52 m (60") |
-| 48" (1.22 m) | 1.71 | 0.22 m (9") | 0.56 m (22") | 0.92 m (36") | 1.24 m (49") | 2.39 m (94") |
+| 18" (0.46 m) | 2.21 | 0.06 m (2") | 0.16 m (6") | 0.25 m (10") | 0.33 m (13") | 0.49 m (19")† |
+| 24" (0.61 m) | 2.09 | 0.09 m (4") | 0.23 m (9") | 0.36 m (14") | 0.46 m (18") | 0.68 m (27")† |
+| 30" (0.76 m) | 1.99 | 0.12 m (5") | 0.30 m (12") | 0.48 m (19") | 0.60 m (23") | 0.89 m (35")† |
+| 36" (0.91 m) | 1.91 | 0.15 m (6") | 0.38 m (15") | 0.61 m (24") | 0.74 m (29") | 1.12 m (44")† |
+| 48" (1.22 m) | 1.78 | 0.22 m (9") | 0.56 m (22") | 0.92 m (36") | 1.07 m (42") | 1.61 m (63")† |
+
+† Fr > 2.7 at this condition (Table 3.3): disrupted regime (Table 3.8). The linear formula's deflection is shown for completeness only and is not a design value.
 
 #### Table 3.2c: Plume Centerline Deflection — Gas Grill Large (Q_c = 12.3 kW, z_0 = -0.41 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.60 | 0.06 m (2") | 0.14 m (5") | 0.22 m (9") | 0.29 m (11") | 0.52 m (20") |
-| 24" (0.61 m) | 2.39 | 0.08 m (3") | 0.20 m (8") | 0.32 m (13") | 0.41 m (16") | 0.75 m (30") |
-| 30" (0.76 m) | 2.25 | 0.11 m (4") | 0.27 m (10") | 0.42 m (17") | 0.55 m (22") | 1.01 m (40") |
-| 36" (0.91 m) | 2.12 | 0.13 m (5") | 0.34 m (13") | 0.54 m (21") | 0.71 m (28") | 1.31 m (52") |
-| 48" (1.22 m) | 1.93 | 0.20 m (8") | 0.49 m (19") | 0.80 m (31") | 1.07 m (42") | 2.04 m (80") |
+| 18" (0.46 m) | 2.49 | 0.06 m (2") | 0.14 m (5") | 0.22 m (9") | 0.29 m (11") | 0.52 m (20") |
+| 24" (0.61 m) | 2.36 | 0.08 m (3") | 0.20 m (8") | 0.32 m (13") | 0.41 m (16") | 0.75 m (30") |
+| 30" (0.76 m) | 2.26 | 0.11 m (4") | 0.27 m (10") | 0.42 m (17") | 0.55 m (22") | 1.01 m (40") |
+| 36" (0.91 m) | 2.17 | 0.13 m (5") | 0.34 m (13") | 0.54 m (21") | 0.71 m (28") | 1.31 m (52") |
+| 48" (1.22 m) | 2.02 | 0.20 m (8") | 0.49 m (19") | 0.80 m (31") | 1.07 m (42") | 2.04 m (80") |
 
 #### Table 3.2d: Plume Centerline Deflection — Gas Grill High-Output (Q_c = 16.4 kW, z_0 = -0.44 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.83 | 0.05 m (2") | 0.13 m (5") | 0.20 m (8") | 0.26 m (10") | 0.47 m (18") |
-| 24" (0.61 m) | 2.60 | 0.07 m (3") | 0.19 m (7") | 0.29 m (12") | 0.38 m (15") | 0.68 m (27") |
-| 30" (0.76 m) | 2.44 | 0.10 m (4") | 0.24 m (10") | 0.39 m (15") | 0.50 m (20") | 0.91 m (36") |
-| 36" (0.91 m) | 2.31 | 0.12 m (5") | 0.31 m (12") | 0.49 m (19") | 0.64 m (25") | 1.18 m (47") |
-| 48" (1.22 m) | 2.10 | 0.18 m (7") | 0.44 m (17") | 0.72 m (28") | 0.96 m (38") | 1.82 m (72") |
+| 18" (0.46 m) | 2.71 | 0.05 m (2") | 0.13 m (5") | 0.20 m (8") | 0.26 m (10") | 0.47 m (18") |
+| 24" (0.61 m) | 2.57 | 0.07 m (3") | 0.19 m (7") | 0.29 m (12") | 0.38 m (15") | 0.68 m (27") |
+| 30" (0.76 m) | 2.46 | 0.10 m (4") | 0.24 m (10") | 0.39 m (15") | 0.50 m (20") | 0.91 m (36") |
+| 36" (0.91 m) | 2.37 | 0.12 m (5") | 0.31 m (12") | 0.49 m (19") | 0.64 m (25") | 1.18 m (47") |
+| 48" (1.22 m) | 2.21 | 0.18 m (7") | 0.44 m (17") | 0.72 m (28") | 0.96 m (38") | 1.82 m (72") |
 
 #### Table 3.2e: Plume Centerline Deflection — Charcoal Kettle (Q_c = 1.8 kW, z_0 = -0.47 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 1.45 | 0.10 m (4") | 0.25 m (10") | 0.41 m (16") | 0.55 m (22") | 1.06 m (42") |
-| 24" (0.61 m) | 1.33 | 0.14 m (6") | 0.36 m (14") | 0.60 m (24") | 0.81 m (32") | 1.58 m (62") |
-| 30" (0.76 m) | 1.25 | 0.19 m (7") | 0.48 m (19") | 0.80 m (32") | 1.09 m (43") | 2.16 m (85") |
-| 36" (0.91 m) | 1.18 | 0.24 m (9") | 0.61 m (24") | 1.03 m (41") | 1.41 m (55") | 2.83 m (111") |
-| 48" (1.22 m) | 1.07 | 0.36 m (14") | 0.92 m (36") | 1.57 m (62") | 2.17 m (85") | 4.48 m (176") |
+| 18" (0.46 m) | 1.28 | 0.10 m (4") | 0.25 m (10") | 0.41 m (16") | 0.55 m (22") | 1.06 m (42") |
+| 24" (0.61 m) | 1.22 | 0.14 m (6") | 0.36 m (14") | 0.60 m (24") | 0.81 m (32") | 1.58 m (62") |
+| 30" (0.76 m) | 1.17 | 0.19 m (7") | 0.48 m (19") | 0.80 m (32") | 1.09 m (43") | 2.16 m (85") |
+| 36" (0.91 m) | 1.13 | 0.24 m (9") | 0.61 m (24") | 1.03 m (41") | 1.41 m (55") | 2.83 m (111") |
+| 48" (1.22 m) | 1.05 | 0.36 m (14") | 0.92 m (36") | 1.57 m (62") | 2.17 m (85") | 4.48 m (176") |
 
 #### Table 3.2f: Plume Centerline Deflection — Wood-Fired (Q_c = 7.6 kW, z_0 = -0.36 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.25 | 0.06 m (3") | 0.16 m (6") | 0.26 m (10") | 0.34 m (13") | 0.62 m (24") |
-| 24" (0.61 m) | 2.07 | 0.09 m (4") | 0.23 m (9") | 0.37 m (15") | 0.49 m (19") | 0.90 m (35") |
-| 30" (0.76 m) | 1.94 | 0.12 m (5") | 0.31 m (12") | 0.50 m (20") | 0.65 m (26") | 1.22 m (48") |
-| 36" (0.91 m) | 1.84 | 0.16 m (6") | 0.39 m (15") | 0.63 m (25") | 0.83 m (33") | 1.57 m (62") |
-| 48" (1.22 m) | 1.67 | 0.23 m (9") | 0.58 m (23") | 0.95 m (38") | 1.28 m (51") | 2.49 m (98") |
+| 18" (0.46 m) | 2.16 | 0.06 m (3") | 0.16 m (6") | 0.26 m (10") | 0.34 m (13") | 0.62 m (24") |
+| 24" (0.61 m) | 2.05 | 0.09 m (4") | 0.23 m (9") | 0.37 m (15") | 0.49 m (19") | 0.90 m (35") |
+| 30" (0.76 m) | 1.95 | 0.12 m (5") | 0.31 m (12") | 0.50 m (20") | 0.65 m (26") | 1.22 m (48") |
+| 36" (0.91 m) | 1.87 | 0.16 m (6") | 0.39 m (15") | 0.63 m (25") | 0.83 m (33") | 1.57 m (62") |
+| 48" (1.22 m) | 1.74 | 0.23 m (9") | 0.58 m (23") | 0.95 m (38") | 1.28 m (51") | 2.49 m (98") |
 
 #### Table 3.2g: Plume Centerline Deflection — Pellet Smoker Low (Q_c = 1.5 kW, z_0 = -0.38 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 1.38 | 0.10 m (4") | 0.26 m (10") | 0.43 m (17") | 0.58 m (23") | 1.12 m (44") |
-| 24" (0.61 m) | 1.27 | 0.15 m (6") | 0.38 m (15") | 0.63 m (25") | 0.86 m (34") | 1.67 m (66") |
-| 30" (0.76 m) | 1.19 | 0.20 m (8") | 0.50 m (20") | 0.85 m (33") | 1.16 m (46") | 2.28 m (90") |
-| 36" (0.91 m) | 1.13 | 0.25 m (10") | 0.64 m (25") | 1.08 m (43") | 1.49 m (59") | 2.99 m (118") |
-| 48" (1.22 m) | 1.02 | 0.38 m (15") | 0.97 m (38") | 1.66 m (65") | 2.29 m (90") | 4.74 m (187") |
+| 18" (0.46 m) | 1.25 | 0.10 m (4") | 0.26 m (10") | 0.43 m (17") | 0.58 m (23") | 1.12 m (44") |
+| 24" (0.61 m) | 1.18 | 0.15 m (6") | 0.38 m (15") | 0.63 m (25") | 0.86 m (34") | 1.67 m (66") |
+| 30" (0.76 m) | 1.13 | 0.20 m (8") | 0.50 m (20") | 0.85 m (33") | 1.16 m (46") | 2.28 m (90") |
+| 36" (0.91 m) | 1.08 | 0.25 m (10") | 0.64 m (25") | 1.08 m (43") | 1.49 m (59") | 2.99 m (118") |
+| 48" (1.22 m) | 1.01 | 0.38 m (15") | 0.97 m (38") | 1.66 m (65") | 2.29 m (90") | 4.74 m (187") |
 
 #### Table 3.2h: Plume Centerline Deflection — Pellet Smoker High (Q_c = 5.7 kW, z_0 = -0.30 m)
 
 | Height | u_0 (m/s) | 2 mph (0.89 m/s) | 5 mph (2.24 m/s) | 8 mph (3.58 m/s) | 10 mph (4.47 m/s) | 15 mph (6.71 m/s) |
 |---|---|---|---|---|---|---|
-| 18" (0.46 m) | 2.06 | 0.07 m (3") | 0.17 m (7") | 0.28 m (11") | 0.37 m (15") | 0.68 m (27") |
+| 18" (0.46 m) | 2.02 | 0.07 m (3") | 0.17 m (7") | 0.28 m (11") | 0.37 m (15") | 0.68 m (27") |
 | 24" (0.61 m) | 1.90 | 0.10 m (4") | 0.25 m (10") | 0.40 m (16") | 0.53 m (21") | 0.99 m (39") |
-| 30" (0.76 m) | 1.78 | 0.13 m (5") | 0.33 m (13") | 0.54 m (21") | 0.72 m (28") | 1.34 m (53") |
-| 36" (0.91 m) | 1.68 | 0.17 m (7") | 0.42 m (17") | 0.68 m (27") | 0.92 m (36") | 1.74 m (69") |
-| 48" (1.22 m) | 1.53 | 0.25 m (10") | 0.63 m (25") | 1.04 m (41") | 1.40 m (55") | 2.73 m (107") |
+| 30" (0.76 m) | 1.80 | 0.13 m (5") | 0.33 m (13") | 0.54 m (21") | 0.72 m (28") | 1.34 m (53") |
+| 36" (0.91 m) | 1.73 | 0.17 m (7") | 0.42 m (17") | 0.68 m (27") | 0.92 m (36") | 1.74 m (69") |
+| 48" (1.22 m) | 1.60 | 0.25 m (10") | 0.63 m (25") | 1.04 m (41") | 1.40 m (55") | 2.73 m (107") |
 
 **Key observations from the deflection tables:**
 
@@ -617,73 +619,75 @@ Using the deflection formula delta_x = 0.35 * U_w * z / u_0(z), the critical win
 
 > U_w_crit = OH * u_0(z) / (0.35 * z)
 
+The values in Tables 3.4a and 3.4b are computed with the base-margin (K = 1.38) overhang listed in the OH column, the b_T = 0.12 (z - z_0) half-width, and the u_0 values of Tables 3.2a through 3.2h.
+
 #### Table 3.4a: Critical Wind Speeds for Capture Failure — Gas Grill Sources (with RB-002 recommended hood)
 
 | Source / Height | OH (m) | b_T (m) | U_crit: 25% escape (mph) | U_crit: Centerline exit (mph) | U_crit: 50% escape (mph) |
 |---|---|---|---|---|---|
 | **Gas Small** | | | | | |
-| 18" | 0.32 | 0.100 | 6.6 | 9.7 | 12.8 |
-| 24" | 0.37 | 0.118 | 6.2 | 9.0 | 11.7 |
-| 30" | 0.42 | 0.136 | 5.9 | 8.5 | 11.0 |
-| 36" | 0.47 | 0.154 | 5.6 | 8.0 | 10.2 |
-| 48" | 0.57 | 0.191 | 5.1 | 7.1 | 9.0 |
+| 18" | 0.32 | 0.091 | 6.2 | 8.6 | 11.1 |
+| 24" | 0.37 | 0.109 | 5.0 | 7.1 | 9.2 |
+| 30" | 0.42 | 0.127 | 4.3 | 6.1 | 8.0 |
+| 36" | 0.47 | 0.145 | 3.8 | 5.5 | 7.2 |
+| 48" | 0.57 | 0.182 | 3.1 | 4.6 | 6.1 |
 | **Gas Medium** | | | | | |
-| 18" | 0.32 | 0.100 | 7.6 | 11.1 | 14.7 |
-| 24" | 0.37 | 0.118 | 7.1 | 10.3 | 13.5 |
-| 30" | 0.42 | 0.136 | 6.7 | 9.7 | 12.6 |
-| 36" | 0.47 | 0.154 | 6.3 | 9.1 | 11.7 |
-| 48" | 0.58 | 0.191 | 5.7 | 8.1 | 10.3 |
+| 18" | 0.32 | 0.100 | 6.8 | 9.8 | 12.9 |
+| 24" | 0.37 | 0.118 | 5.5 | 8.1 | 10.7 |
+| 30" | 0.42 | 0.136 | 4.8 | 7.0 | 9.3 |
+| 36" | 0.47 | 0.154 | 4.3 | 6.3 | 8.4 |
+| 48" | 0.58 | 0.191 | 3.6 | 5.4 | 7.2 |
 | **Gas Large** | | | | | |
-| 18" | 0.31 | 0.104 | 7.8 | 11.7 | 15.5 |
-| 24" | 0.36 | 0.122 | 7.4 | 10.9 | 14.3 |
-| 30" | 0.41 | 0.140 | 7.0 | 10.2 | 13.3 |
-| 36" | 0.46 | 0.158 | 6.6 | 9.5 | 12.3 |
-| 48" | 0.56 | 0.196 | 5.9 | 8.4 | 10.7 |
+| 18" | 0.31 | 0.104 | 7.1 | 10.7 | 14.3 |
+| 24" | 0.36 | 0.122 | 5.9 | 8.9 | 11.9 |
+| 30" | 0.41 | 0.140 | 5.1 | 7.8 | 10.4 |
+| 36" | 0.46 | 0.158 | 4.6 | 7.0 | 9.4 |
+| 48" | 0.56 | 0.196 | 3.9 | 5.9 | 8.0 |
 | **Gas High-Output** | | | | | |
-| 18" | 0.29 | 0.108 | 8.0 | 12.5 | 16.7 |
-| 24" | 0.34 | 0.126 | 7.6 | 11.6 | 15.3 |
-| 30" | 0.39 | 0.144 | 7.2 | 10.9 | 14.3 |
-| 36" | 0.44 | 0.162 | 6.7 | 10.1 | 13.3 |
-| 48" | 0.54 | 0.199 | 6.0 | 8.9 | 11.6 |
+| 18" | 0.29 | 0.108 | 6.9 | 10.9 | 15.0 |
+| 24" | 0.34 | 0.126 | 5.8 | 9.2 | 12.6 |
+| 30" | 0.39 | 0.144 | 5.1 | 8.1 | 11.1 |
+| 36" | 0.44 | 0.162 | 4.6 | 7.3 | 10.0 |
+| 48" | 0.54 | 0.199 | 3.9 | 6.3 | 8.6 |
 
 #### Table 3.4b: Critical Wind Speeds for Capture Failure — Other Sources (with RB-002 recommended hood)
 
 | Source / Height | OH (m) | b_T (m) | U_crit: 25% escape (mph) | U_crit: Centerline exit (mph) | U_crit: 50% escape (mph) |
 |---|---|---|---|---|---|
 | **Charcoal Kettle** | | | | | |
-| 18" | 0.42 | 0.112 | 5.9 | 8.1 | 10.2 |
-| 24" | 0.47 | 0.130 | 5.3 | 7.3 | 9.1 |
-| 30" | 0.52 | 0.148 | 5.0 | 6.7 | 8.4 |
-| 36" | 0.56 | 0.166 | 4.6 | 6.2 | 7.7 |
-| 48" | 0.67 | 0.203 | 4.1 | 5.4 | 6.7 |
+| 18" | 0.42 | 0.112 | 5.5 | 7.5 | 9.5 |
+| 24" | 0.47 | 0.130 | 4.4 | 6.0 | 7.7 |
+| 30" | 0.52 | 0.148 | 3.7 | 5.1 | 6.6 |
+| 36" | 0.56 | 0.166 | 3.1 | 4.4 | 5.7 |
+| 48" | 0.67 | 0.203 | 2.6 | 3.7 | 4.8 |
 | **Wood-Fired** | | | | | |
-| 18" | 0.32 | 0.100 | 7.4 | 10.8 | 14.2 |
-| 24" | 0.37 | 0.118 | 6.9 | 10.0 | 13.0 |
-| 30" | 0.42 | 0.136 | 6.5 | 9.4 | 12.1 |
-| 36" | 0.46 | 0.154 | 6.1 | 8.7 | 11.2 |
-| 48" | 0.56 | 0.191 | 5.4 | 7.7 | 9.8 |
+| 18" | 0.32 | 0.098 | 6.7 | 9.6 | 12.6 |
+| 24" | 0.37 | 0.116 | 5.4 | 7.9 | 10.4 |
+| 30" | 0.42 | 0.134 | 4.7 | 6.9 | 9.1 |
+| 36" | 0.46 | 0.152 | 4.0 | 6.0 | 8.0 |
+| 48" | 0.56 | 0.190 | 3.4 | 5.1 | 6.8 |
 | **Pellet Smoker Low** | | | | | |
-| 18" | 0.30 | 0.101 | 4.8 | 6.8 | 8.7 |
-| 24" | 0.36 | 0.119 | 4.5 | 6.3 | 8.0 |
-| 30" | 0.41 | 0.137 | 4.2 | 5.8 | 7.3 |
-| 36" | 0.45 | 0.155 | 3.8 | 5.3 | 6.7 |
-| 48" | 0.56 | 0.192 | 3.4 | 4.6 | 5.8 |
+| 18" | 0.30 | 0.101 | 3.5 | 5.2 | 7.0 |
+| 24" | 0.36 | 0.119 | 3.0 | 4.5 | 5.9 |
+| 30" | 0.41 | 0.137 | 2.6 | 3.9 | 5.2 |
+| 36" | 0.45 | 0.155 | 2.2 | 3.4 | 4.6 |
+| 48" | 0.56 | 0.192 | 1.9 | 3.0 | 4.0 |
 | **Pellet Smoker High** | | | | | |
-| 18" | 0.30 | 0.100 | 5.8 | 8.6 | 11.2 |
-| 24" | 0.36 | 0.118 | 5.5 | 7.9 | 10.3 |
-| 30" | 0.41 | 0.136 | 5.2 | 7.4 | 9.5 |
-| 36" | 0.45 | 0.154 | 4.8 | 6.8 | 8.7 |
-| 48" | 0.56 | 0.192 | 4.3 | 6.0 | 7.6 |
+| 18" | 0.30 | 0.091 | 5.8 | 8.4 | 11.0 |
+| 24" | 0.36 | 0.109 | 5.0 | 7.2 | 9.3 |
+| 30" | 0.41 | 0.127 | 4.3 | 6.2 | 8.2 |
+| 36" | 0.45 | 0.145 | 3.7 | 5.5 | 7.2 |
+| 48" | 0.56 | 0.182 | 3.2 | 4.7 | 6.2 |
 
 **Critical findings from Tables 3.4a and 3.4b:**
 
-1. **The weakest plumes lose reliable capture at remarkably low wind speeds.** A pellet smoker low at 30" mounting height experiences 25% plume escape at only 4.2 mph, centerline exit at 5.8 mph, and 50% escape at 7.3 mph. These are wind speeds that occur routinely in most outdoor settings.
+1. **The weakest plumes lose reliable capture at remarkably low wind speeds.** A pellet smoker low at 30" mounting height experiences 25% plume escape at only 2.6 mph, centerline exit at 3.9 mph, and 50% escape at 5.2 mph. These are wind speeds that occur routinely in most outdoor settings.
 
-2. **Even gas grill plumes are vulnerable at moderate heights.** A gas grill medium at 36" loses 25% of the plume at 6.3 mph and experiences centerline exit at 9.1 mph. A homeowner grilling on a mildly breezy day (8-10 mph at cooking height) will experience significant capture failure with a standard hood at 36".
+2. **Even gas grill plumes are vulnerable at moderate heights.** A gas grill medium at 36" loses 25% of the plume at 4.3 mph and experiences centerline exit at 6.3 mph. A homeowner grilling on a mildly breezy day (8-10 mph at cooking height) will experience significant capture failure with a standard hood at 36".
 
-3. **At 48", all sources lose reliable capture below 10 mph.** The highest critical wind speed for any source at 48" is 8.9 mph (gas high-output, centerline exit). For most sources, the plume centerline exits the hood at 5 to 8 mph. This confirms that 48" mounting height is impractical without wind shielding.
+3. **At 48", all sources lose reliable capture below 7 mph.** The highest critical wind speed for any source at 48" is 6.3 mph (gas high-output, centerline exit). For most sources, the plume centerline exits the hood at 3 to 6 mph. This confirms that 48" mounting height is impractical without wind shielding.
 
-4. **The 18" mounting height provides the best wind resistance.** At 18", the gas grill high-output can maintain centerline capture up to 12.5 mph, and 25% escape does not occur until 8.0 mph. Low mounting height is the single most effective mitigation against wind.
+4. **The 18" mounting height provides the best wind resistance.** At 18", the gas grill high-output can maintain centerline capture up to 10.9 mph, and 25% escape does not occur until 6.9 mph. Low mounting height is the single most effective mitigation against wind.
 
 ### 3.5 Wind-Enhanced Entrainment: Quantitative Effect on Plume Width
 
@@ -981,13 +985,13 @@ The analysis in Sections 3.2 through 3.10 directly answers the three key researc
 
 For a Gas Grill Medium (Q_c = 8.2 kW) with a standard RB-002 recommended hood (57" wide at 30"):
 
-- **25% plume escape begins at 6.7 mph** (mean wind at cooking height). With gust factor, this corresponds to a mean wind of approximately 4 mph (gusts to 6.7 mph).
-- **Centerline exits hood at 9.7 mph.** At this point, approximately 50% of the plume is in the **Missed Plume Region**.
-- **Practical answer: 5 mph mean wind is the threshold for noticeable capture degradation** (accounting for gusts). At 7 mph mean wind, capture is marginal. At 10 mph, capture is functionally inadequate.
+- **25% plume escape begins at 4.8 mph** (mean wind at cooking height). With gust factor, this corresponds to a mean wind of approximately 3 mph (gusts to 4.8 mph).
+- **Centerline exits hood at 7.0 mph.** At this point, approximately 50% of the plume is in the **Missed Plume Region**.
+- **Practical answer: 3 mph mean wind is the threshold for noticeable capture degradation** (accounting for gusts). At 5 mph mean wind, capture is marginal. At 7 mph, capture is functionally inadequate.
 
 For weaker sources (charcoal kettle, pellet smoker low), these thresholds are approximately 30-40% lower: noticeable degradation at 3 mph mean, marginal at 5 mph, inadequate at 7 mph.
 
-For stronger sources (gas grill high-output), the thresholds are approximately 20-30% higher: noticeable degradation at 6-7 mph mean, marginal at 9 mph, inadequate at 12 mph.
+For stronger sources (gas grill high-output), the thresholds are approximately 5-20% higher: noticeable degradation at 3-4 mph mean, marginal at 5-6 mph, inadequate at 8 mph.
 
 **Key Question 2: How much additional overhang or CFM is needed to compensate for a 5 mph crosswind?**
 
@@ -1038,16 +1042,16 @@ The detailed analysis in this paper refines the preliminary wind correction fact
 
 #### Table 4.3: Revised Wind Correction Factors for CFM Specification
 
-| Wind Speed at Cooking Height | F_wind (this paper) | Previous F_wind (RB-003) | Notes |
-|---|---|---|---|
-| 0 mph (still air) | 1.0 | 1.0 | Baseline |
-| 1-2 mph (barely perceptible) | 1.2 | 1.3 | RB-003 was slightly conservative for this range |
-| 2-3 mph (light breeze) | 1.5 | 1.3 | RB-003 underestimated this range |
-| 3-5 mph (gentle breeze) | 1.8 | 1.6 | Good agreement with RB-003 sustained-wind factor |
-| 5-7 mph (moderate breeze) | 2.2 | — | Not covered in RB-003; side panels needed |
-| 7-10 mph (fresh breeze) | 2.5-3.0 | — | Side panels + rear wall required |
-| 10-12 mph (strong breeze) | 3.0-4.0 | — | Three-sided enclosure required |
-| > 12 mph | Not applicable | — | Enclosure required; CFM factor alone insufficient |
+| Wind Speed at Cooking Height | F_wind (this paper) | Previous F_wind (RB-003) | RB-008 Exposure Class (F_wind adopted) | Notes |
+|---|---|---|---|---|
+| 0 mph (still air) | 1.0 | 1.0 | Sheltered (1.3) | Baseline |
+| 1-2 mph (barely perceptible) | 1.2 | 1.3 | Sheltered (1.3) | RB-003 was slightly conservative for this range |
+| 2-3 mph (light breeze) | 1.5 | 1.3 | Sheltered (1.3) | RB-003 underestimated this range |
+| 3-5 mph (gentle breeze) | 1.8 | 1.6 | Moderate (1.6) | Good agreement with RB-003 sustained-wind factor |
+| 5-7 mph (moderate breeze) | 2.2 | — | Moderate (1.6) | Not covered in RB-003; side panels needed |
+| 7-10 mph (fresh breeze) | 2.5-3.0 | — | Exposed (2.5; 1.8 with side panels) | Side panels + rear wall required |
+| 10-12 mph (strong breeze) | 3.0-4.0 | — | Exposed (2.5; 1.8 with side panels) | Three-sided enclosure required |
+| > 12 mph | Not applicable | — | Severe (not applicable) | Enclosure required; CFM factor alone insufficient |
 
 **Usage:** The total required CFM in wind is:
 
@@ -1057,34 +1061,36 @@ For example, Gas Medium at 30" in 5 mph wind: CFM_wind = 203 * 2.0 * 1.8 * 1.15 
 
 These revised factors supersede the preliminary values in RB-003 Tables 3.8a and 3.8b. The RB-003 K_CFM = 3.0 (standard outdoor) corresponds to F_wind = 1.3 and is appropriate for Sheltered class installations only. The K_CFM = 3.68 (sustained wind) corresponds to F_wind = 1.6 and is appropriate for the lower end of the Moderate class (3-4 mph).
 
+RB-008 Section 2.2 adopts one class-representative F_wind per exposure class (Sheltered 1.3, Moderate 1.6, Exposed 2.5, or 1.8 with side panels) for its consolidated CFM tables, as mapped in the fourth column. The speed-resolved values in this table apply when the wind speed at cooking height is measured or specified, which is how RB-009 uses them.
+
 ### 4.4 Mounting Height Is the First Line of Defense Against Wind
 
 The deflection tables (Section 3.2) and critical wind speed tables (Section 3.4) demonstrate that low mounting height provides the greatest improvement in wind resistance:
 
-- At 18", the gas grill medium retains centerline capture up to 11.1 mph.
-- At 30", the same source loses centerline capture at 9.7 mph.
-- At 48", centerline capture is lost at 8.1 mph.
+- At 18", the gas grill medium retains centerline capture up to 9.8 mph.
+- At 30", the same source loses centerline capture at 7.0 mph.
+- At 48", centerline capture is lost at 5.4 mph.
 
-The improvement from 48" to 18" is a 37% increase in critical wind speed. No other single intervention provides comparable benefit. Reducing mounting height simultaneously:
+The improvement from 48" to 18" is an 82% increase in critical wind speed. No other single intervention provides comparable benefit. Reducing mounting height simultaneously:
 
 1. Reduces the time (and distance) available for wind to deflect the plume.
 2. Intercepts the plume at a point where centerline velocity is higher (more resistance to deflection).
 3. Reduces the plume cross-section that must be captured.
 4. Reduces the plume mass flow rate (lower CFM required).
 
-Every 6 inches of mounting height reduction improves the critical wind speed for centerline exit by approximately 0.5 to 0.8 mph, depending on source type.
+Every 6 inches of mounting height reduction improves the critical wind speed for centerline exit by approximately 0.4 to 0.9 mph, depending on source type.
 
 ### 4.5 The Charcoal Wind Vulnerability
 
 The charcoal kettle represents the most wind-vulnerable source type in the program. At 30" mounting height, the charcoal plume:
 
 - Enters the CVP (bifurcated) regime at only 2 mph
-- Begins losing 25% of plume mass at 5.0 mph
-- Experiences centerline exit at 6.7 mph
+- Begins losing 25% of plume mass at 3.7 mph
+- Experiences centerline exit at 5.1 mph
 - Is intermittently disrupted at 8 mph
 - Is fully disrupted at 10 mph
 
-These thresholds are 25-35% lower than for gas grill sources. The reason is the low convective heat release rate (Q_c = 1.8 kW for a kettle grill versus 8.2 kW for a medium gas grill), which produces a slower plume with less momentum to resist wind forcing.
+These thresholds are 15-40% lower than for gas grill sources. The reason is the low convective heat release rate (Q_c = 1.8 kW for a kettle grill versus 8.2 kW for a medium gas grill), which produces a slower plume with less momentum to resist wind forcing.
 
 The charcoal paradox identified in RB-001 is compounded by wind: the charcoal grill produces more contaminants per unit time but a weaker plume to carry them, and that weaker plume is more easily disrupted by wind. The combination makes charcoal grilling in wind-exposed locations the most challenging ventilation scenario in the outdoor cooking domain.
 
@@ -1114,7 +1120,7 @@ This paper's findings directly affect the following downstream research:
 
 **RB-007 (Failure Modes):** Wind is identified as the primary cause of outdoor hood capture failure. The failure mechanism is geometric displacement of the plume beyond the **Capture Envelope**, not aerodynamic insufficiency of the hood's suction. The critical wind speed tables (Section 3.4) define the wind-speed boundaries for each failure threshold.
 
-**RB-008 (CFM Requirements):** The revised wind correction factors (Table 4.3) must be incorporated into the consolidated CFM specification tables. The RB-003 preliminary factors are superseded.
+**RB-008 (CFM Requirements):** RB-008 adopts class-representative wind correction factors (Sheltered 1.3, Moderate 1.6, Exposed 2.5, or 1.8 with side panels) for its consolidated CFM tables; the speed-resolved factors in Table 4.3 apply when the wind speed at cooking height is measured. The RB-003 preliminary factors are superseded.
 
 **RB-009 (Side Panel Effectiveness):** The quantitative framework for side panel analysis (Section 3.9.1) provides the foundation for detailed panel geometry optimization. The CFM-equivalent improvement values and wind class reduction metrics provide the performance targets.
 
