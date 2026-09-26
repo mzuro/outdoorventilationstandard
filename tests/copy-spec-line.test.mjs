@@ -14,15 +14,18 @@ import { requiredCfm } from '../static/js/ovs/physics/cfm.mjs';
 
 const HREF = 'https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/';
 
-test('buildSpecLine: 48in/wall/60k BTU/moderate — the site baseline (min 1,200 / rec 1,500, tests/cfm.test.mjs)', () => {
+test('buildSpecLine: 48in/wall/60k BTU/moderate — the site baseline (min 892 / rec 1,200, RB-008 §3.3)', () => {
+  // Stage A: i02 still calls requiredCfm() with its legacy {widthIn, btu}
+  // shape (STAGE-A SHIM in cfm.mjs); 60k BTU → Gas Large at the 30 in
+  // default height, so the bands are the RB-008 §3.3 flagship.
   const bands = requiredCfm({ widthIn: 48, mount: 'wall', btu: 60000, exposure: 'moderate' });
-  assert.equal(bands.minimum, 1200);
-  assert.equal(bands.recommended, 1500);
+  assert.equal(bands.minimum, 892);                                           // rb-008:310
+  assert.equal(bands.recommended, 1200);                                      // rb-008:310 (blower)
   const state = { 'i02-width': 48, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
   const line = buildSpecLine(state, bands, HREF);
   assert.equal(
     line,
-    '48 in wall · 60k BTU · moderate wind → min 1,200 / rec 1,500 CFM — outdoorventilationstandard.com/questions/what-cfm-do-i-need/ (RB-008)',
+    '48 in wall · 60k BTU · moderate wind → min 892 / rec 1,200 CFM — outdoorventilationstandard.com/questions/what-cfm-do-i-need/ (RB-008)',
   );
 });
 
@@ -102,25 +105,26 @@ test('buildSpecLine returns null without bands (never fabricates a line before t
 // (so a future regression is visibly wrong, not silently "fine"), and that
 // viz.mjs's source is actually wired to the paired snapshot, not get().
 test('buildSpecLine contract: a mismatched (state, bands) pair — as the pre-fix get()+ctx.physics wiring could produce mid-tween — renders a self-inconsistent line', () => {
-  // Simulate exactly the pre-fix race: `targetState` is the committed
-  // target width (60in, what get() would have returned the instant the
-  // slider moved) while `midTweenBands` is requiredCfm() computed for the
-  // width the tween was still passing through (42in, what
-  // currentNumericState()'s `displayed` value would have been a frame or
-  // two into the 200ms tween).
+  // Simulate exactly the pre-fix race on the BTU slider (a `type: 'range'`
+  // control that tweens; width no longer moves CFM at all — RB-008 §3.4.3,
+  // so it cannot carry this test any more): `targetState` is the committed
+  // target BTU (60k, what get() would have returned the instant the slider
+  // moved) while `midTweenBands` is requiredCfm() computed for the BTU the
+  // tween was still passing through (30k, what currentNumericState()'s
+  // `displayed` value would have been a frame or two into the 200ms tween).
   const targetState = { 'i02-width': 60, 'i02-mount': 'wall', 'i02-btu': 60000, 'i02-exposure': 'moderate' };
-  const midTweenBands = requiredCfm({ widthIn: 42, mount: 'wall', btu: 60000, exposure: 'moderate' });
+  const midTweenBands = requiredCfm({ widthIn: 60, mount: 'wall', btu: 30000, exposure: 'moderate' });
   const correctBands = requiredCfm({ widthIn: 60, mount: 'wall', btu: 60000, exposure: 'moderate' });
-  // Precondition: the two widths must actually disagree on CFM, or this
+  // Precondition: the two BTU values must actually disagree on CFM, or this
   // test would not be exercising anything.
   assert.notEqual(midTweenBands.minimum, correctBands.minimum);
 
   const mismatchedLine = buildSpecLine(targetState, midTweenBands, HREF);
   const midMinStr = Math.round(midTweenBands.minimum).toLocaleString('en-US');
   const correctMinStr = Math.round(correctBands.minimum).toLocaleString('en-US');
-  // The label says 60in (the target)...
-  assert.ok(mismatchedLine.startsWith('60 in wall'), mismatchedLine);
-  // ...but the numbers are the 42in figures, not the 60in ones — a line
+  // The label says 60k BTU (the target)...
+  assert.ok(mismatchedLine.includes('60k BTU'), mismatchedLine);
+  // ...but the numbers are the 30k figures, not the 60k ones — a line
   // that matches no real hood configuration. This is what buildSpecLine
   // MUST still do given a mismatched pair (it has no way to detect one —
   // it is a pure formatter); guarding against ever constructing this pair

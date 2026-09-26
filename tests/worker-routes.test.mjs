@@ -236,6 +236,42 @@ test('explain: foreign hostname -> 403; good token -> proceeds to rate limit the
   assert.equal(kv.puts.filter((p) => p.key.startsWith('ratelimit:')).length, 1);
 });
 
+// ---------- physics-version cache keys (Stage A re-base) ----------
+// Every cached narration/answer was computed by the pre-rebase physics, so
+// the KV keys carry PHYSICS_VERSION: explain:v2:… and ask:v2:…. Old-prefix
+// entries must never be served again.
+
+test('explain: cached body is served under explain:<PHYSICS_VERSION>:<params key>, after Turnstile + rate limit, before AI', async () => {
+  const { PHYSICS_VERSION } = await import('../static/js/ovs/physics/version.mjs');
+  const { clampParams, paramsCacheKey } = await import('../src/lib/params.mjs');
+  const clamped = clampParams('i01', OK_EXPLAIN.params).params;
+  const key = `explain:${PHYSICS_VERSION}:${paramsCacheKey('i01', clamped)}`;
+  assert.ok(key.startsWith('explain:v2:'), key);
+  const kv = makeKv({ [key]: JSON.stringify({ explanation: 'cached narration', state: {} }) });
+  const res = await worker.fetch(post('/api/explain', OK_EXPLAIN), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).explanation, 'cached narration');
+  assert.equal(siteverifyCalls.length, 1, 'Turnstile still runs before the cache');
+  assert.equal(kv.puts.filter((p) => p.key.startsWith('ratelimit:')).length, 1, 'rate limit charged before the cache');
+});
+
+test('explain: a pre-rebase cache entry (explain:i01:…) is NOT served', async () => {
+  const { paramsCacheKey } = await import('../src/lib/params.mjs');
+  const stale = `explain:${paramsCacheKey('i01', OK_EXPLAIN.params)}`;
+  const kv = makeKv({ [stale]: JSON.stringify({ explanation: 'stale physics' }) });
+  const res = await worker.fetch(post('/api/explain', OK_EXPLAIN), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
+  assert.equal(res.status, 503);
+  assert.deepEqual(await res.json(), { error: 'ai_not_configured' });
+});
+
+test('ask: a pre-rebase cache entry (askcache:…) is NOT served', async () => {
+  const { normalizeQuestion } = await import('../src/lib/normalize.mjs');
+  const kv = makeKv({ [`askcache:${normalizeQuestion(OK_ASK.question)}`]: JSON.stringify({ answer: 'stale physics' }) });
+  const res = await worker.fetch(post('/api/ask', OK_ASK), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
+  assert.notEqual(res.status, 200);
+  assert.notEqual((await res.json()).answer, 'stale physics');
+});
+
 // ---------- /api/track ----------
 
 test('track: malformed JSON / bad ids -> 400, nothing written', async () => {
