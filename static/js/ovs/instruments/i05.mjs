@@ -6,8 +6,13 @@
 // (`buildSide`/`paintSide`) between the two halves per the brief ("keep it
 // simple, reuse one drawing function for both sides"). Physics only from
 // ../physics/capture.mjs (captureFraction) — no deflection is drawn here;
-// wind only feeds the capture-fraction integral for each side, at a fixed
-// 30in rise (matching i01's canonical rise).
+// wind only feeds the capture fraction for each side, at a fixed 30in rise
+// (matching i01's canonical rise). WIND DIRECTION (physics Stage B)
+// defaults to REAR — the wall effect this A/B exists to show (RB-006
+// §3.9.2 recirculation shelter, rb-006:859; RB-005 §4.3) — and under REAR
+// wind hood WIDTH does not enter the capture at all (RB-006 §3.4's aperture
+// is along the wind axis: the depth overhang). Switch to SIDE to see width
+// matter and the wall drop out (it is parallel to the flow).
 //
 // v2.1 (F2) adoption — the multi-scene instrument, so several features are
 // hand-rolled per side rather than delegated to the single-field engine
@@ -66,12 +71,14 @@
 
 import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
-import { plumeRadius } from '../physics/plume.mjs';
+import { captureDiameter } from '../physics/plume.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 import { createSmokeField } from '../smoke.mjs';
 import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const RISE_IN = 30;
 const SAMPLE_STEP_IN = 2;
+const SRC = SOURCES.gasMedium; // the papers' single-source reference case (RB-005 §4.3 / RB-006 §3.4 rows)
 
 const STATUS_FILL = {
   ok: null, // fall back to the .ovs-i-plume-fill CSS default
@@ -191,6 +198,11 @@ export function mount(figureEl) {
     refs.a = buildSide(svg, CX_A, 'left', 'a');
     refs.b = buildSide(svg, CX_B, 'right', 'b');
 
+    // wind-axis caption (RB-006 §3.4: the aperture that matters is along
+    // the wind) — rebuilt per update
+    refs.axisNote = H.el('g');
+    svg.appendChild(refs.axisNote);
+
     // Two independent smoke fields (see header note) — created here so
     // they exist before the engine's first runUpdate() call.
     smokeA = createSmokeField(refs.a.smokeMount, { sourceX: CX_A, sourceY: GY, pxPerIn: PX_PER_IN });
@@ -212,7 +224,7 @@ export function mount(figureEl) {
     if (samples[samples.length - 1] !== RISE_IN) samples.push(RISE_IN);
 
     const yAt = (zIn) => GY - zIn * PX_PER_IN;
-    const halfWAt = (zIn) => plumeRadius(zIn) * PX_PER_IN;
+    const halfWAt = (zIn) => (captureDiameter(zIn, SRC) / 2) * PX_PER_IN; // RB-002 d_capture (rb-002:983)
 
     let dl = '', dr = '';
     for (let i = 0; i < samples.length; i++) {
@@ -272,14 +284,14 @@ export function mount(figureEl) {
     const c = document.createElement('span');
     c.className = 'ovs-i-stamp-clause';
     // The 0.85/0.60 grade bands are this instrument's MODEL CRITERIA — no
-    // research bulletin (and no clause on this site) defines PASS/MARGINAL
-    // bands, so they are labeled as such rather than attributed. The RB
-    // citation is where the capture reasoning lives: RB-005 §4.3 "Island
-    // Versus Wall-Mount: A Significant Performance Gap" (content/research/
-    // rb-005-hood-geometry-capture.md) — exactly this A/B comparison.
-    c.textContent = 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-005 §4.3';
+    // research bulletin defines PASS/MARGINAL bands, so the stamp cites the
+    // papers for the DATA (RB-005 §4.3 "Island Versus Wall-Mount", RB-006
+    // §3.4 capture thresholds / §3.9.2 wall shelter) and labels the cut as
+    // the OVS model criterion rather than attributing it to a section that
+    // does not define it.
+    c.textContent = 'capture data: RB-005 §4.3, RB-006 §3.4 · thresholds: OVS model criterion (≥85% PASS · ≥60% MARGINAL)';
     el.appendChild(c);
-    el.title = `Plume capture ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`;
+    el.title = `Plume capture ${pct}% — capture data: RB-005 §4.3 / RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`;
   }
   function slamStamp(el) {
     if (!el || reducedMode) return;
@@ -314,12 +326,13 @@ export function mount(figureEl) {
     const mountA = MOUNT[state['i05-mountA']] ? state['i05-mountA'] : 'island';
     const mountB = MOUNT[state['i05-mountB']] ? state['i05-mountB'] : 'wall';
     const windMph = state['i05-wind'];
+    const windDir = state['i05-dir'] === 'side' ? 'side' : 'rear';
 
     const capA = captureFraction({
-      widthIn: widthA, depthIn: MOUNT[mountA].depthIn, mount: mountA, riseIn: RISE_IN, windMph, panels: 'none',
+      widthIn: widthA, depthIn: MOUNT[mountA].depthIn, mount: mountA, riseIn: RISE_IN, windMph, windDir, panels: 'none', src: SRC,
     });
     const capB = captureFraction({
-      widthIn: widthB, depthIn: MOUNT[mountB].depthIn, mount: mountB, riseIn: RISE_IN, windMph, panels: 'none',
+      widthIn: widthB, depthIn: MOUNT[mountB].depthIn, mount: mountB, riseIn: RISE_IN, windMph, windDir, panels: 'none', src: SRC,
     });
     lastCapA = capA;
     lastCapB = capB;
@@ -337,11 +350,18 @@ export function mount(figureEl) {
     paintSide(refs.a, widthA, mountA, capA);
     paintSide(refs.b, widthB, mountB, capB);
 
+    // Wind-axis caption: under REAR wind the depth overhang is the
+    // aperture and width does not enter; under SIDE wind width governs and
+    // the wall (parallel to the flow) does nothing (RB-006 §3.4, §3.9.2).
+    replaceChildren(refs.axisNote, H.noteBox(20, 12, windDir === 'rear'
+      ? `REAR WIND ${Math.round(windMph)} mph — depth overhang governs; width not in play`
+      : `SIDE WIND ${Math.round(windMph)} mph — width governs; the wall is parallel to the flow`));
+
     if (smokeA) {
-      smokeA.update({ widthIn: widthA, depthIn: MOUNT[mountA].depthIn, mount: mountA, riseIn: RISE_IN, windMph, panels: 'none', w0: 400 });
+      smokeA.update({ widthIn: widthA, depthIn: MOUNT[mountA].depthIn, mount: mountA, riseIn: RISE_IN, windMph, windDir, panels: 'none', src: SRC });
     }
     if (smokeB) {
-      smokeB.update({ widthIn: widthB, depthIn: MOUNT[mountB].depthIn, mount: mountB, riseIn: RISE_IN, windMph, panels: 'none', w0: 400 });
+      smokeB.update({ widthIn: widthB, depthIn: MOUNT[mountB].depthIn, mount: mountB, riseIn: RISE_IN, windMph, windDir, panels: 'none', src: SRC });
     }
     ensureSmokeRaf();
 
@@ -370,6 +390,10 @@ export function mount(figureEl) {
         options: [{ value: 'wall', label: 'WALL' }, { value: 'island', label: 'ISLAND' }],
       },
       { id: 'i05-wind', type: 'range', label: 'WIND SPEED', min: 0, max: 12, step: 1, value: 8, unit: 'mph' },
+      {
+        id: 'i05-dir', type: 'segmented', label: 'WIND DIRECTION', value: 'rear',
+        options: [{ value: 'rear', label: 'REAR' }, { value: 'side', label: 'SIDE' }],
+      },
     ],
     readouts: [
       { id: 'captureA', label: 'CAPTURE A', format: 'pct', hero: true },
@@ -399,10 +423,10 @@ export function mount(figureEl) {
 
     // --- story presets: four site-voice A/B scenarios. ---------------------
     presets: [
-      { id: 'calm-comparison', label: 'Calm comparison', state: { 'i05-widthA': 48, 'i05-mountA': 'island', 'i05-widthB': 48, 'i05-mountB': 'wall', 'i05-wind': 0 } },
-      { id: 'windy-comparison', label: 'Windy comparison', state: { 'i05-widthA': 48, 'i05-mountA': 'island', 'i05-widthB': 48, 'i05-mountB': 'wall', 'i05-wind': 10 } },
-      { id: 'undersized-vs-oversized', label: 'Undersized vs. oversized island', state: { 'i05-widthA': 42, 'i05-mountA': 'island', 'i05-widthB': 72, 'i05-mountB': 'island', 'i05-wind': 6 } },
-      { id: 'exposed-island-vs-sheltered-wall', label: 'Exposed island vs. sheltered wall', state: { 'i05-widthA': 60, 'i05-mountA': 'island', 'i05-widthB': 42, 'i05-mountB': 'wall', 'i05-wind': 10 } },
+      { id: 'calm-comparison', label: 'Calm comparison', state: { 'i05-widthA': 48, 'i05-mountA': 'island', 'i05-widthB': 48, 'i05-mountB': 'wall', 'i05-wind': 0, 'i05-dir': 'rear' } },
+      { id: 'windy-comparison', label: 'Rear wind: island vs. wall', state: { 'i05-widthA': 48, 'i05-mountA': 'island', 'i05-widthB': 48, 'i05-mountB': 'wall', 'i05-wind': 8, 'i05-dir': 'rear' } },
+      { id: 'undersized-vs-oversized', label: 'Side wind: 42 vs. 72 in island', state: { 'i05-widthA': 42, 'i05-mountA': 'island', 'i05-widthB': 72, 'i05-mountB': 'island', 'i05-wind': 8, 'i05-dir': 'side' } },
+      { id: 'exposed-island-vs-sheltered-wall', label: 'Exposed island vs. sheltered wall', state: { 'i05-widthA': 60, 'i05-mountA': 'island', 'i05-widthB': 42, 'i05-mountB': 'wall', 'i05-wind': 10, 'i05-dir': 'rear' } },
     ],
 
     // No spec.verdict — see the header comment; two stamps are built
