@@ -1,7 +1,7 @@
 ---
 title: "RB-003: Velocity Decay and Near-Field vs. Far-Field Capture"
 date: 2025-09-19
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-003"
 priority: "P0 — Foundation"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -43,6 +43,19 @@ dataset:
 **Author Role:** Physics Research Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.1 / Tables 3.1a and 3.1b, standard-height rows (18", 24", 30", 36", 48"): regenerated from u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) (Gas Medium 453/417/392/370/337 → 435/412/393/377/350 fpm; Charcoal 286/262/246/233/211 → 253/240/230/222/207 fpm; all eight columns likewise); v1.0 transcribed RB-001's hand-rounded Table 3.5, corrected in the same revision. The table note about 1-4% transcription differences is replaced. The non-standard-height rows were already formula values and are unchanged.
+- Table 3.1b key observation 2: 55 ft/min (508 to 453) → 73 ft/min (508 to 435); 6 ft/min (337 to 331) → 19 ft/min (350 to 331).
+- Table 3.10: u_0 2.30/1.71 → 2.21/1.78 m/s and 453/337 → 435/350 fpm (ratio 0.74 → 0.81); capture diameter 39/53 → 36/50" (ratio 1.36 → 1.39), following RB-001 Table 3.6 v1.1. The Section 6 diagram note follows.
+- Appendix A.4: F_wind rows "refined in RB-006" → class values consolidated in RB-008 Section 2.2 (speed-resolved values remain in RB-006 Table 4.3).
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -251,18 +264,18 @@ with virtual origins from RB-001 Table 3.2. Values are presented in both m/s and
 
 #### Table 3.1a: Centerline Velocity u_0 (m/s) — Continuous Profile
 
-Values at standard hood heights (18", 24", 30", 36", 48") are taken directly from RB-001 Table 3.5. Values at non-standard heights (6", 12", 42", 54", 60", 66", 72") are computed using the Heskestad formula with identical parameters. Small differences (1-4%) between formula-computed and RB-001 tabulated values at standard heights are due to intermediate rounding in RB-001's manual calculations and are within the stated accuracy of the correlations.
+All values are computed from the Heskestad formula with the RB-001 Table 3.2 virtual origins. The standard-height rows (18", 24", 30", 36", 48") agree with RB-001 Table 3.5 (v1.1); in v1.0 they were transcribed from RB-001's hand-rounded values and differed from the formula by up to 13%.
 
 | Height | Gas Small (5.1 kW, z_0=-0.30) | Gas Med (8.2 kW, z_0=-0.37) | Gas Large (12.3 kW, z_0=-0.41) | Gas High (16.4 kW, z_0=-0.44) | Charcoal (1.8 kW, z_0=-0.47) | Wood (7.6 kW, z_0=-0.36) | Pellet Low (1.5 kW, z_0=-0.38) | Pellet High (5.7 kW, z_0=-0.30) |
 |---|---|---|---|---|---|---|---|---|
 | 6" (0.15 m) | 2.31 | 2.58 | 2.88 | 3.12 | 1.47 | 2.53 | 1.45 | 2.40 |
 | 12" (0.30 m) | 2.10 | 2.37 | 2.66 | 2.89 | 1.36 | 2.32 | 1.34 | 2.18 |
-| 18" (0.46 m) | 2.01 | 2.30 | 2.60 | 2.83 | 1.45 | 2.25 | 1.38 | 2.06 |
-| 24" (0.61 m) | 1.85 | 2.12 | 2.39 | 2.60 | 1.33 | 2.07 | 1.27 | 1.90 |
-| 30" (0.76 m) | 1.74 | 1.99 | 2.25 | 2.44 | 1.25 | 1.94 | 1.19 | 1.78 |
-| 36" (0.91 m) | 1.64 | 1.88 | 2.12 | 2.31 | 1.18 | 1.84 | 1.13 | 1.68 |
+| 18" (0.46 m) | 1.94 | 2.21 | 2.49 | 2.71 | 1.28 | 2.16 | 1.25 | 2.02 |
+| 24" (0.61 m) | 1.83 | 2.09 | 2.36 | 2.57 | 1.22 | 2.05 | 1.18 | 1.90 |
+| 30" (0.76 m) | 1.74 | 1.99 | 2.26 | 2.46 | 1.17 | 1.95 | 1.13 | 1.80 |
+| 36" (0.91 m) | 1.66 | 1.91 | 2.17 | 2.37 | 1.13 | 1.87 | 1.08 | 1.73 |
 | 42" (1.07 m) | 1.60 | 1.84 | 2.09 | 2.28 | 1.09 | 1.80 | 1.04 | 1.66 |
-| 48" (1.22 m) | 1.49 | 1.71 | 1.93 | 2.10 | 1.07 | 1.67 | 1.02 | 1.53 |
+| 48" (1.22 m) | 1.54 | 1.78 | 2.02 | 2.21 | 1.05 | 1.74 | 1.01 | 1.60 |
 | 54" (1.37 m) | 1.49 | 1.73 | 1.96 | 2.15 | 1.02 | 1.69 | 0.98 | 1.55 |
 | 60" (1.52 m) | 1.45 | 1.68 | 1.91 | 2.09 | 1.00 | 1.64 | 0.95 | 1.51 |
 | 66" (1.68 m) | 1.41 | 1.64 | 1.86 | 2.04 | 0.97 | 1.60 | 0.93 | 1.47 |
@@ -276,12 +289,12 @@ Values at standard hood heights (18", 24", 30", 36", 48") are taken directly fro
 |---|---|---|---|---|---|---|---|---|
 | 6" | 455 | 508 | 567 | 615 | 290 | 499 | 286 | 473 |
 | 12" | 414 | 467 | 524 | 569 | 268 | 457 | 264 | 429 |
-| 18" | 396 | 453 | 512 | 557 | 286 | 443 | 272 | 406 |
-| 24" | 365 | 417 | 471 | 512 | 262 | 408 | 250 | 374 |
-| 30" | 343 | 392 | 443 | 481 | 246 | 382 | 234 | 351 |
-| 36" | 323 | 370 | 418 | 455 | 233 | 363 | 223 | 331 |
+| 18" | 382 | 435 | 490 | 534 | 253 | 426 | 246 | 397 |
+| 24" | 360 | 412 | 465 | 507 | 240 | 403 | 233 | 374 |
+| 30" | 342 | 393 | 444 | 485 | 230 | 384 | 222 | 355 |
+| 36" | 328 | 377 | 427 | 466 | 222 | 368 | 213 | 340 |
 | 42" | 315 | 363 | 412 | 449 | 215 | 355 | 205 | 327 |
-| 48" | 294 | 337 | 380 | 414 | 211 | 329 | 201 | 301 |
+| 48" | 304 | 350 | 398 | 435 | 207 | 342 | 198 | 315 |
 | 54" | 294 | 341 | 386 | 424 | 201 | 333 | 193 | 305 |
 | 60" | 286 | 331 | 376 | 412 | 197 | 323 | 187 | 297 |
 | 66" | 278 | 323 | 367 | 402 | 191 | 315 | 183 | 290 |
@@ -291,7 +304,7 @@ Values at standard hood heights (18", 24", 30", 36", 48") are taken directly fro
 
 1. **All sources maintain velocities above 179 ft/min (0.91 m/s) even at 72 inches.** The weakest source (pellet smoker low, Q_c = 1.5 kW) still produces 179 ft/min at 72 inches — nearly twice the ASHRAE heavy-duty face velocity specification of 100 fpm. This confirms and extends RB-001's finding that centerline velocity is not the limiting factor for capture.
 
-2. **The velocity decay rate decelerates with height.** From 6" to 18", the gas medium plume loses 55 ft/min (508 to 453). From 48" to 60", it loses only 6 ft/min (337 to 331). The inverse-cubic-root decay flattens at greater heights. This means the velocity penalty for moving from 36" to 48" is less severe than moving from 18" to 30" — but the mass flow and diameter penalties remain severe.
+2. **The velocity decay rate decelerates with height.** From 6" to 18", the gas medium plume loses 73 ft/min (508 to 435). From 48" to 60", it loses only 19 ft/min (350 to 331). The inverse-cubic-root decay flattens at greater heights. This means the velocity penalty for moving from 36" to 48" is less severe than moving from 18" to 30" — but the mass flow and diameter penalties remain severe.
 
 3. **The velocity hierarchy among sources is preserved at all heights.** Gas high-output is always fastest; pellet smoker low is always slowest. The ratio between them (approximately 2.0:1) is constant at all heights because both follow the same z^(-1/3) decay law with different Q_c prefactors.
 
@@ -668,10 +681,10 @@ Even though all hood heights are technically in the far-field regime (as establi
 
 | Parameter | 18" Height | 30" Height | 48" Height | Ratio 48"/18" |
 |---|---|---|---|---|
-| **Centerline velocity** u_0 (m/s) | 2.30 | 1.99 | 1.71 | 0.74 |
-| **Centerline velocity** (fpm) | 453 | 392 | 337 | 0.74 |
+| **Centerline velocity** u_0 (m/s) | 2.21 | 1.99 | 1.78 | 0.81 |
+| **Centerline velocity** (fpm) | 435 | 393 | 350 | 0.81 |
 | **Centerline temp excess** Delta_T_0 (K) | 115 | 50 | 23 | 0.20 |
-| **Plume capture diameter** (in) | 39 | 41 | 53 | 1.36 |
+| **Plume capture diameter** (in) | 36 | 41 | 50 | 1.39 |
 | **Recommended hood width** (in) | 49 | 57 | 69 | 1.41 |
 | **Plume mass flow** (CFM) | 104 | 203 | 413 | 3.97 |
 | **Required CFM** (standard outdoor) | 312 | 609 | 1238 | 3.97 |
@@ -931,8 +944,8 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 
 **Content:**
 - Two side-by-side plume profiles for Gas Grill Medium (Q_c = 8.2 kW):
-  - Left: hood at 18 inches — narrow plume (39" diameter), small hood (49" wide), high velocity (453 fpm), low CFM (312), minimal wind deflection (4")
-  - Right: hood at 48 inches — wide plume (53" diameter), large hood (69" wide), reduced velocity (337 fpm), high CFM (1238), large wind deflection (12")
+  - Left: hood at 18 inches — narrow plume (36" diameter), small hood (49" wide), high velocity (435 fpm), low CFM (312), minimal wind deflection (4")
+  - Right: hood at 48 inches — wide plume (50" diameter), large hood (69" wide), reduced velocity (350 fpm), high CFM (1238), large wind deflection (12")
 - Plume velocity indicated by arrow density (many arrows at 18", fewer at 48")
 - Plume width clearly scaled to show the 36% increase
 - Hood dimensions drawn to scale
@@ -994,8 +1007,8 @@ Recommended hood dimensions (W_rec x D_rec, using the base width-sizing margin K
 | Factor | Symbol | Value | Basis |
 |---|---|---|---|
 | Infiltration factor | F_inf | 2.0 | Ratio of hood ingestion to plume flow |
-| Wind margin (standard) | F_wind | 1.3 | Preliminary; refined in RB-006 |
-| Wind margin (sustained) | F_wind_sustained | 1.6 | Preliminary; refined in RB-006 |
+| Wind margin (standard) | F_wind | 1.3 | Preliminary; class values consolidated in RB-008 Section 2.2 (Sheltered class) |
+| Wind margin (sustained) | F_wind_sustained | 1.6 | Preliminary; class values consolidated in RB-008 Section 2.2 (Moderate class); speed-resolved values in RB-006 Table 4.3 |
 | Safety factor | F_safety | 1.15 | Calculation uncertainty margin |
 | Total CFM multiplier (standard) | K_CFM | 3.0 | F_inf * F_wind * F_safety |
 | Total CFM multiplier (sustained wind) | K_CFM_wind | 3.68 | F_inf * F_wind_sustained * F_safety |
