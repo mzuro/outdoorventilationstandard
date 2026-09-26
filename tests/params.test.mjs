@@ -81,11 +81,13 @@ test('unknown instrument is rejected', () => {
 
 // ---------------------------------------------------------------- i02
 
-test('i02: the minimal new-shape request fills height/panels defaults; source is left to explain-state (Gas Large unless btu is sent)', () => {
-  const r = clampParams('i02', { mount: 'wall', exposure: 'moderate' });
+test('i02: the minimal request needs source/mount/exposure; height/panels default; width is omitted when absent', () => {
+  const r = clampParams('i02', { source: 'gasLarge', mount: 'wall', exposure: 'moderate' });
   assert.equal(r.ok, true);
-  assert.deepEqual(r.params, { height: 30, mount: 'wall', exposure: 'moderate', panels: 'none' });
-  assert.equal(clampParams('i02', { source: 'gasLarge', mount: 'wall', exposure: 'moderate' }).params.source, 'gasLarge');
+  assert.deepEqual(r.params, { source: 'gasLarge', height: 30, mount: 'wall', exposure: 'moderate', panels: 'none' });
+  const missing = clampParams('i02', { mount: 'wall', exposure: 'moderate' });
+  assert.equal(missing.ok, false, 'source is required now that the shim-era btu is gone');
+  assert.ok(missing.errors.some((e) => e.includes('source')));
 });
 
 test('i02: full new shape passes through; source enum is exactly the RB-001 SOURCES ids', () => {
@@ -97,34 +99,34 @@ test('i02: full new shape passes through; source enum is exactly the RB-001 SOUR
 });
 
 test('i02: height snaps to the paper grid 18/24/30/36/48 and rejects outside it', () => {
-  assert.equal(clampParams('i02', { height: 33, mount: 'wall', exposure: 'moderate' }).params.height, 30);
-  assert.equal(clampParams('i02', { height: 40, mount: 'wall', exposure: 'moderate' }).params.height, 36);
+  assert.equal(clampParams('i02', { source: 'gasLarge', height: 33, mount: 'wall', exposure: 'moderate' }).params.height, 30);
+  assert.equal(clampParams('i02', { source: 'gasLarge', height: 40, mount: 'wall', exposure: 'moderate' }).params.height, 36);
   assert.deepEqual(SCHEMAS.i02.fields.height.values, [18, 24, 30, 36, 48]);  // rb-008:198 (Table 3.1 columns)
-  assert.equal(clampParams('i02', { height: 60, mount: 'wall', exposure: 'moderate' }).ok, false);
+  assert.equal(clampParams('i02', { source: 'gasLarge', height: 60, mount: 'wall', exposure: 'moderate' }).ok, false);
 });
 
 test('i02: mount accepts wall/peninsula/island (RB-008 §3.9); panels none/both only', () => {
-  for (const mount of ['wall', 'peninsula', 'island']) assert.equal(clampParams('i02', { mount, exposure: 'moderate' }).ok, true); // rb-008:560-562
-  assert.equal(clampParams('i02', { mount: 'ceiling', exposure: 'moderate' }).ok, false);
-  assert.equal(clampParams('i02', { mount: 'wall', exposure: 'moderate', panels: 'one' }).ok, false);
+  for (const mount of ['wall', 'peninsula', 'island']) assert.equal(clampParams('i02', { source: 'gasLarge', mount, exposure: 'moderate' }).ok, true); // rb-008:560-562
+  assert.equal(clampParams('i02', { source: 'gasLarge', mount: 'ceiling', exposure: 'moderate' }).ok, false);
+  assert.equal(clampParams('i02', { source: 'gasLarge', mount: 'wall', exposure: 'moderate', panels: 'one' }).ok, false);
 });
 
-test('i02: legacy shape (STAGE-A SHIM) {width, mount, exposure, btu} still validates; btu snaps to the 10k grid; no source is invented', () => {
+test('i02: the shim-era btu/legacy shape is rejected (unexpected key), never silently mapped', () => {
   const r = clampParams('i02', { width: 54, mount: 'wall', exposure: 'exposed', btu: 63000 });
-  assert.equal(r.ok, true);
-  assert.equal(r.params.btu, 60000);
-  assert.equal(r.params.width, 54);
-  assert.equal('source' in r.params, false, 'btu-only requests carry no source; explain-state resolves it via sourceForBtu');
-  assert.equal(r.params.height, 30);
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.some((e) => e.includes('btu')));
+  assert.equal('btu' in SCHEMAS.i02.fields, false);
 });
 
-test('i02: btu outside range is rejected', () => {
-  assert.equal(clampParams('i02', { width: 48, mount: 'wall', exposure: 'moderate', btu: 999999 }).ok, false);
+test('i02: the client PARAM_MAP shape (what explain-ui.mjs sends) validates as-is', () => {
+  const r = clampParams('i02', { source: 'gasLarge', height: 30, mount: 'wall', exposure: 'moderate', panels: 'none', width: 48 });
+  assert.equal(r.ok, true);
+  assert.deepEqual(Object.keys(r.params).sort(), ['exposure', 'height', 'mount', 'panels', 'source', 'width']);
 });
 
 test('i02: a PRESENT optional value is still validated strictly (optional ≠ lenient)', () => {
-  assert.equal(clampParams('i02', { mount: 'wall', exposure: 'moderate', panels: 'lots' }).ok, false);
-  assert.equal(clampParams('i02', { mount: 'wall', exposure: 'moderate', width: 'wide' }).ok, false);
+  assert.equal(clampParams('i02', { source: 'gasLarge', mount: 'wall', exposure: 'moderate', panels: 'lots' }).ok, false);
+  assert.equal(clampParams('i02', { source: 'gasLarge', mount: 'wall', exposure: 'moderate', width: 'wide' }).ok, false);
 });
 
 // ---------------------------------------------------------------- keys

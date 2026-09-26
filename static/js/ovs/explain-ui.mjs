@@ -6,10 +6,15 @@
 // `figureEl.ovsInstrument` (see static/js/ovs/instruments/i01.mjs / i02.mjs).
 //
 // Per-instrument param key -> plain param name, matching src/lib/params.mjs
-// SCHEMAS server-side.
+// SCHEMAS server-side. An entry may be a plain name or { name, num: true }
+// for a control whose committed value is a radio string ("30") but whose
+// server field is numeric (i02 height: RB-008's 18/24/30/36/48 in grid).
 const PARAM_MAP = {
-  i01: { 'i01-wind': 'wind', 'i01-width': 'width', 'i01-mount': 'mount', 'i01-panels': 'panels' },
-  i02: { 'i02-width': 'width', 'i02-mount': 'mount', 'i02-exposure': 'exposure', 'i02-btu': 'btu' },
+  i01: { 'i01-wind': 'wind', 'i01-width': 'width', 'i01-mount': 'mount', 'i01-panels': 'panels', 'i01-dir': 'dir' },
+  i02: {
+    'i02-source': 'source', 'i02-height': { name: 'height', num: true }, 'i02-mount': 'mount',
+    'i02-exposure': 'exposure', 'i02-panels': 'panels', 'i02-width': 'width',
+  },
 };
 
 const TURNSTILE_SITEKEY = '0x4AAAAAACcaq_joFScewE6d';
@@ -29,8 +34,10 @@ function extractParams(instrument, figureEl) {
   const state = inst.get();
   const map = PARAM_MAP[instrument];
   const params = {};
-  for (const [stateKey, paramName] of Object.entries(map)) {
-    params[paramName] = state[stateKey];
+  for (const [stateKey, entry] of Object.entries(map)) {
+    const name = typeof entry === 'string' ? entry : entry.name;
+    const value = state[stateKey];
+    params[name] = typeof entry !== 'string' && entry.num ? Number(value) : value;
   }
   return params;
 }
@@ -57,9 +64,10 @@ const STATE_READOUTS = {
     { key: 'plumeWidthAtHoodIn', label: 'PLUME WIDTH AT HOOD', fmt: (v) => nfmt(v) + '″' },
   ],
   i02: [
-    { key: 'recommendedCfm', label: 'RECOMMENDED', fmt: (v) => nfmt(v) + ' CFM', hero: true },
-    { key: 'minimumCfm', label: 'MINIMUM', fmt: (v) => nfmt(v) + ' CFM' },
-    { key: 'highWindCfm', label: 'HIGH-WIND', fmt: (v) => nfmt(v) + ' CFM' },
+    { key: 'minimumCfm', label: 'MINIMUM', fmt: (v) => nfmt(v) + ' CFM', hero: true },
+    { key: 'blowerCfm', label: 'BLOWER', fmt: (v) => nfmt(v) + ' CFM' },
+    { key: 'kCfm', label: 'K_CFM', fmt: (v) => Number(v).toFixed(2) + '×' },
+    { key: 'plumeCfm', label: 'PLUME FLOW', fmt: (v) => nfmt(v) + ' CFM' },
   ],
 };
 

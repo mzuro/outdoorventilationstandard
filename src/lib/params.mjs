@@ -15,13 +15,12 @@
 // between the 48/54 detents, or float jitter) are snapped to the nearest
 // valid grid point — that's rounding, not correction of an abusive input.
 //
-// Optional fields (`optional: true`): controls the physics re-base added
-// (i01 wind direction; i02 source / mounting height / panels / coverage
-// width) that a client may not expose yet. ABSENT → the default is filled
-// in (or the key is omitted when there is no default); PRESENT → validated
-// exactly as strictly as a required field. The legacy i02 `btu` field is a
-// STAGE-A SHIM (remove in Stage B): explain-state maps it to the nearest
-// RB-001 source when no `source` is sent.
+// Optional fields (`optional: true`): i01's wind direction, i02's mounting
+// height / panels (both default) and coverage width (no default — the
+// advisory is simply omitted). ABSENT → the default is filled in (or the
+// key is omitted when there is no default); PRESENT → validated exactly as
+// strictly as a required field. The shim-era `btu` field is gone: the
+// client (static/js/ovs/explain-ui.mjs PARAM_MAP) sends `source` directly.
 
 import { SOURCE_IDS } from '../../static/js/ovs/physics/heat.mjs';
 
@@ -42,15 +41,12 @@ export const SCHEMAS = {
   },
   i02: {
     fields: {
-      // No default on purpose: explain-state resolves an absent source from
-      // the legacy `btu` (STAGE-A SHIM) and otherwise to Gas Large.
-      source: ENUM(SOURCE_IDS, { optional: true }),                        // RB-001 Table 3.1 rows
+      source: ENUM(SOURCE_IDS),                                            // RB-001 Table 3.1 rows
       height: DETENTS([18, 24, 30, 36, 48], { optional: true, default: 30 }), // RB-008 table columns
       mount: ENUM(['wall', 'peninsula', 'island']),        // rb-008:560-562
       exposure: ENUM(['sheltered', 'moderate', 'exposed']),
       panels: ENUM(['none', 'both'], { optional: true, default: 'none' }),
       width: DETENTS([42, 48, 54, 60, 72], { optional: true }), // coverage advisory only (RB-008 Table 3.10)
-      btu: RANGE(30000, 150000, 10000, { optional: true }),    // STAGE-A SHIM (legacy i02 control)
     },
     defaults: { source: 'gasLarge', height: 30, mount: 'island', exposure: 'moderate', panels: 'none' },
   },

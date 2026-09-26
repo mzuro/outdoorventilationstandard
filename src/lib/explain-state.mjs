@@ -10,7 +10,7 @@ import { captureDiameter, recommendedWidth } from '../../static/js/ovs/physics/p
 import { deflection, froude } from '../../static/js/ovs/physics/wind.mjs';
 import { effectiveWind } from '../../static/js/ovs/physics/sidepanels.mjs';
 import { requiredCfm, coverageAdvisory } from '../../static/js/ovs/physics/cfm.mjs';
-import { SOURCES, sourceForBtu } from '../../static/js/ovs/physics/heat.mjs';
+import { SOURCES } from '../../static/js/ovs/physics/heat.mjs';
 
 const MOUNT_DEPTH_IN = { wall: 36, island: 40 };
 const I01_RISE_IN = 30; // matches the fixed rise in static/js/ovs/instruments/i01.mjs
@@ -56,9 +56,7 @@ export function computeI01State(params) {
 /** Build the i02 (CFM Requirement) state sheet from validated params. Pure. */
 export function computeI02State(params) {
   const { height = 30, mount, exposure, panels = 'none', width } = params;
-  // STAGE-A SHIM (remove in Stage B): a legacy btu-only request resolves to
-  // the nearest RB-001 gas row; the new shape names the source directly.
-  const src = SOURCES[params.source] ?? (Number.isFinite(params.btu) ? sourceForBtu(params.btu) : SOURCES.gasLarge);
+  const src = SOURCES[params.source] ?? SOURCES.gasLarge; // params.mjs guarantees a valid id; Gas Large = RB-008 flagship
   const r = requiredCfm({ src, riseIn: height, mount, exposure, panels });
 
   const outputs = {

@@ -59,10 +59,9 @@ test('i02: island → 1,070 minimum / 1,200 blower (RB-008 §3.9 application exa
   assert.equal(s.outputs.mountMultiplier, 1.2);                               // rb-008:561
 });
 
-test('i02: legacy btu-only request (STAGE-A SHIM) resolves to the nearest RB-001 gas row', () => {
-  const s = computeI02State({ height: 30, mount: 'wall', exposure: 'moderate', panels: 'none', btu: 60000 });
-  assert.equal(s.inputs.source, 'gasLarge');                                  // rb-001:243
-  assert.equal(s.outputs.minimumCfm, 892);                                    // rb-008:310
+test('i02: every RB-001 source id resolves (no btu mapping remains); an unknown id falls back to Gas Large', () => {
+  for (const id of Object.keys(SOURCES)) assert.equal(computeI02State({ source: id, height: 30, mount: 'wall', exposure: 'moderate', panels: 'none' }).inputs.source, id);
+  assert.equal(computeI02State({ height: 30, mount: 'wall', exposure: 'moderate', panels: 'none' }).inputs.source, 'gasLarge'); // rb-001:243
 });
 
 test('i02: width is a coverage advisory, not a CFM input (RB-008 Table 3.10)', () => {
