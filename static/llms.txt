@@ -20,7 +20,7 @@
 ## Interactive tools (11)
 
 - [Capture Demonstrator](https://outdoorventilationstandard.com/tools/capture-demonstrator/) — Combined mounting-height, hood-width, and wind-speed plume capture model.
-- [CFM Sizing Calculator](https://outdoorventilationstandard.com/tools/cfm-calculator/) — Minimum exhaust airflow from hood width, mount type, wind exposure, and burner rating.
+- [Outdoor Range Hood CFM Calculator](https://outdoorventilationstandard.com/tools/cfm-calculator/) — Minimum exhaust airflow from hood width, mount type, wind exposure, and burner rating.
 - [Plume Width by Height](https://outdoorventilationstandard.com/tools/plume-width-by-height/) — Capture-diameter growth from the cooking surface to hood mounting height.
 - [Wind Deflection Trajectories](https://outdoorventilationstandard.com/tools/wind-deflection-trajectory/) — Crosswind plume deflection from still air to 20 mph at any mounting height.
 - [Hood Geometry Comparison](https://outdoorventilationstandard.com/tools/hood-geometry-comparison/) — Side-by-side capture comparison of two hood widths and mount types.

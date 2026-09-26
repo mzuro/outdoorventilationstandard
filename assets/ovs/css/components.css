@@ -1189,7 +1189,11 @@ a.ovs-chip:hover {
    pages, baseline 7ba3549 vs this build), preserving F3's calibration —
    same residual settle, no new whitespace at tablet widths. */
 .ovs-instrument[data-instrument="i01"] { --i-reserve: 780px; }
-.ovs-instrument[data-instrument="i02"] { --i-reserve: 715px; }
+/* +65px (W5-T6, 2026-08-31): the copy-spec-line button row added to i02
+   only (.ovs-i-copyline: ~44px button + ~19px vertical padding + 1px
+   border) — same "F3 value plus the measured delta" calibration as the
+   W5-T3 note above, just a second delta stacked on i02's alone. */
+.ovs-instrument[data-instrument="i02"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
 .ovs-instrument[data-instrument="i05"] { --i-reserve: 780px; }
 .ovs-instrument[data-instrument="i07"] { --i-reserve: 780px; }
@@ -1202,7 +1206,7 @@ a.ovs-chip:hover {
     min-height: var(--i-reserve-m, 760px);
   }
   .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 905px; }
-  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 900px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 965px; } /* +65px, W5-T6 copy-spec-line row */
   .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 810px; }
   .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 660px; }
   .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 1065px; }
@@ -1555,6 +1559,70 @@ a.ovs-chip:hover {
 }
 
 .ovs-i-segmented-input:focus-visible + .ovs-i-segmented-label {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* "CHECK A HOOD" (i02 rated-CFM entry): a `type: 'number'` control, pulled
+   out of the shared .ovs-i-controls fieldset into its own small section
+   (see i02.mjs) so it reads as an optional, separate action rather than a
+   fifth required spec input alongside WIDTH/MOUNT/EXPOSURE/BTU. Dashed
+   border (vs. the solid-bordered required controls) + its own legend/note
+   are the visual cue that it's opt-in and doesn't change the bands above. */
+.ovs-i-check-hood {
+  border: 1px dashed var(--line-strong);
+  border-radius: 2px;
+  margin: 0.85rem 0.9rem;
+  padding: 0.7rem 0.9rem 0.85rem;
+  background: var(--surface);
+}
+
+.ovs-i-check-hood-legend {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0.3rem;
+}
+
+.ovs-i-check-hood-note {
+  margin: 0.15rem 0 0.65rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* the moved .ovs-i-control wrap loses its grid-cell chrome once it's
+   inside .ovs-i-check-hood instead of .ovs-i-controls */
+.ovs-i-check-hood-control.ovs-i-control {
+  background: transparent;
+  padding: 0;
+}
+
+/* Mirrors .ovs-i-range's box height (44px hit target, WCAG 2.5.5/2.5.8)
+   but as a real bordered text field, matching the mono/uppercase/bordered
+   language of .ovs-i-segmented-label rather than a native slider. */
+.ovs-i-number {
+  display: block;
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+}
+
+.ovs-i-number::placeholder {
+  color: var(--faint);
+}
+
+.ovs-i-number:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -1948,6 +2016,18 @@ a.ovs-chip:hover {
   position: relative;
 }
 
+/* [hidden] must keep winning even against the rule below — same
+   defeated-specificity problem as .ovs-nav-toggle[hidden] / .ovs-i-strip
+   [hidden] above (equal-specificity class-vs-attribute selectors, author
+   rule wins over the UA [hidden] default). i02's optional "rated CFM"
+   field is the first spec.verdict() that can legitimately return
+   {grade: null} on initial load (every other graded instrument always has
+   a real grade), which is what exposed this: without this rule, an empty
+   bordered stamp box rendered at rest on every i02 page. */
+.ovs-i-stamp[hidden] {
+  display: none;
+}
+
 .ovs-i-stamp {
   position: absolute;
   bottom: 16px;
@@ -2109,6 +2189,53 @@ a.ovs-chip:hover {
   color: var(--muted);
 }
 
+/* ---- W5-T6 (UX P1-6): "carry-away" copy-spec-line button ----
+   Engine-emitted (viz.mjs, spec.copyLine — i02.mjs only) directly after
+   .ovs-i-readouts, continuing its surface-2 band so the answer and its
+   carry-away action read as one block. Button weight matches the other
+   instrument-chrome actions (.ovs-explain-btn / .ovs-i-preset, W5-T3):
+   ink text, a real border, mono (readouts/verdict-foot voice). Sized to a
+   native 44px min-height instead of the chips' ::after trick — there is no
+   compact-visual constraint here. Confirmation is a plain text swap (see
+   viz.mjs) with no animation, so it is identical under
+   prefers-reduced-motion; .ovs-i-copyline-status duplicates the same text
+   into an aria-live region (sr-only) since the button's own accessible
+   name change is not reliably announced. */
+.ovs-i-copyline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 0.6rem 0.9rem;
+}
+
+.ovs-i-copyline-btn {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0.5rem 0.9rem;
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+}
+
+.ovs-i-copyline-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ovs-i-copyline-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* The one orchestrated moment: the stamp slams on settle. Neutralized under
    prefers-reduced-motion by the global override in base.css (and the engine
    also skips adding this class when reduced), so it just appears at rest. */
@@ -2211,4 +2338,119 @@ a.ovs-chip:hover {
 .ovs-i-strip-grade[data-grade="FAIL"] {
   border-color: var(--fail);
   color: var(--fail);
+}
+
+/* ==========================================================================
+   Print (minimal) — a contractor/verifier printing a question answer or a
+   research paper's method + references for a job folder should get the
+   prose, headings, answer/summary box, byline, and reference list with
+   visible URLs; nothing else. No nav, no footer, no ask box, no sticky
+   chrome, no live-instrument controls.
+
+   The instrument mount (.ovs-i-instrument, viz.mjs createInstrument) puts
+   its SVG scene, its slider/segmented controls, and its preset-chip row in
+   separate top-level children from the readouts and the verdict footnote —
+   so the interactive chrome can be hidden while the plain-text readout
+   values and .ovs-i-verdict-foot line (the same numbers already echoed in
+   the surrounding prose) keep printing.
+   ========================================================================== */
+@media print {
+  :root {
+    --ground: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --note-bg: #ffffff;
+    --ink: #000000;
+    --muted: #333333;
+    --faint: #555555;
+    --line: #999999;
+    --line-strong: #000000;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* primary chrome */
+  .ovs-header,
+  .ovs-footer,
+  .ovs-askbox,
+  .ovs-i-strip,
+  .ovs-toc-rail,
+  .ovs-toc-mobile {
+    display: none !important;
+  }
+
+  /* interactive instrument chrome — the SVG drawing (drag handles, wisps,
+     grips — everything scene-specific lives inside <svg class="ovs-i-svg">,
+     viz.mjs L284-289) and, on i10 only, its HTML failure-mode taxonomy tree
+     (a sibling of the svg inside .ovs-i-scene, i10.mjs L251-254), controls
+     (sliders/segmented inputs), preset chips, and the "Explain this
+     configuration" affordance. Readouts and the verdict footnote are left
+     alone (see comment above).
+
+     .ovs-i-scene ITSELF is deliberately left un-hidden here (no
+     display:none on it) — graded instruments (i01/i05/i07/i08) append
+     .ovs-i-stamp as a further child of .ovs-i-scene, alongside the svg
+     (viz.mjs L618-624, and i05's own two-stamp variant at i05.mjs
+     L418-427), not as a sibling of it. display:none on an ancestor
+     removes every descendant from rendering regardless of the
+     descendant's own display value, so hiding .ovs-i-scene wholesale (the
+     previous rule) silently hid the verdict stamp along with the drawing
+     it was layered over — the printed page kept the "grades apply to the
+     model configuration" disclaimer (.ovs-i-verdict-foot, a true sibling
+     of .ovs-i-scene that this block never touched) with no grade anywhere
+     on the page to explain. Hiding only the svg and the taxonomy tree
+     hides all of the actual interactive content while leaving
+     .ovs-i-scene itself, and its .ovs-i-stamp child, in the render tree. */
+  .ovs-i-svg,
+  .ovs-i-taxonomy,
+  .ovs-i-controls,
+  .ovs-i-presets,
+  .ovs-i-copyline,
+  .ovs-explain {
+    display: none !important;
+  }
+
+  /* .ovs-i-stamp is normally position:absolute, bottom/right, with
+     .ovs-i-scene (position:relative) as its containing block. With the
+     scene's only other content (the svg) now display:none, .ovs-i-scene
+     has no in-flow content left and collapses to zero height — an
+     absolutely positioned stamp would then anchor its bottom edge 16px
+     above that zero-height box, i.e. print it overlapping whatever
+     precedes .ovs-i-scene (the instrument title) instead of sitting in
+     its own space. Taking it out of absolute positioning puts it back in
+     normal flow: it lays out like any other block, and being the only
+     in-flow content left in .ovs-i-scene, gives that wrapper real height
+     again. The on-screen rubber-stamp tilt (transform: rotate(-6deg)) was
+     staged to sit crooked over the drawing it covered; flattened here so
+     a static in-flow box doesn't print with rotated corners overlapping
+     the readouts that immediately follow it. */
+  .ovs-i-stamp {
+    position: static !important;
+    transform: none !important;
+    margin: 0.6rem 0.9rem;
+  }
+
+  /* citation links (partials/citations.html) resolve href to a relative
+     /research/... RelPermalink with no visible URL text on screen, and a
+     printed page has no visible domain anywhere else either (the header —
+     the only element carrying the site's absolute root link — is itself
+     hidden above), so printing that relative path is unresolvable off the
+     page. data-print-href carries the same link's absolute .Permalink
+     (set alongside href in citations.html) instead. */
+  .ovs-cite-list a[data-print-href]::after {
+    content: " (" attr(data-print-href) ")";
+    font-size: 0.85em;
+  }
+
+  /* print hygiene: rows/callouts shouldn't split across a page break;
+     the table itself is left free to flow across pages. */
+  tr,
+  .ovs-note,
+  .ovs-cite-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 }
