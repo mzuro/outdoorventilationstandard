@@ -1159,7 +1159,10 @@ a.ovs-chip:hover {
 }
 
 /* ---------- CLS reserve (pre-mount) ----------
-   createInstrument() stamps .ovs-i on the figure when it mounts; until
+   createInstrument() stamps .ovs-i on the figure when it mounts (viz.mjs:
+   on its inner div.ovs-instrument-mount AND, via closest(), on this outer
+   figure — the figure stamp is what releases this reserve; until 2026-09
+   only the inner div was stamped and the reserve never released); until
    then the figure holds only the (JS-hidden) noscript fallback and
    collapses to ~0px, so everything below jumps when the instrument
    appears (Lighthouse CLS 0.31 on tool pages). Reserve each instrument's
@@ -2431,6 +2434,17 @@ a.ovs-chip:hover {
     position: static !important;
     transform: none !important;
     margin: 0.6rem 0.9rem;
+  }
+
+  /* The pre-mount CLS reserve (.ovs-instrument:not(.ovs-i) min-height,
+     above) exists to hold screen layout steady until JS mounts; a printed
+     page has nothing to hold steady, and with the interactive chrome
+     hidden the reserve only prints as blank paper (a ~400px gap on i02).
+     Same selector as the reserve so it wins on source order, not
+     specificity; covers the no-JS print path too. */
+  .ovs-instrument,
+  .ovs-instrument:not(.ovs-i) {
+    min-height: 0;
   }
 
   /* citation links (partials/citations.html) resolve href to a relative
