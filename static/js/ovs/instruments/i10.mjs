@@ -183,7 +183,7 @@ export function mount(figureEl) {
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', 'Bar chart of the downwind ground-contact distance for escaped grease droplets by particle size, on a logarithmic axis from 1 metre to 1,000 kilometres.');
 
-    svg.appendChild(H.el('text', { x: X0, y: 24, text: 'GROUND-CONTACT DISTANCE x_ground = H·U/v_s (H = 1.5 m) — RB-011 Table 3.3a' }));
+    svg.appendChild(H.el('text', { x: X0, y: 24, text: 'x_ground = H·U/v_s, H = 1.5 m (RB-011 Table 3.3a)' }));
 
     // log-axis gridlines at each decade
     const axis = H.el('g');
@@ -257,11 +257,11 @@ export function mount(figureEl) {
       row.bar.style.opacity = row.um === sizeUm ? '' : '0.45';
       const fine = row.um < FINE_LIMIT_UM;
       row.value.setAttribute('x', (x + 6).toFixed(1));
-      row.value.textContent = `${fmtDistance(m)}${fine && m > 0 ? ' — settling not governing' : ''}`;
+      row.value.textContent = `${fmtDistance(m)}${fine && m > 0 ? ' †' : ''}`;
       row.label.style.fontWeight = row.um === sizeUm ? '700' : '';
     }
-    replaceChildren(refs.note, H.noteBox(X0, AXIS_Y + 26, windMph > 0
-      ? `U = ${Math.round(windMph)} mph · < ${FINE_LIMIT_UM} µm: diffusion/washout govern, not settling (RB-011 §3.3)`
+    replaceChildren(refs.note, H.noteBox(20, AXIS_Y + 26, windMph > 0
+      ? `U = ${Math.round(windMph)} mph · † < ${FINE_LIMIT_UM} µm: settling not governing (RB-011 §3.3)`
       : 'U = 0 mph — no downwind transport; droplets settle in place'));
   }
 
