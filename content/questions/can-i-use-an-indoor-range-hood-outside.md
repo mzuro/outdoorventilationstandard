@@ -1,9 +1,9 @@
 ---
 title: "Can I use an indoor range hood outside?"
-description: "Physically yes, but the ratings don't transfer: outdoors a hood loses all six indoor capture mechanisms, and indoor CFM rules run 1.7-2.5x too low (RB-004)."
+description: "Physically yes, but the ratings don't transfer: outdoors a hood loses all six indoor capture assists, and indoor CFM rules run 1.7-2.5x too low (RB-004)."
 summary: "Physically, yes — but its ratings won't come with it. Indoors a hood gets six free capture assists: walls, a ceiling, room negative pressure, controlled makeup air, still air, and a finite room volume that recirculates escaped smoke back to the hood. Outdoors all six are gone, first-pass capture is the only capture, and the indoor rules a spec sheet is built on run 1.7-2.5x too low for open-air conditions."
 date: 2026-07-15
-lastmod: 2026-07-15
+lastmod: 2026-09-26
 reviewed: true
 weight: 10
 instruments: true
@@ -15,7 +15,7 @@ An indoor range hood will bolt to an outdoor wall and its blower will spin — b
 
 ## The environment is the difference, not the appliance
 
-The plume coming off the grill doesn't know whether it's indoors or outdoors — velocity, temperature, and mass flow are identical; the entire performance gap comes from the capture environment (RB-004 §3.9). The instrument above isolates the one environmental variable that moves most: with the same 48-inch island hood, the model reads about 97% capture in still, indoor-like air, but about 46% in an 8 mph crosswind — no change to the hood at all. Open the full [Indoor vs. Outdoor Ventilation Comparison](/tools/indoor-vs-outdoor-comparison/) for the mechanism-by-mechanism breakdown.
+The plume coming off the grill doesn't know whether it's indoors or outdoors — velocity, temperature, and mass flow are identical; the entire performance gap comes from the capture environment (RB-004 §3.9). The instrument above isolates the one environmental variable that moves most: with the same 48-inch island hood, the model reads about 87% capture in still, indoor-like air, but about 20% in an 8 mph crosswind — no change to the hood at all. Open the full [Indoor vs. Outdoor Ventilation Comparison](/tools/indoor-vs-outdoor-comparison/) for the mechanism-by-mechanism breakdown.
 
 ## The spec-sheet numbers don't transfer
 
@@ -23,7 +23,7 @@ The familiar indoor sizing rules understate outdoor requirements systematically,
 
 - **CFM.** The indoor ASHRAE BTU method assigns 1 CFM per 100 BTU/hr — 600 CFM for a 60,000 BTU grill (RB-008 §2.3). The physics-based outdoor analysis shows that same grill at a 30-inch mount needs 727 CFM even sheltered and 892 CFM in moderate exposure — the indoor rule underspecifies by 21% to 49% (RB-008 §4.3), and across indoor exhaust-rate tables generally the shortfall is 1.7-2.5x (RB-004 §3.4, §4.1). See [what CFM you need](/questions/what-cfm-do-i-need/) for outdoor-derived figures.
 - **Capture ratings.** A UL 710 capture rating is measured in an enclosed test room with all six indoor assists present; a hood rated at 85% there may achieve only 50-65% first-pass capture outdoors, depending on wind and installation geometry (RB-004 §3.3.1-§3.3.2).
-- **Overhang.** Indoor practice sizes overhang at 6-9 inches per side; outdoor conditions call for 15-26 inches per side because the open-air plume spreads unconfined and wind deflects it (RB-004 §4.2). See [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).
+- **Overhang.** Indoor practice sizes overhang at 6-9 inches per side; outdoor conditions call for 11–26 inches per side across the standard mounting-height range because the open-air plume spreads unconfined and wind deflects it (RB-004 §4.2; RB-005 §3.1). See [what size hood your grill needs](/questions/what-size-hood-for-my-grill/).
 
 ## Heat at the hood face is a materials question the spec sheet may not answer
 
