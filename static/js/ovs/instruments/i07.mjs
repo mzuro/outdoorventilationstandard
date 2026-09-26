@@ -355,7 +355,7 @@ export function mount(figureEl) {
       return {
         grade,
         plain: `${pct}% captured with panels in this modeled scene`,
-        clauseRef: 'panel data: RB-009 §3.1 · capture: RB-006 §3.4 · thresholds: OVS model criterion (≥85% PASS · ≥60% MARGINAL)',
+        clauseRef: 'OVS model criterion ≥85% · ≥60% — data: RB-009 §3.1',
         detail: `Plume capture with panels ${pct}% — panel attenuation data: RB-009 §3.1; capture model: RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`,
       };
     },
