@@ -1,7 +1,7 @@
 ---
 title: "RB-008: CFM Requirements for Outdoor Cooking Ventilation"
 date: 2025-12-04
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-008"
 priority: "P2 — Applied"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -46,6 +46,17 @@ dataset:
 **Author Role:** Hood Performance & Design Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-003: Velocity Decay and Near-Field vs. Far-Field Capture; RB-005: Impact of Hood Geometry on Capture Performance; RB-006: Wind Interaction and Cross-Flow Effects
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.3, Exposed-without-panels row: recommended blower 1500 → 1800 CFM; 1.1 x 1394 = 1533 CFM exceeds the 1500 CFM size, so v1.0 violated the paper's own selection rule (blower guidance under Table 3.11; Appendix A step 8). The Answer list follows (29% margin). Blower guidance under Table 3.11: note added that where 1.1 times the required value exceeds 1500 CFM the next commercial size (1800 CFM) applies.
+- Section 4.4: charcoal-kettle critical wind speeds quoted from RB-006 Table 3.4b updated to RB-006 v1.1 (5.0 mph vs 6.7 mph → 3.7 mph vs 4.8 mph; 30-40% → 15-40% lower).
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -309,14 +320,14 @@ RB-003 Table 3.5 reports 242 CFM (the 2% difference is due to intermediate round
 | Sheltered (< 3 mph) | 3.0 | 727 | 900 CFM |
 | Moderate (3-7 mph) | 3.68 | 892 | 1200 CFM |
 | Exposed with panels (7-12 mph) | 4.14 | 1003 | 1200 CFM |
-| Exposed without panels (7-12 mph) | 5.75 | 1394 | 1500 CFM |
+| Exposed without panels (7-12 mph) | 5.75 | 1394 | 1800 CFM |
 
 **Answer:** For a 60,000 BTU gas grill at 30-inch mounting height:
 
 - **Sheltered installation:** 727 CFM minimum; specify a 900 CFM blower to provide 24% margin.
 - **Moderate wind exposure:** 892 CFM minimum; specify a 1200 CFM blower to provide 35% margin.
 - **Exposed installation with side panels:** 1003 CFM minimum; specify a 1200 CFM blower to provide 20% margin.
-- **Exposed installation without panels:** 1394 CFM minimum; specify a 1500 CFM blower. Capture efficiency is limited to approximately 60% even at this rate; side panels are strongly recommended.
+- **Exposed installation without panels:** 1394 CFM minimum; specify an 1800 CFM blower (29% margin; 1.1 x 1394 = 1533 CFM exceeds the 1500 CFM size). Capture efficiency is limited to approximately 60% even at this rate; side panels are strongly recommended.
 
 The recommended hood dimensions from RB-005 Table 3.8c for this configuration at 30 inches are: width 62 inches, depth 55 inches (island) or 42 inches (wall-mount), overhang 16 inches per side, lip height 3 inches, internal cavity height 8 inches.
 
@@ -611,7 +622,7 @@ The 30-inch mounting height is the most commonly specified configuration. The fo
 | Pellet Medium | 18,000 | 3.4 | 54" | 418 | 513 | 577 | 600-900 CFM |
 | Pellet High | 30,000 | 5.7 | 54" | 523 | 641 | 722 | 900 CFM |
 
-**Blower selection guidance.** The recommended blower should provide at least the Moderate exposure CFM value, even for Sheltered installations, to allow for occasional breezes and operational margin. Common residential outdoor blower ratings are 600, 900, 1200, and 1500 CFM. Select the smallest standard size that exceeds the Moderate CFM value by at least 10%.
+**Blower selection guidance.** The recommended blower should provide at least the Moderate exposure CFM value, even for Sheltered installations, to allow for occasional breezes and operational margin. Common residential outdoor blower ratings are 600, 900, 1200, and 1500 CFM. Select the smallest standard size that exceeds the Moderate CFM value by at least 10%. Where 1.1 times the required value exceeds 1500 CFM, the next commercial size (1800 CFM) applies, as in the Exposed-without-panels case of Section 3.3.
 
 ---
 
@@ -659,7 +670,7 @@ RB-001 identified the charcoal paradox: charcoal grills produce more contaminant
 
 A charcoal kettle at 15,000 BTU requires 335 CFM at 30 inches (Sheltered). A gas grill small at 25,000 BTU requires 500 CFM. The charcoal grill needs 33% less CFM despite producing comparable or greater smoke, grease aerosol, and particulate emissions.
 
-This does not mean the charcoal grill is easier to ventilate. The low CFM requirement reflects the weak plume (Q_c = 1.8 kW, only 40% of total BTU), which entrains less ambient air. But this same weakness makes the plume highly vulnerable to wind displacement. The critical wind speeds for capture failure from RB-006 Table 3.4b are 30-40% lower for the charcoal kettle than for gas grills: 25% plume escape occurs at only 5.0 mph at 30 inches, compared to 6.7 mph for the gas grill medium.
+This does not mean the charcoal grill is easier to ventilate. The low CFM requirement reflects the weak plume (Q_c = 1.8 kW, only 40% of total BTU), which entrains less ambient air. But this same weakness makes the plume highly vulnerable to wind displacement. The critical wind speeds for capture failure from RB-006 Table 3.4b are 15-40% lower for the charcoal kettle than for gas grills: 25% plume escape occurs at only 3.7 mph at 30 inches, compared to 4.8 mph for the gas grill medium.
 
 The charcoal ventilation priority is therefore not CFM but geometry and wind protection:
 
