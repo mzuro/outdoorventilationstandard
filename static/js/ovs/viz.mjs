@@ -50,6 +50,17 @@ export function gradeCapture(capFrac, { pass = 0.85, marginal = 0.6 } = {}) {
  * compared so segmented literals and numeric ranges compare uniformly).
  * Pure. Returns the preset id or null.
  */
+/**
+ * Label for a readout's cell in the sticky mobile strip: the readout's
+ * optional short `stripLabel`, else its full `label`. The strip is one
+ * line at <=760px with a grade badge on graded instruments, so long labels
+ * ("RECOMMENDED") ellipsized at 375px; values are never abbreviated.
+ */
+export function stripLabelFor(readout) {
+  if (!readout) return '';
+  return readout.stripLabel || readout.label || '';
+}
+
 export function presetActiveId(presets, state) {
   for (const p of presets || []) {
     let match = true;
@@ -547,7 +558,7 @@ export function createInstrument(rootEl, spec) {
       cell.className = 'ovs-i-strip-cell';
       const lab = document.createElement('span');
       lab.className = 'ovs-i-strip-label';
-      lab.textContent = r.label;
+      lab.textContent = stripLabelFor(r);
       const val = document.createElement('span');
       val.className = 'ovs-i-strip-value';
       cell.appendChild(lab);

@@ -139,12 +139,24 @@ export function mount(figureEl) {
   // --- band-chart geometry (viewBox px) --------------------------------
   const X0 = 150; // bar origin (after row labels)
   const X1 = 690; // 3500 CFM
+  // Rows sit on a 52px pitch (was 60) and the viewBox starts at y=-64
+  // (was 0), so the chart carries a state-independent empty band across
+  // its top-left — the row-label column x<140 down to y=85 and the
+  // x<510 band above the gridlines (GRID_TOP) — that is where the
+  // verdict stamp now lives (components.css, `[data-instrument="i02"]
+  // .ovs-i-stamp`). Bottom-right, the engine default, covered the 2k/2.5k
+  // tick labels and the axis caption on desktop and half the scene on
+  // mobile; nowhere in the old 720x270 frame was free of data at every
+  // control state. Physics and every plotted value are untouched — only
+  // where the bars are drawn.
+  const VIEWBOX = '0 -64 720 334';
   const ROWS = [
-    { key: 'minimum', label: 'MINIMUM', y: 64 },
-    { key: 'recommended', label: 'RECOMMENDED', y: 124 },
-    { key: 'highWind', label: 'HIGH-WIND', y: 184 },
+    { key: 'minimum', label: 'MINIMUM', y: 90 },
+    { key: 'recommended', label: 'RECOMMENDED', y: 142 },
+    { key: 'highWind', label: 'HIGH-WIND', y: 194 },
   ];
   const BAR_H = 22;
+  const GRID_TOP = 56; // gridlines start 34px above the first bar
   const AXIS_Y = 236;
   const xFor = (cfm) => X0 + (Math.min(cfm, AXIS_MAX_CFM) / AXIS_MAX_CFM) * (X1 - X0);
 
@@ -161,7 +173,7 @@ export function mount(figureEl) {
 
   function buildScene(svg, helpers) {
     H = helpers;
-    svg.setAttribute('viewBox', '0 0 720 270');
+    svg.setAttribute('viewBox', VIEWBOX);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', 'Bar chart of the three airflow bands — minimum, recommended, and high-wind CFM — on a 0 to 3,500 CFM axis.');
@@ -171,7 +183,7 @@ export function mount(figureEl) {
     axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: X0, y1: AXIS_Y, x2: X1, y2: AXIS_Y }));
     for (let cfm = 0; cfm <= AXIS_MAX_CFM; cfm += 500) {
       const x = xFor(cfm);
-      axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: 30, x2: x, y2: AXIS_Y, opacity: 0.25 }));
+      axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: GRID_TOP, x2: x, y2: AXIS_Y, opacity: 0.25 }));
       axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: AXIS_Y, x2: x, y2: AXIS_Y + 6 }));
       axis.appendChild(H.el('text', {
         x, y: AXIS_Y + 20, 'text-anchor': 'middle',
@@ -296,14 +308,23 @@ export function mount(figureEl) {
       // stamp, matching this instrument's pre-existing behavior exactly.
       // Pulled into its own "CHECK A HOOD" <fieldset> post-mount below so
       // it never reads as a fifth required spec control.
+      // step: 'any' — a real nameplate figure such as 1,437 CFM is graded
+      // exactly like any other (gradeRatedCfm never rounds), so a 25-CFM
+      // step only made the field :invalid (stepMismatch) for the very
+      // numbers visitors copy off a spec sheet.
       {
         id: 'i02-rated', type: 'number', label: "HOOD'S RATED CFM", value: null,
-        min: 0, step: 25, placeholder: 'e.g. 1500',
+        min: 0, step: 'any', placeholder: 'e.g. 1500',
       },
     ],
+    // stripLabel: the <=760px sticky strip (viz.mjs, spec.stickyReadout)
+    // shows both cells plus the verdict grade badge on one line; at 375px
+    // the full labels ellipsized ("RECOM… 1,800 CFM  MI… 1,450 CFM  FAIL")
+    // once the badge appeared. The strip copies values verbatim; only the
+    // label text is abbreviated.
     readouts: [
-      { id: 'recommended', label: 'RECOMMENDED', format: 'cfm', hero: true },
-      { id: 'minimum', label: 'MINIMUM', format: 'cfm' },
+      { id: 'recommended', label: 'RECOMMENDED', stripLabel: 'REC', format: 'cfm', hero: true },
+      { id: 'minimum', label: 'MINIMUM', stripLabel: 'MIN', format: 'cfm' },
       { id: 'highWind', label: 'HIGH-WIND', format: 'cfm' },
     ],
     // W5-T2 sticky strip: hero + minimum, plus the verdict grade (added

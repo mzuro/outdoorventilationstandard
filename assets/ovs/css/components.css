@@ -2178,6 +2178,94 @@ a.ovs-chip:hover {
   }
 }
 
+/* i02 (CFM band chart): the engine's bottom-right default sat over the
+   2k/2.5k axis tick labels and the "exhaust airflow, CFM" caption on
+   desktop, and over the HIGH-WIND bar on mobile. i02.mjs now draws its
+   chart with an empty band across the top-left (viewBox starts at y=-64,
+   row-label column free to y=85), so the stamp pins there instead. The
+   -6deg rotation lifts the box's right end ~20px above `top` at desktop
+   width and ~9px at the <=760 compact size; the offsets keep it inside
+   the scene. Verified 641-1440px against every svg text/bar (probe,
+   2026-09-26). */
+.ovs-instrument[data-instrument="i02"] .ovs-i-stamp {
+  top: 24px;
+  left: 16px;
+  bottom: auto;
+  right: auto;
+}
+
+/* 641-900px: the band is only 53-75px tall here, so i02 takes the
+   <=760 compact sizes early (the full-width nowrap clause makes the
+   default stamp 386px wide and it reached the MINIMUM row's dimension
+   label at 761-800 in the preset sweep) ... */
+@media (max-width: 900px) {
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp {
+    top: 10px;
+    left: 10px;
+    border-width: 2px;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp-grade {
+    font-size: 0.85rem;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp-plain {
+    font-size: 0.54rem;
+    max-width: 24ch;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp-clause {
+    white-space: normal;
+    max-width: 30ch;
+    text-align: center;
+    line-height: 1.25;
+    font-size: 0.52rem;
+  }
+}
+
+/* ... and at 641-760 even the compact three-line stamp (111px) clears
+   the band only without its third line: grade + plain explanation stay;
+   the model-criterion clause (still carried in the stamp's title
+   attribute) is dropped in this band only. */
+@media screen and (min-width: 641px) and (max-width: 760px) {
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-clause {
+    display: none;
+  }
+}
+
+/* Phone widths: the compact stamp — grade word only. At 375px the i05
+   pair (96x122px each, three lines) covered ~40% of both mini-scene hood
+   glyphs, and i02's covered half its 220px scene. The plain and clause
+   lines are the stamp's own explanation, so they are dropped only here,
+   where there is no room to show them without hiding the drawing they
+   grade; the grade word stays visible and aria-live still announces it.
+   `screen` so a narrow print page box never loses the lines. */
+@media screen and (max-width: 640px) {
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp,
+  .ovs-instrument[data-instrument="i05"] .ovs-i-stamp {
+    gap: 0;
+    padding: 0.12rem 0.45rem;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-plain,
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-clause,
+  .ovs-instrument[data-instrument="i05"] .ovs-i-stamp .ovs-i-stamp-plain,
+  .ovs-instrument[data-instrument="i05"] .ovs-i-stamp .ovs-i-stamp-clause {
+    display: none;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp {
+    top: 8px;
+    left: 8px;
+  }
+
+  .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-grade,
+  .ovs-instrument[data-instrument="i05"] .ovs-i-stamp .ovs-i-stamp-grade {
+    font-size: 0.8rem;
+  }
+}
+
 /* W5-T3 (UX P1-3): static footnote on every graded instrument, appended
    by the engine (or by i05 itself) after the readouts — defuses "PASS
    reads as product certification". Continues the readouts' surface. */
@@ -2314,6 +2402,11 @@ a.ovs-chip:hover {
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   white-space: nowrap;
+  /* the label (overflow:hidden above) is the only thing allowed to give
+     way when the line is tight — a value must never truncate. Readouts
+     that would ellipsize their label pass a short `stripLabel` instead
+     (viz.mjs stripLabelFor; i02 REC/MIN). */
+  flex-shrink: 0;
 }
 
 /* mini verdict grade — same data-grade color language as the stamp */
