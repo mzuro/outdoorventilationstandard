@@ -108,7 +108,8 @@ export function mount(figureEl) {
     // reference-height plane (dashed) + its measuring line
     const refY = GY - REF_HEIGHT_IN * PX_PER_IN;
     svg.appendChild(H.el('line', { class: 'ovs-i-cap-plane', x1: 40, y1: refY, x2: 440, y2: refY }));
-    svg.appendChild(H.el('text', { x: 40, y: refY - 6, text: `${REF_HEIGHT_IN}″ reference height` }));
+    // short label at the far left so it clears the centred measuring-line label
+    svg.appendChild(H.el('text', { x: 40, y: refY - 6, text: `${REF_HEIGHT_IN}″ reference` }));
 
     refs.scaleNote = H.el('g');
     svg.appendChild(refs.scaleNote);
@@ -173,7 +174,7 @@ export function mount(figureEl) {
     }
     refs.envFill.setAttribute('d', `${fill}Z`);
 
-    replaceChildren(refs.scaleNote, H.noteBox(20, 20, `Q_c ${src.qcKw.toFixed(1)} kW (χ_c ${src.chiC.toFixed(2)}) · z_0 ${src.z0M.toFixed(2)} m`));
+    replaceChildren(refs.scaleNote, H.noteBox(20, 20, `${SHORT_LABEL[src.id] || src.id} · Q_c ${src.qcKw.toFixed(1)} kW · z_0 ${src.z0M.toFixed(2)} m`));
     const my = yAt(REF_HEIGHT_IN);
     replaceChildren(refs.measureLine, H.dimensionLine(
       GX - halfWAt(REF_HEIGHT_IN), my, GX + halfWAt(REF_HEIGHT_IN), my,
@@ -191,7 +192,7 @@ export function mount(figureEl) {
       },
     ],
     readouts: [
-      { id: 'u0', label: `CENTERLINE VELOCITY u_0 AT ${REF_HEIGHT_IN}″`, format: 'fpm', hero: true },
+      { id: 'u0', label: `u_0 AT ${REF_HEIGHT_IN}″`, format: 'fpm', hero: true },
       { id: 'qc', label: 'CONVECTIVE HEAT Q_c' },
       { id: 'btu', label: 'RATED INPUT' },
     ],
