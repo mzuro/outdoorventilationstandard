@@ -6,6 +6,9 @@ import { askCacheKey } from './lib/normalize.mjs';
 import { clampParams, paramsCacheKey } from './lib/params.mjs';
 import { computeState, PAPER_MAP } from './lib/explain-state.mjs';
 import { validateNarration, templateNarration } from './lib/narration.mjs';
+import { verifyTurnstile } from './lib/turnstile.mjs';
+import { validateTrackBody, CUSTOM_TTL } from './lib/track.mjs';
+import { hashIp } from './lib/iphash.mjs';
 
 const ASK_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const ASK_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -48,14 +51,32 @@ async function buildContext(env) {
   }
 }
 
-async function checkRateLimit(ip, env) {
+// Per-IP, per-minute KV counter. `scope` keeps the AI routes' shared
+// bucket (`ratelimit:<ip>:<minute>`, unchanged key shape) separate from
+// /api/track's bucket (`ratelimit:track:<ip>:<minute>`) so a question's
+// fire-and-forget track call doesn't eat the ask budget.
+//
+// NOTE: the AI routes now call this only AFTER the body has parsed, the
+// honeypot is clean and Turnstile has verified (finding #3), so a bot
+// that fails the cheap checks never costs a KV read+write.
+async function checkRateLimit(ip, env, scope = '', limit = 10) {
   if (!env.QUESTION_CLICKS) return true;
   const bucket = Math.floor(Date.now() / 60000);
-  const key = `ratelimit:${ip}:${bucket}`;
+  const key = scope ? `ratelimit:${scope}:${ip}:${bucket}` : `ratelimit:${ip}:${bucket}`;
   const current = parseInt(await env.QUESTION_CLICKS.get(key) || '0');
-  if (current >= 10) return false;
+  if (current >= limit) return false;
   await env.QUESTION_CLICKS.put(key, String(current + 1), { expirationTtl: 120 });
   return true;
+}
+
+// ailog: keys use an inverted millisecond timestamp so KV's
+// lexicographic list() returns NEWEST first — /api/stats reads the first
+// 100 as "most recent". The `-` sub-prefix (0x2d) sorts before any digit,
+// so these new keys list AHEAD of the legacy plain-timestamp keys
+// (`ailog:17xxxxxxxxxxx`) that are still in KV until their 30-day TTL.
+const AILOG_TS_MAX = 9999999999999; // 13 digits; ms timestamps stay 13 digits until 2286
+function ailogKey(ts) {
+  return `ailog:-${String(AILOG_TS_MAX - ts).padStart(13, '0')}`;
 }
 
 async function logAiRequest(env, question, result, ip) {
@@ -64,14 +85,49 @@ async function logAiRequest(env, question, result, ip) {
     const ts = Date.now();
     const logEntry = JSON.stringify({
       question,
-      result, // 'ok', 'off_topic', 'filtered', 'error'
-      ip: ip.slice(0, 8) + '***', // partial IP for privacy
+      result, // 'ok', 'cached', 'off_topic', 'filtered', 'capacity_limited', 'error'
+      // Same field name as before, but now a daily-salted sha256 prefix
+      // (src/lib/iphash.mjs) rather than a partial address.
+      ip: await hashIp(ip, new Date(ts), env.AILOG_PEPPER || ''),
       time: new Date(ts).toISOString()
     });
-    await env.QUESTION_CLICKS.put(`ailog:${ts}`, logEntry, { expirationTtl: 2592000 }); // 30 days
+    await env.QUESTION_CLICKS.put(ailogKey(ts), logEntry, { expirationTtl: 2592000 }); // 30 days
   } catch (e) {
     // logging failure should never block the response
   }
+}
+
+function json(body, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...extraHeaders }
+  });
+}
+
+// Parse a JSON body into a plain object, or return null. Used so a
+// malformed/absent body is a 400 at the call site instead of falling
+// through to the route's outer catch as a 500 (finding #3).
+async function readJsonObject(request) {
+  try {
+    const body = await request.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
+    return body;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Shared Turnstile gate for the AI routes (finding #1). Returns null when
+// the request may proceed, otherwise the error Response to send.
+async function turnstileGate(request, env, body, ip) {
+  const result = await verifyTurnstile({
+    secret: env.TURNSTILE_SECRET,
+    token: body.cf_token,
+    ip,
+    requestHost: new URL(request.url).hostname
+  });
+  if (result.ok) return null;
+  return json({ error: result.error }, result.status);
 }
 
 const OFF_TOPIC_RESPONSE = {
@@ -154,39 +210,43 @@ STRICT RULES:
 async function handleFetch(request, env) {
     const url = new URL(request.url);
 
-    // API: track question clicks (requires KV binding)
+    // API: track question clicks (requires KV binding). Finding #2: this
+    // used to be an unauthenticated, unbounded, un-TTL'd write sink into
+    // the same namespace as the rate limiter / daily cap / answer cache.
+    // Now: strict body validation (src/lib/track.mjs), its own per-IP
+    // rate-limit bucket, 30-day TTL on custom: text, and every KV failure
+    // is contained here (503) rather than surfacing as a 500.
     if (url.pathname === '/api/track' && request.method === 'POST') {
+      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+      if (!env.QUESTION_CLICKS) {
+        return json({ ok: true, note: 'tracking not configured' });
+      }
+      const body = await readJsonObject(request);
+      const v = validateTrackBody(body);
+      if (!v.ok) {
+        return json({ error: v.error }, 400);
+      }
       try {
-        if (!env.QUESTION_CLICKS) {
-          return new Response(JSON.stringify({ ok: true, note: 'tracking not configured' }), {
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-        const { question_id, text } = await request.json();
-        if (!question_id) {
-          return new Response(JSON.stringify({ error: 'missing question_id' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
+        const allowed = await checkRateLimit(ip, env, 'track');
+        if (!allowed) {
+          return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
         }
 
-        const key = `clicks:${question_id}`;
+        // Counter also carries a TTL (refreshed on every increment) so an
+        // unauthenticated caller can never create a permanent key.
+        const key = `clicks:${v.questionId}`;
         const current = parseInt(await env.QUESTION_CLICKS.get(key) || '0');
-        await env.QUESTION_CLICKS.put(key, String(current + 1));
+        await env.QUESTION_CLICKS.put(key, String(current + 1), { expirationTtl: CUSTOM_TTL });
 
-        if (question_id === 'custom' && text) {
-          const customKey = `custom:${Date.now()}`;
-          await env.QUESTION_CLICKS.put(customKey, text);
+        if (v.questionId === 'custom' && v.text) {
+          await env.QUESTION_CLICKS.put(`custom:${Date.now()}`, v.text, { expirationTtl: CUSTOM_TTL });
         }
 
-        return new Response(JSON.stringify({ ok: true }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return json({ ok: true });
       } catch (e) {
-        return new Response(JSON.stringify({ error: 'invalid request' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        // KV read/write failure: the client fires-and-forgets, nothing
+        // else depends on this write.
+        return json({ error: 'track_unavailable' }, 503);
       }
     }
 
@@ -194,56 +254,45 @@ async function handleFetch(request, env) {
     if (url.pathname === '/api/ask' && request.method === 'POST') {
       const ip = request.headers.get('cf-connecting-ip') || 'unknown';
 
+      // Order (finding #3): cheap, pure rejections first — parse/validate
+      // body, honeypot, Turnstile — and only THEN the KV-backed rate
+      // limit, cache, and daily cap. Body parsing sits outside the outer
+      // try so a malformed body is a 400, not a 500 'ai_failed'.
+      const body = await readJsonObject(request);
+      if (!body) {
+        return json({ error: 'invalid_json' }, 400);
+      }
+      const question = body.question;
+      if (!question || typeof question !== 'string' || question.length > 500) {
+        return json({ error: 'invalid_question' }, 400);
+      }
+
+      // Honeypot check — bots fill this hidden field, humans don't
+      if (body.website) {
+        return json({ error: 'bot_detected' }, 403);
+      }
+
+      // Turnstile verification — fails CLOSED when the secret is unset
+      // (503 turnstile_not_configured), checks the token's hostname.
+      // Sits before the content filter so bots can't probe the filter
+      // without auth, and before the rate limiter so failed challenges
+      // don't cost a KV read+write.
+      const denied = await turnstileGate(request, env, body, ip);
+      if (denied) return denied;
+
       try {
-        // Rate limiting
+        // Rate limiting (per-IP, per-minute, KV-backed). Sits BEFORE the
+        // content filter so the filtered path's ailog write is bounded by
+        // the same 10/min budget as everything else (review round 1 #3).
         const allowed = await checkRateLimit(ip, env);
         if (!allowed) {
-          return new Response(JSON.stringify({ error: 'rate_limited' }), {
-            status: 429,
-            headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
-          });
-        }
-
-        const body = await request.json();
-        const question = body.question;
-        if (!question || typeof question !== 'string' || question.length > 500) {
-          return new Response(JSON.stringify({ error: 'invalid_question' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Honeypot check — bots fill this hidden field, humans don't
-        if (body.website) {
-          return new Response(JSON.stringify({ error: 'bot_detected' }), {
-            status: 403,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Turnstile verification (before content filter so bots can't probe filter without auth)
-        if (env.TURNSTILE_SECRET) {
-          const cfToken = body.cf_token || '';
-          const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${encodeURIComponent(env.TURNSTILE_SECRET)}&response=${encodeURIComponent(cfToken)}&remoteip=${encodeURIComponent(ip)}`
-          });
-          const verifyData = await verifyRes.json();
-          if (!verifyData.success) {
-            return new Response(JSON.stringify({ error: 'turnstile_failed' }), {
-              status: 403,
-              headers: { 'Content-Type': 'application/json' }
-            });
-          }
+          return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
         }
 
         // Content filter -- block obviously inappropriate input before it reaches AI
         if (isBlockedInput(question)) {
           await logAiRequest(env, question, 'filtered', ip);
-          return new Response(JSON.stringify(OFF_TOPIC_RESPONSE), {
-            headers: { 'Content-Type': 'application/json' }
-          });
+          return json(OFF_TOPIC_RESPONSE);
         }
 
         // Normalized-question answer cache (AI #6) -- checked before the
@@ -368,7 +417,7 @@ async function handleFetch(request, env) {
           headers: { 'Content-Type': 'application/json' }
         });
       } catch (e) {
-        await logAiRequest(env, '(parse error)', 'error', ip);
+        await logAiRequest(env, '(unhandled error)', 'error', ip);
         return new Response(JSON.stringify({ error: 'ai_failed' }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
@@ -383,58 +432,38 @@ async function handleFetch(request, env) {
     if (url.pathname === '/api/explain' && request.method === 'POST') {
       const ip = request.headers.get('cf-connecting-ip') || 'unknown';
 
+      // Same ordering as /api/ask (finding #3): parse + validate (pure)
+      // -> honeypot -> Turnstile (fail-closed) -> rate limit -> cache -> cap.
+      const body = await readJsonObject(request);
+      if (!body) {
+        return json({ error: 'invalid_json' }, 400);
+      }
+
+      if (body.website) {
+        return json({ error: 'bot_detected' }, 403);
+      }
+
+      const instrument = body.instrument;
+      if (instrument !== 'i01' && instrument !== 'i02') {
+        return json({ error: 'invalid_instrument' }, 400);
+      }
+
+      // Params are validated/clamped against the same ranges the
+      // controls enforce (src/lib/params.mjs) -- out-of-range, wrong
+      // types, unknown enum values, missing or extra keys all reject
+      // with 400 rather than being silently corrected.
+      const clamp = clampParams(instrument, body.params);
+      if (!clamp.ok) {
+        return json({ error: 'invalid_params', details: clamp.errors }, 400);
+      }
+
+      const denied = await turnstileGate(request, env, body, ip);
+      if (denied) return denied;
+
       try {
         const allowed = await checkRateLimit(ip, env);
         if (!allowed) {
-          return new Response(JSON.stringify({ error: 'rate_limited' }), {
-            status: 429,
-            headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
-          });
-        }
-
-        const body = await request.json();
-
-        if (body.website) {
-          return new Response(JSON.stringify({ error: 'bot_detected' }), {
-            status: 403,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        if (env.TURNSTILE_SECRET) {
-          const cfToken = body.cf_token || '';
-          const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${encodeURIComponent(env.TURNSTILE_SECRET)}&response=${encodeURIComponent(cfToken)}&remoteip=${encodeURIComponent(ip)}`
-          });
-          const verifyData = await verifyRes.json();
-          if (!verifyData.success) {
-            return new Response(JSON.stringify({ error: 'turnstile_failed' }), {
-              status: 403,
-              headers: { 'Content-Type': 'application/json' }
-            });
-          }
-        }
-
-        const instrument = body.instrument;
-        if (instrument !== 'i01' && instrument !== 'i02') {
-          return new Response(JSON.stringify({ error: 'invalid_instrument' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Params are validated/clamped against the same ranges the
-        // controls enforce (src/lib/params.mjs) -- out-of-range, wrong
-        // types, unknown enum values, missing or extra keys all reject
-        // with 400 rather than being silently corrected.
-        const clamp = clampParams(instrument, body.params);
-        if (!clamp.ok) {
-          return new Response(JSON.stringify({ error: 'invalid_params', details: clamp.errors }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
+          return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
         }
 
         // Quantized-param cache: the validated params ARE already
@@ -539,7 +568,9 @@ async function handleFetch(request, env) {
         stats[key.name.replace('clicks:', '')] = parseInt(val || '0');
       }
 
-      // Gather AI request logs (most recent 100)
+      // Gather AI request logs (most recent 100). ailog: keys carry an
+      // inverted timestamp (see ailogKey()) so KV's lexicographic list()
+      // yields newest first; the first 100 really are the most recent.
       const logList = await env.QUESTION_CLICKS.list({ prefix: 'ailog:', limit: 100 });
       for (const key of logList.keys) {
         try {

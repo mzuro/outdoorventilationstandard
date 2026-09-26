@@ -281,7 +281,8 @@
     historyEl.style.display = '';
     var html = '';
     for (var i = 0; i < h.length; i++) {
-      html += '<button type="button" class="ovs-history-item" title="' + h[i].replace(/"/g, '&quot;') + '">' + h[i] + '</button>';
+      /* history entries are user text (and model followup chips) from localStorage — always escape */
+      html += '<button type="button" class="ovs-history-item" title="' + escapeHtml(h[i]) + '">' + escapeHtml(h[i]) + '</button>';
     }
     historyList.innerHTML = html;
     var items = historyList.querySelectorAll('.ovs-history-item');
