@@ -2,13 +2,15 @@
 title: "Research"
 description: "Independently researched, physics-grounded publications on outdoor cooking ventilation — buoyant plume behavior, entrainment, velocity decay, hood capture, wind interaction, and standards analysis."
 date: 2025-08-01
-lastmod: 2026-02-13
+lastmod: 2026-09-26
 weight: 10
 ---
 
 The Outdoor Ventilation Standard research program produces independently researched, physics-grounded technical publications on outdoor cooking ventilation. Each paper addresses a specific topic within the broader challenge of capturing buoyant cooking plumes in open-air environments.
 
 All research is governed by the [Research Program Charter v2.6](/governance/research-program-charter/), uses the controlled vocabulary defined in the [Glossary v1.1](/governance/glossary/), and follows the visual conventions established in the [Diagram Standard v2.1](/governance/diagram-standard/).
+
+**Revision note (2026-09-26).** RB-001, RB-002, RB-003, RB-004, RB-006, RB-007, RB-008, RB-009, RB-011 and RB-012 are at v1.1. Each carries a *Revision history* section immediately after its header that lists every corrected cell (old → new) and the reason: hand-rounded table rows are regenerated from the papers' own printed formulas, and a small number of cross-paper inconsistencies (margin factors, wind factors, one blower size, one units line) are reconciled. RB-005 and RB-010 are unchanged at v1.0. The downloadable PDFs were regenerated the same day.
 
 ---
 
