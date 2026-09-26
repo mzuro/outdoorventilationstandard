@@ -1,7 +1,7 @@
 ---
 title: "RB-007: Failure Modes of Outdoor BBQ Hoods"
 date: 2025-11-21
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-007"
 priority: "P2 — Applied"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -31,6 +31,16 @@ categories: ["P2 — Applied"]
 **Author Role:** Hood Performance & Design Agent
 **Date:** 2026-02-08
 **Depends On:** RB-003: Velocity Decay and Near-Field vs. Far-Field Capture; RB-004: Why Indoor Ventilation Assumptions Fail Outdoors; RB-005: Impact of Hood Geometry on Capture Performance; RB-006: Wind Interaction and Cross-Flow Effects
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.5.2 and Appendix C: critical wind speeds quoted from RB-006 Tables 3.4a/b updated to RB-006 v1.1 (Gas Medium 30": 6.7/9.7/12.6 → 4.8/7.0/9.3 mph; Charcoal Kettle 30": 5.0/6.7/8.4 → 3.7/5.1/6.6 mph; Pellet Smoker Low 30": 4.2/5.8/7.3 → 2.6/3.9/5.2 mph). No other content changes.
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -296,19 +306,19 @@ FM-4 is triggered when the plume deflection exceeds the available downwind overh
 From RB-006 Tables 3.4a and 3.4b, the critical wind speeds for various thresholds (25% plume escape, centerline exit, 50% escape) are:
 
 **Gas Grill Medium at 30 inches with recommended hood (OH = 0.42 m):**
-- 25% escape at 6.7 mph
-- Centerline exit at 9.7 mph
-- 50% escape at 12.6 mph
+- 25% escape at 4.8 mph
+- Centerline exit at 7.0 mph
+- 50% escape at 9.3 mph
 
 **Charcoal Kettle at 30 inches with recommended hood (OH = 0.52 m):**
-- 25% escape at 5.0 mph
-- Centerline exit at 6.7 mph
-- 50% escape at 8.4 mph
+- 25% escape at 3.7 mph
+- Centerline exit at 5.1 mph
+- 50% escape at 6.6 mph
 
 **Pellet Smoker Low at 30 inches with recommended hood (OH = 0.41 m):**
-- 25% escape at 4.2 mph
-- Centerline exit at 5.8 mph
-- 50% escape at 7.3 mph
+- 25% escape at 2.6 mph
+- Centerline exit at 3.9 mph
+- 50% escape at 5.2 mph
 
 With the gust factor of G = 1.7, a site with a mean wind of 5 mph experiences peak deflections corresponding to 8.5 mph, which exceeds the 25% escape threshold for all source types at 30 inches.
 
@@ -751,8 +761,8 @@ The following values are referenced throughout this paper and are drawn from the
 | Indoor-to-outdoor CFM correction factor | 1.7 to 2.5 | RB-004 Section 3.10 |
 | Indoor-to-outdoor hood width correction factor | 1.3 to 1.7 | RB-004 Section 3.10 |
 | Wind deflection (Gas Med, 30", 5 mph) | 12" | RB-006 Table 3.2b |
-| Critical wind for 25% escape (Gas Med, 30") | 6.7 mph | RB-006 Table 3.4a |
-| Critical wind for centerline exit (Gas Med, 30") | 9.7 mph | RB-006 Table 3.4a |
+| Critical wind for 25% escape (Gas Med, 30") | 4.8 mph | RB-006 Table 3.4a |
+| Critical wind for centerline exit (Gas Med, 30") | 7.0 mph | RB-006 Table 3.4a |
 | Lip improvement factor (3" lip) | 1.25 to 1.40 composite | RB-005 Section 3.3.4 |
 | Unbaffled hood eta_uniformity | 0.40 to 0.55 | RB-005 Section 2.5 |
 | Fully baffled hood eta_uniformity | 0.75 to 0.85 | RB-005 Section 2.5 |
