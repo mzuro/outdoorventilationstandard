@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<!-- values from static/js/ovs/physics (RB-002 §3.3 d_capture, Table 3.7/3.9 W_rec; RB-006 §3.4 capture model; RB-008 Table 3.10); regenerated 2026-09-26 -->
+<svg role="img" aria-label="Three side-by-side hood diagrams over a 24 inch cooking surface with a 41 inch plume at the 30 inch hood plane. A 24 inch hood with no overhang lets the plume escape both sides. A 42 inch hood (W_min equal to the capture diameter, 9 inch overhang) captures 74 percent in still air and 36 percent at 5 mph. The recommended 57 inch hood (1.38 times the capture diameter, 17 inch overhang) captures 96 percent in still air and 72 percent at 5 mph." xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <title>Hood overhang comparison for a Gas Grill Medium at 30 inches: no overhang, minimum width, recommended width</title>
   <defs>
     <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.85"/>
@@ -117,8 +119,8 @@
   <text x="480" y="150" text-anchor="middle" font-size="9" fill="#CC8800" font-weight="600">9" overhang (OH_min)</text>
 
   <!-- Outcome -->
-  <rect x="405" y="90" width="150" height="26" rx="4" fill="#FFF3E0" stroke="#CC8800" stroke-width="1"/>
-  <text x="480" y="107" text-anchor="middle" font-size="10" fill="#AA6600" font-weight="700">98% capture — still air only</text>
+  <rect x="395" y="90" width="170" height="26" rx="4" fill="#FFF3E0" stroke="#CC8800" stroke-width="1"/>
+  <text x="480" y="107" text-anchor="middle" font-size="10" fill="#AA6600" font-weight="700">74% still air &#xB7; 36% at 5 mph</text>
 
   <!-- ===== RIGHT PANEL: Recommended Outdoor ===== -->
   <text x="800" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#227722">Recommended Outdoor (K ≈ 1.38)</text>
@@ -162,13 +164,13 @@
   <text x="800" y="150" text-anchor="middle" font-size="9" fill="#227722" font-weight="600">17" overhang (OH_rec)</text>
 
   <!-- Outcome -->
-  <rect x="715" y="90" width="170" height="26" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
-  <text x="800" y="107" text-anchor="middle" font-size="10" fill="#227722" font-weight="700">Turbulence + light-wind margin</text>
+  <rect x="710" y="90" width="180" height="26" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
+  <text x="800" y="107" text-anchor="middle" font-size="10" fill="#227722" font-weight="700">96% still air &#xB7; 72% at 5 mph</text>
 
   <!-- ===== BOTTOM COMPARISON BAR ===== -->
   <rect x="30" y="478" width="900" height="29" rx="5" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
   <text x="480" y="496" text-anchor="middle" font-size="9" fill="#555">
-    W_min = d_capture: 98% time-averaged capture, still air, no wind/turbulence margin (RB-005 §3.1, Table 3.1a) | W_rec: base margin K ≈ 1.38 (RB-002 Table 3.7; RB-005 Table 3.1b)
+    W_min = d_capture 41": 74% still-air capture, no wind margin (RB-006 &#xA7;3.4; RB-008 Table 3.10) | W_rec = 1.38 &#xD7; d_capture = 57": 96% still air, 72% at 5 mph side wind (RB-002 Table 3.7)
   </text>
 
   <!-- Source attribution -->

@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<!-- values from static/js/ovs/physics (no model-derived values: 85–98 % and 50–65 % are RB-004 §2.3/§3.4 verbatim, rb-004:149,249; a11y added); regenerated 2026-09-26 -->
+<svg role="img" aria-label="Two side-by-side diagrams. Indoors, walls and a ceiling confine the plume and room pressure assists capture, giving 85 to 98 percent capture in an enclosed test room. Outdoors there are no walls, the plume disperses in three dimensions, wind deflects it and there is no pressure assist, so the same hood achieves only 50 to 65 percent first-pass capture per RB-004." xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <title>Why indoor ventilation assumptions fail outdoors: enclosed-room capture versus open-boundary capture</title>
   <defs>
     <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.9"/>

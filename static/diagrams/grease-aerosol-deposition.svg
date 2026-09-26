@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<!-- values from static/js/ovs/physics (RB-011 §2.4 x_ground = H·U_w/v_s, Table 3.3a v_s and x_ground with H = 1.5 m); regenerated 2026-09-26 -->
+<svg role="img" aria-label="Diagram of grease droplets escaping a partially effective hood and settling downwind in a 5 mph wind, in three particle-size zones. 50 to 100 micrometre droplets settle at 0.068 to 0.27 metres per second and reach the ground 12–49 m downwind; 20 to 50 micrometre droplets at 0.011 to 0.068 metres per second reach 49–307 m; 10 to 20 micrometre droplets at 0.0028 to 0.011 metres per second reach 0.31–1.2 km. Below 10 micrometres the ground-contact distance exceeds 1 km and settling is no longer the deposition mechanism." xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <title>Grease aerosol transport: settling velocity and downwind ground-contact distance by droplet size (RB-011)</title>
   <defs>
     <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.85"/>
@@ -42,7 +44,7 @@
 
   <!-- Title -->
   <text x="480" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#222">Grease Aerosol Transport and Deposition in Missed Plume</text>
-  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Particle size determines transport distance and deposition pattern — RB-011</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Stokes settling v_s &#x221D; d_p&#xB2; sets the downwind ground-contact distance x_ground = H&#xB7;U_w / v_s (H = 1.5 m) &#x2014; RB-011 Table 3.3a</text>
 
   <!-- Ground surface -->
   <rect x="30" y="380" width="900" height="6" rx="1" fill="#B0A898"/>
@@ -76,7 +78,7 @@
   <line x1="30" y1="180" x2="55" y2="180" stroke="#4488CC" stroke-width="1.5" marker-end="url(#windArrow)"/>
   <text x="38" y="130" font-size="9" fill="#4488CC" font-weight="600">Wind</text>
 
-  <!-- ===== ZONE 1: Coarse Droplets (0-3 ft) ===== -->
+  <!-- ===== ZONE 1: 50-100 um, x_ground @5 mph 12–49 m ===== -->
 
   <!-- Zone background -->
   <rect x="190" y="62" width="155" height="316" rx="0" fill="url(#zone1Grad)" opacity="0.15"/>
@@ -106,17 +108,17 @@
   <!-- Zone label -->
   <rect x="195" y="64" width="145" height="50" rx="4" fill="white" stroke="#8B6914" stroke-width="1" opacity="0.95"/>
   <text x="267" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#6B4913">ZONE 1</text>
-  <text x="267" y="90" text-anchor="middle" font-size="8" fill="#8B6914">Coarse Droplets (&gt;50 um)</text>
-  <text x="267" y="102" text-anchor="middle" font-size="7.5" fill="#666">Within ~1 m of source</text>
+  <text x="267" y="90" text-anchor="middle" font-size="8" fill="#8B6914">Coarse droplets 50&#x2013;100 &#xB5;m</text>
+  <text x="267" y="102" text-anchor="middle" font-size="7.5" fill="#666">Ground contact 12–49 m @ 5 mph</text>
 
   <!-- Zone 1 data -->
   <rect x="200" y="392" width="135" height="52" rx="3" fill="white" stroke="#8B6914" stroke-width="0.8"/>
-  <text x="267" y="405" text-anchor="middle" font-size="8" fill="#6B4913" font-weight="600">Settling: 0.07-0.27 m/s</text>
-  <text x="267" y="418" text-anchor="middle" font-size="7.5" fill="#888">Drip pan, grill exterior,</text>
-  <text x="267" y="430" text-anchor="middle" font-size="7.5" fill="#888">adjacent countertop</text>
+  <text x="267" y="405" text-anchor="middle" font-size="8" fill="#6B4913" font-weight="600">Settling v_s: 0.068&#x2013;0.27 m/s</text>
+  <text x="267" y="418" text-anchor="middle" font-size="7.5" fill="#888">x_ground: 5–20 m @ 2 mph</text>
+  <text x="267" y="430" text-anchor="middle" font-size="7.5" fill="#888">25–99 m @ 10 mph</text>
   <text x="267" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Rapid gravitational settling</text>
 
-  <!-- ===== ZONE 2: Fine Aerosol (3-30 ft) ===== -->
+  <!-- ===== ZONE 2: 20-50 um, x_ground @5 mph 49–307 m ===== -->
 
   <!-- Zone background -->
   <rect x="345" y="62" width="310" height="316" rx="0" fill="url(#zone2Grad)" opacity="0.12"/>
@@ -164,17 +166,17 @@
   <!-- Zone label -->
   <rect x="370" y="64" width="145" height="50" rx="4" fill="white" stroke="#CC8844" stroke-width="1" opacity="0.95"/>
   <text x="442" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#AA6622">ZONE 2</text>
-  <text x="442" y="90" text-anchor="middle" font-size="8" fill="#CC8844">Coarse Droplets (20-50 um)</text>
-  <text x="442" y="102" text-anchor="middle" font-size="7.5" fill="#666">1-5 m downwind</text>
+  <text x="442" y="90" text-anchor="middle" font-size="8" fill="#CC8844">Coarse droplets 20&#x2013;50 &#xB5;m</text>
+  <text x="442" y="102" text-anchor="middle" font-size="7.5" fill="#666">Ground contact 49–307 m @ 5 mph</text>
 
   <!-- Zone 2 data -->
   <rect x="365" y="392" width="135" height="52" rx="3" fill="white" stroke="#CC8844" stroke-width="0.8"/>
-  <text x="432" y="405" text-anchor="middle" font-size="8" fill="#AA6622" font-weight="600">Settling: ~0.01-0.07 m/s</text>
-  <text x="432" y="418" text-anchor="middle" font-size="7.5" fill="#888">Decking, furniture,</text>
-  <text x="432" y="430" text-anchor="middle" font-size="7.5" fill="#888">siding within 5 m</text>
+  <text x="432" y="405" text-anchor="middle" font-size="8" fill="#AA6622" font-weight="600">Settling v_s: 0.011&#x2013;0.068 m/s</text>
+  <text x="432" y="418" text-anchor="middle" font-size="7.5" fill="#888">x_ground: 20–123 m @ 2 mph</text>
+  <text x="432" y="430" text-anchor="middle" font-size="7.5" fill="#888">99–614 m @ 10 mph</text>
   <text x="432" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Gravitational settling</text>
 
-  <!-- ===== ZONE 3: Ultrafine (<2.5 um, 30+ ft) ===== -->
+  <!-- ===== ZONE 3: 10-20 um, x_ground @5 mph 0.31–1.2 km ===== -->
 
   <!-- Zone background -->
   <rect x="655" y="62" width="275" height="316" rx="0" fill="url(#zone3Grad)" opacity="0.1"/>
@@ -203,24 +205,24 @@
   <!-- Zone label -->
   <rect x="680" y="64" width="145" height="50" rx="4" fill="white" stroke="#DDAA66" stroke-width="1" opacity="0.95"/>
   <text x="752" y="78" text-anchor="middle" font-size="10" font-weight="600" fill="#AA8822">ZONE 3</text>
-  <text x="752" y="90" text-anchor="middle" font-size="8" fill="#DDAA66">Coarse Droplets (10-20 um)</text>
-  <text x="752" y="102" text-anchor="middle" font-size="7.5" fill="#666">5-30 m downwind</text>
+  <text x="752" y="90" text-anchor="middle" font-size="8" fill="#DDAA66">Fine droplets 10&#x2013;20 &#xB5;m</text>
+  <text x="752" y="102" text-anchor="middle" font-size="7.5" fill="#666">Ground contact 0.31–1.2 km @ 5 mph</text>
 
   <!-- Zone 3 data -->
   <rect x="680" y="392" width="135" height="52" rx="3" fill="white" stroke="#DDAA66" stroke-width="0.8"/>
-  <text x="747" y="405" text-anchor="middle" font-size="8" fill="#AA8822" font-weight="600">Settling: ~0.003-0.011 m/s</text>
-  <text x="747" y="418" text-anchor="middle" font-size="7.5" fill="#888">Adjacent structures,</text>
-  <text x="747" y="430" text-anchor="middle" font-size="7.5" fill="#888">property boundary</text>
+  <text x="747" y="405" text-anchor="middle" font-size="8" fill="#AA8822" font-weight="600">Settling v_s: 0.0028&#x2013;0.011 m/s</text>
+  <text x="747" y="418" text-anchor="middle" font-size="7.5" fill="#888">x_ground: 0.12–0.49 km @ 2 mph</text>
+  <text x="747" y="430" text-anchor="middle" font-size="7.5" fill="#888">0.61–2.4 km @ 10 mph</text>
   <text x="747" y="440" text-anchor="middle" font-size="7" fill="#AA6600" font-style="italic">Settling + turbulent diffusion</text>
 
   <!-- ===== DISTANCE SCALE ===== -->
   <line x1="190" y1="460" x2="345" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="267" y="472" text-anchor="middle" font-size="7.5" fill="#888">0-1 m</text>
+  <text x="267" y="472" text-anchor="middle" font-size="7.5" fill="#888">12–49 m</text>
   <line x1="345" y1="460" x2="655" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="500" y="472" text-anchor="middle" font-size="7.5" fill="#888">1-5 m</text>
+  <text x="500" y="472" text-anchor="middle" font-size="7.5" fill="#888">49–307 m</text>
   <line x1="655" y1="460" x2="930" y2="460" stroke="#888" stroke-width="0.8" marker-start="url(#dimArrowRev)" marker-end="url(#dimArrow)"/>
-  <text x="792" y="472" text-anchor="middle" font-size="7.5" fill="#888">5-30 m</text>
-  <text x="480" y="484" text-anchor="middle" font-size="7" fill="#888">Coarse mode (2.5-100 um) carries 50-80% of grease mass; below ~5 um the fine fraction disperses with no significant local deposition (RB-011 §2.2, §3.3)</text>
+  <text x="792" y="472" text-anchor="middle" font-size="7.5" fill="#888">0.31–1.2 km</text>
+  <text x="480" y="484" text-anchor="middle" font-size="7" fill="#888">Zone widths &#x2248; log distance. Distances are where the escaped-plume centreline (H = 1.5 m) reaches the ground; below 10 &#xB5;m x_ground exceeds 1 km at 5 mph (5 &#xB5;m: 4.8 km) and settling is no longer the deposition mechanism (RB-011 &#xA7;3.3)</text>
 
   <!-- Deposition intensity gradient bar -->
   <text x="340" y="501" text-anchor="end" font-size="8" fill="#666">Deposition Intensity:</text>

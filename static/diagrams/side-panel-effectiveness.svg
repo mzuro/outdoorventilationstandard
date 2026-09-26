@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<!-- values from static/js/ovs/physics (RB-009 Table 3.1a R_panel f=0.67 lateral; RB-008 §2.2 K_CFM; RB-006 §3.4 capture, Table 3.10); regenerated 2026-09-26 -->
+<svg role="img" aria-label="Two front-view diagrams. Without side panels the 5 mph side wind pushes the plume out of the hood and capture is 72 percent; the exposed wind class requires K_CFM 5.75. With two side panels of fractional enclosure f = 0.67 the lateral wind is reduced 60 percent to 2.0 mph effective, capture rises to 93 percent, and K_CFM drops to 4.14, a 28 percent CFM reduction." xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <title>Side-panel effectiveness: 57 inch hood at 30 inches in a 5 mph side wind, without and with two side panels</title>
   <defs>
     <linearGradient id="plumeGrad" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.85"/>
@@ -44,7 +46,7 @@
 
   <!-- Title -->
   <text x="480" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#222">Side Panel Effectiveness: Restoring Partial Confinement</text>
-  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Wind exposure class: Exposed (7-12 mph) — RB-009</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#666">Gas Grill Medium, 57" hood (W_rec) at 30" — 5 mph side wind, panels f = 0.67 — RB-009 Table 3.1a / RB-006 Table 3.10</text>
 
   <!-- Divider -->
   <line x1="480" y1="58" x2="480" y2="430" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="6,4"/>
@@ -97,10 +99,10 @@
 
   <!-- Performance metrics -->
   <rect x="155" y="400" width="170" height="20" rx="4" fill="#FEE8E8" stroke="#CC3333" stroke-width="1"/>
-  <text x="240" y="414" text-anchor="middle" font-size="9" fill="#CC2222" font-weight="600">40-60% capture at 5 mph wind</text>
+  <text x="240" y="414" text-anchor="middle" font-size="9" fill="#CC2222" font-weight="600">72% capture at 5 mph side wind</text>
 
   <rect x="185" y="424" width="110" height="16" rx="3" fill="#F5F5F5" stroke="#DDD" stroke-width="0.8"/>
-  <text x="240" y="436" text-anchor="middle" font-size="9" fill="#666" font-weight="600">K_CFM = 5.75</text>
+  <text x="240" y="436" text-anchor="middle" font-size="9" fill="#666" font-weight="600">Exposed class: K_CFM = 5.75</text>
 
   <!-- ===== RIGHT PANEL: With Side Panels ===== -->
   <text x="720" y="75" text-anchor="middle" font-size="14" font-weight="600" fill="#227722">With Side Panels</text>
@@ -118,19 +120,19 @@
   <text x="720" y="90" text-anchor="middle" font-size="8" fill="#555">Exhaust</text>
 
   <!-- LEFT side panel -->
-  <rect x="615" y="155" width="6" height="168" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
+  <rect x="615" y="155" width="6" height="134" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
   <text x="608" y="260" text-anchor="end" font-size="7" fill="#555" transform="rotate(-90,608,260)">Side Panel</text>
 
   <!-- RIGHT side panel -->
-  <rect x="819" y="155" width="6" height="168" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
+  <rect x="819" y="155" width="6" height="134" rx="1" fill="#777" stroke="#555" stroke-width="1"/>
   <text x="832" y="260" text-anchor="start" font-size="7" fill="#555" transform="rotate(90,832,260)">Side Panel</text>
 
-  <!-- Side panel height dimension (75% of mounting height) -->
-  <line x1="840" y1="155" x2="840" y2="323" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <!-- Side panel height dimension (f = 0.67 of the 30" mounting height = 134 px) -->
+  <line x1="840" y1="155" x2="840" y2="289" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
   <line x1="835" y1="155" x2="845" y2="155" stroke="#888" stroke-width="0.7"/>
-  <line x1="835" y1="323" x2="845" y2="323" stroke="#888" stroke-width="0.7"/>
-  <text x="855" y="243" font-size="7" fill="#888">~75%</text>
-  <text x="855" y="253" font-size="7" fill="#888">height</text>
+  <line x1="835" y1="289" x2="845" y2="289" stroke="#888" stroke-width="0.7"/>
+  <text x="855" y="243" font-size="7" fill="#888">f = 0.67</text>
+  <text x="855" y="253" font-size="7" fill="#888">of height</text>
 
   <!-- Wind arrows hitting side panel and being deflected -->
   <line x1="515" y1="180" x2="606" y2="180" stroke="#4488CC" stroke-width="2.5" marker-end="url(#windArrow)"/>
@@ -149,7 +151,7 @@
   <!-- Wind blocked label -->
   <rect x="555" y="332" width="60" height="22" rx="3" fill="#E8F0FE" stroke="#88AACC" stroke-width="0.5"/>
   <text x="585" y="341" text-anchor="middle" font-size="7" fill="#4488CC" font-weight="500">Wind</text>
-  <text x="585" y="350" text-anchor="middle" font-size="7" fill="#4488CC" font-weight="500">deflected</text>
+  <text x="585" y="350" text-anchor="middle" font-size="7" fill="#4488CC" font-weight="500">&#x2192; 2.0 mph</text>
 
   <!-- Sheltered recirculation zone -->
   <rect x="625" y="165" width="190" height="145" rx="4" fill="url(#recirc)"/>
@@ -173,7 +175,7 @@
 
   <!-- Performance metrics -->
   <rect x="635" y="400" width="170" height="20" rx="4" fill="#E8F8E8" stroke="#44AA44" stroke-width="1"/>
-  <text x="720" y="414" text-anchor="middle" font-size="9" fill="#227722" font-weight="600">85-95% capture at 5 mph wind</text>
+  <text x="720" y="414" text-anchor="middle" font-size="9" fill="#227722" font-weight="600">93% capture at 5 mph side wind</text>
 
   <rect x="645" y="424" width="150" height="16" rx="3" fill="#F5F5F5" stroke="#DDD" stroke-width="0.8"/>
   <text x="720" y="436" text-anchor="middle" font-size="9" fill="#666" font-weight="600">K_CFM = 4.14 | 28% CFM reduction</text>
@@ -181,7 +183,7 @@
   <!-- ===== BOTTOM COMPARISON BAR ===== -->
   <rect x="30" y="455" width="900" height="36" rx="5" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
   <text x="480" y="477" text-anchor="middle" font-size="9.5" fill="#555">
-    Side panels reduce effective wind speed by 40-60% | Required CFM drops 28% | Capture efficiency improves 25-35 percentage points
+    Two side panels (f = 0.67) cut lateral wind 60% (R = 0.60, RB-009 Table 3.1a) | Required CFM drops 28% (K_CFM 5.75 &#x2192; 4.14) | Capture 72% &#x2192; 93% at 5 mph (+21 pts)
   </text>
 
   <!-- Source attribution -->

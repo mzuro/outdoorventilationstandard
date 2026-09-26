@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<!-- values from static/js/ovs/physics (no numeric values; RB-007 failure-mode taxonomy; a11y added); regenerated 2026-09-26 -->
+<svg role="img" aria-label="Six cards, each with root cause, symptom, fix and severity: 1 inadequate overhang (most common, design-locked); 2 excessive mounting height (design-locked); 3 insufficient exhaust rate (correctable); 4 wind-deflected plume escape (correctable with side panels or baffles); 5 geometry-induced spillage (partially correctable); 6 momentum-limited capture (correctable by increasing CFM)." xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <title>Outdoor hood failure mode taxonomy: six primary failure mechanisms (RB-007)</title>
   <defs>
     <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="104%">
       <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.08"/>
