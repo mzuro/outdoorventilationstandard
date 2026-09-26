@@ -1204,6 +1204,65 @@ a.ovs-chip:hover {
 .ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
 .ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
 
+/* Width bands (2026-09-26): the 1280/390 values above and below were the
+   only calibration, and until the figure actually released its reserve
+   (see the comment at the top of this section) an over-tall reserve was
+   invisible — the mount just sat at the bottom of a blank box. With the
+   release working, a reserve TALLER than the mounted instrument settles
+   UPWARD on a late mount (an upward snap is the one shift the
+   calibration note above rules out), and between 391 and 1100px most
+   instruments mount well below their 390/1280 heights (i04 819px at 641
+   vs a 1080px reserve; i05 775px at 640 vs 1065; i01 760px at 460 vs
+   905). Each band below is the MINIMUM mounted height measured on the
+   tool pages every 20px from 320 to 1300 (headless Chromium, instrument
+   modules blocked for the pre-mount side), minus a 15px margin for font/
+   wrap variance, rounded down to 5px — so any residual settle stays a
+   small downward one. Band edges are the existing 640px (stamp/reserve),
+   760px (controls/strip) and 980px (TOC rail) breakpoints plus 480px,
+   where the column width and so the mounted height step. Above 1100px
+   the 1280 values already sit below every measured height; below 391px
+   the 390 values do. i03/i06 had no 1280 entry (750px default) and get
+   band entries only. i10 is the shared taxonomy/grease module: the
+   taxonomy page (565px) sets it, grease settles down ~500px as before. */
+@media (min-width: 641px) and (max-width: 760px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve: 750px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve: 1105px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve: 640px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve: 800px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve: 760px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve: 620px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve: 675px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve: 840px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve: 820px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve: 590px; }
+}
+
+@media (min-width: 761px) and (max-width: 979px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve: 705px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve: 1005px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve: 685px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve: 885px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve: 805px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve: 630px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve: 730px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve: 835px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve: 835px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve: 550px; }
+}
+
+@media (min-width: 980px) and (max-width: 1100px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve: 775px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve: 1040px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve: 745px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve: 995px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve: 760px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve: 720px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve: 775px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve: 895px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve: 985px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve: 550px; }
+}
+
 @media (max-width: 640px) {
   .ovs-instrument:not(.ovs-i) {
     min-height: var(--i-reserve-m, 760px);
@@ -1218,6 +1277,35 @@ a.ovs-chip:hover {
   .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 930px; }
   .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 655px; }
   .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 595px; }
+}
+
+/* 391-640px: same measured-minimum calibration as the tablet bands above
+   (see that comment). The 390-measured values just above stay for
+   320-390; here the wider column shortens most instruments by 100-300px. */
+@media (min-width: 391px) and (max-width: 480px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 745px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1090px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 685px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 670px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 900px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 580px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 800px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 790px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 705px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 665px; }
+}
+
+@media (min-width: 481px) and (max-width: 640px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 745px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1085px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 630px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 710px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 760px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 580px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 665px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 790px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 790px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 590px; }
 }
 
 .ovs-instrument figcaption {
