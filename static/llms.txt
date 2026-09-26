@@ -19,23 +19,26 @@
 
 ## Interactive tools (11)
 
-- [Capture Demonstrator](https://outdoorventilationstandard.com/tools/capture-demonstrator/) — Combined mounting-height, hood-width, and wind-speed plume capture model.
-- [Outdoor Range Hood CFM Calculator](https://outdoorventilationstandard.com/tools/cfm-calculator/) — Minimum exhaust airflow from hood width, mount type, wind exposure, and burner rating.
+- [Capture Demonstrator](https://outdoorventilationstandard.com/tools/capture-demonstrator/) — Combined mounting-height, hood-width, wind-speed and wind-direction plume capture model.
+- [Outdoor Range Hood CFM Calculator](https://outdoorventilationstandard.com/tools/cfm-calculator/) — Minimum exhaust airflow and blower size from cooking source, mounting height, mount type and wind exposure (RB-008 App. A).
 - [Plume Width by Height](https://outdoorventilationstandard.com/tools/plume-width-by-height/) — Capture-diameter growth from the cooking surface to hood mounting height.
 - [Wind Deflection Trajectories](https://outdoorventilationstandard.com/tools/wind-deflection-trajectory/) — Crosswind plume deflection from still air to 20 mph at any mounting height.
 - [Hood Geometry Comparison](https://outdoorventilationstandard.com/tools/hood-geometry-comparison/) — Side-by-side capture comparison of two hood widths and mount types.
 - [Velocity Decay Curves](https://outdoorventilationstandard.com/tools/velocity-decay-curves/) — Centerline velocity decay from cooking surface to hood height.
 - [Side Panel Effectiveness](https://outdoorventilationstandard.com/tools/side-panel-effectiveness/) — Capture with vs. without side panels across the wind-speed range.
 - [Indoor vs. Outdoor Ventilation Comparison](https://outdoorventilationstandard.com/tools/indoor-vs-outdoor-comparison/) — Why the same hood captures worse outdoors as wind speed rises.
-- [Heat Release Rate Comparison](https://outdoorventilationstandard.com/tools/heat-release-rate-comparison/) — Plume rise velocity by appliance burner rating.
-- [Grease Aerosol Deposition Pattern](https://outdoorventilationstandard.com/tools/grease-aerosol-deposition/) — Particle transport and deposition zones for escaped grease aerosol.
+- [Heat Release Rate Comparison](https://outdoorventilationstandard.com/tools/heat-release-rate-comparison/) — Convective heat release and plume velocity at 30 inches for the eight RB-001 reference sources.
+- [Grease Aerosol Deposition Pattern](https://outdoorventilationstandard.com/tools/grease-aerosol-deposition/) — Settling velocity and downwind ground-contact distance by droplet size and wind speed.
 - [Failure Mode Taxonomy](https://outdoorventilationstandard.com/tools/failure-mode-taxonomy/) — Six-mode diagnostic reference for outdoor hood smoke-escape symptoms.
 
-## Questions (6)
+## Questions (9)
 
-- [What CFM does my outdoor kitchen hood need?](https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/) — Minimum and recommended exhaust airflow by hood width, mount type, and burner rating.
-- [Does wind really affect an outdoor range hood?](https://outdoorventilationstandard.com/questions/does-wind-affect-my-hood/) — Modeled capture loss from 0 to 10+ mph crosswind.
-- [Island or wall-mounted outdoor hood — which works better?](https://outdoorventilationstandard.com/questions/island-vs-wall-hood/) — Capture comparison between wall and island mounts at the same width and wind speed.
-- [How much overhang does an outdoor hood need?](https://outdoorventilationstandard.com/questions/hood-depth-and-overhang/) — Required hood overhang from plume-width growth with height.
-- [Do side panels actually help an outdoor hood?](https://outdoorventilationstandard.com/questions/do-side-panels-work/) — Capture gain from one- and two-panel configurations in wind.
-- [How high should an outdoor hood be mounted?](https://outdoorventilationstandard.com/questions/mounting-height/) — Centerline velocity margin above capture threshold by mounting height.
+- [What CFM does my outdoor kitchen hood need?](https://outdoorventilationstandard.com/questions/what-cfm-do-i-need/) — 892 CFM minimum and a 1,200 CFM blower for a 60,000 BTU grill at a 30-inch wall mount in moderate wind; 1,070 CFM on an island (RB-008 §3.3, §3.9).
+- [Does wind really affect an outdoor range hood?](https://outdoorventilationstandard.com/questions/does-wind-affect-my-hood/) — Modeled capture at a 48-inch island hood falls from 87% in still air to 51% at 5 mph and 8% at 10 mph in a side wind.
+- [Island or wall-mounted outdoor range hood — which works better?](https://outdoorventilationstandard.com/questions/island-vs-wall-hood/) — In an 8 mph rear wind a 48-inch wall hood holds about 88% capture and an island hood about 12%; under a side wind the two are identical.
+- [How far should an outdoor hood extend past the grill?](https://outdoorventilationstandard.com/questions/hood-depth-and-overhang/) — Capture diameter grows from 27 to 41 to 50 inches over 0/30/48 inches of rise; overhang of 11–26 inches per side (RB-005).
+- [Do side panels actually help an outdoor hood?](https://outdoorventilationstandard.com/questions/do-side-panels-work/) — Two panels lift modeled capture from 20% to 70% at 8 mph by cutting the wind the plume feels to 40% of ambient (RB-009 Table 3.1a).
+- [How high should an outdoor range hood be above the grill?](https://outdoorventilationstandard.com/questions/mounting-height/) — Centerline velocity 412/393/377 fpm at 24/30/36 inches; the airflow requirement grows as height^(5/3); 30 inches is the recommended maximum.
+- [What size outdoor range hood do I need for my grill?](https://outdoorventilationstandard.com/questions/what-size-hood-for-my-grill/) — 41-inch capture diameter over a medium gas grill at 30 inches gives a 57-inch recommended hood (RB-002 Table 3.7).
+- [Can I use an indoor range hood outside?](https://outdoorventilationstandard.com/questions/can-i-use-an-indoor-range-hood-outside/) — Physically yes, but the ratings don't transfer: all six indoor capture assists are absent outdoors (RB-004).
+- [Does an outdoor range hood need a duct?](https://outdoorventilationstandard.com/questions/does-an-outdoor-hood-need-a-duct/) — Under open sky often not; under a roof yes, the exhaust needs a path out of the covered volume.

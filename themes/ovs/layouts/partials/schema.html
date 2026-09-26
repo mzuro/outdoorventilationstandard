@@ -99,7 +99,13 @@
   "url": {{ .Permalink | jsonify | safeJS }},
   "creator": {{ $orgRef | jsonify | safeJS }},
   "license": {{ ($ds.license | default ("legal/" | absURL)) | jsonify | safeJS }},
-  "isAccessibleForFree": true
+  "isAccessibleForFree": true,
+  {{- /* Dataset version 2 = the 2026-09 physics re-base: CSVs are generated
+     from static/js/ovs/physics by scripts/generate-reference-tables.mjs
+     (changelog on /downloads/). A paper's `dataset:` block may override
+     either field when its data changes again. */}}
+  "version": {{ $ds.version | default 2 }},
+  "dateModified": {{ ($ds.dateModified | default "2026-09-26") | jsonify | safeJS }}
   {{- with $ds.variableMeasured }},
   "variableMeasured": {{ . | jsonify | safeJS }}
   {{- end }}
