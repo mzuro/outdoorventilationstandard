@@ -424,7 +424,7 @@ export function mount(figureEl) {
       return {
         grade,
         plain: `${pct}% of smoke captured in this modeled scene`,
-        clauseRef: 'capture data: RB-005 §2.2, RB-006 §3.4 · thresholds: OVS model criterion (≥85% PASS · ≥60% MARGINAL)',
+        clauseRef: 'OVS model criterion ≥85% · ≥60% — data: RB-005 §2.2',
         detail: `Plume capture ${pct}% — capture data: RB-005 §2.2 / RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`,
       };
     },
