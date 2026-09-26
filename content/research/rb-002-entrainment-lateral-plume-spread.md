@@ -1,7 +1,7 @@
 ---
 title: "RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments"
 date: 2025-09-02
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-002"
 priority: "P0 — Foundation"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -31,6 +31,19 @@ downstream_topics:
 **Author Role:** Physics Research Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.7 / Table 3.7, Pellet Smoker High at 30": 54" → 52"; regenerated from W_rec = 1.38 * d_capture with Pellet High's own z_0 = -0.30 m (RB-001 Table 3.2) — v1.0 evaluated the cell with Pellet Low's z_0 = -0.38 m.
+- Section 3.5 margin-factor table: quiescent K 1.40 → 1.38, the derived M_1 * M_2 value the Section 3.6 tables already use; light-outdoor 1.70 annotated as 1.72 derived and retained as the wind-inclusive K_inf of RB-003 Appendix D and RB-008 Section 2.2. No table values change.
+- Section 3.4 item 3: note added that the 98% capture-diameter figure is the radial mean-profile contour without intermittency margin, and that wind-analysis capture thresholds are those of RB-006 Section 3.4.
+- Section 4.2: required overhang 12-26 → 11-26 inches per side, matching this paper's own height table and RB-005.
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -391,7 +404,7 @@ Building on the Gaussian profile analysis in Section 2.3, this section computes 
 
 2. **d_mean (mean time-averaged plume diameter):** Equal to 2 * 1.5 * b_T = 3.0 * b_T, encompassing the time-averaged 90% buoyancy flux contour.
 
-3. **d_capture (Heskestad capture diameter):** Equal to 0.48 * (z - z_0) + D_eff, encompassing the 98% buoyancy flux contour plus source width offset. This is the minimum diameter a hood must cover in quiescent conditions.
+3. **d_capture (Heskestad capture diameter):** Equal to 0.48 * (z - z_0) + D_eff, encompassing the 98% buoyancy flux contour plus source width offset. This is the minimum diameter a hood must cover in quiescent conditions. The 98% figure refers to the radial mean-profile contour and carries no intermittency margin; the capture thresholds used for wind analysis are those of RB-006 Section 3.4, which measure deflection against the hood overhang in units of b_T.
 
 4. **d_99_instant (99th percentile instantaneous diameter):** The diameter that contains the plume 99% of the time, accounting for turbulent intermittency. Equal to 2 * 3.0 * b_T + D_eff = 0.72 * (z - z_0) + D_eff. This represents the boundary of the quiescent-air **Capture Envelope**.
 
@@ -497,8 +510,8 @@ For engineering purposes, this paper recommends:
 
 | Condition | Margin Factor K | Application |
 |---|---|---|
-| Quiescent (sheltered installation, no wind) | 1.40 | Covered patio, wind-shielded installation |
-| Light outdoor (0.5 m/s ambient) | 1.70 | Typical open patio, light breeze conditions |
+| Quiescent (sheltered installation, no wind) | 1.38 | Covered patio, wind-shielded installation; the base margin applied in the Section 3.6 tables |
+| Light outdoor (0.5 m/s ambient) | 1.70 (1.72 as derived above) | Typical open patio, light breeze conditions; retained as the wind-inclusive K_inf used by RB-003 Appendix D and RB-008 Section 2.2 |
 | Moderate outdoor (1.0 m/s ambient) | 2.00 | Exposed installation, moderate breeze |
 
 The moderate outdoor factor of 2.0 means the hood should be twice as wide as the Heskestad capture diameter. This may seem conservative, but it reflects the reality that outdoor cooking occurs in a stochastic wind environment where the plume is routinely displaced from its nominal vertical path. The detailed wind interaction analysis in RB-006 will refine these factors; the values here serve as preliminary engineering guidance.
@@ -649,7 +662,7 @@ For rapid engineering reference, the following consolidated table presents the r
 | Wood-Fired Large | 67" | 71" | 74" |
 | Pellet Smoker Low | 50" | 54" | 58" |
 | Pellet Smoker Medium | 50" | 54" | 58" |
-| Pellet Smoker High | 50" | 54" | 58" |
+| Pellet Smoker High | 50" | 52" | 58" |
 
 **How to use this table:** Select the source type and mounting height. The recommended width is the minimum hood width dimension (side to side, parallel to the long axis of the grill) for reliable plume capture in typical installations (the K ≈ 1.38 base margin covering turbulent intermittency and puffing). For open or wind-exposed sites, increase the width using the additional wind margin from Section 3.5. The hood depth (front to back) should be at least 6 inches less than the width for rectangular cooking surfaces, or equal to the width for circular sources (kettle grills).
 
@@ -719,7 +732,7 @@ A hood that is too narrow creates a **Missed Plume Region** — the annular zone
 
 The required overhang — the distance the hood extends beyond the cooking surface edge — is the most operationally important dimension derived from this analysis. The cooking surface width is fixed by the appliance; the overhang is the adjustable dimension that determines whether the hood captures the plume expansion.
 
-For all source types at all mounting heights, the required overhang is 12 to 26 inches per side. This means the hood must extend 12 to 26 inches beyond the cooking surface edge in every direction (front, back, left, right) to capture the expanded plume with turbulence and wind margin.
+For all source types at all mounting heights, the required overhang is 11 to 26 inches per side. This means the hood must extend 11 to 26 inches beyond the cooking surface edge in every direction (front, back, left, right) to capture the expanded plume with turbulence and wind margin.
 
 The overhang requirement increases with height:
 
