@@ -51,6 +51,7 @@ const SOURCE_MENU = [
   { value: 'pelletHigh', label: 'PELLET' },
 ];
 const sourceFor = (v) => SOURCES[v] || SOURCES.gasMedium;
+const shortLabel = (src) => (SOURCE_MENU.find((o) => o.value === src.id) || { label: src.id }).label;
 
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i06Mounted === '1') return;
@@ -147,7 +148,7 @@ export function mount(figureEl) {
     const qcEl = container.querySelector('output[aria-labelledby="qc-label"]');
     if (qcEl) qcEl.textContent = `${src.qcKw.toFixed(1)} kW`;
 
-    replaceChildren(refs.sourceNote, H.noteBox(X0 + 10, Y_TOP - 24, `${src.label.toUpperCase()} · Q_c ${src.qcKw.toFixed(1)} kW · z_0 ${src.z0M.toFixed(2)} m`));
+    replaceChildren(refs.sourceNote, H.noteBox(X0 + 10, Y_TOP - 24, `${shortLabel(src)} · Q_c ${src.qcKw.toFixed(1)} kW · z_0 ${src.z0M.toFixed(2)} m`));
 
     // --- decay curve, sampled every 2in --------------------------------
     const samples = [];
