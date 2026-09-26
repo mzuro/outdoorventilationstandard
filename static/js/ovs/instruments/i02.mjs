@@ -241,7 +241,7 @@ export function mount(figureEl) {
 
     // --- HOOD WIDTH gauge + drag handle --------------------------------
     const gauge = H.el('g');
-    gauge.appendChild(H.el('text', { x: WIDTH_X0, y: WIDTH_Y - 6, text: 'HOOD WIDTH (coverage)' }));
+    gauge.appendChild(H.el('text', { x: WIDTH_X0, y: WIDTH_Y - 6, text: 'COVERAGE WIDTH' }));
     gauge.appendChild(H.el('line', {
       class: 'ovs-i-fl-thin', x1: WIDTH_X0, y1: WIDTH_Y + WIDTH_H / 2, x2: WIDTH_X1, y2: WIDTH_Y + WIDTH_H / 2,
     }));
@@ -449,7 +449,7 @@ export function mount(figureEl) {
       return {
         grade,
         plain,
-        clauseRef: `model criterion: ≥ blower PASS · ≥ minimum MARGINAL — ${CITATION}`,
+        clauseRef: 'OVS model criterion ≥ blower · ≥ minimum — RB-008 §3.3',
         detail: `Rated CFM ${ratedStr} vs. this configuration's RB-008 minimum (${minStr}) and blower (${blowerStr}) — both from RB-008 §3.3 / App A; the PASS/MARGINAL split is an OVS model criterion.`,
       };
     },
