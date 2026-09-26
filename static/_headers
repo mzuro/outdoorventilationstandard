@@ -2,13 +2,13 @@
 # never reach src/worker.js). Security headers on everything; long cache only
 # on the content-hashed CSS bundle (js/*.mjs are NOT fingerprinted).
 # HSTS is only honoured over https; it needs "Always Use HTTPS" on in the
-# Cloudflare dashboard to be complete. No includeSubDomains until www resolves.
+# Cloudflare dashboard to be complete. includeSubDomains is safe: www redirects to apex.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Strict-Transport-Security: max-age=31536000
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 /ovs/css/*
   Cache-Control: public, max-age=31536000, immutable
