@@ -19,9 +19,11 @@ export const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/si
 /**
  * Pure: is `verifiedHost` (from siteverify's `hostname`) acceptable for
  * a request that arrived on `requestHost`?
- *   - the request's own host (covers the custom domain and local dev)
+ *   - the request's own host (covers the custom domain, a workers.dev
+ *     preview solving its own widget, and local dev)
  *   - the apex domain and its www. variant
- *   - any *.workers.dev host (git-integration branch previews)
+ * No wildcard: a preview host already matches its own token via the
+ * first rule, so `*.workers.dev` would only widen replay surface.
  */
 export function hostnameAllowed(verifiedHost, requestHost) {
   if (typeof verifiedHost !== 'string' || !verifiedHost) return false;
@@ -29,7 +31,6 @@ export function hostnameAllowed(verifiedHost, requestHost) {
   const r = String(requestHost || '').toLowerCase().split(':')[0];
   if (r && v === r) return true;
   if (v === APEX_HOST || v === `www.${APEX_HOST}`) return true;
-  if (v.endsWith('.workers.dev')) return true;
   return false;
 }
 

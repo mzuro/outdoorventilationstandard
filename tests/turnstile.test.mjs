@@ -12,20 +12,23 @@ function stubFetch(reply, calls = []) {
   };
 }
 
-test('hostnameAllowed: request host, apex, www, *.workers.dev', () => {
+test('hostnameAllowed: request host, apex, www only', () => {
   assert.equal(hostnameAllowed(APEX, APEX), true);
   assert.equal(hostnameAllowed(`www.${APEX}`, APEX), true);
   assert.equal(hostnameAllowed(APEX, 'ovs-v2-preview.markzuro.workers.dev'), true);
+  // a preview host solving its OWN widget matches via the request-host rule
   assert.equal(hostnameAllowed('ovs-v2-preview.markzuro.workers.dev', 'ovs-v2-preview.markzuro.workers.dev'), true);
-  assert.equal(hostnameAllowed('fix-x-ovs.markzuro.workers.dev', APEX), true);
   assert.equal(hostnameAllowed('localhost', 'localhost:8787'), true);
   assert.equal(hostnameAllowed('OutdoorVentilationStandard.COM', APEX), true);
 });
 
-test('hostnameAllowed: foreign hosts rejected', () => {
+test('hostnameAllowed: foreign hosts rejected, including other workers.dev hosts (no wildcard)', () => {
   assert.equal(hostnameAllowed('evil.example.com', APEX), false);
   assert.equal(hostnameAllowed(`${APEX}.evil.example.com`, APEX), false);
   assert.equal(hostnameAllowed('evilworkers.dev', APEX), false);
+  // token solved on a different workers.dev site must NOT be accepted here
+  assert.equal(hostnameAllowed('fix-x-ovs.markzuro.workers.dev', APEX), false);
+  assert.equal(hostnameAllowed('someone-else.workers.dev', 'ovs-v2-preview.markzuro.workers.dev'), false);
   assert.equal(hostnameAllowed('', APEX), false);
   assert.equal(hostnameAllowed(undefined, APEX), false);
   assert.equal(hostnameAllowed('localhost', APEX), false);
@@ -64,9 +67,12 @@ test('verifyTurnstile: success with matching hostname -> ok, posts secret/respon
   assert.equal(sent.get('remoteip'), '1.2.3.4');
 });
 
-test('verifyTurnstile: success on a workers.dev preview host -> ok', async () => {
-  const r = await verifyTurnstile({ secret: 's', token: 't', ip: '1.2.3.4', requestHost: 'ovs-v2-preview.markzuro.workers.dev', fetchImpl: stubFetch({ success: true, hostname: 'ovs-v2-preview.markzuro.workers.dev' }) });
+test('verifyTurnstile: preview host accepts its own token, rejects another workers.dev token', async () => {
+  const preview = 'ovs-v2-preview.markzuro.workers.dev';
+  const r = await verifyTurnstile({ secret: 's', token: 't', ip: '1.2.3.4', requestHost: preview, fetchImpl: stubFetch({ success: true, hostname: preview }) });
   assert.deepEqual(r, { ok: true });
+  const r2 = await verifyTurnstile({ secret: 's', token: 't', ip: '1.2.3.4', requestHost: preview, fetchImpl: stubFetch({ success: true, hostname: 'other-branch.markzuro.workers.dev' }) });
+  assert.deepEqual(r2, { ok: false, status: 403, error: 'turnstile_hostname_mismatch' });
 });
 
 test('verifyTurnstile: success with foreign hostname -> 403 hostname mismatch', async () => {

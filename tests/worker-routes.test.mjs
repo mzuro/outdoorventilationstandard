@@ -161,9 +161,9 @@ test('ask: filtered input logs an ailog entry with a hashed ip and an inverted-t
   assert.equal((await res.json()).off_topic, true);
   const logs = kv.puts.filter((p) => p.key.startsWith('ailog:'));
   assert.equal(logs.length, 1);
-  assert.match(logs[0].key, /^ailog:\d{13}$/);
+  assert.match(logs[0].key, /^ailog:-\d{13}$/);
   // inverted: newer entries must sort BEFORE older ones
-  const inv = Number(logs[0].key.slice(6));
+  const inv = Number(logs[0].key.slice(7));
   assert.ok(inv < 9999999999999 - Date.now() + 5000 && inv > 9999999999999 - Date.now() - 60000);
   assert.equal(logs[0].opts.expirationTtl, 2592000);
   const entry = JSON.parse(logs[0].value);
@@ -171,6 +171,15 @@ test('ask: filtered input logs an ailog entry with a hashed ip and an inverted-t
   assert.match(entry.ip, /^[0-9a-f]{12}$/);
   assert.equal(entry.ip.includes('203'), false);
   assert.equal(entry.ip.includes('***'), false);
+});
+
+test('ask: filtered input with the rate limit exhausted -> 429 and NO ailog write', async () => {
+  const bucket = Math.floor(Date.now() / 60000);
+  const kv = makeKv({ [`ratelimit:${IP}:${bucket}`]: '10' });
+  const res = await worker.fetch(post('/api/ask', { question: 'where can I buy drugs', cf_token: 'tok' }), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
+  assert.equal(res.status, 429);
+  assert.equal(kv.puts.filter((p) => p.key.startsWith('ailog:')).length, 0);
+  assert.equal(kv.puts.length, 0);
 });
 
 test('ask: cached answer served after Turnstile + rate limit, without AI', async () => {
@@ -236,6 +245,10 @@ test('track: malformed JSON / bad ids -> 400, nothing written', async () => {
   res = await worker.fetch(post('/api/track', { question_id: 'ratelimit:x' }), { QUESTION_CLICKS: kv });
   assert.equal(res.status, 400);
   assert.deepEqual(await res.json(), { error: 'invalid_question_id' });
+  // well-formed but not on the allowlist
+  res = await worker.fetch(post('/api/track', { question_id: 'preset-1' }), { QUESTION_CLICKS: kv });
+  assert.equal(res.status, 400);
+  assert.deepEqual(await res.json(), { error: 'invalid_question_id' });
   res = await worker.fetch(post('/api/track', { question_id: 'custom', text: 42 }), { QUESTION_CLICKS: kv });
   assert.equal(res.status, 400);
   res = await worker.fetch(post('/api/track', {}), { QUESTION_CLICKS: kv });
@@ -249,6 +262,10 @@ test('track: valid custom click increments counter and stores capped text with a
   assert.equal(res.status, 200);
   assert.deepEqual(await res.json(), { ok: true });
   assert.equal(kv.store.get('clicks:custom'), '1');
+  // counter put carries a TTL too: no permanent key from an unauthenticated caller
+  const clicks = kv.puts.filter((p) => p.key.startsWith('clicks:'));
+  assert.equal(clicks.length, 1);
+  assert.equal(clicks[0].opts.expirationTtl, 2592000);
   const custom = kv.puts.filter((p) => p.key.startsWith('custom:'));
   assert.equal(custom.length, 1);
   assert.equal(custom[0].value.length, 200);
@@ -288,6 +305,23 @@ test('track: no KV binding -> 200 no-op', async () => {
 });
 
 // ---------- /api/stats ordering ----------
+
+test('stats: new ailog keys list BEFORE a legacy plain-timestamp key still in KV', async () => {
+  // Legacy shape written by the pre-hardening worker: ailog:<ms>, 13 digits
+  const legacyKey = `ailog:${Date.now() - 1000}`;
+  const kv = makeKv({ [legacyKey]: JSON.stringify({ question: 'legacy', result: 'ok', ip: '203.0.11***', time: 'x' }) });
+  const env = { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's', ADMIN_TOKEN: 't' };
+  await worker.fetch(post('/api/ask', { question: 'where can I buy drugs now', cf_token: 'tok' }), env);
+  const newKey = kv.puts.find((p) => p.key.startsWith('ailog:')).key;
+  assert.match(newKey, /^ailog:-\d{13}$/);
+  assert.ok(newKey < legacyKey, `${newKey} should sort before ${legacyKey}`);
+  const listed = (await kv.list({ prefix: 'ailog:' })).keys.map((k) => k.name);
+  assert.deepEqual(listed, [newKey, legacyKey]);
+  const res = await worker.fetch(new Request(`https://${HOST}/api/stats?token=t`), env);
+  const data = await res.json();
+  assert.equal(data.ai_logs[0].question, 'where can I buy drugs now');
+  assert.equal(data.ai_logs[1].question, 'legacy');
+});
 
 test('stats: ailog listing returns newest entry first', async () => {
   const kv = makeKv();

@@ -71,11 +71,12 @@ async function checkRateLimit(ip, env, scope = '', limit = 10) {
 
 // ailog: keys use an inverted millisecond timestamp so KV's
 // lexicographic list() returns NEWEST first — /api/stats reads the first
-// 100 as "most recent". (Pre-existing plain-timestamp keys sort ahead of
-// these until they age out via their 30-day TTL.)
+// 100 as "most recent". The `-` sub-prefix (0x2d) sorts before any digit,
+// so these new keys list AHEAD of the legacy plain-timestamp keys
+// (`ailog:17xxxxxxxxxxx`) that are still in KV until their 30-day TTL.
 const AILOG_TS_MAX = 9999999999999; // 13 digits; ms timestamps stay 13 digits until 2286
 function ailogKey(ts) {
-  return `ailog:${String(AILOG_TS_MAX - ts).padStart(13, '0')}`;
+  return `ailog:-${String(AILOG_TS_MAX - ts).padStart(13, '0')}`;
 }
 
 async function logAiRequest(env, question, result, ip) {
@@ -231,9 +232,11 @@ async function handleFetch(request, env) {
           return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
         }
 
+        // Counter also carries a TTL (refreshed on every increment) so an
+        // unauthenticated caller can never create a permanent key.
         const key = `clicks:${v.questionId}`;
         const current = parseInt(await env.QUESTION_CLICKS.get(key) || '0');
-        await env.QUESTION_CLICKS.put(key, String(current + 1));
+        await env.QUESTION_CLICKS.put(key, String(current + 1), { expirationTtl: CUSTOM_TTL });
 
         if (v.questionId === 'custom' && v.text) {
           await env.QUESTION_CLICKS.put(`custom:${Date.now()}`, v.text, { expirationTtl: CUSTOM_TTL });
@@ -278,16 +281,18 @@ async function handleFetch(request, env) {
       if (denied) return denied;
 
       try {
+        // Rate limiting (per-IP, per-minute, KV-backed). Sits BEFORE the
+        // content filter so the filtered path's ailog write is bounded by
+        // the same 10/min budget as everything else (review round 1 #3).
+        const allowed = await checkRateLimit(ip, env);
+        if (!allowed) {
+          return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
+        }
+
         // Content filter -- block obviously inappropriate input before it reaches AI
         if (isBlockedInput(question)) {
           await logAiRequest(env, question, 'filtered', ip);
           return json(OFF_TOPIC_RESPONSE);
-        }
-
-        // Rate limiting (per-IP, per-minute, KV-backed)
-        const allowed = await checkRateLimit(ip, env);
-        if (!allowed) {
-          return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
         }
 
         // Normalized-question answer cache (AI #6) -- checked before the
