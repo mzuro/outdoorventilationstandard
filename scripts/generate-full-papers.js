@@ -119,10 +119,8 @@ async function generateFullPaper(filePath) {
       word-break: break-all;
     }
 
-    /* Content styling */
-    .content {
-      counter-reset: h2counter;
-    }
+    /* Content styling — section headings carry their own numbers in the markdown ("## 1. Topic Definition"),
+       so no CSS counter is added here. */
 
     h1 {
       font-size: 20pt;
@@ -140,11 +138,6 @@ async function generateFullPaper(filePath) {
       color: #1a1a1a;
       margin: 28px 0 12px 0;
       page-break-after: avoid;
-    }
-
-    h2:before {
-      counter-increment: h2counter;
-      content: counter(h2counter) ". ";
     }
 
     h3 {
