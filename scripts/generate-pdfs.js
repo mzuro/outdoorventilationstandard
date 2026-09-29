@@ -33,7 +33,9 @@ function parseResearchFile(filePath) {
   const quantitativeFindings = [];
 
   // Look for specific patterns that indicate key findings
-  const sections = body.split(/\n## /);
+  // Skip the Revision history section: its errata bullets are old→new
+  // corrections, not findings.
+  const sections = body.split(/\n## /).filter(s => !/^Revision history/i.test(s));
 
   sections.forEach(section => {
     // Extract bullet points with quantitative info

@@ -1,7 +1,7 @@
 ---
 title: "RB-009: Side Panel and Wind Baffle Effectiveness"
 date: 2025-12-18
-lastmod: 2026-07-11
+lastmod: 2026-09-26
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-009"
 priority: "P2 — Applied"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -31,6 +31,16 @@ categories: ["P2 — Applied"]
 **Author Role:** Hood Performance & Design Agent
 **Date:** 2026-02-08
 **Depends On:** RB-005: Impact of Hood Geometry on Capture Performance; RB-006: Wind Interaction and Cross-Flow Effects
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 2.4: the infiltration fraction Q_inf / Q_exhaust, printed as F_inf, is renamed phi_inf — it collided with the infiltration factor F_inf = Q_exhaust / Q_plume of RB-003 Appendix D and RB-008 Section 2.2. The identity F_inf = 1 / (1 - phi_inf) is added (phi_inf = 0.50 corresponds to F_inf = 2.0). No numbers change.
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -149,9 +159,9 @@ For a hood exhausting Q_exhaust, the total flow is partitioned between plume gas
 
 The infiltration fraction is:
 
-> F_inf = Q_inf / Q_exhaust
+> phi_inf = Q_inf / Q_exhaust
 
-Without panels (four open sides), F_inf is approximately 0.50 to 0.65 for island installations (from RB-005 Section 3.4.3). With three panels (sides plus rear), only the front face admits ambient air. The infiltration fraction decreases to approximately 0.30 to 0.45 because less total surface area is available for ambient entry. This means a greater fraction of the exhaust capacity is available for plume capture.
+phi_inf is a fraction of the exhaust flow. It is related to the infiltration factor F_inf = Q_exhaust / Q_plume of RB-003 Appendix D and RB-008 Section 2.2 by F_inf = 1 / (1 - phi_inf), so phi_inf = 0.50 corresponds to F_inf = 2.0. Without panels (four open sides), phi_inf is approximately 0.50 to 0.65 for island installations (from RB-005 Section 3.4.3). With three panels (sides plus rear), only the front face admits ambient air. The infiltration fraction decreases to approximately 0.30 to 0.45 because less total surface area is available for ambient entry. This means a greater fraction of the exhaust capacity is available for plume capture.
 
 **Mechanism 2 — Velocity redistribution toward open faces.** Panels create a pressure differential: the blocked sides cannot supply air, so the suction on the open faces increases. The face velocity at the front opening of a three-panel configuration is higher than the average face velocity of the same hood without panels. This increased velocity at the open face improves capture of the deflected plume entering from the front.
 

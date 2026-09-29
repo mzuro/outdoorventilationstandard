@@ -1,7 +1,7 @@
 ---
 title: "RB-011: Grease Aerosol Transport and Deposition in Open Environments"
 date: 2026-01-23
-lastmod: 2026-07-11
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-011"
 priority: "P3 — Frontier"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -28,6 +28,18 @@ categories: ["P3 — Frontier"]
 **Author Role:** Environmental Conditions Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-006: Wind Interaction and Cross-Flow Effects; RB-007: Failure Modes of Outdoor BBQ Hoods
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 2.3: v_s = 0.0271 * d_p^2 [d_p in micrometers] → 2.71 x 10^(-5) * d_p^2; units erratum (0.0271 * 100^2 would give 271 m/s). The SI form and Table 3.3a were already correct.
+- Appendix B: Charcoal Kettle centerline velocity at 48" 1.07 → 1.05 m/s (RB-001 Table 3.5 v1.1); critical wind for 25% escape, Gas Medium at 30", 6.7 → 4.8 mph (RB-006 Table 3.4a v1.1).
+- Section 2.3 worked calculation: d_p_crit = sqrt(0.01 * 1.0 / 0.0271) = 610 micrometers → sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = 19 micrometers (the v1.0 arithmetic used the units-erratum constant). The stated conclusion changes: particles below approximately 20 micrometers rise with negligible gravitational separation, while the coarse tail (v_s / u_0 of approximately 0.07 at 50 micrometers and 0.27 at 100 micrometers for the weakest plume, Table 3.3a) is partially depleted before hood height; v1.0 concluded that no particle size class is filtered. The Section 6 Figure note follows (u_0 at 48" 1.07 → 1.05 m/s; "no particle size settles out of the plume" → modal sizes two to seven orders of magnitude below the plume velocity, coarse tail above 50 micrometers a few percent to a quarter of it).
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -144,7 +156,7 @@ Substituting standard values:
 
 Or equivalently:
 
-> v_s = 0.0271 * d_p^2 [m/s, with d_p in micrometers]
+> v_s = 2.71 x 10^(-5) * d_p^2 [m/s, with d_p in micrometers]
 
 **Cunningham slip correction.** For particles below approximately 1 micrometer, the mean free path of air molecules (approximately 0.066 micrometers at standard conditions) becomes comparable to the particle size, and the particle experiences reduced drag. The Cunningham slip correction factor C_c increases the settling velocity:
 
@@ -172,11 +184,11 @@ where C_c = 1 + (2 * lambda / d_p) * [1.257 + 0.4 * exp(-0.55 * d_p / lambda)], 
 
 The critical particle diameter at which the settling velocity equals 1% of the weakest plume centerline velocity (approximately 1.0 m/s at 48 inches for the charcoal kettle) is:
 
-> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / 0.0271) = sqrt(0.369) = 0.61 mm = 610 micrometers
+> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = sqrt(369) = 19 micrometers
 
-This means that all grease aerosol particles below approximately 600 micrometers in diameter — which encompasses the entire aerosol distribution including the coarsest spray droplets — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. Gravitational settling does not meaningfully filter any particle size class from the plume during the vertical transport from cooking surface to hood.
+This means that grease aerosol particles below approximately 20 micrometers in diameter — the ultrafine and accumulation modes and most of the coarse mode, which together carry the large majority of the aerosol mass (Section 2.2) — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. The coarse tail behaves differently: for the weakest plume, v_s / u_0 is approximately 0.07 at 50 micrometers and 0.27 at 100 micrometers (Table 2.3, Table 3.3a), so the largest spray droplets rise measurably more slowly than the plume gas and are partially depleted — by settling within the plume and by fallout at the plume edge — before reaching hood height. Gravitational settling therefore does not filter the sub-20-micrometer aerosol from the plume during vertical transport, but it does begin to thin the coarsest droplets.
 
-The practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface. All particle sizes are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.
+The practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface below approximately 20 micrometers, with a coarse tail that is somewhat depleted relative to the source. All particle sizes that reach the hood are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.
 
 ### 2.4 Atmospheric Transport and Gaussian Dispersion
 
@@ -600,8 +612,8 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 - Dual Y-axis chart. X-axis: particle diameter (log scale, 0.01 to 100 micrometers).
 - Left Y-axis: normalized mass distribution (dM/d(log d_p)). Three modes shown: ultrafine peak at 0.03 micrometers, accumulation peak at 0.4 micrometers, coarse peak at 12 micrometers.
 - Right Y-axis: Stokes settling velocity (log scale, 10^(-6) to 1 m/s). Monotonically increasing curve (v_s proportional to d_p^2).
-- Horizontal reference lines on the right Y-axis at: u_0 at 30 inches for gas medium (1.99 m/s) — "Plume velocity at 30-inch hood height"; u_0 at 48 inches for charcoal kettle (1.07 m/s) — "Weakest plume at 48 inches".
-- All settling velocities fall well below both plume velocity references, confirming that no particle size settles out of the plume.
+- Horizontal reference lines on the right Y-axis at: u_0 at 30 inches for gas medium (1.99 m/s) — "Plume velocity at 30-inch hood height"; u_0 at 48 inches for charcoal kettle (1.05 m/s) — "Weakest plume at 48 inches".
+- The settling velocities of the three modal sizes fall two to seven orders of magnitude below both plume velocity references; only the coarse tail above approximately 50 micrometers reaches a few percent to a quarter of the weakest plume velocity (Section 2.3).
 - Vertical reference line at d_p = 2.5 micrometers labeled "PM2.5 boundary"
 - Vertical reference line at d_p = 10 micrometers labeled "PM10 boundary"
 - Annotations for each mode: ultrafine ("Dominates particle number; negligible mass; passive tracer"), accumulation ("20-40% of mass; PM2.5 fraction; longest atmospheric residence time"), coarse ("50-80% of mass; settles rapidly; deposits within meters of source").
@@ -685,11 +697,11 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 | Quantity | Value | Source |
 |---|---|---|
 | Plume centerline velocity, Gas Medium at 30" | 1.99 m/s | RB-001 Table 3.5 |
-| Plume centerline velocity, Charcoal Kettle at 48" | 1.07 m/s | RB-001 Table 3.5 |
+| Plume centerline velocity, Charcoal Kettle at 48" | 1.05 m/s | RB-001 Table 3.5 |
 | Plume mass flow, Gas Medium at 30" | 0.093 kg/s (168 CFM) | RB-001 Table 3.7 |
 | Plume capture diameter, Gas Medium at 30" | 1.05 m (41") | RB-001 Table 3.6 |
 | Wind deflection, Gas Medium at 30", 5 mph | 12" (0.30 m) | RB-006 Table 3.2b |
-| Critical wind for 25% escape, Gas Medium at 30" | 6.7 mph | RB-006 Table 3.4a |
+| Critical wind for 25% escape, Gas Medium at 30" | 4.8 mph | RB-006 Table 3.4a |
 | Capture efficiency, standard hood, 5 mph, no panels | 70-75% | RB-006 Table 3.10 |
 | Capture efficiency, standard hood, 8 mph, no panels | 45-55% | RB-006 Table 3.10 |
 | Capture efficiency, side panels + rear wall, 5 mph | >95% | RB-006 Table 3.10 |

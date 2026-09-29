@@ -55,5 +55,5 @@ export function froude(zIn, windMph, src = SOURCES.gasMedium) {
   return windMph * MS_PER_MPH / centerlineVelocityMs(heightM(Math.max(0, zIn)), src);
 }
 
-/** RB-006 Table 4.1 regime boundary: above this the plume is "disrupted" (rb-006:775). */
+/** RB-006 Table 3.8 Severe-class boundary: above this the plume is "disrupted" (rb-006:779). */
 export const FR_DISRUPTED = 2.7;
