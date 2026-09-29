@@ -3,7 +3,7 @@ title: "How far should an outdoor hood extend past the grill?"
 description: "The plume over a medium gas grill is 27 inches across at the grate and 41 by a 30-inch mount. Overhang keeps the hood ahead of that growth and the wind."
 summary: "The plume's capture diameter over a medium gas grill is already about 27 inches at the cooking surface — wider than the 24-inch grate — and grows to about 41 inches by a 30-inch mounting height and 50 inches by 48 inches (RB-002). The hood has to overhang the grill on every side to stay ahead of that growth, and then by more on the side the wind pushes toward: the papers call for 11 to 26 inches per side depending on height."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 4
 instruments: true
@@ -16,7 +16,7 @@ A cooking plume's capture diameter — the 98% flux contour plus the source widt
 
 ## Overhang isn't cosmetic
 
-Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower (RB-007 §3.9). The instrument above is set to a 54-inch island hood, 15 inches of overhang beyond the cooking surface at each end; in the capture model it reads about 94% in still air and 66% in a 5 mph side wind. Open the full [Capture Demonstrator](/tools/capture-demonstrator/) to move mounting height, width, wind speed and wind direction together and watch the capture boundary shift.
+Every inch a hood's edge sits past the grill's edge is an inch of margin against a plume that is continuously spreading outward as it rises, plus whatever a crosswind adds on top of the natural growth. Undersized overhang is a design-locked failure — it can't be fixed after installation the way a CFM shortfall can be corrected with a stronger blower (RB-007 §3.9). The instrument above is set to a 54-inch island hood, 15 inches of overhang beyond the cooking surface at each end; in the capture model it reads about 94% in still air and 66% in a 5 mph side wind, both along the side-wind axis. Open the full [Capture Demonstrator](/tools/capture-demonstrator/) to move mounting height, width, wind speed and wind direction together and watch the capture boundary shift.
 
 ## Width keeps paying until the overhang beats the wind
 

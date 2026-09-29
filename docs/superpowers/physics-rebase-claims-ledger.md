@@ -8,15 +8,15 @@ claim on the 9 live question pages and 11 tool pages, recomputed from
 "paper: …" quote a printed paper cell that no module computes; verify them against the
 paper line, not here.
 
-Claims: 167; verified ✓: 167; ✗: 0.
+Claims: 169; verified ✓: 169; ✗: 0.
 
 | page | claim text | module call | value | citation | status |
 |---|---|---|---|---|---|
 | questions/what-cfm-do-i-need.md | needs at least **892 CFM** | requiredCfm({src:gasLarge,riseIn:30,mount:'wall',exposure:'moderate'}).minimum | 892 | RB-008 §3.3 | ✓ |
 | questions/what-cfm-do-i-need.md | and a **1,200 CFM blower** | … .blower | 1,200 | RB-008 §3.3, App. A step 8 | ✓ |
 | questions/what-cfm-do-i-need.md | minimums are 727 CFM sheltered, 892 CFM moderate, 1,004 CFM exposed with side panels, and 1,394 CFM exposed without | requiredCfm(gasLarge, 30, wall, 'sheltered').minimum; … 'moderate'; … 'exposed', panels 'both' (paper prints 1,003); … 'exposed', panels 'none' | 727 / 892 / 1,004 / 1,394 | RB-008 §3.3 | ✓ |
-| questions/what-cfm-do-i-need.md | with blowers of 900, 1,200, 1,200 and 1,800 CFM | .blower sheltered; .blower moderate; .blower exposed+panels; .blower exposed (paper prints 1,500; App. A step 8 rule → 1,800) | 900 / 1,200 / 1,200 / 1,800 | RB-008 §3.3, App. A step 8 | ✓ |
-| questions/what-cfm-do-i-need.md | which is only 8% above the minimum | 1500 / minimum(exposed) − 1 | 8 | RB-008 §3.3 (erratum j) | ✓ |
+| questions/what-cfm-do-i-need.md | with blowers of 900, 1,200, 1,200 and 1,800 CFM | .blower sheltered; .blower moderate; .blower exposed+panels; .blower exposed (RB-008 v1.0 printed 1,500; v1.1 prints 1,800 under App. A step 8) | 900 / 1,200 / 1,200 / 1,800 | RB-008 §3.3, App. A step 8 | ✓ |
+| questions/what-cfm-do-i-need.md | only 8% above the minimum | 1500 / minimum(exposed) − 1 | 8 | RB-008 §3.3 (v1.0 erratum j; v1.1 prints 1,800) | ✓ |
 | questions/what-cfm-do-i-need.md | needs about **1,070 CFM minimum** | requiredCfm(… mount:'island').minimum | 1,070 | RB-008 §3.9 | ✓ |
 | questions/what-cfm-do-i-need.md | times the 1.20 island multiplier | MOUNT_MULT.island | 1.20 | RB-008 §3.9 | ✓ |
 | questions/what-cfm-do-i-need.md | a peninsula takes 1.10, or 981 CFM | MOUNT_MULT.peninsula; requiredCfm(… mount:'peninsula').minimum | 1.10 / 981 | RB-008 §3.9 | ✓ |
@@ -104,6 +104,8 @@ Claims: 167; verified ✓: 167; ✗: 0.
 | questions/does-an-outdoor-hood-need-a-duct.md | outdoor exhaust rates of 727-892 CFM | minimum sheltered; minimum moderate | 727 / 892 | RB-008 §3.3 | ✓ |
 | tools/capture-demonstrator.md | from about 87% in still air to 51% at 5 mph and 20% at 8 mph | side 0; side 5; side 8 | 87 / 51 / 20 | RB-006 §3.4 model | ✓ |
 | tools/capture-demonstrator.md | the 12 inches of overhang beyond each end | (48 − 24)/2 | 12 | RB-002 App. A.4 | ✓ |
+| tools/capture-demonstrator.md | about 87% end to end (the side-wind axis, 12 inches beyond each end of the cooking surface) | captureFraction(48×40 island, side, 0); (48 − 24)/2 | 87 / 12 | model (side-wind axis) | ✓ |
+| tools/capture-demonstrator.md | about 97% for the wall hood and 76% for the island — not a two-dimensional capture | captureFraction(48×36 wall, rear, 0); captureFraction(48×40 island, rear, 0) | 97 / 76 | model (rear-wind axis) | ✓ |
 | tools/capture-demonstrator.md | still holds about 88% at 8 mph while the island hood — with only 9.5 inches of front-to-back overhang on each side — has fallen to about 12% | wall rear 8; (40 − 21)/2; island rear 8 | 88 / 9.5 / 12 | RB-006 §3.9.2 model | ✓ |
 | tools/capture-demonstrator.md | is 57 inches wide by 53 inches deep | recommendedWidth(30) (53 in depth = RB-002 Table 3.6b, paper) | 57 | RB-002 Tables 3.6b, 3.7 | ✓ |
 | tools/capture-demonstrator.md | the 48-inch preset is 84% of that width | coverageAdvisory(48,30).pctOfRecommended | 84 | RB-008 Table 3.10 | ✓ |
@@ -112,8 +114,8 @@ Claims: 167; verified ✓: 167; ✗: 0.
 | tools/cfm-calculator.md | needs a minimum of 892 CFM under moderate wind exposure and a 1,200 CFM blower | minimum; blower | 892 / 1,200 | RB-008 §3.3 | ✓ |
 | tools/cfm-calculator.md | Sheltered sites need 727 CFM (900 CFM blower); an exposed site with side panels needs 1,004 CFM | sheltered min; sheltered blower; exposed+panels min (paper 1,003) | 727 / 900 / 1,004 | RB-008 §3.3 | ✓ |
 | tools/cfm-calculator.md | without panels 1,394 CFM | exposed min | 1,394 | RB-008 §3.3 | ✓ |
-| tools/cfm-calculator.md | only 8% above the minimum | 1500/1394 − 1 | 8 | RB-008 §3.3 (erratum j) | ✓ |
-| tools/cfm-calculator.md | reaches 1,800 CFM instead | blower exposed | 1,800 | RB-008 App. A step 8 | ✓ |
+| tools/cfm-calculator.md | only 8% above the minimum | 1500/1394 − 1 | 8 | RB-008 §3.3 (v1.0 erratum j; v1.1 prints 1,800) | ✓ |
+| tools/cfm-calculator.md | v1.1 corrects it to 1,800 CFM under | blower exposed | 1,800 | RB-008 App. A step 8 | ✓ |
 | tools/cfm-calculator.md | 892 becomes 1,070 CFM, still served by a 1,200 CFM blower | wall min; island min; island blower | 892 / 1,070 / 1,200 | RB-008 §3.9 | ✓ |
 | tools/cfm-calculator.md | from 475 CFM at 18 inches to 1,775 CFM at 48 | requiredCfm(gasLarge, 18).minimum; … 48 | 475 / 1,775 | RB-008 Table 3.2b | ✓ |
 | tools/cfm-calculator.md | adds about 19% | 892/747 − 1 | 19 | RB-008 §2.4 | ✓ |
@@ -128,7 +130,7 @@ Claims: 167; verified ✓: 167; ✗: 0.
 | tools/wind-deflection-trajectory.md | the 12 mph deflection (28.2 inches) is four times the 3 mph deflection (7.0 inches) | deflection(30, 12); deflection(30, 3) | 28.2 / 7.0 | RB-006 §3.1 | ✓ |
 | tools/wind-deflection-trajectory.md | RB-006 Table 3.4a v1.1 prints 4.8, 7.0 and 9.3 mph for this row | criticalWinds(57 island).u25; … .uCenterline; … .u50 | 4.8 / 7.0 / 9.3 | RB-006 Table 3.4a (v1.1, Revision history) | ✓ |
 | tools/wind-deflection-trajectory.md | (3.8, 7.0 and 12.7 inches) are the RB-003 benchmark | deflection(18, 3); deflection(30, 3); deflection(48, 3) | 3.8 / 7.0 / 12.7 | RB-006 §3.1 (benchmark 4/7/12) | ✓ |
-| tools/wind-deflection-trajectory.md | the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph | criticalWinds(57 island).u25; … .uCenterline | 4.8 / 7.0 | RB-006 §3.4 identities (Table 3.4a prints 6.7/9.7) | ✓ |
+| tools/wind-deflection-trajectory.md | the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph | criticalWinds(57 island).u25; … .uCenterline | 4.8 / 7.0 | RB-006 §3.4 identities (Table 3.4a v1.0 printed 6.7/9.7; v1.1 prints 4.8/7.0) | ✓ |
 | tools/wind-deflection-trajectory.md | Fr > 2.7 at every standard height by 15 mph | FR_DISRUPTED; min froude(18..48, 15) = 3.03 | 2.7 | RB-006 §3.8, Table 4.1 | ✓ |
 | tools/plume-width-by-height.md | already about 27 inches at the cooking surface | captureDiameter(0) | 27 | RB-002 App. A.3 | ✓ |
 | tools/plume-width-by-height.md | grows to about 41.4 inches by a 30-inch mounting height (RB-002 Table 3.3a prints 1.05 m, 41 inches) and 50.1 inches by 48 inches | captureDiameter(30); captureDiameter(48) | 41.4 / 50.1 | RB-002 Table 3.3a | ✓ |
