@@ -72,7 +72,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'minimums are {0} CFM sheltered, {1} CFM moderate, {2} CFM exposed with side panels, and {3} CFM exposed without', [
     v(() => cfmGL('sheltered').minimum, n, "requiredCfm(gasLarge, 30, wall, 'sheltered').minimum"),
     v(() => cfmGL('moderate').minimum, n, "… 'moderate'"),
-    v(() => cfmGL('exposed', 'both').minimum, n, "… 'exposed', panels 'both' (paper prints 1,003)"),
+    v(() => cfmGL('exposed', 'both').minimum, n, "… 'exposed', panels 'both' (RB-008 v1.0 printed 1,003; v1.1 prints 1,004)"),
     v(() => cfmGL('exposed').minimum, n, "… 'exposed', panels 'none'"),
   ], 'RB-008 §3.3');
   claim(p, 'with blowers of {0}, {1}, {2} and {3} CFM', [
@@ -102,7 +102,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
 {
   const p = Q + 'mounting-height.md';
   claim(p, 'is about **{0} fpm**; at 30 inches, about **{1} fpm**; at 36 inches, about **{2} fpm**', [v(() => centerlineVelocity(24, GM), r, 'centerlineVelocity(24, gasMedium)'), v(() => centerlineVelocity(30, GM), r, '… 30'), v(() => centerlineVelocity(36, GM), r, '… 36')], 'RB-003 Table 3.1a/b, regenerated (paper prints 417/392/370)');
-  claim(p, 'keeps about {0} fpm at 72 inches (RB-003 prints 179)', [v(() => centerlineVelocity(72, PL), r, 'centerlineVelocity(72, pelletLow)')], 'RB-003 §3.1');
+  claim(p, 'keeps about {0} fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179)', [v(() => centerlineVelocity(72, PL), r, 'centerlineVelocity(72, pelletLow)')], 'RB-003 §3.1');
   claim(p, 'needs {0} CFM at 24 inches, {1} at 30 and {2} at 36', [v(() => cfmMin(GM, 24), n, 'requiredCfm(gasMedium, 24, moderate).minimum'), v(() => cfmMin(GM, 30), n, '… 30'), v(() => cfmMin(GM, 36), n, '… 36')], 'RB-008 Table 3.2b');
   claim(p, 'from {0} to {1} CFM', [v(() => cfmMin(GM, 18), n, 'requiredCfm(gasMedium, 18, moderate).minimum'), v(() => cfmMin(GM, 48), n, '… 48')], 'RB-008 Table 3.2b, §2.4');
   claim(p, 'about {0} inches at 24 inches, {1} at 30 and {2} at 36', [v(() => captureDiameter(24, GM), f1, 'captureDiameter(24, gasMedium)'), v(() => captureDiameter(30, GM), f1, '… 30'), v(() => captureDiameter(36, GM), f1, '… 36')], 'RB-002 Table 3.3a');
@@ -110,6 +110,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'about {0} inches by 24 inches of rise, {1} by 30 and {2} by 36', [v(() => deflection(24, 5, GM), f1, 'deflection(24, 5, gasMedium)'), v(() => deflection(30, 5, GM), f1, '… 30'), v(() => deflection(36, 5, GM), f1, '… 36')], 'RB-006 Table 3.2b (prints 9/12/15)');
   claim(p, 'reads {0}% at 18 inches, {1}% at 24, {2}% at 30 and {3}% at 36', [v(() => isl(48, 5, { riseIn: 18 }), pct, 'captureFraction(48×40 island, side, 5 mph, rise 18)'), v(() => isl(48, 5, { riseIn: 24 }), pct, '… rise 24'), v(() => isl(48, 5, { riseIn: 30 }), pct, '… rise 30'), v(() => isl(48, 5, { riseIn: 36 }), pct, '… rise 36')], 'RB-006 §3.4 model');
   paper(p, 'requirements escalate to 417–1,623 CFM across the source range', 'RB-003 §4.2', 'printed range');
+  paper(p, 'RB-003 Table 3.1b v1.0 printed 417, 392 and 370', 'RB-003 Table 3.1b (v1.0 cells; v1.1 prints 412/393/377 = module values)', 'superseded printed cells');
   claim(p, 'description: "Plume velocity falls only from {0} fpm at 24 inches to {1} fpm at 36', [v(() => centerlineVelocity(24, GM), r, 'centerlineVelocity(24)'), v(() => centerlineVelocity(36, GM), r, 'centerlineVelocity(36)')], 'RB-003 Table 3.1b regenerated');
 }
 // ======================================================= does-wind-affect-my-hood
@@ -230,6 +231,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
 {
   const p = T + 'wind-deflection-trajectory.md';
   claim(p, 'about {0} inches (RB-006 Table 3.2b prints 12)', [v(() => deflection(30, 5, GM), f1, 'deflection(30, 5)')], 'RB-006 Table 3.2b');
+  paper(p, 'RB-002 Table 3.6b carries the exact 16.5', 'RB-002 Table 3.6b v1.1 (30″ OH; RB-005 Table 3.1b prints 17)', 'printed cell = (W_rec − 24)/2');
   claim(p, 'about {0} inches (Table 3.2b: 19)', [v(() => deflection(30, 8, GM), f1, 'deflection(30, 8)')], 'RB-006 Table 3.2b');
   claim(p, 'roughly {0}× farther at a 48-inch mounting height than at 30 inches ({1} versus {2} inches at 5 mph)', [v(() => deflection(48, 5, GM) / deflection(30, 5, GM), f1, 'deflection(48,5)/deflection(30,5)'), v(() => deflection(48, 5, GM), f1, 'deflection(48, 5)'), v(() => deflection(30, 5, GM), f1, 'deflection(30, 5)')], 'RB-006 §3.1');
   claim(p, 'the 12 mph deflection ({0} inches) is four times the 3 mph deflection ({1} inches)', [v(() => deflection(30, 12, GM), f1, 'deflection(30, 12)'), v(() => deflection(30, 3, GM), f1, 'deflection(30, 3)')], 'RB-006 §3.1');
@@ -267,7 +269,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'centerline velocity ({0} fpm) is three times the 100 fpm', [v(() => centerlineVelocity(72, GM), r, 'centerlineVelocity(72)')], 'RB-003 §3.1');
   claim(p, '({0} to {1} fpm, a {2}% drop)', [v(() => centerlineVelocity(24, GM), r, 'centerlineVelocity(24)'), v(() => centerlineVelocity(48, GM), r, 'centerlineVelocity(48)'), v(() => (1 - centerlineVelocity(48, GM) / centerlineVelocity(24, GM)) * 100, r, '1 − u(48)/u(24)')], 'RB-003 Table 3.1b');
   claim(p, 'from {0} to {1} CFM for this source under moderate exposure', [v(() => cfmMin(GM, 24), n, 'requiredCfm(gasMedium, 24).minimum'), v(() => cfmMin(GM, 48), n, '… 48')], 'RB-008 Table 3.2b');
-  claim(p, 'holds about {0} fpm at 30 inches and still about {1} fpm at 72 inches (RB-003 prints 179)', [v(() => centerlineVelocity(30, PL), r, 'centerlineVelocity(30, pelletLow)'), v(() => centerlineVelocity(72, PL), r, '… 72')], 'RB-003 Table 3.1b');
+  claim(p, 'holds about {0} fpm at 30 inches and still about {1} fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179)', [v(() => centerlineVelocity(30, PL), r, 'centerlineVelocity(30, pelletLow)'), v(() => centerlineVelocity(72, PL), r, '… 72')], 'RB-003 Table 3.1b');
   claim(p, 'from about {0} fpm (pellet smoker, low) to {1} fpm (high-output gas grill)', [v(() => centerlineVelocity(30, PL), r, 'centerlineVelocity(30, pelletLow)'), v(() => centerlineVelocity(30, GH), r, 'centerlineVelocity(30, gasHigh)')], 'RB-003 §3.1');
   claim(p, "charcoal kettle's {0} fpm at 30 inches — below a 25,000 BTU gas grill's {1} fpm", [v(() => centerlineVelocity(30, CK), r, 'centerlineVelocity(30, charcoalKettle)'), v(() => centerlineVelocity(30, GS), r, 'centerlineVelocity(30, gasSmall)')], 'RB-001 §4.3');
 }

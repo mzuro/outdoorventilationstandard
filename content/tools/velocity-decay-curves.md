@@ -50,7 +50,7 @@ Centerline velocity over the medium gas grill falls from about 508 fpm at 6 inch
 
 ## Key Findings
 
-**All source types keep capture-viable velocities at standard mounting heights.** Even the pellet smoker in low-smoke mode (Q_c = 1.5 kW) holds about 222 fpm at 30 inches and still about 178 fpm at 72 inches (RB-003 prints 179), so velocity decay alone does not cause capture failure for properly sized hoods [RB-003 §3.1, §4.1].
+**All source types keep capture-viable velocities at standard mounting heights.** Even the pellet smoker in low-smoke mode (Q_c = 1.5 kW) holds about 222 fpm at 30 inches and still about 178 fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179), so velocity decay alone does not cause capture failure for properly sized hoods [RB-003 §3.1, §4.1].
 
 **The practical constraint is not velocity but plume width and mass flow.** While centerline velocity remains adequate, the capture diameter grows at 0.48 inch per inch of rise and the plume mass flow as z^(5/3), requiring progressively larger hood coverage and higher CFM to capture the widened plume [RB-002 §3.4; RB-008 §2.4].
 

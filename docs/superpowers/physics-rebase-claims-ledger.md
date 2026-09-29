@@ -8,13 +8,13 @@ claim on the 9 live question pages and 11 tool pages, recomputed from
 "paper: …" quote a printed paper cell that no module computes; verify them against the
 paper line, not here.
 
-Claims: 169; verified ✓: 169; ✗: 0.
+Claims: 171; verified ✓: 171; ✗: 0.
 
 | page | claim text | module call | value | citation | status |
 |---|---|---|---|---|---|
 | questions/what-cfm-do-i-need.md | needs at least **892 CFM** | requiredCfm({src:gasLarge,riseIn:30,mount:'wall',exposure:'moderate'}).minimum | 892 | RB-008 §3.3 | ✓ |
 | questions/what-cfm-do-i-need.md | and a **1,200 CFM blower** | … .blower | 1,200 | RB-008 §3.3, App. A step 8 | ✓ |
-| questions/what-cfm-do-i-need.md | minimums are 727 CFM sheltered, 892 CFM moderate, 1,004 CFM exposed with side panels, and 1,394 CFM exposed without | requiredCfm(gasLarge, 30, wall, 'sheltered').minimum; … 'moderate'; … 'exposed', panels 'both' (paper prints 1,003); … 'exposed', panels 'none' | 727 / 892 / 1,004 / 1,394 | RB-008 §3.3 | ✓ |
+| questions/what-cfm-do-i-need.md | minimums are 727 CFM sheltered, 892 CFM moderate, 1,004 CFM exposed with side panels, and 1,394 CFM exposed without | requiredCfm(gasLarge, 30, wall, 'sheltered').minimum; … 'moderate'; … 'exposed', panels 'both' (RB-008 v1.0 printed 1,003; v1.1 prints 1,004); … 'exposed', panels 'none' | 727 / 892 / 1,004 / 1,394 | RB-008 §3.3 | ✓ |
 | questions/what-cfm-do-i-need.md | with blowers of 900, 1,200, 1,200 and 1,800 CFM | .blower sheltered; .blower moderate; .blower exposed+panels; .blower exposed (RB-008 v1.0 printed 1,500; v1.1 prints 1,800 under App. A step 8) | 900 / 1,200 / 1,200 / 1,800 | RB-008 §3.3, App. A step 8 | ✓ |
 | questions/what-cfm-do-i-need.md | only 8% above the minimum | 1500 / minimum(exposed) − 1 | 8 | RB-008 §3.3 (v1.0 erratum j; v1.1 prints 1,800) | ✓ |
 | questions/what-cfm-do-i-need.md | needs about **1,070 CFM minimum** | requiredCfm(… mount:'island').minimum | 1,070 | RB-008 §3.9 | ✓ |
@@ -35,7 +35,7 @@ Claims: 169; verified ✓: 169; ✗: 0.
 | questions/what-cfm-do-i-need.md | cut the multiplier to 4.14, a 28% reduction, and bring the minimum to 1,004 CFM | K_CFM.exposedPanels; 1 − 4.14/5.75; minimum exposed+panels | 4.14 / 28 / 1,004 | RB-008 §2.2 | ✓ |
 | questions/what-cfm-do-i-need.md | description: "A 60,000 BTU grill at a 30-inch wall mount needs 892 CFM minimum in moderate wind and a 1,200 CFM blower; on an island, 1,070 CFM | minimum; blower; island minimum | 892 / 1,200 / 1,070 | RB-008 §3.3, §3.9 | ✓ |
 | questions/mounting-height.md | is about **412 fpm**; at 30 inches, about **393 fpm**; at 36 inches, about **377 fpm** | centerlineVelocity(24, gasMedium); … 30; … 36 | 412 / 393 / 377 | RB-003 Table 3.1a/b, regenerated (paper prints 417/392/370) | ✓ |
-| questions/mounting-height.md | keeps about 178 fpm at 72 inches (RB-003 prints 179) | centerlineVelocity(72, pelletLow) | 178 | RB-003 §3.1 | ✓ |
+| questions/mounting-height.md | keeps about 178 fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179) | centerlineVelocity(72, pelletLow) | 178 | RB-003 §3.1 | ✓ |
 | questions/mounting-height.md | needs 550 CFM at 24 inches, 747 at 30 and 972 at 36 | requiredCfm(gasMedium, 24, moderate).minimum; … 30; … 36 | 550 / 747 / 972 | RB-008 Table 3.2b | ✓ |
 | questions/mounting-height.md | from 383 to 1,518 CFM | requiredCfm(gasMedium, 18, moderate).minimum; … 48 | 383 / 1,518 | RB-008 Table 3.2b, §2.4 | ✓ |
 | questions/mounting-height.md | about 38.6 inches at 24 inches, 41.4 at 30 and 44.3 at 36 | captureDiameter(24, gasMedium); … 30; … 36 | 38.6 / 41.4 / 44.3 | RB-002 Table 3.3a | ✓ |
@@ -43,6 +43,7 @@ Claims: 169; verified ✓: 169; ✗: 0.
 | questions/mounting-height.md | about 9.0 inches by 24 inches of rise, 11.7 by 30 and 14.7 by 36 | deflection(24, 5, gasMedium); … 30; … 36 | 9.0 / 11.7 / 14.7 | RB-006 Table 3.2b (prints 9/12/15) | ✓ |
 | questions/mounting-height.md | reads 83% at 18 inches, 67% at 24, 51% at 30 and 38% at 36 | captureFraction(48×40 island, side, 5 mph, rise 18); … rise 24; … rise 30; … rise 36 | 83 / 67 / 51 / 38 | RB-006 §3.4 model | ✓ |
 | questions/mounting-height.md | requirements escalate to 417–1,623 CFM across the source range | paper: printed range | — | RB-003 §4.2 | ✓ |
+| questions/mounting-height.md | RB-003 Table 3.1b v1.0 printed 417, 392 and 370 | paper: superseded printed cells | — | RB-003 Table 3.1b (v1.0 cells; v1.1 prints 412/393/377 = module values) | ✓ |
 | questions/mounting-height.md | description: "Plume velocity falls only from 412 fpm at 24 inches to 377 fpm at 36 | centerlineVelocity(24); centerlineVelocity(36) | 412 / 377 | RB-003 Table 3.1b regenerated | ✓ |
 | questions/does-wind-affect-my-hood.md | about **87% of the plume in still air**, **51% at 5 mph**, and roughly **8% at 10 mph** | captureFraction(48×40 island, side, 0 mph); … 5 mph; … 10 mph | 87 / 51 / 8 | RB-006 §3.4 | ✓ |
 | questions/does-wind-affect-my-hood.md | at 5.75 times the bare plume flow | K_CFM.exposed | 5.75 | RB-008 §3.3 | ✓ |
@@ -125,6 +126,7 @@ Claims: 169; verified ✓: 169; ✗: 0.
 | tools/cfm-calculator.md | W_rec = 1.38 × capture diameter | K_BASE | 1.38 | RB-002 §3.6 | ✓ |
 | tools/cfm-calculator.md | face velocity of about 29 fpm | paper: printed example | — | RB-003 §4.1 | ✓ |
 | tools/wind-deflection-trajectory.md | about 11.7 inches (RB-006 Table 3.2b prints 12) | deflection(30, 5) | 11.7 | RB-006 Table 3.2b | ✓ |
+| tools/wind-deflection-trajectory.md | RB-002 Table 3.6b carries the exact 16.5 | paper: printed cell = (W_rec − 24)/2 | — | RB-002 Table 3.6b v1.1 (30″ OH; RB-005 Table 3.1b prints 17) | ✓ |
 | tools/wind-deflection-trajectory.md | about 18.8 inches (Table 3.2b: 19) | deflection(30, 8) | 18.8 | RB-006 Table 3.2b | ✓ |
 | tools/wind-deflection-trajectory.md | roughly 1.8× farther at a 48-inch mounting height than at 30 inches (21.1 versus 11.7 inches at 5 mph) | deflection(48,5)/deflection(30,5); deflection(48, 5); deflection(30, 5) | 1.8 / 21.1 / 11.7 | RB-006 §3.1 | ✓ |
 | tools/wind-deflection-trajectory.md | the 12 mph deflection (28.2 inches) is four times the 3 mph deflection (7.0 inches) | deflection(30, 12); deflection(30, 3) | 28.2 / 7.0 | RB-006 §3.1 | ✓ |
@@ -153,7 +155,7 @@ Claims: 169; verified ✓: 169; ✗: 0.
 | tools/velocity-decay-curves.md | centerline velocity (314 fpm) is three times the 100 fpm | centerlineVelocity(72) | 314 | RB-003 §3.1 | ✓ |
 | tools/velocity-decay-curves.md | (412 to 350 fpm, a 15% drop) | centerlineVelocity(24); centerlineVelocity(48); 1 − u(48)/u(24) | 412 / 350 / 15 | RB-003 Table 3.1b | ✓ |
 | tools/velocity-decay-curves.md | from 550 to 1,518 CFM for this source under moderate exposure | requiredCfm(gasMedium, 24).minimum; … 48 | 550 / 1,518 | RB-008 Table 3.2b | ✓ |
-| tools/velocity-decay-curves.md | holds about 222 fpm at 30 inches and still about 178 fpm at 72 inches (RB-003 prints 179) | centerlineVelocity(30, pelletLow); … 72 | 222 / 178 | RB-003 Table 3.1b | ✓ |
+| tools/velocity-decay-curves.md | holds about 222 fpm at 30 inches and still about 178 fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179) | centerlineVelocity(30, pelletLow); … 72 | 222 / 178 | RB-003 Table 3.1b | ✓ |
 | tools/velocity-decay-curves.md | from about 222 fpm (pellet smoker, low) to 485 fpm (high-output gas grill) | centerlineVelocity(30, pelletLow); centerlineVelocity(30, gasHigh) | 222 / 485 | RB-003 §3.1 | ✓ |
 | tools/velocity-decay-curves.md | charcoal kettle's 230 fpm at 30 inches — below a 25,000 BTU gas grill's 342 fpm | centerlineVelocity(30, charcoalKettle); centerlineVelocity(30, gasSmall) | 230 / 342 | RB-001 §4.3 | ✓ |
 | tools/side-panel-effectiveness.md | from about 20% with no side panels to about 70% with panels on both sides | capture 8; … both | 20 / 70 | RB-009 Table 3.1a + RB-006 §3.4 | ✓ |

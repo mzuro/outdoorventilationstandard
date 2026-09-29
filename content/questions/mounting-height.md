@@ -11,7 +11,7 @@ instrument_id: "i06"
 citations: ["rb-003", "rb-001", "rb-008"]
 ---
 
-At a 24-inch mounting height, the plume's centerline velocity over a medium gas grill is about **412 fpm**; at 30 inches, about **393 fpm**; at 36 inches, about **377 fpm** — values recomputed from the Heskestad relation with RB-001 Table 3.2 inputs (RB-003 Table 3.1b prints 417, 392 and 370, hand-rounded figures the paper itself notes sit 1–4% off its own formula; RB-003 §3.1). The decay follows an inverse cube root, so raising the hood a foot costs less than a tenth of the velocity. Velocity is not what limits a higher mount: even the weakest source in the program keeps about 178 fpm at 72 inches (RB-003 prints 179), and RB-003 concludes that centerline velocity is never the binding constraint for a properly sized hood (RB-003 §3.1, §4.1).
+At a 24-inch mounting height, the plume's centerline velocity over a medium gas grill is about **412 fpm**; at 30 inches, about **393 fpm**; at 36 inches, about **377 fpm** — values recomputed from the Heskestad relation with RB-001 Table 3.2 inputs (RB-003 Table 3.1b v1.0 printed 417, 392 and 370, hand-rounded figures 1–4% off its own formula; v1.1 regenerates the rows to these values; RB-003 §3.1). The decay follows an inverse cube root, so raising the hood a foot costs less than a tenth of the velocity. Velocity is not what limits a higher mount: even the weakest source in the program keeps about 178 fpm at 72 inches (RB-003 Table 3.1b; v1.0 printed 179), and RB-003 concludes that centerline velocity is never the binding constraint for a properly sized hood (RB-003 §3.1, §4.1).
 
 ## What height actually changes
 
