@@ -20,10 +20,11 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const BASE = '66cf282'; // origin/physics/rebase-stage-a — papers untouched since v1.0
 const PHYS = path.join(ROOT, 'static/js/ovs/physics');
 const { SOURCES, heightM } = await import(path.join(PHYS, 'heat.mjs'));
-const { centerlineVelocityMs, centerlineVelocity, captureDiameter, plumeHalfWidthBT, recommendedWidth, IN_PER_M } = await import(path.join(PHYS, 'plume.mjs'));
+const { centerlineVelocityMs, centerlineVelocity, captureDiameter, plumeHalfWidthBT, recommendedWidth, IN_PER_M, FPM_PER_MS } = await import(path.join(PHYS, 'plume.mjs'));
 const { deflection, froude, FR_DISRUPTED } = await import(path.join(PHYS, 'wind.mjs'));
 const { criticalWinds } = await import(path.join(PHYS, 'capture.mjs'));
-const { blowerFor } = await import(path.join(PHYS, 'cfm.mjs'));
+const { blowerFor, plumeCfm, plumeMassFlowKgS, K_CFM } = await import(path.join(PHYS, 'cfm.mjs'));
+const { RHO_PARTICLE, RHO_AIR, MU_AIR } = await import(path.join(PHYS, 'grease.mjs'));
 
 const APPLY = process.argv.includes('--apply');
 const R = 'content/research/';
@@ -73,9 +74,13 @@ for (const h of H) for (const id of ['gasMedium', 'gasLarge']) {
 }
 // RB-001 Table 3.6 Gas Medium column  (plan §1 (i))
 for (const h of H) cell({ paper: 'rb001', table: 'Table 3.6:', col: 'Gas Medium', row: `${h}"`, value: mIn(captureDiameter(h, SOURCES.gasMedium)), call: `captureDiameter(${h}, SOURCES.gasMedium)` });
+// RB-001 Table 3.6 Gas Large and Gas High columns — own z_0 (round 2, B2); identical to RB-002 Tables 3.6c/3.6d W_min
+for (const h of H) for (const [id, col] of [['gasLarge', 'Gas Large'], ['gasHigh', 'Gas High']])
+  cell({ paper: 'rb001', table: 'Table 3.6:', col, row: `${h}"`, value: mIn(captureDiameter(h, SOURCES[id])), call: `captureDiameter(${h}, SOURCES.${id})` });
 
-// RB-003 Tables 3.1a (m/s) and 3.1b (ft/min), standard-height rows  (plan §1 (f))
-for (const h of H) for (const [id, name] of COLS) {
+// RB-003 Tables 3.1a (m/s) and 3.1b (ft/min), all twelve height rows  (plan §1 (f); round 2 extends the standard-height
+// regeneration to the 6–72" rows, whose v1.0 hand-rounding was ±1 fpm off the formula — Table 3.1b is the rb-003 dataset CSV)
+for (const h of [6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72]) for (const [id, name] of COLS) {
   cell({ paper: 'rb003', table: 'Table 3.1a:', col: name, row: `${h}"`, value: f2(ms(h, id)), call: `centerlineVelocityMs(heightM(${h}), SOURCES.${id})` });
   cell({ paper: 'rb003', table: 'Table 3.1b:', col: name, row: `${h}"`, value: String(Math.round(centerlineVelocity(h, SOURCES[id]))), call: `centerlineVelocity(${h}, SOURCES.${id})` });
 }
@@ -91,15 +96,73 @@ for (const h of H) for (const [id, name] of COLS) {
   cell({ paper: 'rb003', table: 'Table 3.10:', col: 'Ratio 48"/18"', row: 'Centerline velocity** (fpm)', value: f2(u(48) / u(18)), call: 'u_0(48)/u_0(18)' });
   cell({ paper: 'rb003', table: 'Table 3.10:', col: 'Ratio 48"/18"', row: 'Plume capture diameter', value: f2(d(48) / d(18)), call: 'd_capture(48)/d_capture(18)' });
 }
+// RB-003 Table 3.2 radial-velocity tables (three height blocks under one heading), Gas Medium (round 2, B3):
+//   u(r) = u_0 · exp(−(r/b_u)²), b_u = 1.2 · b_T (rb-003 §2.2); r taken at the exact multiples the row labels state.
+{
+  const RAD = [['Centerline', 0], ['r = 0.5 * b_u', 0.6], ['r = b_T', 1], ['r = b_u', 1.2], ['r = 1.5 * b_u', 1.8], ['r = 2.0 * b_T', 2]]; // r as multiples of b_T
+  for (const h of [24, 30, 48]) {
+    const u = ms(h, 'gasMedium'), bT = plumeHalfWidthBT(h, SOURCES.gasMedium) / IN_PER_M, bu = 1.2 * bT;
+    const t = { header: '| Radial Position | r (m) | r (in) | u(r) m/s | u(r) fpm | Fraction of u_0 |', after: `**At ${h}" (`, label: `Table 3.2 (${h}")` };
+    for (const [row, k] of RAD) {
+      const ur = u * Math.exp(-((k * bT / bu) ** 2));
+      const call = `u_0(${h}) · exp(−(${k} b_T / 1.2 b_T)²); u_0 = centerlineVelocityMs(heightM(${h}), gasMedium), b_T = plumeHalfWidthBT(${h}, gasMedium)`;
+      cell({ paper: 'rb003', table: t, col: 'u(r) m/s', row, value: f2(ur), call });
+      cell({ paper: 'rb003', table: t, col: 'u(r) fpm', row, value: String(Math.round(ur * FPM_PER_MS)), call });
+    }
+  }
+}
+// RB-003 Tables 3.5, 3.6a/b, 3.8a/b restate the RB-008 mass-flow / required-CFM formulas for the eight modelled
+// sources (round 2, A10 consistency): ṁ_p = 0.071 Q_c^(1/3) z^(5/3) + 0.0018 Q_c; CFM = ṁ_p / 1.10 · 2119; × K_CFM.
+{
+  const H8 = [18, 24, 30, 36, 42, 48, 60, 72];
+  const C8 = [['gasSmall', 'Gas Small'], ['gasMedium', 'Gas Med'], ['gasLarge', 'Gas Large'], ['gasHigh', 'Gas High'], ['charcoalKettle', 'Charcoal'], ['woodFired', 'Wood'], ['pelletLow', 'Pellet Low'], ['pelletHigh', 'Pellet High']];
+  for (const h of H8) for (const [id, name] of C8) {
+    const s = SOURCES[id];
+    cell({ paper: 'rb003', table: 'Table 3.5:', col: `${name} kg/s`, row: `${h}"`, value: `${f3(plumeMassFlowKgS(heightM(h), s))} (${Math.round(plumeCfm(h, s))})`, call: `plumeMassFlowKgS(heightM(${h}), SOURCES.${id}); plumeCfm(${h}, SOURCES.${id})` });
+    const t36 = ['gasSmall', 'gasMedium', 'gasLarge', 'gasHigh'].includes(id) ? 'Table 3.6a:' : 'Table 3.6b:';
+    cell({ paper: 'rb003', table: t36, col: name, row: `${h}"`, value: String(Math.round(plumeCfm(h, s) * K_CFM.sheltered)), call: `round(plumeCfm(${h}, SOURCES.${id}) × K_CFM.sheltered)` });
+    if (h <= 48) {
+      cell({ paper: 'rb003', table: 'Table 3.8a:', col: `${h}"`, row: name, value: String(Math.round(plumeCfm(h, s) * K_CFM.sheltered)), call: `round(plumeCfm(${h}, SOURCES.${id}) × K_CFM.sheltered)` });
+      cell({ paper: 'rb003', table: 'Table 3.8b:', col: `${h}"`, row: name, value: String(Math.round(plumeCfm(h, s) * K_CFM.moderate)), call: `round(plumeCfm(${h}, SOURCES.${id}) × K_CFM.moderate)` });
+    }
+  }
+}
 
 // RB-006 Tables 3.2a–h u_0 column  (plan §1 (f) propagation)
 const T32 = { a: 'gasSmall', b: 'gasMedium', c: 'gasLarge', d: 'gasHigh', e: 'charcoalKettle', f: 'woodFired', g: 'pelletLow', h: 'pelletHigh' };
 for (const [letter, id] of Object.entries(T32)) for (const h of H)
   cell({ paper: 'rb006', table: `Table 3.2${letter}:`, col: 'u_0 (m/s)', row: `${h}"`, value: f2(ms(h, id)), call: `centerlineVelocityMs(heightM(${h}), SOURCES.${id})` });
-// RB-006 Table 3.2b 10 / 15 mph cells, Fr > 2.7 marked  (plan §1 (k), Stage-A note 2)
-for (const h of H) for (const w of [10, 15]) {
-  const d = deflection(h, w, SOURCES.gasMedium), fr = froude(h, w, SOURCES.gasMedium);
-  cell({ paper: 'rb006', table: 'Table 3.2b:', col: `${w} mph`, row: `${h}"`, value: mIn(d) + (fr > FR_DISRUPTED ? '†' : ''), call: `deflection(${h}, ${w}, SOURCES.gasMedium); froude() = ${f2(fr)}` });
+// RB-006 Tables 3.2a–h, all five wind columns, on the v1.1 u_0 and the linear formula; Fr > 2.7 marked †
+// (plan §1 (k), Stage-A note 2; round 2, A3 extends the 3.2b 10/15 mph regeneration to every table and column)
+const WINDS = [2, 5, 8, 10, 15];
+for (const [letter, id] of Object.entries(T32)) for (const h of H) for (const w of WINDS) {
+  const d = deflection(h, w, SOURCES[id]), fr = froude(h, w, SOURCES[id]);
+  cell({ paper: 'rb006', table: `Table 3.2${letter}:`, col: `${w} mph`, row: `${h}"`, value: mIn(d) + (fr > FR_DISRUPTED ? '†' : ''), call: `deflection(${h}, ${w}, SOURCES.${id}); froude() = ${f2(fr)}` });
+}
+// RB-006 Table 3.3 (four source blocks under one heading): u_0 and Fr = U_w / u_0 on the v1.1 u_0  (round 2, A7).
+// The Gas Medium block is the rb-006 dataset CSV (static/data/rb-006-crosswind-froude-number.csv).
+const T33 = [['gasMedium', '**Gas Grill Medium (u_0 values'], ['charcoalKettle', '**Charcoal Kettle (Q_c = 1.8 kW):**'], ['gasHigh', '**Gas Grill High-Output (Q_c = 16.4 kW):**'], ['pelletLow', '**Pellet Smoker Low (Q_c = 1.5 kW):**']];
+for (const [id, after] of T33) for (const h of H) {
+  const t = { header: '| Height | u_0 (m/s) | 2 mph | 5 mph | 8 mph | 10 mph | 15 mph |', after, label: `Table 3.3 (${id})` };
+  cell({ paper: 'rb006', table: t, col: 'u_0 (m/s)', row: `${h}"`, value: f2(ms(h, id)), call: `centerlineVelocityMs(heightM(${h}), SOURCES.${id})` });
+  for (const w of WINDS) cell({ paper: 'rb006', table: t, col: `${w} mph`, row: `${h}"`, value: f2(froude(h, w, SOURCES[id])), call: `froude(${h}, ${w}, SOURCES.${id})` });
+}
+// RB-006 §3.9.4 orientation tables, Gas Medium 30": centerline-exit wind for the printed downwind overhang  (round 2, A8)
+//   U_cl = OH · u_0(z) / (0.35 · z)  (rb-006:618) — criticalWinds() with widthIn = cooking width + 2·OH.
+{
+  const ucl = (ohM) => criticalWinds({ widthIn: SOURCES.gasMedium.cookWIn + 2 * ohM * IN_PER_M, depthIn: 1e3, riseIn: 30, windDir: 'side', src: SOURCES.gasMedium }).uCenterline;
+  const t1 = { header: '| Wind Direction | Available Downwind OH | Critical Wind Speed (centerline exit) | Improvement |', label: '§3.9.4 orientation (57" x 53")' };
+  const t2 = { header: '| Wind Direction | Available Downwind OH | Critical Wind Speed | Improvement vs Worst |', label: '§3.9.4 orientation (66" x 55")' };
+  const a = ucl(0.41), b = ucl(0.42), c = ucl(0.305), d = ucl(0.457);
+  const pct = (x) => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
+  cell({ paper: 'rb006', table: t1, col: 'Critical Wind Speed', row: 'Along depth', value: `${f1(a)} mph`, call: 'criticalWinds(OH = 0.41 m, 30", gasMedium).uCenterline' });
+  cell({ paper: 'rb006', table: t1, col: 'Critical Wind Speed', row: 'Along width', value: `${f1(b)} mph`, call: 'criticalWinds(OH = 0.42 m, 30", gasMedium).uCenterline' });
+  cell({ paper: 'rb006', table: t1, col: 'Improvement', row: 'Along width', value: pct(b / a - 1), call: 'U_cl(0.42) / U_cl(0.41) − 1' });
+  cell({ paper: 'rb006', table: t1, col: 'Critical Wind Speed', row: '45 degrees', value: `${f1(c)} mph`, call: 'criticalWinds(OH = 0.305 m (12"), 30", gasMedium).uCenterline' });
+  cell({ paper: 'rb006', table: t1, col: 'Improvement', row: '45 degrees', value: `${pct(c / a - 1)} (worst)`, call: 'U_cl(0.305) / U_cl(0.41) − 1' });
+  cell({ paper: 'rb006', table: t2, col: 'Critical Wind Speed', row: 'Along short dimension', value: `${f1(c)} mph`, call: 'criticalWinds(OH = 0.305 m (12"), 30", gasMedium).uCenterline' });
+  cell({ paper: 'rb006', table: t2, col: 'Critical Wind Speed', row: 'Along long dimension', value: `${f1(d)} mph`, call: 'criticalWinds(OH = 0.457 m (18"), 30", gasMedium).uCenterline' });
+  cell({ paper: 'rb006', table: t2, col: 'Improvement vs Worst', row: 'Along long dimension', value: pct(d / c - 1), call: 'U_cl(0.457) / U_cl(0.305) − 1' });
 }
 // RB-006 Tables 3.4a/b — b_T and the three U_crit columns re-derived with the printed base-K OH  (plan §0 finding 4, §1 (b))
 const T34 = {
@@ -118,11 +181,105 @@ for (const [table, groups] of Object.entries(T34)) for (const [group, id] of gro
   cell({ paper: 'rb006', table, group, col: '50% escape', row: `${h}"`, value: f1(r.u50), call: callBase + '.u50' });
 }
 
-// RB-002 Table 3.7 Pellet Smoker High @ 30"  (Stage-A note 1)
-cell({ paper: 'rb002', table: 'Table 3.7:', col: '30" Height', row: 'Pellet Smoker High', value: `${Math.round(recommendedWidth(30, SOURCES.pelletHigh))}"`, call: 'recommendedWidth(30, SOURCES.pelletHigh)' });
+// RB-002 Table 3.7 Pellet Smoker High @ 30"  (Stage-A note 1; round 2, B1: REVERTED to the v1.0 cell so the row keeps
+// the paper's single pellet envelope, evaluated with Pellet Low's z_0 = −0.38 m like the rest of Table 3.7's pellet rows)
+{
+  const pelletMedium = { qcKw: 3.4, dEffM: 0.45, z0M: -0.32 }; // RB-001 Tables 3.1/3.2 inputs for the per-variant note only
+  const perVariant = (src) => [24, 30, 36].map((h) => Math.round(recommendedWidth(h, src))).join('/');
+  cell({ paper: 'rb002', table: 'Table 3.7:', col: '30" Height', row: 'Pellet Smoker High', value: readBaseCell('rb002', 'Table 3.7:', '30" Height', 'Pellet Smoker High'), call: `v1.0 cell kept (single pellet envelope on Pellet Low z_0); per-variant W_rec would be ${perVariant(SOURCES.pelletHigh)}" (High), ${perVariant(pelletMedium)}" (Medium) at 24/30/36"` });
+}
 
-// RB-008 §3.3 exposed blower  (plan §1 (j))
-cell({ paper: 'rb008', table: { header: '| Wind Exposure | K_CFM | Required CFM | Recommended Blower |' }, col: 'Recommended Blower', row: 'Exposed without panels', value: `${blowerFor(1394)} CFM`, call: 'blowerFor(1394)  // = smallest of BLOWER_SIZES ≥ 1.1 × 1394' });
+// RB-006 Table 3.7 (gust design deflection, Gas Medium 30") and §3.9.5 overhang-per-mph table restate Table 3.2 cells
+// on the linear formula: regenerated on the v1.1 u_0 (round 2, A3 consequences). Peak = 1.7 × mean wind (G = 1.7).
+{
+  const GMs = SOURCES.gasMedium;
+  for (const U of [2, 3, 5, 7, 10]) {
+    const P = Math.round(1.7 * U * 10) / 10, frP = froude(30, P, GMs);
+    cell({ paper: 'rb006', table: 'Table 3.7:', col: 'Mean Deflection', row: `${U} mph`, value: `${Math.round(deflection(30, U, GMs))}"`, call: `deflection(30, ${U}, SOURCES.gasMedium)` });
+    cell({ paper: 'rb006', table: 'Table 3.7:', col: 'Peak Deflection', row: `${U} mph`, value: `${Math.round(deflection(30, P, GMs))}"` + (frP > FR_DISRUPTED ? '†' : ''), call: `deflection(30, ${P}, SOURCES.gasMedium); froude() = ${f2(frP)}` });
+    cell({ paper: 'rb006', table: 'Table 3.7:', col: 'Mean Fr', row: `${U} mph`, value: f2(froude(30, U, GMs)), call: `froude(30, ${U}, SOURCES.gasMedium)` });
+    cell({ paper: 'rb006', table: 'Table 3.7:', col: 'Peak Fr', row: `${U} mph`, value: f2(frP), call: `froude(30, ${P}, SOURCES.gasMedium)` });
+  }
+  const T395 = { header: '| Source / Height | delta_x per mph (inches/mph) | Additional OH needed for 5 mph (in) | Additional OH for 8 mph (in) |', label: '§3.9.5 overhang per mph' };
+  for (const [row, id, h] of [['Gas Medium / 24"', 'gasMedium', 24], ['Gas Medium / 30"', 'gasMedium', 30], ['Gas Medium / 36"', 'gasMedium', 36], ['Gas Medium / 48"', 'gasMedium', 48], ['Charcoal / 30"', 'charcoalKettle', 30], ['Pellet Low / 30"', 'pelletLow', 30]]) {
+    cell({ paper: 'rb006', table: T395, col: 'delta_x per mph', row, value: f1(deflection(h, 1, SOURCES[id])), call: `deflection(${h}, 1, SOURCES.${id})` });
+    cell({ paper: 'rb006', table: T395, col: 'Additional OH needed for 5 mph', row, value: `${Math.round(deflection(h, 5, SOURCES[id]))}"`, call: `deflection(${h}, 5, SOURCES.${id})` });
+    cell({ paper: 'rb006', table: T395, col: 'Additional OH for 8 mph', row, value: `${Math.round(deflection(h, 8, SOURCES[id]))}"`, call: `deflection(${h}, 8, SOURCES.${id})` });
+  }
+}
+
+// RB-002 Table 3.6b (Gas Medium) 30" overhang: (W_rec − cooking width)/2 = (57 − 24)/2 = 16.5", carried exactly
+// rather than rounded to 17" because RB-006 §3.4 and the site's instruments use 0.42 m = 16.5" (round 2, coordinator).
+{
+  const wrecIn = Math.round(recommendedWidth(30, SOURCES.gasMedium)), ohIn = (wrecIn - SOURCES.gasMedium.cookWIn) / 2;
+  const ohM = (Math.round(recommendedWidth(30, SOURCES.gasMedium) / IN_PER_M * 100) / 100 - Math.round(SOURCES.gasMedium.cookWIn / IN_PER_M * 100) / 100) / 2;
+  cell({ paper: 'rb002', table: 'Table 3.6b:', col: 'OH each side', row: '30"', value: `${f2(ohM)} / ${ohIn}"`, call: `(round(recommendedWidth(30, gasMedium)) = ${wrecIn}" − 24") / 2; (1.45 − 0.61) / 2 m` });
+}
+
+// RB-008 sizing tables regenerated in full from the paper's formulas with the same inputs the site's reference-table
+// generator uses (round 2, A10 + B8 + B11): Tables 3.1, 3.2a–d, 3.4a/b, 3.5, 3.6, 3.8a–f, 3.11 and the §3.3 table.
+//   CFM_plume = plumeCfm(z, src); table = round(CFM_plume × K_CFM); blower = blowerFor(minimum) (1.1× ladder rule).
+// The four sources heat.mjs does not carry enter as paper INPUTS (Q_c from rb-008 Table 3.1 = RB-001 Table 3.1).
+{
+  const RB008 = [
+    ['Gas Grill — Small', SOURCES.gasSmall, 'Gas Small', 'SOURCES.gasSmall'], ['Gas Grill — Medium', SOURCES.gasMedium, 'Gas Medium', 'SOURCES.gasMedium'],
+    ['Gas Grill — Large', SOURCES.gasLarge, 'Gas Large', 'SOURCES.gasLarge'], ['Gas Grill — High-Output', SOURCES.gasHigh, 'Gas High', 'SOURCES.gasHigh'],
+    ['Charcoal Kettle', SOURCES.charcoalKettle, 'Charcoal Kettle', 'SOURCES.charcoalKettle'], ['Charcoal Kettle High', { qcKw: 3.5, btu: 30000 }, 'Charcoal High', '{qcKw: 3.5}'],
+    ['Charcoal Kamado', { qcKw: 3.3, btu: 25000 }, 'Charcoal Kamado', '{qcKw: 3.3}'], ['Wood-Fired', SOURCES.woodFired, 'Wood-Fired', 'SOURCES.woodFired'],
+    ['Wood-Fired Large', { qcKw: 13.3, btu: 70000 }, 'Wood-Fired Large', '{qcKw: 13.3}'], ['Pellet Smoker — Low', SOURCES.pelletLow, 'Pellet Low', 'SOURCES.pelletLow'],
+    ['Pellet Smoker — Medium', { qcKw: 3.4, btu: 18000 }, 'Pellet Medium', '{qcKw: 3.4}'], ['Pellet Smoker — High', SOURCES.pelletHigh, 'Pellet High', 'SOURCES.pelletHigh'],
+  ];
+  const EXPOSED = new Set(['Gas Grill — Small', 'Gas Grill — Medium', 'Gas Grill — Large', 'Gas Grill — High-Output', 'Charcoal Kettle', 'Wood-Fired', 'Pellet Smoker — Low', 'Pellet Smoker — High']);
+  const T32K = { a: 'sheltered', b: 'moderate', c: 'exposed', d: 'exposedPanels' };
+  const req = (h, s, k) => Math.round(plumeCfm(h, s) * K_CFM[k]);
+  for (const [name, s, short, ref] of RB008) {
+    for (const h of H) {
+      cell({ paper: 'rb008', table: 'Table 3.1:', col: `${h}"`, row: name, value: String(Math.round(plumeCfm(h, s))), call: `round(plumeCfm(${h}, ${ref}))` });
+      for (const [letter, k] of Object.entries(T32K)) {
+        if (k.startsWith('exposed') && !EXPOSED.has(name)) continue;
+        cell({ paper: 'rb008', table: `Table 3.2${letter}:`, col: `${h}"`, row: name, value: String(req(h, s, k)), call: `round(plumeCfm(${h}, ${ref}) × K_CFM.${k})` });
+      }
+    }
+    // Table 3.4a (rows keyed by Q_c) and 3.4b (CFM per 10,000 BTU) restate the 30" Sheltered column for ten sources
+    if (!['Charcoal Kamado', 'Pellet Smoker — Medium'].includes(name)) {
+      const qc = new RegExp(`^${String(s.qcKw).replace('.', '\\.')}$`), rowLabel = `Q_c = ${s.qcKw}`; // exact row key — "3.5" must not match inside "13.3"
+      if (s !== SOURCES.gasMedium) cell({ paper: 'rb008', table: 'Table 3.4a:', col: 'Ratio', row: qc, rowLabel, value: f2(plumeCfm(30, s) / plumeCfm(30, SOURCES.gasMedium)), call: `plumeCfm(30, ${ref}) / plumeCfm(30, SOURCES.gasMedium)` });
+      cell({ paper: 'rb008', table: 'Table 3.4a:', col: 'CFM_plume', row: qc, rowLabel, value: String(Math.round(plumeCfm(30, s))), call: `round(plumeCfm(30, ${ref}))` });
+      cell({ paper: 'rb008', table: 'Table 3.4a:', col: 'CFM_required', row: qc, rowLabel, value: String(req(30, s, 'sheltered')), call: `round(plumeCfm(30, ${ref}) × K_CFM.sheltered)` });
+      cell({ paper: 'rb008', table: 'Table 3.4b:', col: 'CFM_req', row: name, value: String(req(30, s, 'sheltered')), call: `round(plumeCfm(30, ${ref}) × K_CFM.sheltered)` });
+      cell({ paper: 'rb008', table: 'Table 3.4b:', col: 'CFM per 10,000 BTU', row: name, value: String(Math.round(req(30, s, 'sheltered') / (s.btu / 1e4))), call: `CFM_req ${req(30, s, 'sheltered')} / (${s.btu} / 10,000)` });
+    }
+    // Table 3.11 quick reference at 30": three classes + blower = smallest standard size ≥ 1.1 × Moderate (rb-008:614 rule)
+    cell({ paper: 'rb008', table: 'Table 3.11:', col: 'Sheltered', row: short, value: String(req(30, s, 'sheltered')), call: `round(plumeCfm(30, ${ref}) × K_CFM.sheltered)` });
+    cell({ paper: 'rb008', table: 'Table 3.11:', col: 'Moderate', row: short, value: String(req(30, s, 'moderate')), call: `round(plumeCfm(30, ${ref}) × K_CFM.moderate)` });
+    cell({ paper: 'rb008', table: 'Table 3.11:', col: 'Exposed (panels)', row: short, value: String(req(30, s, 'exposedPanels')), call: `round(plumeCfm(30, ${ref}) × K_CFM.exposedPanels)` });
+    cell({ paper: 'rb008', table: 'Table 3.11:', col: 'Blower Recommendation', row: short, value: `${blowerFor(req(30, s, 'moderate'))} CFM`, call: `blowerFor(${req(30, s, 'moderate')})  // smallest of BLOWER_SIZES ≥ 1.1 × Moderate` });
+  }
+  // Table 3.4a Q_c-keyed rows exist only for the ten sources the paper lists there
+  // Tables 3.5 and 3.6 (Gas Medium at 30") restate Tables 3.2a–d
+  const gm30 = Object.fromEntries(Object.entries(K_CFM).map(([k]) => [k, req(30, SOURCES.gasMedium, k)]));
+  for (const [row, k] of [['Sheltered', 'sheltered'], ['Moderate', 'moderate'], ['Exposed with side panels', 'exposedPanels'], ['Exposed without panels', 'exposed']]) {
+    cell({ paper: 'rb008', table: 'Table 3.5:', col: 'Outdoor CFM', row, value: String(gm30[k]), call: `round(plumeCfm(30, SOURCES.gasMedium) × K_CFM.${k})` });
+    cell({ paper: 'rb008', table: 'Table 3.5:', col: 'K_outdoor', row, value: f1(gm30[k] / 350), call: `${gm30[k]} / 350` });
+  }
+  for (const [row, a, b] of [['Sheltered to Moderate', 'sheltered', 'moderate'], ['Moderate to Exposed (panels)', 'moderate', 'exposedPanels'], ['Moderate to Exposed (no panels)', 'moderate', 'exposed'], ['Sheltered to Exposed (panels)', 'sheltered', 'exposedPanels'], ['Sheltered to Exposed (no panels)', 'sheltered', 'exposed']]) {
+    cell({ paper: 'rb008', table: 'Table 3.6:', col: 'CFM Change', row, value: `${gm30[a]} to ${gm30[b]}`, call: `Table 3.2 Gas Medium 30" ${a} → ${b}` });
+    cell({ paper: 'rb008', table: 'Table 3.6:', col: 'Percentage Increase', row, value: `+${Math.round((gm30[b] / gm30[a] - 1) * 100)}%`, call: `${gm30[b]} / ${gm30[a]} − 1` });
+  }
+  // Tables 3.8a–f integrated design: the CFM columns
+  const T38 = { a: 'gasMedium', b: 'gasLarge', c: 'gasHigh', d: 'charcoalKettle', e: 'woodFired' };
+  for (const [letter, id] of Object.entries(T38)) for (const h of H) for (const [col, k] of [['Sheltered CFM', 'sheltered'], ['Moderate CFM', 'moderate'], ['Exposed+Panels CFM', 'exposedPanels']])
+    cell({ paper: 'rb008', table: `Table 3.8${letter}:`, col, row: `${h}"`, value: String(req(h, SOURCES[id], k)), call: `round(plumeCfm(${h}, SOURCES.${id}) × K_CFM.${k})` });
+  for (const h of H) for (const [col, k] of [['Sheltered CFM (Low/High)', 'sheltered'], ['Moderate CFM (Low/High)', 'moderate']])
+    cell({ paper: 'rb008', table: 'Table 3.8f:', col, row: `${h}"`, value: `${req(h, SOURCES.pelletLow, k)} / ${req(h, SOURCES.pelletHigh, k)}`, call: `round(plumeCfm(${h}, SOURCES.pelletLow|pelletHigh) × K_CFM.${k})` });
+  // §3.3 primary answer (Gas Large 30"): required CFM and blower per class  (plan §1 (j) extended)
+  const T33H = { header: '| Wind Exposure | K_CFM | Required CFM | Recommended Blower |' };
+  for (const [row, k] of [['Sheltered', 'sheltered'], ['Moderate', 'moderate'], ['Exposed with panels', 'exposedPanels'], ['Exposed without panels', 'exposed']]) {
+    const v = req(30, SOURCES.gasLarge, k);
+    cell({ paper: 'rb008', table: T33H, col: 'Required CFM', row, value: String(v), call: `round(plumeCfm(30, SOURCES.gasLarge) × K_CFM.${k})` });
+    cell({ paper: 'rb008', table: T33H, col: 'Recommended Blower', row, value: `${blowerFor(v)} CFM`, call: `blowerFor(${v})  // = smallest of BLOWER_SIZES ≥ 1.1 × ${v}` });
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Prose edits that restate a regenerated cell (exact, unique substrings).
@@ -174,7 +331,103 @@ const prose = [
   { paper: 'rb011', old: '| Critical wind for 25% escape, Gas Medium at 30" | 6.7 mph | RB-006 Table 3.4a |', new: `| Critical wind for 25% escape, Gas Medium at 30" | ${f1(cw('gasMedium', 30).u25)} mph | RB-006 Table 3.4a |`, call: 'criticalWinds(gasMedium, 30).u25' },
   // RB-012 quote of RB-001 Table 3.5
   { paper: 'rb012', old: '| Plume centerline velocity (30") | 1.25 m/s | 2.25 m/s | 0.56 |', new: `| Plume centerline velocity (30") | ${f2(ms(30, 'charcoalKettle'))} m/s | ${f2(ms(30, 'gasLarge'))} m/s | ${f2(ms(30, 'charcoalKettle') / ms(30, 'gasLarge'))} |`, call: 'centerlineVelocityMs(heightM(30), charcoalKettle|gasLarge)' },
+  ...roundTwoProse(),
 ];
+
+// ---------------------------------------------------------------------------
+// Round 2 (2026-09-29) prose: restatements of the cells regenerated above, plus the RB-011 worked calculation
+// and the RB-006 §3.1 Froude-correction statement. Range sentences are asserted against the module values.
+// ---------------------------------------------------------------------------
+function roundTwoProse() {
+  const GM = SOURCES.gasMedium;
+  const dcapM = (h, id = 'gasMedium') => (captureDiameter(h, SOURCES[id]) / IN_PER_M).toFixed(2);
+  const dcapIn = (h, id = 'gasMedium') => Math.round(captureDiameter(h, SOURCES[id]));
+  const fpm30 = COLS.map(([id]) => fpm(30, id));
+  const doubling = Math.round((1 - 2 ** (-1 / 3)) * 100);
+  const assert = (ok, msg) => { if (!ok) throw new Error(`round-2 prose assertion failed: ${msg}`); };
+  // RB-006 §3.9.4 (same calls as the cells)
+  const ucl = (ohM) => criticalWinds({ widthIn: GM.cookWIn + 2 * ohM * IN_PER_M, depthIn: 1e3, riseIn: 30, windDir: 'side', src: GM }).uCenterline;
+  const sq = Math.round((ucl(0.42) / ucl(0.41) - 1) * 100), rect = Math.round((ucl(0.457) / ucl(0.305) - 1) * 100);
+  assert(rect === 50, `66x55 orientation gain ${rect}%`);
+  // RB-006 §3.11 weaker sources vs Gas Medium at 30" (Tables 3.4a/b), gust factor G = 1.7
+  const g = cw('gasMedium', 30), weak = [cw('charcoalKettle', 30), cw('pelletLow', 30)];
+  const lower = weak.flatMap((w) => ['u25', 'uCenterline', 'u50'].map((k) => (1 - w[k] / g[k]) * 100));
+  const lo5 = Math.round(Math.min(...lower) / 5) * 5, hi5 = Math.round(Math.max(...lower) / 5) * 5;
+  const G = 1.7, band = (k) => weak.map((w) => w[k] / G);
+  assert(lo5 === 25 && hi5 === 45, `weaker-source offsets ${lo5}-${hi5}%`);
+  assert(Math.min(...band('u25')) >= 1.45 && Math.max(...band('u25')) < 2.25, `degradation band ${band('u25')}`);
+  assert(Math.min(...band('uCenterline')) >= 2.2 && Math.max(...band('uCenterline')) <= 3.05, `marginal band ${band('uCenterline')}`);
+  assert(Math.min(...band('u50')) >= 2.95 && Math.max(...band('u50')) < 4.0, `inadequate band ${band('u50')}`);
+  // RB-008 §3.3 (Gas Large 30") and Table 3.6 key finding (Gas Medium 30")
+  const req = (s, k) => Math.round(plumeCfm(30, s) * K_CFM[k]);
+  const margin = (v) => Math.round((blowerFor(v) / v - 1) * 100);
+  const gl = Object.fromEntries(Object.keys(K_CFM).map((k) => [k, req(SOURCES.gasLarge, k)]));
+  const gmod = req(GM, 'moderate'), gpan = req(GM, 'exposedPanels');
+  assert(blowerFor(gl.exposed) === 1800 && 1.1 * gl.exposed > 1500, 'exposed blower ladder');
+  // RB-011 §2.3 critical diameter: v_s = k · d_p² (d_p in µm), k from the paper's Stokes constants
+  const kStokes = (RHO_PARTICLE - RHO_AIR) * 9.81 * 1e-12 / (18 * MU_AIR);
+  const dCrit = Math.sqrt(0.01 * 1.0 / kStokes);
+  assert(Math.abs(kStokes - 2.71e-5) < 0.01e-5 && Math.round(dCrit) === 19, `d_p_crit ${dCrit} µm, k ${kStokes}`);
+  const vsRatio = (dp) => kStokes * dp * dp / 1.0; // against the paragraph's own u_0 ≈ 1.0 m/s (weakest plume, 48")
+  assert(Math.abs(vsRatio(50) - 0.07) < 0.005 && Math.abs(vsRatio(100) - 0.27) < 0.005, `v_s/u_0 ${vsRatio(50)} ${vsRatio(100)}`);
+  const foot = "† Fr = U_w / u_0 > 2.7 at this condition (Section 3.3): disrupted regime (Table 3.8). The linear formula's deflection is shown for completeness only and is not a design value.";
+  return [
+    // RB-001
+    { paper: 'rb001', old: '- **Centerline velocity** drops as (z - z_0)^(-1/3) — reducing by approximately 26% when height doubles', new: `- **Centerline velocity** drops as (z - z_0)^(-1/3) — reducing by approximately ${doubling}% when height doubles`, call: '1 − 2^(−1/3)' },
+    { paper: 'rb001', old: 'expanding linearly from D_eff = 0.51 m at z = 0 to d_capture = 1.35 m at z = 1.22 m (48 inches)', new: `expanding linearly from D_eff = 0.51 m at z = 0 to d_capture = ${dcapM(48)} m at z = 1.22 m (48 inches)`, call: 'captureDiameter(48, gasMedium)' },
+    { paper: 'rb001', old: '- At 24": plume diameter (42") fits within hood (48") with margin', new: `- At 24": plume diameter (${dcapIn(24)}") fits within hood (48") with margin`, call: 'captureDiameter(24, gasMedium)' },
+    { paper: 'rb001', old: '- At 36": plume diameter (47") approaches hood width', new: `- At 36": plume diameter (${dcapIn(36)}") approaches hood width`, call: 'captureDiameter(36, gasMedium)' },
+    { paper: 'rb001', old: 'For large gas grills and high-output sources, the plume at 36 inches already exceeds 50 inches in diameter.', new: `For large gas grills and high-output sources, the plume at 36 inches already approaches or exceeds 50 inches in diameter (${dcapIn(36, 'gasLarge')} and ${dcapIn(36, 'gasHigh')} inches).`, call: 'captureDiameter(36, gasLarge|gasHigh)' },
+    // RB-002 Table 3.6b footnote (overhang rounding convention)
+    { paper: 'rb002', old: '#### Table 3.6c:', new: 'Overhang is (W_rec − cooking-surface width) / 2. The 30" row carries its exact 16.5" (0.42 m) because RB-006 Section 3.4 and the site\'s instruments use that value; the other rows round the half inch up to the whole inch.\n\n#### Table 3.6c:', call: 'footnote (round 2)' },
+    // RB-003
+    { paper: 'rb003', old: '**At 24" (0.61 m) mounting height:** z - z_0 = 0.98 m; b_u = 0.141 m; u_0 = 2.12 m/s (417 fpm)', new: `**At 24" (0.61 m) mounting height:** z - z_0 = 0.98 m; b_u = 0.141 m; u_0 = ${f2(gm(24))} m/s (${fpm(24)} fpm)`, call: 'centerlineVelocity(24, gasMedium)' },
+    { paper: 'rb003', old: '**At 30" (0.76 m) mounting height:** z - z_0 = 1.13 m; b_u = 0.163 m; u_0 = 1.99 m/s (392 fpm)', new: `**At 30" (0.76 m) mounting height:** z - z_0 = 1.13 m; b_u = 0.163 m; u_0 = ${f2(gm(30))} m/s (${fpm(30)} fpm)`, call: 'centerlineVelocity(30, gasMedium)' },
+    { paper: 'rb003', old: '**At 48" (1.22 m) mounting height:** z - z_0 = 1.59 m; b_u = 0.229 m; u_0 = 1.71 m/s (337 fpm)', new: `**At 48" (1.22 m) mounting height:** z - z_0 = 1.59 m; b_u = 0.229 m; u_0 = ${f2(gm(48))} m/s (${fpm(48)} fpm)`, call: 'centerlineVelocity(48, gasMedium)' },
+    { paper: 'rb003', old: '- **Centerline velocity decreases by only 26%.**', new: `- **Centerline velocity decreases by only ${reduction1848}%.**`, call: 'centerlineVelocityMs at 18/48 in, gasMedium' },
+    { paper: 'rb003', old: '"At 30 inches, all sources maintain 234-481 fpm centerline velocity"', new: `"At 30 inches, all sources maintain ${Math.min(...fpm30)}-${Math.max(...fpm30)} fpm centerline velocity"`, call: 'min/max centerlineVelocity(30, all 8 sources)' },
+    { paper: 'rb003', old: '**All sources maintain velocities above 179 ft/min (0.91 m/s) even at 72 inches.** The weakest source (pellet smoker low, Q_c = 1.5 kW) still produces 179 ft/min at 72 inches', new: `**All sources maintain velocities above ${fpm(72, 'pelletLow')} ft/min (${f2(ms(72, 'pelletLow'))} m/s) even at 72 inches.** The weakest source (pellet smoker low, Q_c = 1.5 kW) still produces ${fpm(72, 'pelletLow')} ft/min at 72 inches`, call: 'centerlineVelocity(72, pelletLow)' },
+    { paper: 'rb003', old: 'even at 72 inches, no source drops below 179 fpm.', new: `even at 72 inches, no source drops below ${fpm(72, 'pelletLow')} fpm.`, call: 'centerlineVelocity(72, pelletLow)' },
+    // RB-004
+    { paper: 'rb004', old: 'Outdoor practice requires 15-26 inches per side (RB-002), resulting in hoods that are 30-52 inches wider than the cooking surface.', new: 'Outdoor practice requires 11-26 inches per side (RB-002), resulting in hoods that are 22-52 inches wider than the cooking surface.', call: 'RB-002 Section 4.2 / RB-005 Section 3.2 overhang range (v1.1)' },
+    { paper: 'rb004', old: 'the plume self-delivers at 443 fpm centerline velocity', new: `the plume self-delivers at ${fpm(30, 'gasLarge')} fpm centerline velocity`, call: 'centerlineVelocity(30, gasLarge)' },
+    // RB-006 §3.1: the Froude correction is an upper-bound estimate, not applied in the tables
+    { paper: 'rb006', old: 'At higher Froude numbers (Fr > 1.5), the actual deflection exceeds this linear estimate because the plume velocity degrades further as wind disrupts the buoyant rise. A correction factor of (1 + 0.3 * Fr) is applied for Fr > 1:\n\n> **delta_x(z) = 0.35 * U_w * z / u_0(z) * [1 + 0.3 * max(0, Fr - 1)]**', new: 'At higher Froude numbers (Fr > 1.5), the actual deflection can exceed this linear estimate because the plume velocity degrades further as wind disrupts the buoyant rise. An upper-bound estimate for Fr > 1 is obtained by applying a correction factor of (1 + 0.3 * (Fr - 1)):\n\n> delta_x,upper(z) = 0.35 * U_w * z / u_0(z) * [1 + 0.3 * max(0, Fr - 1)]\n\nThis corrected form is an upper-bound estimate only. It is not applied in Tables 3.2a-h, which use the linear formula throughout; conditions with Fr > 2.7 (Table 3.3) are instead marked as the disrupted regime of Table 3.8, in which no deflection value is a design value.', call: 'editorial (round 2, A2)' },
+    { paper: 'rb006', old: 'All values are computed using the calibrated deflection formula from Section 3.1.', new: 'All values are computed using the linear calibrated formula of Section 3.1, delta_x = 0.35 * U_w * z / u_0(z), without the Froude correction; cells marked † lie in the disrupted regime (Fr > 2.7) and are not design values.', call: 'editorial (round 2, A2/A3)' },
+    // RB-006 Tables 3.2a–h: one † footnote per table
+    { paper: 'rb006', old: '† Fr > 2.7 at this condition (Table 3.3): disrupted regime (Table 3.8). The linear formula\'s deflection is shown for completeness only and is not a design value.', new: foot, call: 'footnote wording unified across Tables 3.2a-h' },
+    ...['b', 'd', 'e', 'f', 'g', 'h'].map((next) => ({ paper: 'rb006', old: `#### Table 3.2${next}:`, new: `${foot}\n\n#### Table 3.2${next}:`, call: `† footnote under Table 3.2${String.fromCharCode(next.charCodeAt(0) - 1)}` })),
+    { paper: 'rb006', old: '**Key observations from the deflection tables:**', new: `${foot}\n\n**Key observations from the deflection tables:**`, call: '† footnote under Table 3.2h' },
+    // RB-006 §3.9.4 prose
+    { paper: 'rb006', old: 'For this nearly square hood, the orientation effect is small (4% difference between width-aligned and depth-aligned wind).', new: `For this nearly square hood, the orientation effect is small (${sq}% difference between width-aligned and depth-aligned wind).`, call: 'U_cl(0.42) / U_cl(0.41) − 1' },
+    { paper: 'rb006', old: 'this orientation can improve the critical wind speed by 30 to 55%.', new: `this orientation can improve the critical wind speed by 30 to ${rect}%.`, call: 'U_cl(0.457) / U_cl(0.305) − 1 (66" x 55" case)' },
+    // RB-006 key observations under Tables 3.2a-h, Table 3.7 footnote, §3.3 and §6 Froude quotes, §3.9.5 key finding
+    { paper: 'rb006', old: 'At 30 inches in a 5 mph wind, the charcoal kettle deflects 19 inches (nearly half a hood width)', new: `At 30 inches in a 5 mph wind, the charcoal kettle deflects ${Math.round(deflection(30, 5, SOURCES.charcoalKettle))} inches (nearly half a hood width)`, call: 'deflection(30, 5, charcoalKettle)' },
+    { paper: 'rb006', old: 'Even the strongest plume (gas high-output) deflects 20 inches at 30" in a 10 mph wind.', new: `Even the strongest plume (gas high-output) deflects ${Math.round(deflection(30, 10, SOURCES.gasHigh))} inches at 30" in a 10 mph wind.`, call: 'deflection(30, 10, gasHigh)' },
+    { paper: 'rb006', old: 'All sources at all heights show deflections exceeding 18 inches. At 48 inches, deflections range from 72 inches (gas high-output) to 187 inches (pellet smoker low).', new: `All sources at all heights show deflections exceeding ${Math.floor(Math.min(...Object.keys(SOURCES).flatMap((id) => H.map((h) => deflection(h, 15, SOURCES[id])))))} inches. At 48 inches, deflections range from ${Math.round(deflection(48, 15, SOURCES.gasHigh))} inches (gas high-output) to ${Math.round(deflection(48, 15, SOURCES.pelletLow))} inches (pellet smoker low).`, call: 'min over Tables 3.2a-h at 15 mph (gasHigh 18"); deflection(48, 15, gasHigh|pelletLow)' },
+    { paper: 'rb006', old: 'enters the disrupted regime at 15 mph (Fr = 2.75).', new: `enters the disrupted regime at 15 mph (Fr = ${f2(froude(30, 15, SOURCES.gasHigh))}).`, call: 'froude(30, 15, gasHigh)' },
+    { paper: 'rb006', old: '"Fr = U_w / u_0 = 1.13 at 30" — wind-dominated regime"', new: `"Fr = U_w / u_0 = ${f2(froude(30, 5, SOURCES.gasMedium))} at 30" — wind-dominated regime"`, call: 'froude(30, 5, gasMedium)' },
+    { paper: 'rb006', old: '**Critical finding:** A site with a mean wind of 5 mph experiences instantaneous peak deflections', new: `${foot}\n\n**Critical finding:** A site with a mean wind of 5 mph experiences instantaneous peak deflections`, call: '† footnote under Table 3.7' },
+    { paper: 'rb006', old: 'requires approximately 2.3 to 4.0 inches of additional overhang per mph of wind speed, depending on source strength and mounting height. A 5 mph wind requires 11 to 20 inches of additional overhang', new: (() => { const rows = [[24, 'gasMedium'], [30, 'gasMedium'], [36, 'gasMedium'], [48, 'gasMedium'], [30, 'charcoalKettle'], [30, 'pelletLow']]; const per = rows.map(([h, id]) => deflection(h, 1, SOURCES[id])), five = rows.map(([h, id]) => Math.round(deflection(h, 5, SOURCES[id]))); return `requires approximately ${f1(Math.min(...per))} to ${f1(Math.max(...per))} inches of additional overhang per mph of wind speed, depending on source strength and mounting height. A 5 mph wind requires ${Math.min(...five)} to ${Math.max(...five)} inches of additional overhang`; })(), call: 'min/max of the §3.9.5 table columns' },
+    // RB-008 Section 6 figure notes (Gas Medium 30" by exposure class)
+    { paper: 'rb008', old: '  - Exposed with panels: 841 CFM (orange)\n  - Exposed without panels: 1169 CFM (red)', new: `  - Exposed with panels: ${gpan} CFM (orange)\n  - Exposed without panels: ${req(GM, 'exposed')} CFM (red)`, call: 'round(plumeCfm(30, gasMedium) × 4.14 | 5.75)' },
+    { paper: 'rb008', old: 'CFM specification box showing: 609 (Sheltered), 747 (Moderate), 841 (Exposed + panels)', new: `CFM specification box showing: ${req(GM, 'sheltered')} (Sheltered), ${gmod} (Moderate), ${gpan} (Exposed + panels)`, call: 'round(plumeCfm(30, gasMedium) × K_CFM)' },
+    // RB-006 §3.11 weaker sources
+    { paper: 'rb006', old: 'For weaker sources (charcoal kettle, pellet smoker low), these thresholds are approximately 30-40% lower: noticeable degradation at 3 mph mean, marginal at 5 mph, inadequate at 7 mph.', new: `For weaker sources (charcoal kettle, pellet smoker low), these thresholds are approximately ${lo5}-${hi5}% lower: noticeable degradation at 1.5-2 mph mean, marginal at 2-3 mph, inadequate at 3-4 mph.`, call: `charcoal ${['u25', 'uCenterline', 'u50'].map((k) => f1(weak[0][k])).join('/')}, pelletLow ${['u25', 'uCenterline', 'u50'].map((k) => f1(weak[1][k])).join('/')} vs gasMedium ${['u25', 'uCenterline', 'u50'].map((k) => f1(g[k])).join('/')} mph → ${lower.map((x) => Math.round(x)).join('/')}% lower; ÷ G = 1.7` },
+    // RB-008 §3.3 answer bullets and Table 3.6 key finding
+    { paper: 'rb008', old: '- **Sheltered installation:** 727 CFM minimum; specify a 900 CFM blower to provide 24% margin.', new: `- **Sheltered installation:** ${gl.sheltered} CFM minimum; specify a ${blowerFor(gl.sheltered)} CFM blower to provide ${margin(gl.sheltered)}% margin.`, call: 'round(plumeCfm(30, gasLarge) × 3.0); blowerFor()' },
+    { paper: 'rb008', old: '- **Moderate wind exposure:** 892 CFM minimum; specify a 1200 CFM blower to provide 35% margin.', new: `- **Moderate wind exposure:** ${gl.moderate} CFM minimum; specify a ${blowerFor(gl.moderate)} CFM blower to provide ${margin(gl.moderate)}% margin.`, call: 'round(plumeCfm(30, gasLarge) × 3.68); blowerFor()' },
+    { paper: 'rb008', old: '- **Exposed installation with side panels:** 1003 CFM minimum; specify a 1200 CFM blower to provide 20% margin.', new: `- **Exposed installation with side panels:** ${gl.exposedPanels} CFM minimum; specify a ${blowerFor(gl.exposedPanels)} CFM blower to provide ${margin(gl.exposedPanels)}% margin.`, call: 'round(plumeCfm(30, gasLarge) × 4.14); blowerFor()' },
+    { paper: 'rb008', old: '- **Exposed installation without panels:** 1394 CFM minimum; specify an 1800 CFM blower (29% margin; 1.1 x 1394 = 1533 CFM exceeds the 1500 CFM size).', new: `- **Exposed installation without panels:** ${gl.exposed} CFM minimum; specify an ${blowerFor(gl.exposed)} CFM blower (${margin(gl.exposed)}% margin; 1.1 x ${gl.exposed} = ${Math.round(1.1 * gl.exposed)} CFM exceeds the 1500 CFM size).`, call: 'round(plumeCfm(30, gasLarge) × 5.75); blowerFor()' },
+    { paper: 'rb008', old: 'If the installation includes side panels, the further step from Moderate to Exposed adds only 13%.', new: `If the installation includes side panels, the further step from Moderate to Exposed adds only ${Math.round((gpan / gmod - 1) * 100)}%.`, call: `${gpan} / ${gmod} − 1 (Gas Medium 30")` },
+    // RB-011 §2.3 worked calculation (round 2, A1 — changes a stated conclusion) and the Section 6 figure note
+    { paper: 'rb011', old: '> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / 0.0271) = sqrt(0.369) = 0.61 mm = 610 micrometers\n\nThis means that all grease aerosol particles below approximately 600 micrometers in diameter — which encompasses the entire aerosol distribution including the coarsest spray droplets — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. Gravitational settling does not meaningfully filter any particle size class from the plume during the vertical transport from cooking surface to hood.\n\nThe practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface. All particle sizes are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.', new: `> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = sqrt(${Math.round(0.01 / 2.71e-5)}) = ${Math.round(dCrit)} micrometers\n\nThis means that grease aerosol particles below approximately 20 micrometers in diameter — the ultrafine and accumulation modes and most of the coarse mode, which together carry the large majority of the aerosol mass (Section 2.2) — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. The coarse tail behaves differently: for the weakest plume, v_s / u_0 is approximately ${vsRatio(50).toFixed(2)} at 50 micrometers and ${vsRatio(100).toFixed(2)} at 100 micrometers (Table 2.3, Table 3.3a), so the largest spray droplets rise measurably more slowly than the plume gas and are partially depleted — by settling within the plume and by fallout at the plume edge — before reaching hood height. Gravitational settling therefore does not filter the sub-20-micrometer aerosol from the plume during vertical transport, but it does begin to thin the coarsest droplets.\n\nThe practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface below approximately 20 micrometers, with a coarse tail that is somewhat depleted relative to the source. All particle sizes that reach the hood are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.`, call: `d_p_crit = sqrt(0.01 · u_0 / k), k = (ρ_p − ρ_a) g / (18 μ) = ${kStokes.toExponential(3)} m/s per µm²; v_s/u_0 at 50/100 µm vs the paragraph's u_0 ≈ 1.0 m/s (u_0(48", charcoalKettle) = ${f2(ms(48, 'charcoalKettle'))} m/s)` },
+    { paper: 'rb011', old: 'u_0 at 48 inches for charcoal kettle (1.07 m/s) — "Weakest plume at 48 inches".', new: `u_0 at 48 inches for charcoal kettle (${f2(ms(48, 'charcoalKettle'))} m/s) — "Weakest plume at 48 inches".`, call: 'centerlineVelocityMs(heightM(48), charcoalKettle)' },
+    { paper: 'rb011', old: '- All settling velocities fall well below both plume velocity references, confirming that no particle size settles out of the plume.', new: '- The settling velocities of the three modal sizes fall two to seven orders of magnitude below both plume velocity references; only the coarse tail above approximately 50 micrometers reaches a few percent to a quarter of the weakest plume velocity (Section 2.3).', call: 'v_s(0.03|0.4|12 µm) / u_0(48", charcoalKettle); v_s/u_0 at 50/100 µm' },
+    // RB-012
+    { paper: 'rb012', old: '(392 fpm for the medium gas grill at 30 inches)', new: `(${fpm(30)} fpm for the medium gas grill at 30 inches)`, call: 'centerlineVelocity(30, gasMedium)' },
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // Markdown table plumbing
@@ -182,6 +435,9 @@ const prose = [
 function base(paper) { return baseText[paper] ??= execFileSync('git', ['show', `${BASE}:${P[paper]}`], { cwd: ROOT, encoding: 'utf8' }); }
 function cur(paper) { return curText[paper] ??= readFileSync(path.join(ROOT, P[paper]), 'utf8'); }
 
+// table: "#### …" heading substring, or {header, after?, label?} — `after` is a substring of a line the header
+// row must follow (several blocks under one heading share a header row); row: substring of the first cell, or a
+// RegExp tested against it.
 function locate(lines, table, col, row, group) {
   let start = -1;
   if (typeof table === 'string') {
@@ -190,17 +446,21 @@ function locate(lines, table, col, row, group) {
     start = hi + 1;
     while (start < lines.length && !lines[start].startsWith('|')) start++;
   } else {
-    start = lines.findIndex((l) => l.startsWith(table.header));
+    let from = 0;
+    if (table.after) { from = lines.findIndex((l) => l.includes(table.after)); if (from < 0) throw new Error(`anchor not found: ${table.after}`); }
+    start = lines.findIndex((l, i) => i >= from && l.startsWith(table.header));
     if (start < 0) throw new Error(`table header not found: ${table.header}`);
   }
   const header = lines[start].split('|').slice(1, -1).map((s) => s.trim());
-  const ci = header.findIndex((h) => h.includes(col));
+  let ci = header.findIndex((h) => h === col); // exact first: "CFM Change" must not resolve to "K_CFM Change"
+  if (ci < 0) ci = header.findIndex((h) => h.includes(col));
   if (ci < 0) throw new Error(`column "${col}" not in ${JSON.stringify(header)}`);
+  const rowMatch = (c) => (row instanceof RegExp ? row.test(c) : c.includes(row));
   let g = null;
   for (let i = start + 2; i < lines.length && lines[i].startsWith('|'); i++) {
     const cellsIn = lines[i].split('|').slice(1, -1).map((s) => s.trim());
     if (cellsIn[0].startsWith('**') && cellsIn.slice(1).every((c) => c === '')) { g = cellsIn[0].replace(/\*/g, ''); continue; }
-    if (cellsIn[0].includes(row) && (!group || g === group)) return { line: i, ci, cells: cellsIn };
+    if (rowMatch(cellsIn[0]) && (!group || g === group)) return { line: i, ci, cells: cellsIn };
   }
   throw new Error(`row "${row}"${group ? ` in ${group}` : ''} not found in ${JSON.stringify(table)}`);
 }
@@ -227,8 +487,8 @@ for (const c of cells) {
   const lines = cur(c.paper).split('\n');
   const loc = locate(lines, c.table, c.col, c.row, c.group);
   if (APPLY) { setCell(lines, loc, c.value); curText[c.paper] = lines.join('\n'); }
-  const label = typeof c.table === 'string' ? c.table.replace(':', '') : 'table ' + c.table.header.split('|')[1].trim();
-  (byPaper[c.paper] ??= []).push(`| ${P[c.paper].replace(R, '')}:${loc.line + 1} | ${label} | ${c.group ? c.group + ' ' : ''}${c.row} × ${c.col} | ${oldVal} | ${c.value} | \`${c.call}\` |${oldVal === c.value ? ' unchanged' : ''}`);
+  const label = typeof c.table === 'string' ? c.table.replace(':', '') : c.table.label ?? 'table ' + c.table.header.split('|')[1].trim();
+  (byPaper[c.paper] ??= []).push(`| ${P[c.paper].replace(R, '')}:${loc.line + 1} | ${label} | ${c.group ? c.group + ' ' : ''}${c.rowLabel ?? c.row} × ${c.col} | ${oldVal} | ${c.value} | \`${c.call}\` |${oldVal === c.value ? ' unchanged' : ''}`);
   oldVal === c.value ? same++ : changed++;
 }
 for (const [paper, rows] of Object.entries(byPaper)) {
@@ -247,9 +507,15 @@ out.push('| file:line | old | new | basis |');
 out.push('|---|---|---|---|');
 for (const p of prose) {
   const text = cur(p.paper);
-  let idx = text.indexOf(p.old), status = '';
-  if (idx < 0) { if (text.indexOf(p.new) >= 0) { idx = text.indexOf(p.new); status = ' (already applied)'; } else throw new Error(`prose not found in ${p.paper}: ${p.old.slice(0, 60)}`); }
-  else if (APPLY) { if (text.indexOf(p.old, idx + 1) >= 0) throw new Error(`prose not unique in ${p.paper}: ${p.old.slice(0, 60)}`); curText[p.paper] = text.replace(p.old, p.new); }
+  // "new" present ⇒ already applied (it may contain "old", e.g. a footnote inserted before a heading), so a
+  // second --apply is a no-op; otherwise "old" must be present and unique.
+  let idx = text.indexOf(p.new), status = '';
+  if (idx >= 0) status = ' (already applied)';
+  else {
+    idx = text.indexOf(p.old);
+    if (idx < 0) throw new Error(`prose not found in ${p.paper}: ${p.old.slice(0, 60)}`);
+    if (APPLY) { if (text.indexOf(p.old, idx + 1) >= 0) throw new Error(`prose not unique in ${p.paper}: ${p.old.slice(0, 60)}`); curText[p.paper] = text.replace(p.old, p.new); }
+  }
   const line = text.slice(0, idx).split('\n').length;
   const esc = (s) => s.replace(/\|/g, '\\|').replace(/\n/g, ' ⏎ ');
   out.push(`| ${P[p.paper].replace(R, '')}:${line}${status} | ${esc(p.old)} | ${esc(p.new)} | \`${p.call}\` |`);
