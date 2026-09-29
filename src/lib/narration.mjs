@@ -105,6 +105,8 @@ const PANELS_LABEL = { none: 'no side panels', both: 'side panels on both sides'
 const I02_PANELS_CLAUSE = { none: ' with no side panels', both: ' with side panels on both sides' };
 const DIR_LABEL = { side: 'side wind', rear: 'wind from the rear' };
 const MOUNT_LABEL = { wall: 'wall-mount', peninsula: 'peninsula', island: 'island' };
+// Indefinite article by the label's first letter ("an island", "a wall-mount").
+const article = (label) => (/^[aeiou]/i.test(String(label)) ? 'an' : 'a');
 const SOURCE_LABEL = {
   gasSmall: 'small gas grill', gasMedium: 'medium gas grill', gasLarge: 'large gas grill', gasHigh: 'high-output gas grill',
   charcoalKettle: 'charcoal kettle', woodFired: 'wood-fired grill', pelletLow: 'pellet smoker (low)', pelletHigh: 'pellet smoker (high)',
@@ -131,8 +133,9 @@ export function templateNarration(state) {
       ? `specify a ${fmt(o.blowerCfm)} CFM blower.`
       : `no standard blower size in the RB-008 ladder meets ${o.blowerMargin} × ${fmt(o.minimumCfm)} = ${fmt(o.blowerNeedCfm)} CFM — `
         + `the requirement exceeds the largest standard size, ${fmt(o.blowerLadderTopCfm)} CFM.`;
-    let text = `A ${fmt(i.sourceBtu)} BTU/hr ${SOURCE_LABEL[i.source] || 'appliance'} at a ${i.heightIn}-inch mounting height on a `
-      + `${MOUNT_LABEL[i.mount] || i.mount} in ${EXPOSURE_LABEL[i.exposure] || i.exposure} wind exposure${panelsClause} needs at least `
+    const mountLabel = MOUNT_LABEL[i.mount] || i.mount;
+    let text = `A ${fmt(i.sourceBtu)} BTU/hr ${SOURCE_LABEL[i.source] || 'appliance'} at a ${i.heightIn}-inch mounting height on ${article(mountLabel)} `
+      + `${mountLabel} in ${EXPOSURE_LABEL[i.exposure] || i.exposure} wind exposure${panelsClause} needs at least `
       + `${fmt(o.minimumCfm)} CFM (RB-008: a ${fmt(o.plumeCfm)} CFM plume times K_CFM ${o.kCfm}); `
       + blowerClause;
     if (typeof o.coveragePct === 'number' && typeof i.widthIn === 'number') {

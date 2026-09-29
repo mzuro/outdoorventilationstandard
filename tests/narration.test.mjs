@@ -121,6 +121,10 @@ test('templateNarration(i02) is itself validation-clean and carries the sheet nu
   assert.equal(validateNarration(t, I02_STATE).ok, true, JSON.stringify(validateNarration(t, I02_STATE).bad));
   const w = templateNarration(computeState('i02', { source: 'gasLarge', height: 30, mount: 'wall', exposure: 'moderate', panels: 'none', width: 48 }));
   assert.match(w, /892 CFM/);
+  // indefinite article follows the mount label: "an island", "a wall-mount"
+  assert.match(t, /on an island in/);
+  assert.doesNotMatch(t, /\ba island\b/);
+  assert.match(w, /on a wall-mount in/);
   assert.equal(validateNarration(w, computeState('i02', { source: 'gasLarge', height: 30, mount: 'wall', exposure: 'moderate', panels: 'none', width: 48 })).ok, true);
 });
 
