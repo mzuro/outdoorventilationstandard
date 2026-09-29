@@ -20,7 +20,7 @@ test('normalizeQuestion is stable for non-string input', () => {
 });
 
 test('askCacheKey is prefixed with the physics version and normalized (a physics re-base invalidates every cached answer)', () => {
-  assert.equal(PHYSICS_VERSION, 'v2');
-  assert.equal(askCacheKey('What CFM?'), 'ask:v2:what cfm');
+  assert.equal(PHYSICS_VERSION, 'v3'); // v3: i02 above-ladder state-sheet shape (version.mjs)
+  assert.equal(askCacheKey('What CFM?'), 'ask:v3:what cfm');
   assert.ok(askCacheKey('anything').startsWith(`ask:${PHYSICS_VERSION}:`));
 });

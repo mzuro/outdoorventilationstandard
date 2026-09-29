@@ -586,12 +586,20 @@ export function createInstrument(rootEl, spec) {
     else if (stripMq.addListener) stripMq.addListener(stripMqHandler);
   }
 
-  function setReadout(id, value) {
+  // setReadout(id, value[, display]): `display`, when a string, is shown
+  // VERBATIM in place of fmt(value) — for readouts whose formatting the
+  // engine's fmt() cannot express (K_CFM "3.68×"; a blower above the
+  // standard-size ladder, "> 3,000 CFM"). It is the instrument's own
+  // string and is mirrored unchanged into the sticky strip below, so a
+  // readout and its strip cell can never show different text (the
+  // Stage-B review caught i02 overriding only the <output>, leaving the
+  // strip at "0 CFM").
+  function setReadout(id, value, display) {
     const r = readoutEls.get(id);
     if (!r) return;
-    r.el.textContent = fmt(value, r.format);
-    // Mirror the SAME formatted string into the sticky strip (W5-T2) —
-    // never a recomputation, so the strip cannot disagree with the readout.
+    r.el.textContent = typeof display === 'string' ? display : fmt(value, r.format);
+    // Mirror the SAME string into the sticky strip (W5-T2) — never a
+    // recomputation, so the strip cannot disagree with the readout.
     const cell = stripCells.get(id);
     if (cell) cell.textContent = r.el.textContent;
   }

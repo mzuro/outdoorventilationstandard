@@ -7,9 +7,11 @@
 //   minimum   = round(table × mount multiplier)   (§3.9, rb-008:560-568)
 //   blower    = smallest standard size ≥ 1.1 × minimum             rb-008:870, rb-008:614
 //
-// Hood WIDTH is not a CFM input (RB-008 §3.4.3 / Table 3.10: a wider hood
-// needs less, not more); coverageAdvisory() reports the RB-008 Table 3.10
-// coverage band for the UI instead. Pure module.
+// Hood WIDTH is not a CFM input: RB-008 §3.4.3 sizes CFM from Q_c and
+// mounting height alone (rb-008:381-395). Width is the site's separate
+// coverage check (plan §2): coverageAdvisory() reports the RB-008 Table
+// 3.10 coverage band (rb-008:580-591 — that table rates a NARROWER hood
+// as needing more CFM, 900 at 42 in vs 609 at 57 in). Pure module.
 
 import { SOURCES, heightM } from './heat.mjs';
 import { recommendedWidth } from './plume.mjs';

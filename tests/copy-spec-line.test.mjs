@@ -59,7 +59,7 @@ test('buildSpecLine: the label is the SAME state the numbers were computed for, 
   assert.ok(bandsFor(noPanels).minimum > bands.minimum, 'no panels needs more (K_CFM 5.75 vs 4.14, rb-008:144-145)');
 });
 
-test('buildSpecLine: hood width never changes the line\'s CFM numbers (RB-008 §3.4.3)', () => {
+test('buildSpecLine: hood width never changes the line\'s CFM numbers (RB-008 §3.4.3 sizes CFM from Q_c and height, rb-008:381-395; width is the Table 3.10 coverage check, rb-008:580-591)', () => {
   const a = { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 42 };
   const b = { ...a, 'i02-width': 72 };
   assert.equal(buildSpecLine(a, bandsFor(a), HREF), buildSpecLine(b, bandsFor(b), HREF));

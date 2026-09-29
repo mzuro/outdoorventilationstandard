@@ -238,7 +238,7 @@ test('explain: foreign hostname -> 403; good token -> proceeds to rate limit the
 
 // ---------- physics-version cache keys (Stage A re-base) ----------
 // Every cached narration/answer was computed by the pre-rebase physics, so
-// the KV keys carry PHYSICS_VERSION: explain:v2:… and ask:v2:…. Old-prefix
+// the KV keys carry PHYSICS_VERSION: explain:v3:… and ask:v3:…. Old-prefix
 // entries must never be served again.
 
 test('explain: cached body is served under explain:<PHYSICS_VERSION>:<params key>, after Turnstile + rate limit, before AI', async () => {
@@ -246,7 +246,7 @@ test('explain: cached body is served under explain:<PHYSICS_VERSION>:<params key
   const { clampParams, paramsCacheKey } = await import('../src/lib/params.mjs');
   const clamped = clampParams('i01', OK_EXPLAIN.params).params;
   const key = `explain:${PHYSICS_VERSION}:${paramsCacheKey('i01', clamped)}`;
-  assert.ok(key.startsWith('explain:v2:'), key);
+  assert.ok(key.startsWith('explain:v3:'), key); // pinned on purpose: bump here when version.mjs bumps
   const kv = makeKv({ [key]: JSON.stringify({ explanation: 'cached narration', state: {} }) });
   const res = await worker.fetch(post('/api/explain', OK_EXPLAIN), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
   assert.equal(res.status, 200);
@@ -256,12 +256,13 @@ test('explain: cached body is served under explain:<PHYSICS_VERSION>:<params key
 });
 
 test('explain: a pre-rebase cache entry (explain:i01:…, same params, no version prefix) is NOT served', async () => {
+  const { PHYSICS_VERSION } = await import('../static/js/ovs/physics/version.mjs');
   const { clampParams, paramsCacheKey } = await import('../src/lib/params.mjs');
   // Seed the SAME clamped params (incl. the defaulted dir=side) so the only
   // difference from the live key is the missing PHYSICS_VERSION segment.
   const liveTail = paramsCacheKey('i01', clampParams('i01', OK_EXPLAIN.params).params);
   const stale = `explain:${liveTail}`;
-  assert.equal(`explain:v2:${liveTail}`.replace(':v2:', ':'), stale);
+  assert.equal(`explain:${PHYSICS_VERSION}:${liveTail}`.replace(`:${PHYSICS_VERSION}:`, ':'), stale);
   const kv = makeKv({ [stale]: JSON.stringify({ explanation: 'stale physics' }) });
   const res = await worker.fetch(post('/api/explain', OK_EXPLAIN), { QUESTION_CLICKS: kv, TURNSTILE_SECRET: 's' });
   assert.equal(res.status, 503);

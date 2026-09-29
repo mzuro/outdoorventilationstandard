@@ -11,10 +11,13 @@
 // columns), the MOUNT (wall / peninsula / island multipliers, §3.9), the
 // wind EXPOSURE class and, for the exposed class only, whether SIDE PANELS
 // are fitted (K_CFM 4.14 with, 5.75 without; rb-008:142-145). Hood WIDTH
-// is deliberately NOT a CFM input — RB-008 §3.4.3 / Table 3.10 show a
-// wider hood needs less, not more — so the width control lives in its own
-// "COVERAGE CHECK" group whose only output is the Table 3.10 coverage
-// band from coverageAdvisory(); it never touches the CFM readouts.
+// is deliberately NOT a CFM input: RB-008 §3.4.3 sizes CFM from Q_c and
+// mounting height alone (rb-008:381-395), and width is the site's
+// separate COVERAGE advisory (plan §2) — so the width control lives in
+// its own "COVERAGE CHECK" group whose only output is the RB-008 Table
+// 3.10 coverage band from coverageAdvisory() (rb-008:580-591; that table
+// rates a NARROWER hood as needing more CFM, not less: 900 at 42 in vs
+// 609 at 57 in). It never touches the CFM readouts.
 //
 // Readouts: MINIMUM (hero; RB-008 required CFM = CFM_plume × K_CFM × mount)
 // and BLOWER (App A step 8: smallest standard size ≥ 1.1 × minimum), plus
@@ -79,6 +82,24 @@ export function mountFor(value) {
 /** "60k gas", "15k charcoal", "40k wood-fired", "30k pellet". */
 export const fmtSource = (src) => `${Math.round(src.btu / 1000)}k ${FUEL_WORD[src.fuel] || src.fuel}`;
 const fmtCfm = (cfm) => Math.round(cfm).toLocaleString('en-US');
+
+/**
+ * The BLOWER readout when no standard size on the cfm.mjs ladder clears
+ * 1.1 × minimum (blowerFor() === null): "> 3,000 CFM" — the ladder's top
+ * rung (rb-008:614 lists 600–1,500; the site extends to 3,000, cfm.mjs),
+ * never the minimum relabelled as a blower. Shown verbatim in BOTH the
+ * <output> and the sticky-strip cell via the engine's display override.
+ */
+export const ABOVE_LADDER_READOUT = `> ${fmtCfm(BLOWER_SIZES[BLOWER_SIZES.length - 1])} CFM`;
+
+/**
+ * The COVERAGE CHECK group's note. RB-008 §3.4.3 (rb-008:381-395) sets CFM
+ * from Q_c and mounting height — width is not an input; the narrower-hood
+ * statement is RB-008 Table 3.10 (rb-008:580-591: 900 CFM at 42 in vs 609
+ * at 57 in), and treating width as a separate coverage check is the site's
+ * decision (plan §2).
+ */
+export const COVERAGE_NOTE = 'CFM is set by the source and mounting height (RB-008 §3.4.3); width is checked separately as coverage — RB-008 Table 3.10 rates a narrower hood as needing more, not less. Compare the hood with the RB-002 recommended width here.';
 
 /**
  * Grade a user-entered "rated CFM" against this instrument's own computed
@@ -282,18 +303,15 @@ export function mount(figureEl) {
     const cov = coverageAdvisory(Number(state['i02-width']), riseIn, src);
 
     setReadout('minimum', bands.minimum);
-    setReadout('blower', bands.blower != null ? bands.blower : 0);
-    setReadout('kCfm', bands.kCfm);
+    // Local formatting via the engine's display override (brief: extend
+    // fmt ONLY here, not in the engine). The default formatter rounds to an
+    // integer, which would turn K_CFM 3.68 into "4"; and a blower above the
+    // ladder has no size, so the readout says so ("> 3,000 CFM") — the
+    // override reaches the sticky strip too, so the strip can never show
+    // "0 CFM" or the minimum in the blower cell.
+    setReadout('blower', bands.blower != null ? bands.blower : 0, bands.blower == null ? ABOVE_LADDER_READOUT : undefined);
+    setReadout('kCfm', bands.kCfm, `${bands.kCfm.toFixed(2)}×`);
     setReadout('plumeCfm', bands.plumeCfm);
-    // Local formatting (brief: extend fmt ONLY here, not in the engine).
-    // The engine's default formatter rounds to an integer, which would turn
-    // K_CFM 3.68 into "4"; and a blower above the ladder has no size.
-    const kEl = container.querySelector('output[aria-labelledby="kCfm-label"]');
-    if (kEl) kEl.textContent = `${bands.kCfm.toFixed(2)}×`;
-    if (bands.blower == null) {
-      const bEl = container.querySelector('output[aria-labelledby="blower-label"]');
-      if (bEl) bEl.textContent = `> ${fmtCfm(BLOWER_SIZES[BLOWER_SIZES.length - 1])} CFM`;
-    }
 
     // Expose the exact requiredCfm()/coverageAdvisory() output on the
     // shared ctx channel so the verdict stamp (spec.verdict) and the
@@ -440,7 +458,11 @@ export function mount(figureEl) {
       const minStr = fmtCfm(bands.minimum);
       let plain;
       if (grade === 'PASS') {
-        plain = `${ratedStr} CFM meets the RB-008 blower for this configuration.`;
+        // Above the ladder there is no blower size to "meet": say what was
+        // checked — the paper's 1.1 × minimum rule itself (rb-008:870).
+        plain = bands.blower != null
+          ? `${ratedStr} CFM meets the RB-008 blower for this configuration.`
+          : `${ratedStr} CFM meets ${BLOWER_MARGIN} × the ${minStr} CFM RB-008 minimum; no standard blower size covers this configuration.`;
       } else if (grade === 'MARGINAL') {
         plain = `${ratedStr} CFM clears the ${minStr} CFM minimum but is under the ${blowerStr} CFM blower.`;
       } else {
@@ -500,10 +522,7 @@ export function mount(figureEl) {
     else article.appendChild(section);
     return section;
   }
-  const coverage = regroup(
-    'i02-width', 'ovs-i-coverage', 'COVERAGE CHECK',
-    'Width does not set CFM (RB-008 §3.4.3): a narrower hood needs more, not less. Check the hood against the RB-002 recommended width instead.',
-  );
+  const coverage = regroup('i02-width', 'ovs-i-coverage', 'COVERAGE CHECK', COVERAGE_NOTE);
   if (coverage) {
     refs.coverageNote = document.createElement('p');
     refs.coverageNote.className = 'ovs-i-coverage-readout';

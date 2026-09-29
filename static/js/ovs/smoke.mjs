@@ -16,9 +16,9 @@
 // pure exports below carry all the physics and are unit-tested headless; the
 // createSmokeField factory is a harmless no-op when there is no SVG group.
 //
-// STAGE-A note: instruments still pass a legacy `w0` state key (i01/i03/i05/
-// i07/i08/i09) and `panels: 'one'`; both are ignored here (w0 had no paper
-// basis; 'one' has no paper row, rb-009:369). Remove in Stage B.
+// deriveParams() reads only the keys named in its signature; `panels` is
+// 'none' | 'both' | 'three' (a single panel has no RB-009 row, rb-009:369,
+// and no instrument offers it since Stage B).
 
 import { SOURCES } from './physics/heat.mjs';
 import { captureDiameter, centerlineVelocity, plumeHalfWidthBT } from './physics/plume.mjs';

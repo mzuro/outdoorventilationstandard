@@ -103,3 +103,30 @@ test('PAPER_MAP only lists papers actually cited for these instruments elsewhere
   assert.deepEqual(PAPER_MAP.i01, ['RB-001', 'RB-002', 'RB-005', 'RB-006', 'RB-009']);
   assert.deepEqual(PAPER_MAP.i02, ['RB-001', 'RB-006', 'RB-008']);
 });
+
+// --- Stage-B review HIGH: above the blower ladder the sheet must never
+//     relabel the minimum as the blower ---------------------------------
+test('i02 above the ladder (Gas High-Output, 48 in, island, exposed): no blowerCfm; the sheet carries margin / need / ladder top instead', () => {
+  const s = computeI02State({ source: 'gasHigh', height: 48, mount: 'island', exposure: 'exposed', panels: 'none' });
+  const r = requiredCfm({ src: SOURCES.gasHigh, riseIn: 48, mount: 'island', exposure: 'exposed', panels: 'none' });
+  assert.equal(r.blower, null, 'precondition: 1.1 × minimum exceeds the 3,000 CFM ladder top');
+  assert.equal('blowerCfm' in s.outputs, false, 'the minimum must not be relabelled as the blower');
+  assert.equal(s.outputs.minimumCfm, 3732);
+  assert.equal(s.outputs.blowerMargin, 1.1);                                  // rb-008:870
+  assert.equal(s.outputs.blowerNeedCfm, Math.round(3732 * 1.1));              // rb-008:870 → 4,105
+  assert.equal(s.outputs.blowerNeedCfm, 4105);
+  assert.equal(s.outputs.blowerLadderTopCfm, 3000);                           // rb-008:614 ladder, site-extended to 3,000 (cfm.mjs)
+  assert.ok(s.outputs.blowerNeedCfm > s.outputs.blowerLadderTopCfm, 'the need exceeds the largest standard size');
+  for (const v of Object.values(s.outputs)) assert.ok(typeof v === 'number' && Number.isFinite(v));
+  // A configuration ON the ladder carries blowerCfm and none of the three.
+  const on = computeI02State({ source: 'gasLarge', height: 30, mount: 'wall', exposure: 'moderate', panels: 'none' });
+  assert.equal(on.outputs.blowerCfm, 1200);                                   // rb-008:310
+  for (const k of ['blowerMargin', 'blowerNeedCfm', 'blowerLadderTopCfm']) assert.equal(k in on.outputs, false, k);
+});
+
+test('i02 sheet echoes panels so the narration can name them (rb-008:144-145)', () => {
+  const s = computeI02State({ source: 'gasLarge', height: 30, mount: 'island', exposure: 'exposed', panels: 'both' });
+  assert.equal(s.inputs.panels, 'both');
+  assert.equal(s.outputs.kCfm, 4.14);                                         // rb-008:144 (exposed, with panels)
+  assert.equal(computeI02State({ source: 'gasLarge', height: 30, mount: 'island', exposure: 'exposed', panels: 'none' }).outputs.kCfm, 5.75); // rb-008:145
+});

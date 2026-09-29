@@ -135,3 +135,34 @@ test('templateNarration(i01) is itself validation-clean', () => {
 test('templateNarration degrades safely on a malformed state', () => {
   assert.match(templateNarration(null), /unavailable/i);
 });
+
+// --- Stage-B review: above-ladder blower + side panels in the i02 template ---
+
+test('templateNarration(i02) above the ladder says the requirement exceeds the largest standard size — never "specify a <minimum> CFM blower"', () => {
+  const s = computeState('i02', { source: 'gasHigh', height: 48, mount: 'island', exposure: 'exposed', panels: 'none' });
+  assert.equal('blowerCfm' in s.outputs, false, 'precondition');
+  const t = templateNarration(s);
+  assert.match(t, /no standard blower size in the RB-008 ladder meets 1\.1 × 3,732 = 4,105 CFM/);       // rb-008:870
+  assert.match(t, /exceeds the largest standard size, 3,000 CFM/);                                      // rb-008:614 ladder, site-extended
+  assert.doesNotMatch(t, /specify a/);
+  assert.doesNotMatch(t, /3,732 CFM blower/);
+  assert.equal(validateNarration(t, s).ok, true, JSON.stringify(validateNarration(t, s).bad));
+  // A model narration that DID relabel the minimum as the blower still
+  // passes the numeral check (3,732 is a sheet number) — which is exactly
+  // why the sheet itself must not carry it as blowerCfm.
+});
+
+test('templateNarration(i02) names side panels in the exposed class only (matches the copy-spec line: "exposed + panels" / "exposed")', () => {
+  const withPanels = computeState('i02', { source: 'gasLarge', height: 30, mount: 'island', exposure: 'exposed', panels: 'both' });
+  const noPanels = computeState('i02', { source: 'gasLarge', height: 30, mount: 'island', exposure: 'exposed', panels: 'none' });
+  const moderate = computeState('i02', { source: 'gasLarge', height: 30, mount: 'island', exposure: 'moderate', panels: 'both' });
+  const tw = templateNarration(withPanels);
+  const tn = templateNarration(noPanels);
+  const tm = templateNarration(moderate);
+  assert.match(tw, /exposed wind exposure with side panels on both sides needs at least 1,205 CFM/);   // 1,004 × 1.20 (rb-008:144, rb-008:561)
+  assert.match(tw, /K_CFM 4\.14/);                                                                       // rb-008:144
+  assert.match(tn, /exposed wind exposure with no side panels needs at least 1,673 CFM/);               // 1,394 × 1.20 (rb-008:145, rb-008:561)
+  assert.match(tn, /K_CFM 5\.75/);                                                                       // rb-008:145
+  assert.doesNotMatch(tm, /panels/, 'panels do not enter K_CFM outside the exposed class (rb-008:144-145)');
+  for (const [t, s] of [[tw, withPanels], [tn, noPanels], [tm, moderate]]) assert.equal(validateNarration(t, s).ok, true, JSON.stringify(validateNarration(t, s).bad));
+});

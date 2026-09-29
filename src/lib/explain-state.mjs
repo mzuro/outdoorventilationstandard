@@ -9,7 +9,7 @@ import { captureFraction } from '../../static/js/ovs/physics/capture.mjs';
 import { captureDiameter, recommendedWidth } from '../../static/js/ovs/physics/plume.mjs';
 import { deflection, froude } from '../../static/js/ovs/physics/wind.mjs';
 import { effectiveWind } from '../../static/js/ovs/physics/sidepanels.mjs';
-import { requiredCfm, coverageAdvisory } from '../../static/js/ovs/physics/cfm.mjs';
+import { requiredCfm, coverageAdvisory, BLOWER_MARGIN, BLOWER_SIZES } from '../../static/js/ovs/physics/cfm.mjs';
 import { SOURCES } from '../../static/js/ovs/physics/heat.mjs';
 
 const MOUNT_DEPTH_IN = { wall: 36, island: 40 };
@@ -61,7 +61,6 @@ export function computeI02State(params) {
 
   const outputs = {
     minimumCfm: r.minimum,
-    blowerCfm: r.blower ?? r.minimum,
     kCfm: r.kCfm,
     plumeCfm: Math.round(r.plumeCfm),
     mountMultiplier: r.mountMult,
@@ -71,6 +70,17 @@ export function computeI02State(params) {
     exposedCfm: r.tables.exposed,
     recommendedWidthIn: Math.round(recommendedWidth(height, src)),
   };
+  if (r.blower != null) {
+    outputs.blowerCfm = r.blower; // App A step 8: smallest standard size ≥ 1.1 × minimum (rb-008:870, rb-008:614)
+  } else {
+    // 1.1 × minimum exceeds the top of the standard-size ladder: there is
+    // NO blower figure. Never relabel the minimum as the blower — the sheet
+    // instead carries the three numbers the narration needs to say so
+    // (the margin, what 1.1 × minimum comes to, and the ladder's top rung).
+    outputs.blowerMargin = BLOWER_MARGIN;                                    // rb-008:870
+    outputs.blowerNeedCfm = Math.round(r.minimum * BLOWER_MARGIN);           // rb-008:870
+    outputs.blowerLadderTopCfm = BLOWER_SIZES[BLOWER_SIZES.length - 1];      // rb-008:614 + cfm.mjs site extension
+  }
   if (Number.isFinite(width)) {
     const cov = coverageAdvisory(width, height, src);
     outputs.coveragePct = Math.round(cov.pctOfRecommended);

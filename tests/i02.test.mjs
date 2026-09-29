@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gradeRatedCfm, coverageSentence, sourceFor, heightFor, mountFor, fmtSource } from '../static/js/ovs/instruments/i02.mjs';
-import { requiredCfm, coverageAdvisory, BLOWER_MARGIN } from '../static/js/ovs/physics/cfm.mjs';
+import { gradeRatedCfm, coverageSentence, sourceFor, heightFor, mountFor, fmtSource, ABOVE_LADDER_READOUT, COVERAGE_NOTE } from '../static/js/ovs/instruments/i02.mjs';
+import { requiredCfm, coverageAdvisory, BLOWER_MARGIN, BLOWER_SIZES } from '../static/js/ovs/physics/cfm.mjs';
 import { SOURCES } from '../static/js/ovs/physics/heat.mjs';
 
 // Bands are the RB-008 §3.3 worked case (Gas Grill Large, 30 in, wall,
@@ -101,4 +101,26 @@ test('coverageSentence walks the four Table 3.10 bands for Gas Medium @30 in (57
   assert.match(coverageSentence(coverageAdvisory(54, 30, SOURCES.gasMedium)), /^54 in is 95% of the 57 in .* near-adequate coverage \(90–93% capture\)/);      // rb-008:586
   assert.match(coverageSentence(coverageAdvisory(60, 30, SOURCES.gasMedium)), /^60 in is 105% of the 57 in .* full coverage \(95%\+ capture\)/);              // rb-008:587-589
   assert.match(coverageSentence(coverageAdvisory(42, 30, SOURCES.gasMedium)), /^42 in is 74% of the 57 in .* overflows/);                                      // rb-008:584
+});
+
+// --- Stage-B review: user-visible strings the instrument pins ---
+
+test('ABOVE_LADDER_READOUT is the ladder top ("> 3,000 CFM"), derived from cfm.mjs BLOWER_SIZES, never a minimum', () => {
+  assert.equal(ABOVE_LADDER_READOUT, '> 3,000 CFM');
+  assert.equal(ABOVE_LADDER_READOUT, `> ${BLOWER_SIZES[BLOWER_SIZES.length - 1].toLocaleString('en-US')} CFM`); // rb-008:614 ladder, site-extended (cfm.mjs)
+  const extreme = requiredCfm({ src: SOURCES.gasHigh, riseIn: 48, mount: 'island', exposure: 'exposed', panels: 'none' });
+  assert.equal(extreme.blower, null);
+  assert.ok(!ABOVE_LADDER_READOUT.includes(extreme.minimum.toLocaleString('en-US')));
+});
+
+test('COVERAGE_NOTE cites §3.4.3 for CFM-from-source-and-height and Table 3.10 for "narrower needs more" (never §3.4.3 for width)', () => {
+  assert.equal(
+    COVERAGE_NOTE,
+    'CFM is set by the source and mounting height (RB-008 §3.4.3); width is checked separately as coverage — RB-008 Table 3.10 rates a narrower hood as needing more, not less. Compare the hood with the RB-002 recommended width here.',
+  ); // rb-008:381-395 (§3.4.3), rb-008:580-591 (Table 3.10: 900 CFM @ 42 in vs 609 @ 57 in)
+  assert.doesNotMatch(COVERAGE_NOTE, /§3\.4\.3\): a narrower/);
+  // The Table 3.10 claim the note makes, checked against the module's bands:
+  // a narrower hood lands in a worse band, never a better one.
+  assert.equal(coverageAdvisory(42, 30, SOURCES.gasMedium).band, 'overflow');   // rb-008:584 (900 CFM)
+  assert.equal(coverageAdvisory(57, 30, SOURCES.gasMedium).band, 'full');       // rb-008:587 (609 CFM)
 });

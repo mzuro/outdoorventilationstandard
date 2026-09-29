@@ -99,6 +99,10 @@ export function validateNarration(text, state) {
 
 const EXPOSURE_LABEL = { sheltered: 'sheltered', moderate: 'moderate', exposed: 'exposed' };
 const PANELS_LABEL = { none: 'no side panels', both: 'side panels on both sides' };
+// i02: side panels only enter K_CFM in the exposed class (rb-008:144-145),
+// so the clause is spoken only there — matching the copy-spec line's
+// "exposed + panels" / "exposed" labels (i02.mjs buildSpecLine).
+const I02_PANELS_CLAUSE = { none: ' with no side panels', both: ' with side panels on both sides' };
 const DIR_LABEL = { side: 'side wind', rear: 'wind from the rear' };
 const MOUNT_LABEL = { wall: 'wall-mount', peninsula: 'peninsula', island: 'island' };
 const SOURCE_LABEL = {
@@ -118,10 +122,19 @@ export function templateNarration(state) {
       + `capture diameter is about ${o.plumeWidthAtHoodIn} inches; the research papers recommend a ${o.recommendedWidthIn}-inch hood here.`;
   }
   if (state.instrument === 'i02') {
+    const panelsClause = i.exposure === 'exposed' ? (I02_PANELS_CLAUSE[i.panels] || '') : '';
+    // Blower: App A step 8 (rb-008:870) when a standard size exists; above
+    // the ladder the sheet carries blowerMargin/blowerNeedCfm/
+    // blowerLadderTopCfm instead of blowerCfm (explain-state.mjs), and the
+    // minimum is never relabelled as the blower.
+    const blowerClause = typeof o.blowerCfm === 'number'
+      ? `specify a ${fmt(o.blowerCfm)} CFM blower.`
+      : `no standard blower size in the RB-008 ladder meets ${o.blowerMargin} × ${fmt(o.minimumCfm)} = ${fmt(o.blowerNeedCfm)} CFM — `
+        + `the requirement exceeds the largest standard size, ${fmt(o.blowerLadderTopCfm)} CFM.`;
     let text = `A ${fmt(i.sourceBtu)} BTU/hr ${SOURCE_LABEL[i.source] || 'appliance'} at a ${i.heightIn}-inch mounting height on a `
-      + `${MOUNT_LABEL[i.mount] || i.mount} in ${EXPOSURE_LABEL[i.exposure] || i.exposure} wind exposure needs at least `
+      + `${MOUNT_LABEL[i.mount] || i.mount} in ${EXPOSURE_LABEL[i.exposure] || i.exposure} wind exposure${panelsClause} needs at least `
       + `${fmt(o.minimumCfm)} CFM (RB-008: a ${fmt(o.plumeCfm)} CFM plume times K_CFM ${o.kCfm}); `
-      + `specify a ${fmt(o.blowerCfm)} CFM blower.`;
+      + blowerClause;
     if (typeof o.coveragePct === 'number' && typeof i.widthIn === 'number') {
       text += ` A ${i.widthIn}-inch hood is ${o.coveragePct}% of the ${o.recommendedWidthIn}-inch recommended width; `
         + `width sets coverage, not CFM.`;
