@@ -2393,11 +2393,21 @@ a.ovs-chip:hover {
 
 /* ... and at 641-760 even the compact three-line stamp (111px) clears
    the band only without its third line: grade + plain explanation stay;
-   the model-criterion clause (still carried in the stamp's title
-   attribute) is dropped in this band only. */
+   the model-criterion clause is visually hidden in this band only — the
+   same clip pattern as the <=640 block below, NOT display:none, so it
+   stays in the accessibility tree and the aria-live stamp announces the
+   same text at every width (review round 2). */
 @media screen and (min-width: 641px) and (max-width: 760px) {
   .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-clause {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 }
 
