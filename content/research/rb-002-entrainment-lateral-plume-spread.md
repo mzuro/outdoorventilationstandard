@@ -1,7 +1,7 @@
 ---
 title: "RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments"
 date: 2025-09-02
-lastmod: 2026-07-11
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-002"
 priority: "P0 — Foundation"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -31,6 +31,20 @@ downstream_topics:
 **Author Role:** Physics Research Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 3.7 / Table 3.7, pellet rows: no cell changes. The three pellet rows share the paper's single pellet envelope, evaluated with Pellet Low's z_0 = -0.38 m (RB-001 Table 3.2); evaluated per variant, W_rec = 1.38 * d_capture would give 48/52/56" (High, z_0 = -0.30 m) and 49/53/57" (Medium, z_0 = -0.32 m) at 24/30/36" instead of the printed 50/54/58". (revised 2026-09-29)
+- Section 3.6 / Table 3.6b: footnote added — the overhang column is (W_rec - cooking-surface width)/2 rounded to the whole inch; the exact 30" Gas Medium value is 16.5" (0.42 m), which RB-006 Section 3.4 and the site's instruments use. No cell changes. (revised 2026-09-29)
+- Section 3.5 margin-factor table: quiescent K 1.40 → 1.38, the derived M_1 * M_2 value the Section 3.6 tables already use; light-outdoor 1.70 annotated as 1.72 derived and retained as the wind-inclusive K_inf of RB-003 Appendix D and RB-008 Section 2.2. No table values change.
+- Section 3.4 item 3: note added that the 98% capture-diameter figure is the radial mean-profile contour without intermittency margin, and that wind-analysis capture thresholds are those of RB-006 Section 3.4.
+- Section 4.2: required overhang 12-26 → 11-26 inches per side, matching this paper's own height table and RB-005.
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -391,7 +405,7 @@ Building on the Gaussian profile analysis in Section 2.3, this section computes 
 
 2. **d_mean (mean time-averaged plume diameter):** Equal to 2 * 1.5 * b_T = 3.0 * b_T, encompassing the time-averaged 90% buoyancy flux contour.
 
-3. **d_capture (Heskestad capture diameter):** Equal to 0.48 * (z - z_0) + D_eff, encompassing the 98% buoyancy flux contour plus source width offset. This is the minimum diameter a hood must cover in quiescent conditions.
+3. **d_capture (Heskestad capture diameter):** Equal to 0.48 * (z - z_0) + D_eff, encompassing the 98% buoyancy flux contour plus source width offset. This is the minimum diameter a hood must cover in quiescent conditions. The 98% figure refers to the radial mean-profile contour and carries no intermittency margin; the capture thresholds used for wind analysis are those of RB-006 Section 3.4, which measure deflection against the hood overhang in units of b_T.
 
 4. **d_99_instant (99th percentile instantaneous diameter):** The diameter that contains the plume 99% of the time, accounting for turbulent intermittency. Equal to 2 * 3.0 * b_T + D_eff = 0.72 * (z - z_0) + D_eff. This represents the boundary of the quiescent-air **Capture Envelope**.
 
@@ -497,8 +511,8 @@ For engineering purposes, this paper recommends:
 
 | Condition | Margin Factor K | Application |
 |---|---|---|
-| Quiescent (sheltered installation, no wind) | 1.40 | Covered patio, wind-shielded installation |
-| Light outdoor (0.5 m/s ambient) | 1.70 | Typical open patio, light breeze conditions |
+| Quiescent (sheltered installation, no wind) | 1.38 | Covered patio, wind-shielded installation; the base margin applied in the Section 3.6 tables |
+| Light outdoor (0.5 m/s ambient) | 1.70 (1.72 as derived above) | Typical open patio, light breeze conditions; retained as the wind-inclusive K_inf used by RB-003 Appendix D and RB-008 Section 2.2 |
 | Moderate outdoor (1.0 m/s ambient) | 2.00 | Exposed installation, moderate breeze |
 
 The moderate outdoor factor of 2.0 means the hood should be twice as wide as the Heskestad capture diameter. This may seem conservative, but it reflects the reality that outdoor cooking occurs in a stochastic wind environment where the plume is routinely displaced from its nominal vertical path. The detailed wind interaction analysis in RB-006 will refine these factors; the values here serve as preliminary engineering guidance.
@@ -536,6 +550,8 @@ All values are provided in both metric and imperial units.
 | 30" (0.76 m) | 1.05 / 41" | 1.45 / 57" | 1.34 / 53" | 0.42 / 17" |
 | 36" (0.91 m) | 1.12 / 44" | 1.55 / 61" | 1.44 / 57" | 0.47 / 19" |
 | 48" (1.22 m) | 1.27 / 50" | 1.76 / 69" | 1.65 / 65" | 0.58 / 23" |
+
+Overhang is (W_rec − cooking-surface width)/2 rounded to the whole inch; the exact 30" Gas Medium value is 16.5" (0.42 m), which RB-006 Section 3.4 and the site's instruments use.
 
 #### Table 3.6c: Hood Sizing — Gas Grill Large (Q_c = 12.3 kW, Cooking Surface: 650 sq in, approx. 30" x 22")
 
@@ -719,7 +735,7 @@ A hood that is too narrow creates a **Missed Plume Region** — the annular zone
 
 The required overhang — the distance the hood extends beyond the cooking surface edge — is the most operationally important dimension derived from this analysis. The cooking surface width is fixed by the appliance; the overhang is the adjustable dimension that determines whether the hood captures the plume expansion.
 
-For all source types at all mounting heights, the required overhang is 12 to 26 inches per side. This means the hood must extend 12 to 26 inches beyond the cooking surface edge in every direction (front, back, left, right) to capture the expanded plume with turbulence and wind margin.
+For all source types at all mounting heights, the required overhang is 11 to 26 inches per side. This means the hood must extend 11 to 26 inches beyond the cooking surface edge in every direction (front, back, left, right) to capture the expanded plume with turbulence and wind margin.
 
 The overhang requirement increases with height:
 

@@ -2,9 +2,9 @@
 //
 // Same module contract as i01.mjs/i02.mjs (the canonical pattern): a single
 // `mount(figureEl)` export, re-mount guarded, physics only from
-// ../physics/{wind,plume,sidepanels,capture}.mjs (capture.mjs supplies only
-// the WIND_COUPLING calibration constant — no captureFraction here, this
-// instrument isolates the deflection integrator by itself).
+// ../physics/{wind,sidepanels}.mjs — no captureFraction here, this
+// instrument isolates the RB-006 §3.1 deflection δ = 0.35·U·z/u_0(z) by
+// itself (wind.mjs carries the coupling C_D; nothing is pre-multiplied).
 //
 // This instrument has no mount/width control (unlike i01/i02), so it does
 // not read `data-preset` — the trajectory geometry depends only on
@@ -15,8 +15,11 @@
 // the current rise and drawn as a bending polyline, next to a straight
 // (undeflected) reference so the bend reads visually; a live dimension
 // line reports the horizontal offset at the hood plane, matching the
-// deflection readout exactly (same plumeWind value feeds both — mirrors
-// i01's plumeWind consistency, RB-006 §wind interaction).
+// deflection readout exactly (the same sheltered wind feeds both — mirrors
+// i01, RB-006 §3.1). Above the RB-006 Table 3.8 regime boundary (Fr > 2.7,
+// rb-006:775) the paper calls the plume "disrupted" and its own printed
+// 15 mph cells depart from the formula, so a note box flags that regime
+// (wind.mjs froude / FR_DISRUPTED) rather than trusting the number.
 //
 // v2.1 (F2) adoption:
 //   - smoke: this instrument has no hood/width/mount control at all — it
@@ -43,9 +46,8 @@
 //   - verdict: not assigned by the plan (no capture concept here to grade).
 
 import { createInstrument } from '../viz.mjs';
-import { deflection } from '../physics/wind.mjs';
+import { deflection, froude, FR_DISRUPTED } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
-import { WIND_COUPLING } from '../physics/capture.mjs';
 
 // Deliberately oversized: every particle always registers as captured, no
 // escape tint — same rule and same values as i09 (see header note).
@@ -149,6 +151,10 @@ export function mount(figureEl) {
     refs.dimRise = H.el('g');
     svg.appendChild(refs.dimOffset);
     svg.appendChild(refs.dimRise);
+
+    // plume-regime note (RB-006 Table 3.8): shown only when Fr > 2.7
+    refs.regimeNote = H.el('g');
+    svg.appendChild(refs.regimeNote);
   }
 
   function replaceChildren(g, ...nodes) {
@@ -162,15 +168,23 @@ export function mount(figureEl) {
     const riseIn = state['i03-rise'];
     const panels = state['i03-panels'];
 
-    const effWind = effectiveWind(windMph, panels);
-    // The wind the plume actually feels: panel attenuation x at-grade
-    // shelter — exactly what the deflection readout and the drawn
-    // trajectory must share so they never disagree (RB-006).
-    const plumeWind = WIND_COUPLING * effWind;
-    const deflAtHood = deflection(riseIn, plumeWind);
+    // The wind the plume actually feels: the RB-009 panel-sheltered wind
+    // (side wind — the panels' lateral row, rb-009:242-247). deflection()
+    // carries C_D itself, so the sheltered wind is passed straight in —
+    // the readout and the drawn trajectory share it, so they never disagree.
+    const effWind = effectiveWind(windMph, { panels: panels === 'both' ? 'both' : 'none', dir: 'side' });
+    const deflAtHood = deflection(riseIn, effWind);
+    const fr = froude(riseIn, effWind);
+    const disrupted = fr > FR_DISRUPTED;
 
     setReadout('deflection', deflAtHood);
     setReadout('effWind', effWind);
+    setReadout('froude', fr);
+    // Local formatter (brief: extend fmt ONLY here): the engine's default
+    // rounds to an integer; Fr wants two decimals.
+    const frEl = container.querySelector('output[aria-labelledby="froude-label"]');
+    if (frEl) frEl.textContent = `${fr.toFixed(2)}${disrupted ? ' (disrupted)' : ''}`;
+    ctx.physics = { deflAtHood, effWind, fr, disrupted };
 
     const hoodY = GY - riseIn * PX_PER_IN_Y;
 
@@ -184,7 +198,7 @@ export function mount(figureEl) {
     for (let z = 0; z <= riseIn; z += SAMPLE_STEP_IN) samples.push(z);
     if (samples[samples.length - 1] !== riseIn) samples.push(riseIn);
 
-    const xAt = (zIn) => GX + deflection(zIn, plumeWind) * PX_PER_IN_X;
+    const xAt = (zIn) => GX + deflection(zIn, effWind) * PX_PER_IN_X;
     const yAt = (zIn) => GY - zIn * PX_PER_IN_Y;
 
     let d = '';
@@ -208,6 +222,11 @@ export function mount(figureEl) {
       660, GY, 660, hoodY, `${Math.round(riseIn)}″ rise`,
     ));
 
+    // --- plume regime note: RB-006 Table 3.8 "disrupted" above Fr 2.7 ----
+    replaceChildren(refs.regimeNote, ...(disrupted
+      ? [H.noteBox(20, 20, `PLUME REGIME DISRUPTED (Fr ${fr.toFixed(1)} > ${FR_DISRUPTED}) — RB-006 §3.8`)]
+      : []));
+
     // --- wind glyph ------------------------------------------------------
     refs.windLabel.textContent = `U = ${Math.round(windMph)} mph`;
     const shaftX = 90 + windMph * 1.5;
@@ -223,14 +242,16 @@ export function mount(figureEl) {
     controls: [
       { id: 'i03-wind', type: 'range', label: 'WIND SPEED', min: 0, max: 20, step: 1, value: 5, unit: 'mph' },
       { id: 'i03-rise', type: 'range', label: 'MOUNTING RISE', min: 18, max: 48, step: 2, value: 30, unit: 'in' },
+      // 'one' panel is not offered: no RB-009 row for it (rb-009:369).
       {
         id: 'i03-panels', type: 'segmented', label: 'SIDE PANELS', value: 'none',
-        options: [{ value: 'none', label: 'NONE' }, { value: 'one', label: 'ONE' }, { value: 'both', label: 'BOTH' }],
+        options: [{ value: 'none', label: 'NONE' }, { value: 'both', label: 'BOTH' }],
       },
     ],
     readouts: [
       { id: 'deflection', label: 'DEFLECTION AT HOOD PLANE', format: 'in', hero: true },
       { id: 'effWind', label: 'EFFECTIVE WIND', format: 'mph' },
+      { id: 'froude', label: 'CROSSWIND FROUDE Fr' },
     ],
     // W5-T2 sticky strip: hero readout only (no verdict on this
     // instrument). Values are copied verbatim from the real readout.
@@ -248,8 +269,8 @@ export function mount(figureEl) {
       mount: NOMINAL_MOUNT,
       riseIn: state['i03-rise'],
       windMph: state['i03-wind'],
-      panels: state['i03-panels'],
-      w0: 400,
+      windDir: 'side',
+      panels: state['i03-panels'] === 'both' ? 'both' : 'none',
     }),
 
     // --- direct manipulation: the wind arrow, 0-20 mph. --------------------

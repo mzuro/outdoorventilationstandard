@@ -2,14 +2,18 @@
 //
 // Same module contract as i01.mjs/i02.mjs: a single `mount(figureEl)`
 // export, re-mount guarded. Physics only from ../physics/plume.mjs
-// (plumeRadius) — the b0/entrainment calibration is never recomputed here.
+// (captureDiameter, recommendedWidth) and ../physics/heat.mjs (SOURCES) —
+// the Heskestad d_capture = 0.48·(z − z_0) + D_eff (rb-002:983) and the
+// RB-002 K = 1.38 width margin are never recomputed here.
 //
 // No mount/width control on this instrument (it isolates plume growth from
-// hood geometry entirely), so it does not read `data-preset`.
+// hood geometry entirely), so it does not read `data-preset`. A SOURCE
+// control (physics Stage B) picks the RB-001 Table 3.1 row; the default is
+// Gas Grill Medium, the papers' reference case (RB-002 Table 3.3a).
 //
-// Scene: a symmetric envelope grown from plumeRadius(z), always drawn over
-// the instrument's full 0-48in range regardless of the slider, subtly
-// shaded like i01's plume fill; a horizontal measuring line at the
+// Scene: a symmetric envelope grown from captureDiameter(z, src), always
+// drawn over the instrument's full 0-48in range regardless of the slider,
+// subtly shaded like i01's plume fill; a horizontal measuring line at the
 // HEIGHT-OF-INTEREST control re-measures the envelope live via the engine's
 // dimensionLine helper.
 //
@@ -25,10 +29,24 @@
 //   - smoke/other drag targets: not assigned by the plan.
 
 import { createInstrument } from '../viz.mjs';
-import { plumeRadius } from '../physics/plume.mjs';
+import { captureDiameter, recommendedWidth } from '../physics/plume.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 
 const SAMPLE_STEP_IN = 2;
 const MAX_Z_IN = 48; // fixed envelope range, independent of the slider
+
+/** SOURCE menu — RB-001 Table 3.1 rows (rb-001:241-252). */
+const SOURCE_MENU = [
+  { value: 'gasSmall', label: 'GAS 25K' },
+  { value: 'gasMedium', label: 'GAS 40K' },
+  { value: 'gasLarge', label: 'GAS 60K' },
+  { value: 'gasHigh', label: 'GAS 80K' },
+  { value: 'charcoalKettle', label: 'CHARCOAL' },
+  { value: 'woodFired', label: 'WOOD-FIRED' },
+  { value: 'pelletHigh', label: 'PELLET' },
+];
+const sourceFor = (v) => SOURCES[v] || SOURCES.gasMedium;
+const shortLabel = (src) => (SOURCE_MENU.find((o) => o.value === src.id) || { label: src.id }).label;
 
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i04Mounted === '1') return;
@@ -102,10 +120,16 @@ export function mount(figureEl) {
   function update(state, ctx) {
     const { setReadout } = ctx;
     const heightIn = state['i04-height'];
-    const sourceWidth = 2 * plumeRadius(0);
-    const widthAtHeight = 2 * plumeRadius(heightIn);
+    const src = sourceFor(state['i04-source']);
+    // RB-002 capture diameter (98 % flux contour + source width) at the
+    // cooking surface and at the selected height, and the RB-002
+    // recommended hood width W_rec = 1.38 · d_capture there.
+    const sourceWidth = captureDiameter(0, src);
+    const widthAtHeight = captureDiameter(heightIn, src);
+    const recWidth = recommendedWidth(heightIn, src);
 
     setReadout('width', widthAtHeight);
+    setReadout('recWidth', recWidth);
     setReadout('sourceWidth', sourceWidth);
 
     // --- envelope, always drawn over the full 0..MAX_Z_IN range ---------
@@ -113,7 +137,7 @@ export function mount(figureEl) {
     for (let z = 0; z <= MAX_Z_IN; z += SAMPLE_STEP_IN) samples.push(z);
 
     const yAt = (zIn) => GY - zIn * PX_PER_IN;
-    const halfWAt = (zIn) => plumeRadius(zIn) * PX_PER_IN;
+    const halfWAt = (zIn) => (captureDiameter(zIn, src) / 2) * PX_PER_IN;
 
     let dl = '', dr = '';
     for (let i = 0; i < samples.length; i++) {
@@ -134,7 +158,7 @@ export function mount(figureEl) {
     refs.envFill.setAttribute('d', `${fill}Z`);
 
     // --- source-width note (constant) -----------------------------------
-    replaceChildren(refs.sourceNote, H.noteBox(20, 20, `SOURCE WIDTH ${Math.round(sourceWidth)}″`));
+    replaceChildren(refs.sourceNote, H.noteBox(20, 20, `${shortLabel(src)} · d_capture AT GRATE ${Math.round(sourceWidth)}″`));
 
     // --- live measuring line at the selected height ----------------------
     const my = yAt(heightIn);
@@ -151,10 +175,12 @@ export function mount(figureEl) {
     title: 'Plume Width',
     controls: [
       { id: 'i04-height', type: 'range', label: 'HEIGHT OF INTEREST', min: 0, max: 48, step: 2, value: 30, unit: 'in' },
+      { id: 'i04-source', type: 'segmented', label: 'SOURCE', value: 'gasMedium', options: SOURCE_MENU },
     ],
     readouts: [
-      { id: 'width', label: 'PLUME WIDTH AT HEIGHT', format: 'in', hero: true },
-      { id: 'sourceWidth', label: 'SOURCE WIDTH', format: 'in' },
+      { id: 'width', label: 'CAPTURE DIAMETER AT HEIGHT', format: 'in', hero: true },
+      { id: 'recWidth', label: 'RB-002 RECOMMENDED WIDTH', format: 'in' },
+      { id: 'sourceWidth', label: 'DIAMETER AT THE GRATE', format: 'in' },
     ],
     scene: buildScene,
     update,
@@ -170,10 +196,10 @@ export function mount(figureEl) {
 
     // --- story presets: four site-voice heights. ---------------------------
     presets: [
-      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i04-height': 2 } },
-      { id: 'countertop-height', label: 'Countertop height', state: { 'i04-height': 12 } },
-      { id: 'standard-capture-zone', label: 'Standard capture zone', state: { 'i04-height': 30 } },
-      { id: 'near-a-tall-hood', label: 'Near a tall hood', state: { 'i04-height': 44 } },
+      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i04-height': 2, 'i04-source': 'gasMedium' } },
+      { id: 'countertop-height', label: 'Countertop height', state: { 'i04-height': 12, 'i04-source': 'gasMedium' } },
+      { id: 'standard-capture-zone', label: 'RB-002 row: 30 in, 40k gas', state: { 'i04-height': 30, 'i04-source': 'gasMedium' } },
+      { id: 'near-a-tall-hood', label: 'Tall hood, 60k gas', state: { 'i04-height': 48, 'i04-source': 'gasLarge' } },
     ],
 
     // No spec.verdict — see the header comment.

@@ -4,24 +4,32 @@
 // I-10) copies: a single `mount(figureEl)` export that reads the figure's
 // `data-preset`, builds a container, and hands a `spec` to
 // createInstrument (../viz.mjs). Physics comes exclusively from
-// ../physics/{capture,plume,wind,sidepanels}.mjs — nothing here recomputes
-// a Gaussian or an entrainment coefficient.
+// ../physics/{capture,plume,wind,sidepanels,heat}.mjs — nothing here
+// recomputes a Gaussian, a deflection or a panel factor.
 //
 // Scene is a side-view line-art elevation adapted from the hero "Figure 1"
 // demo in docs/design/modern-standard-mockup.html: cook surface, hood at a
-// fixed 30in rise, a Gaussian plume envelope whose centerline bends with
-// wind, dimension lines for width/rise, and escape wisps once the hood
-// stops fully capturing the plume.
+// fixed 30in rise, the RB-002 capture-diameter envelope whose centerline
+// bends with the RB-006 §3.1 deflection, dimension lines for the along-
+// wind span/rise, and escape wisps once the hood stops fully capturing the
+// plume. WIND DIRECTION (physics Stage B) picks the axis the elevation
+// looks along: SIDE (hood width in play) or REAR (hood depth; a wall-mount
+// shelters the plume, rb-006:859).
 
 import { createInstrument, gradeCapture } from '../viz.mjs';
-import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
-import { plumeRadius } from '../physics/plume.mjs';
+import { captureFraction } from '../physics/capture.mjs';
+import { captureDiameter } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const RISE_IN = 30; // fixed hood mounting height for this demonstrator
 const SAMPLE_STEP_IN = 2; // "sampled every 2in of rise" per brief
+// The papers' single-source reference case (Gas Grill Medium, plan §0
+// finding 1) — the source every capture/deflection table on this page is
+// printed for (RB-006 Table 3.2b, Table 3.10; RB-008 Table 3.10).
+const SRC = SOURCES.gasMedium;
 
 const STATUS_FILL = {
   ok: null, // null = fall back to the .ovs-i-plume-fill CSS default (var(--plume))
@@ -175,17 +183,21 @@ export function mount(figureEl) {
     const windMph = state['i01-wind'];
     const widthCtl = state['i01-width'];
     const mountVal = MOUNT[state['i01-mount']] ? state['i01-mount'] : 'island';
-    const panels = state['i01-panels'];
+    const panels = state['i01-panels'] === 'both' ? 'both' : 'none';
+    const windDir = state['i01-dir'] === 'rear' ? 'rear' : 'side';
     const depthIn = MOUNT[mountVal].depthIn;
 
-    const effWind = effectiveWind(windMph, panels);
-    // The wind the plume actually feels: panel attenuation × at-grade
-    // shelter — exactly what captureFraction integrates with, so the drawn
-    // trajectory and the deflection readout agree with the capture number.
-    const plumeWind = WIND_COUPLING * effWind;
-    const deflAtHood = deflection(RISE_IN, plumeWind);
+    // The wind the plume actually feels: the sheltered wind of
+    // sidepanels.mjs (panels by direction; the rear wall under a rear wind,
+    // rb-006:859). deflection() carries the RB-006 §3.1 coupling C_D
+    // itself, so this sheltered wind is passed straight in — exactly what
+    // captureFraction() deflects with, so the drawn centreline, the
+    // DEFLECTION readout and the capture number agree (and equal
+    // src/lib/explain-state.mjs computeI01State for the same inputs).
+    const effWind = effectiveWind(windMph, { panels, dir: windDir, mount: mountVal });
+    const deflAtHood = deflection(RISE_IN, effWind, SRC);
     const capFrac = captureFraction({
-      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels,
+      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, windDir, panels, src: SRC,
     });
 
     // --- readouts --------------------------------------------------
@@ -194,19 +206,42 @@ export function mount(figureEl) {
     setReadout('effWind', effWind);
 
     // expose physics to the engine's verdict stamp (spec.verdict)
-    ctx.physics = { capFrac, deflAtHood, effWind };
+    ctx.physics = { capFrac, deflAtHood, effWind, windDir };
 
-    // --- wall visibility --------------------------------------------
+    // --- the drawn elevation looks ALONG the wind axis (RB-006 §3.4's
+    //     1-D convention): under a SIDE wind the hood spans its width and
+    //     the wall is a backdrop; under a REAR wind the hood spans its
+    //     depth and a wall-mount's wall stands at the upwind edge, the
+    //     grill against it. Width does not enter the rear-wind capture at
+    //     all, so its slider is greyed (i08's disabled pattern). --------
+    const rearView = windDir === 'rear';
+    const spanIn = rearView ? depthIn : widthCtl;
+    // wall-mount under rear wind: the plume centre sits cookDIn/2 in from
+    // the wall (RB-002 A.4 cooking depth, heat.mjs SOURCES) and the hood
+    // runs from the wall to its full depth.
+    const wallX = rearView && mountVal === 'wall' ? GX - (SRC.cookDIn / 2) * pxPerIn : 20;
     refs.wall.setAttribute('opacity', mountVal === 'wall' ? '1' : '0');
+    refs.wall.setAttribute('transform', `translate(${(wallX - 20).toFixed(1)} 0)`);
+    if (!refs.widthCtl) {
+      const input = container.querySelector('#i01-width');
+      refs.widthCtl = input ? input.closest('.ovs-i-control') : null;
+      refs.widthInput = input;
+    }
+    if (refs.widthCtl) {
+      refs.widthCtl.classList.toggle('ovs-i-control--disabled', rearView);
+      refs.widthCtl.setAttribute('aria-disabled', rearView ? 'true' : 'false');
+    }
+    if (refs.widthInput) refs.widthInput.disabled = rearView;
 
     // --- plume envelope, sampled every 2in of rise -------------------
     const samples = [];
     for (let z = 0; z <= RISE_IN; z += SAMPLE_STEP_IN) samples.push(z);
     if (samples[samples.length - 1] !== RISE_IN) samples.push(RISE_IN);
 
-    const centerXAt = (zIn) => GX + deflection(zIn, plumeWind) * pxPerIn;
+    const centerXAt = (zIn) => GX + deflection(zIn, effWind, SRC) * pxPerIn;
     const yAt = (zIn) => GY - zIn * pxPerIn;
-    const halfWAt = (zIn) => plumeRadius(zIn) * pxPerIn;
+    // RB-002 capture diameter d_capture = 0.48(z − z_0) + D_eff (rb-002:983)
+    const halfWAt = (zIn) => (captureDiameter(zIn, SRC) / 2) * pxPerIn;
 
     let dl = '', dr = '', dc = '';
     for (let i = 0; i < samples.length; i++) {
@@ -236,21 +271,25 @@ export function mount(figureEl) {
     const status = statusFor(capFrac * 100);
     refs.plumeFill.style.fill = STATUS_FILL[status] || '';
 
-    // --- hood + capture plane, sized to the width control (same
+    // --- hood + capture plane, spanning the along-wind dimension (same
     //     inches->px scale as the plume envelope, per RB-005/-006) ------
-    const hoodHalfPx = (widthCtl / 2) * pxPerIn;
-    const lx = GX - hoodHalfPx, rx = GX + hoodHalfPx;
+    const spanPx = spanIn * pxPerIn;
+    const lx = rearView && mountVal === 'wall' ? wallX : GX - spanPx / 2;
+    const rx = lx + spanPx;
     refs.hood.setAttribute('d', `M${lx.toFixed(1)} ${HY} L${rx.toFixed(1)} ${HY} L${GX + 22} 66 L${GX - 22} 66 Z`);
     refs.capPlane.setAttribute('x1', (lx - 24).toFixed(1));
     refs.capPlane.setAttribute('x2', (rx + 24).toFixed(1));
 
-    // --- drag hit strip: centered on the downwind (right) hood lip --------
-    refs.dragHood.setAttribute('x', (rx - 22).toFixed(1));
+    // --- drag hit strip: centered on the downwind (right) hood lip; parked
+    //     off-canvas under a rear wind, where width is not in play --------
+    refs.dragHood.setAttribute('x', rearView ? '-400' : (rx - 22).toFixed(1));
 
     // --- dimension lines (re-measured live) ---------------------------
-    replaceChildren(refs.dimW, H.dimensionLine(lx, HY - 20, rx, HY - 20, `${Math.round(widthCtl)}″`));
+    replaceChildren(refs.dimW, H.dimensionLine(lx, HY - 20, rx, HY - 20, rearView ? `${depthIn}″ deep` : `${Math.round(widthCtl)}″`));
     replaceChildren(refs.dimRise, H.dimensionLine(660, GY, 660, HY, `${RISE_IN}″ rise`));
-    replaceChildren(refs.depthNote, H.noteBox(20, 20, `DEPTH ${depthIn}″ (${mountVal})`));
+    replaceChildren(refs.depthNote, H.noteBox(20, 20, rearView
+      ? `REAR WIND · ${widthCtl}″ WIDE (${mountVal}) — width not in play`
+      : `SIDE WIND · DEPTH ${depthIn}″ (${mountVal})`));
 
     // --- wind glyph ----------------------------------------------------
     refs.windLabel.textContent = `U = ${Math.round(windMph)} mph`;
@@ -297,8 +336,14 @@ export function mount(figureEl) {
         options: [{ value: 'wall', label: 'WALL' }, { value: 'island', label: 'ISLAND' }],
       },
       {
+        id: 'i01-dir', type: 'segmented', label: 'WIND DIRECTION', value: 'side',
+        options: [{ value: 'side', label: 'SIDE' }, { value: 'rear', label: 'REAR' }],
+      },
+      // 'one' panel is not offered: RB-009 has no row for a single panel and
+      // §3.5.1 warns a lone windward panel can worsen escape (rb-009:369).
+      {
         id: 'i01-panels', type: 'segmented', label: 'SIDE PANELS', value: 'none',
-        options: [{ value: 'none', label: 'NONE' }, { value: 'one', label: 'ONE' }, { value: 'both', label: 'BOTH' }],
+        options: [{ value: 'none', label: 'NONE' }, { value: 'both', label: 'BOTH' }],
       },
     ],
     readouts: [
@@ -314,11 +359,11 @@ export function mount(figureEl) {
     update,
 
     // --- living smoke: derives ENTIRELY from the same physics the readouts
-    //     use (deflection trajectory, plumeRadius spread, captureFraction
-    //     partition for the ember-orange escape tint). Fixed pixel geometry
-    //     (GX/GY/pxPerIn) + the current physics state; the hood plane is
-    //     defined by riseIn in physics space (see smoke.mjs contract note),
-    //     not by a pixel-space HY. ---------------------------------------------
+    //     use (deflection trajectory, captureDiameter spread, the
+    //     captureFraction aperture partition for the ember-orange escape
+    //     tint). Fixed pixel geometry (GX/GY/pxPerIn) + the current physics
+    //     state; the hood plane is defined by riseIn in physics space (see
+    //     smoke.mjs contract note), not by a pixel-space HY. ------------------
     smoke: (state) => {
       const m = MOUNT[state['i01-mount']] ? state['i01-mount'] : 'island';
       return {
@@ -328,8 +373,9 @@ export function mount(figureEl) {
         mount: m,
         riseIn: RISE_IN,
         windMph: state['i01-wind'],
-        panels: state['i01-panels'],
-        w0: 400,
+        windDir: state['i01-dir'] === 'rear' ? 'rear' : 'side',
+        panels: state['i01-panels'] === 'both' ? 'both' : 'none',
+        src: SRC,
       };
     },
 
@@ -353,28 +399,24 @@ export function mount(figureEl) {
     // --- story presets: full four-control scenarios so each lands exactly on
     //     its node values regardless of the prior state. ----------------------
     presets: [
-      { id: 'calm-evening', label: 'Calm evening', state: { 'i01-wind': 0, 'i01-width': 48, 'i01-mount': 'island', 'i01-panels': 'none' } },
-      { id: 'breeze', label: 'Light breeze', state: { 'i01-wind': 5, 'i01-width': 48, 'i01-mount': 'island', 'i01-panels': 'none' } },
-      { id: 'island-party-exposed', label: 'Island party, exposed', state: { 'i01-wind': 10, 'i01-width': 60, 'i01-mount': 'island', 'i01-panels': 'none' } },
-      { id: 'sheltered-wall', label: 'Sheltered wall', state: { 'i01-wind': 5, 'i01-width': 54, 'i01-mount': 'wall', 'i01-panels': 'both' } },
+      { id: 'calm-evening', label: 'Calm evening', state: { 'i01-wind': 0, 'i01-width': 48, 'i01-mount': 'island', 'i01-dir': 'side', 'i01-panels': 'none' } },
+      { id: 'breeze', label: 'Light breeze', state: { 'i01-wind': 5, 'i01-width': 48, 'i01-mount': 'island', 'i01-dir': 'side', 'i01-panels': 'none' } },
+      { id: 'paper-hood-breeze', label: 'RB-002 hood (57 in), breeze', state: { 'i01-wind': 5, 'i01-width': 60, 'i01-mount': 'island', 'i01-dir': 'side', 'i01-panels': 'none' } },
+      { id: 'island-party-exposed', label: 'Island party, exposed', state: { 'i01-wind': 10, 'i01-width': 60, 'i01-mount': 'island', 'i01-dir': 'side', 'i01-panels': 'none' } },
+      { id: 'sheltered-wall', label: 'Wall, rear wind, panels', state: { 'i01-wind': 5, 'i01-width': 54, 'i01-mount': 'wall', 'i01-dir': 'rear', 'i01-panels': 'both' } },
     ],
 
     // --- verdict stamp: capture-fraction thresholds (>=0.85 PASS,
     //     0.60-0.85 MARGINAL, <0.60 FAIL). The bands are this instrument's
-    //     MODEL CRITERIA: no research bulletin (and no clause anywhere on
-    //     the site — "OVS-H1" exists only as header/footer chrome) defines
-    //     PASS/MARGINAL capture bands, so the stamp labels them as model
-    //     criteria rather than attributing them to a clause (F2 review F-3
-    //     fix — the earlier "OVS-H1 §2.4" resolved to nothing). The RB
-    //     citation is where the capture reasoning lives: RB-005 §2.2 "The
-    //     Capture Envelope Geometry" (content/research/
-    //     rb-005-hood-geometry-capture.md), the paper behind this
-    //     instrument's width/mount capture envelope. ------------------------
+    //     MODEL CRITERIA: no research bulletin defines PASS/MARGINAL capture
+    //     bands (RB-005 §2.2 "The Capture Envelope Geometry" is where the
+    //     capture-envelope reasoning lives, but it defines no grading cut),
+    //     so the stamp cites the paper for the DATA and labels the
+    //     thresholds as the OVS model criterion — never attributing the cut
+    //     to a section that does not define it. ----------------------------
     //     W5-T3 (UX P1-3): the explanation renders ON the stamp (`plain` +
-    //     threshold line) instead of a title tooltip nobody hovers; the
-    //     engine also adds the static "Grades apply to the model
-    //     configuration, not to any product." footnote for every graded
-    //     instrument. ---------------------------------------------------------
+    //     threshold line); the engine also adds the static "Grades apply to
+    //     the model configuration, not to any product." footnote. ----------
     verdict: (state, physics) => {
       const cap = physics ? physics.capFrac : 0;
       const grade = gradeCapture(cap);
@@ -382,8 +424,8 @@ export function mount(figureEl) {
       return {
         grade,
         plain: `${pct}% of smoke captured in this modeled scene`,
-        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-005 §2.2',
-        detail: `Plume capture ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-005).`,
+        clauseRef: 'OVS model criterion ≥85% · ≥60% — data: RB-005 §2.2',
+        detail: `Plume capture ${pct}% — capture data: RB-005 §2.2 / RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`,
       };
     },
   };

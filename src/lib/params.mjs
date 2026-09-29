@@ -14,28 +14,41 @@
 // Values that ARE in range but off the discrete step grid (e.g. width:50
 // between the 48/54 detents, or float jitter) are snapped to the nearest
 // valid grid point — that's rounding, not correction of an abusive input.
+//
+// Optional fields (`optional: true`): i01's wind direction, i02's mounting
+// height / panels (both default) and coverage width (no default — the
+// advisory is simply omitted). ABSENT → the default is filled in (or the
+// key is omitted when there is no default); PRESENT → validated exactly as
+// strictly as a required field. The shim-era `btu` field is gone: the
+// client (static/js/ovs/explain-ui.mjs PARAM_MAP) sends `source` directly.
 
-const ENUM = (values) => ({ kind: 'enum', values });
-const RANGE = (min, max, step) => ({ kind: 'range', min, max, step });
+import { SOURCE_IDS } from '../../static/js/ovs/physics/heat.mjs';
+
+const ENUM = (values, extra = {}) => ({ kind: 'enum', values, ...extra });
+const RANGE = (min, max, step, extra = {}) => ({ kind: 'range', min, max, step, ...extra });
+const DETENTS = (values, extra = {}) => ({ kind: 'detents', values, ...extra });
 
 export const SCHEMAS = {
   i01: {
     fields: {
       wind: RANGE(0, 20, 1),
-      width: { kind: 'detents', values: [42, 48, 54, 60, 72] },
+      width: DETENTS([42, 48, 54, 60, 72]),
       mount: ENUM(['wall', 'island']),
-      panels: ENUM(['none', 'one', 'both']),
+      panels: ENUM(['none', 'both']),                       // 'one' dropped: no paper row (rb-009:369)
+      dir: ENUM(['side', 'rear'], { optional: true, default: 'side' }),
     },
-    defaults: { wind: 4, width: 48, mount: 'island', panels: 'none' },
+    defaults: { wind: 4, width: 48, mount: 'island', panels: 'none', dir: 'side' },
   },
   i02: {
     fields: {
-      width: { kind: 'detents', values: [42, 48, 54, 60, 72] },
-      mount: ENUM(['wall', 'island']),
+      source: ENUM(SOURCE_IDS),                                            // RB-001 Table 3.1 rows
+      height: DETENTS([18, 24, 30, 36, 48], { optional: true, default: 30 }), // RB-008 table columns
+      mount: ENUM(['wall', 'peninsula', 'island']),        // rb-008:560-562
       exposure: ENUM(['sheltered', 'moderate', 'exposed']),
-      btu: RANGE(30000, 150000, 10000),
+      panels: ENUM(['none', 'both'], { optional: true, default: 'none' }),
+      width: DETENTS([42, 48, 54, 60, 72], { optional: true }), // coverage advisory only (RB-008 Table 3.10)
     },
-    defaults: { width: 48, mount: 'island', exposure: 'moderate', btu: 60000 },
+    defaults: { source: 'gasLarge', height: 30, mount: 'island', exposure: 'moderate', panels: 'none' },
   },
 };
 
@@ -65,7 +78,11 @@ export function clampParams(instrument, rawParams) {
     const spec = schema.fields[name];
     const has = Object.prototype.hasOwnProperty.call(rawParams, name);
     if (!has) {
-      errors.push(`missing param: ${name}`);
+      if (spec.optional) {
+        if (spec.default !== undefined) out[name] = spec.default;
+      } else {
+        errors.push(`missing param: ${name}`);
+      }
       continue;
     }
     const value = rawParams[name];

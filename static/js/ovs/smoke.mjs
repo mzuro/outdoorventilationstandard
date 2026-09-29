@@ -1,31 +1,38 @@
-// smoke.mjs — living-smoke VISUALIZATION for OVS instruments (v2.1 F1).
+// smoke.mjs — living-smoke VISUALIZATION for OVS instruments (v2.1 F1,
+// re-based on the RB papers in physics Stage A).
 //
 // The smoke is NOT a second physics model. Every particle rides the SAME
-// trajectory the capture model integrates: horizontal drift per unit rise is
-// exactly the deflection integrand (windward crossflow ÷ centerline velocity,
-// wind.mjs), buoyant rise slows with the centerline-velocity decay
-// (plume.mjs centerlineVelocity), lateral spread grows with plumeRadius
-// (plume.mjs), and whether a particle is tinted ember-orange (escaping) is
-// decided by the SAME reflected-Gaussian partition captureFraction uses
-// (capture.mjs) — so the ensemble escape fraction agrees with the capture
-// readout by construction (tests/smoke.test.mjs asserts ±0.15).
+// trajectory the capture model uses: horizontal drift per unit rise is the
+// analytic slope of the RB-006 §3.1 deflection curve (wind.mjs
+// deflectionRate), buoyant rise slows with the Heskestad centerline-velocity
+// decay (plume.mjs centerlineVelocity), lateral spread grows with the RB-002
+// capture diameter (plume.mjs captureDiameter), and whether a particle is
+// tinted ember-orange (escaping) is decided by the SAME aperture partition
+// captureFraction uses (capture.mjs apertureAlongWind, σ = 1.5·b_T) — so the
+// ensemble escape fraction agrees with the capture readout by construction
+// (tests/smoke.test.mjs asserts ±0.15).
 //
 // This module must import cleanly under plain node (no document/window): the
 // pure exports below carry all the physics and are unit-tested headless; the
 // createSmokeField factory is a harmless no-op when there is no SVG group.
+//
+// deriveParams() reads only the keys named in its signature; `panels` is
+// 'none' | 'both' | 'three' (a single panel has no RB-009 row, rb-009:369,
+// and no instrument offers it since Stage B).
 
-import { plumeRadius, centerlineVelocity } from './physics/plume.mjs';
-import { deflection } from './physics/wind.mjs';
+import { SOURCES } from './physics/heat.mjs';
+import { captureDiameter, centerlineVelocity, plumeHalfWidthBT } from './physics/plume.mjs';
+import { deflection, deflectionRate } from './physics/wind.mjs';
 import { effectiveWind } from './physics/sidepanels.mjs';
-import { WIND_COUPLING } from './physics/capture.mjs';
+import { SIGMA_PER_BT, apertureAlongWind } from './physics/capture.mjs';
 
 /** Hard live-particle cap (Global Constraint: ≤120 live particles). */
 export const MAX_PARTICLES = 120;
 
 /**
  * Inverse standard-normal CDF (probit). Acklam's rational approximation;
- * |abs error| < 1.15e-9. Pure. Used to place a particle's depth/width
- * offsets on the same Gaussian the capture integral assumes, from a uniform
+ * |abs error| < 1.15e-9. Pure. Used to place a particle's along-wind
+ * offset on the same Gaussian the capture integral assumes, from a uniform
  * quantile in (0, 1).
  */
 export function probit(p) {
@@ -52,100 +59,88 @@ export function probit(p) {
           ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
 }
 
+const panelsOpt = (panels) => (panels === 'both' || panels === 'three' ? panels : 'none');
+
 /**
- * The wind the plume actually feels — panel attenuation × the RB-006
- * coupling coefficient — identical to what captureFraction integrates with.
- * Pure.
+ * The wind the plume actually feels — the sheltered wind of sidepanels.mjs
+ * (panels, rear wall) — identical to what captureFraction deflects with.
+ * The RB-006 coupling C_D lives inside deflection()/deflectionRate(); it is
+ * NOT pre-multiplied here. Pure.
  */
-export function plumeWindOf(windMph, panels = 'none') {
-  return WIND_COUPLING * effectiveWind(windMph, panels);
+export function plumeWindOf(windMph, panels = 'none', { dir = 'side', mount = 'island' } = {}) {
+  return effectiveWind(Math.max(0, windMph || 0), { panels: panelsOpt(panels), dir, mount });
 }
 
 /**
- * Horizontal drift per inch of rise at height z: d(deflection)/dz =
- * u_wind(fpm) / u_centerline(z). This IS the integrand of wind.mjs
- * deflection(), so a particle stepped by (driftRate·dz) traces the deflected
- * centerline exactly. Sign follows the wind (downwind positive). Pure.
+ * Horizontal drift per inch of rise at height z: the analytic dδ/dz of the
+ * RB-006 §3.1 closed form, so a particle stepped by (driftRate·dz) traces
+ * the deflected centerline exactly. Sign follows the wind. Pure.
  */
-export function driftRate(zIn, plumeWind, w0 = 400) {
-  return (plumeWind * 88) / centerlineVelocity(zIn, w0);
+export function driftRate(zIn, plumeWind, src = SOURCES.gasMedium) {
+  return deflectionRate(zIn, plumeWind, src);
 }
 
 /**
  * Buoyant vertical speed at height z, in inches per ms, scaled so a parcel
- * takes ~riseSeconds to climb from the source to the hood at the base
- * velocity. Because it tracks centerlineVelocity(z), the rise visibly SLOWS
- * as the plume decays — the physical signature, not decoration. Pure.
+ * takes ~riseSeconds to climb from the source to the hood. Because it tracks
+ * the Heskestad centerline velocity, the rise visibly SLOWS as the plume
+ * decays — the physical signature, not decoration. Pure.
  */
-export function riseSpeedInPerMs(zIn, w0 = 400, k = 1) {
-  return centerlineVelocity(zIn, w0) * k;
+export function riseSpeedInPerMs(zIn, src = SOURCES.gasMedium, k = 1) {
+  return centerlineVelocity(zIn, src) * k;
 }
 
 /**
  * Advect a particle by dtMs. Rises per centerline velocity, drifts downwind
- * per the deflection integrand, so its path is the same trajectory the
- * capture model bends. Mutates and returns the particle. Pure (no DOM). The
- * returned dz/dx let the caller add per-particle turbulence around this
- * physics baseline.
+ * per the deflection slope, so its path is the same trajectory the capture
+ * model bends. Mutates and returns the particle. Pure (no DOM).
  */
-export function advect(p, dtMs, { plumeWind, w0 = 400, k }) {
-  const dz = riseSpeedInPerMs(p.z, w0, k) * dtMs;
-  const dx = driftRate(p.z, plumeWind, w0) * dz; // dx = (dx/dz)·dz
+export function advect(p, dtMs, { plumeWind, src = SOURCES.gasMedium, k }) {
+  const dz = riseSpeedInPerMs(p.z, src, k) * dtMs;
+  const dx = driftRate(p.z, plumeWind, src) * dz; // dx = (dx/dz)·dz
   p.z += dz;
   p.driftIn += dx;
   return p;
 }
 
 /**
- * Is a parcel with Gaussian depth/width offsets (inches, ~N(0, sigma))
- * CAPTURED by the aperture? This is the per-particle form of the exact
- * partition captureFraction() integrates:
- *   axial (island): (xc + depthOff) ∈ [−D/2, D/2]
- *   axial (wall):   |xc + depthOff| ≤ D    (reflected Gaussian at the wall)
- *   lateral:        |widthOff| ≤ widthIn/2
- * captured ⟺ axial ∧ lateral. Pure. Escape (ember tint) is the negation.
+ * Is a parcel with along-wind Gaussian offset (inches, ~N(0, σ)) CAPTURED
+ * by the aperture? This is the per-particle form of the partition
+ * captureFraction() integrates: (xc + windOff) ∈ [−ohUp, +ohDown] about the
+ * undeflected centreline (RB-006 §3.4); a wall-mount under rear wind has
+ * ohUp = ∞ (the wall reflects the upwind tail). Pure. Escape (ember tint)
+ * is the negation.
  */
-export function particleCaptured({ depthOff, widthOff }, { xc, depthIn, widthIn, mount }) {
-  let axial;
-  if (mount === 'wall') {
-    axial = Math.abs(xc + depthOff) <= depthIn;
-  } else {
-    axial = (xc + depthOff) >= -depthIn / 2 && (xc + depthOff) <= depthIn / 2;
-  }
-  const lateral = Math.abs(widthOff) <= widthIn / 2;
-  return axial && lateral;
+export function particleCaptured({ windOff }, { xc, ohUp, ohDown }) {
+  const x = xc + windOff;
+  return x >= -ohUp && x <= ohDown;
 }
 
 /** Physics parameters the field derives once per update. Pure. */
-export function deriveParams({ widthIn, depthIn, mount, riseIn, windMph, panels = 'none', w0 = 400 }) {
-  const plumeWind = plumeWindOf(windMph, panels);
-  const sigma = plumeRadius(riseIn) / 2;          // capture.mjs sigma
-  const xc = deflection(riseIn, plumeWind, { w0 }); // capture.mjs deflection
-  const finalRadius = plumeRadius(riseIn);
-  return { widthIn, depthIn, mount, riseIn, windMph, panels, w0, plumeWind, sigma, xc, finalRadius };
+export function deriveParams({ widthIn, depthIn, mount = 'island', riseIn = 30, windMph = 0, panels = 'none', windDir = 'side', src = SOURCES.gasMedium }) {
+  const rise = Math.max(0, riseIn || 0);
+  const plumeWind = plumeWindOf(windMph, panels, { dir: windDir, mount });
+  const sigma = SIGMA_PER_BT * plumeHalfWidthBT(rise, src);   // capture.mjs σ
+  const xc = deflection(rise, plumeWind, src);                 // capture.mjs centre shift
+  const { ohUp, ohDown } = apertureAlongWind({ widthIn, depthIn, mount, windDir, src });
+  const finalRadius = captureDiameter(rise, src) / 2;          // RB-002 d_capture / 2 (envelope)
+  return { widthIn, depthIn, mount, riseIn: rise, windMph, panels, windDir, src, plumeWind, sigma, xc, ohUp, ohDown, finalRadius };
 }
 
 /**
  * Deterministic (low-variance) estimate of the escaping smoke fraction from
- * the per-particle partition above, over an n×n stratified grid of Gaussian
- * quantiles. Independently derived from particleCaptured — NOT a call to
- * captureFraction — so tests can assert the two AGREE (that the smoke can
- * never disagree with the readout). Pure.
+ * the per-particle partition above, over n stratified Gaussian quantiles
+ * along the wind axis. Independently derived from particleCaptured — NOT a
+ * call to captureFraction — so tests can assert the two AGREE. Pure.
  */
-export function escapeFraction(state, n = 24) {
+export function escapeFraction(state, n = 256) {
   const p = deriveParams(state);
-  let captured = 0, total = 0;
+  let captured = 0;
   for (let i = 0; i < n; i++) {
-    const du = (i + 0.5) / n;
-    const depthOff = probit(du) * p.sigma;
-    for (let j = 0; j < n; j++) {
-      const dv = (j + 0.5) / n;
-      const widthOff = probit(dv) * p.sigma;
-      total++;
-      if (particleCaptured({ depthOff, widthOff }, p)) captured++;
-    }
+    const windOff = probit((i + 0.5) / n) * p.sigma;
+    if (particleCaptured({ windOff }, p)) captured++;
   }
-  return 1 - captured / total;
+  return 1 - captured / n;
 }
 
 // --- deterministic per-field RNG (mulberry32) — stable, no Math.random in
@@ -166,7 +161,7 @@ const NS = 'http://www.w3.org/2000/svg';
 /**
  * createSmokeField(svgGroup, geom) — the DOM layer. geom is the FIXED pixel
  * geometry: { sourceX, sourceY, pxPerIn }. Returns
- *   .update(state)   — state = { widthIn, depthIn, mount, riseIn, windMph, panels, w0 }
+ *   .update(state)   — state = { widthIn, depthIn, mount, riseIn, windMph, panels, windDir?, src? }
  *   .frame(nowMs)    — one animation step (driven by the engine's single rAF)
  *   .setReduced(bool).pause().resume().destroy()
  * No-op object when there is no DOM / no group (headless test import).
@@ -175,9 +170,8 @@ const NS = 'http://www.w3.org/2000/svg';
  * capture/recycle plane is authoritative in PHYSICS space — a particle
  * retires at z ≥ riseIn (state.riseIn, inches), and every pixel position is
  * sourceY − z·pxPerIn. A separate pixel-space hood plane would be a second
- * source of truth that could silently disagree with riseIn, so F2
- * instruments must not wire one up: pass source + scale and let riseIn
- * define the plane.
+ * source of truth that could silently disagree with riseIn, so instruments
+ * must not wire one up: pass source + scale and let riseIn define the plane.
  */
 export function createSmokeField(svgGroup, geom) {
   if (!hasDom || !svgGroup) {
@@ -195,24 +189,26 @@ export function createSmokeField(svgGroup, geom) {
   const particles = [];
   const pool = []; // SVG <circle> reuse
 
-  // static reduced-motion silhouette (one filled path from the plumeRadius
-  // envelope, deflected centerline). Hidden until setReduced(true).
+  // static reduced-motion silhouette (one filled path from the capture-
+  // diameter envelope, deflected centerline). Hidden until setReduced(true).
   const silhouette = document.createElementNS(NS, 'path');
   silhouette.setAttribute('class', 'ovs-i-smoke-silhouette');
   silhouette.setAttribute('opacity', '0');
   svgGroup.appendChild(silhouette);
 
+  const halfWidthAt = (z) => captureDiameter(z, params.src) / 2;
+  const sigmaAt = (z) => SIGMA_PER_BT * plumeHalfWidthBT(z, params.src);
+
   function riseK() {
     // scale rise so a parcel crosses the hood in ~2.8 s at base velocity
     const RISE_SECONDS = 2.8;
-    return params.riseIn / (centerlineVelocity(params.riseIn / 2, params.w0) * RISE_SECONDS * 1000);
+    if (!(params.riseIn > 0)) return 0;
+    return params.riseIn / (centerlineVelocity(params.riseIn / 2, params.src) * RISE_SECONDS * 1000);
   }
 
   function spawn() {
     if (particles.length >= MAX_PARTICLES) return;
-    const du = rand(), dv = rand();
-    const depthOff = probit(du) * params.sigma; // inches, ~N(0, sigma) at hood
-    const widthOff = probit(dv) * params.sigma;
+    const windOff = probit(rand()) * params.sigma; // inches, ~N(0, σ) at hood
     let node = pool.pop();
     if (!node) {
       node = document.createElementNS(NS, 'circle');
@@ -222,11 +218,11 @@ export function createSmokeField(svgGroup, geom) {
     const p = {
       z: rand() * 1.5,               // small stagger off the source
       driftIn: 0,
-      depthOff, widthOff,
+      windOff,
       r: 2.4 + rand() * 2.2,
       jitterPhase: rand() * Math.PI * 2,
       jitterAmp: 0.35 + rand() * 0.4,
-      captured: particleCaptured({ depthOff, widthOff }, params),
+      captured: particleCaptured({ windOff }, params),
       node,
     };
     particles.push(p);
@@ -240,11 +236,11 @@ export function createSmokeField(svgGroup, geom) {
 
   function draw(p, now) {
     const z = p.z;
-    const grow = params.finalRadius > 0 ? plumeRadius(z) / params.finalRadius : 1;
+    const grow = params.sigma > 0 ? sigmaAt(z) / params.sigma : 1;
     // physics baseline: deflected centerline + fanned Gaussian offset
-    const baseX = sourceX + (deflection(z, params.plumeWind, { w0: params.w0 }) + p.depthOff * grow) * pxPerIn;
+    const baseX = sourceX + (deflection(z, params.plumeWind, params.src) + p.windOff * grow) * pxPerIn;
     // per-particle turbulence around the baseline, scaled by local radius
-    const turb = Math.sin(now / 520 + p.jitterPhase + z * 0.12) * p.jitterAmp * plumeRadius(z) * pxPerIn * 0.06;
+    const turb = Math.sin(now / 520 + p.jitterPhase + z * 0.12) * p.jitterAmp * halfWidthAt(z) * pxPerIn * 0.06;
     const x = baseX + turb;
     const y = sourceY - z * pxPerIn;
     // opacity: fade in at birth, gentle falloff with rise. NOTE: this
@@ -275,15 +271,15 @@ export function createSmokeField(svgGroup, geom) {
     if (pts[pts.length - 1] !== params.riseIn) pts.push(params.riseIn);
     for (let i = 0; i < pts.length; i++) {
       const z = pts[i];
-      const cx = sourceX + deflection(z, params.plumeWind, { w0: params.w0 }) * pxPerIn;
-      const hw = plumeRadius(z) * pxPerIn;
+      const cx = sourceX + deflection(z, params.plumeWind, params.src) * pxPerIn;
+      const hw = halfWidthAt(z) * pxPerIn;
       const y = sourceY - z * pxPerIn;
       dl += `${i === 0 ? 'M' : 'L'}${(cx - hw).toFixed(1)} ${y.toFixed(1)}`;
     }
     for (let i = pts.length - 1; i >= 0; i--) {
       const z = pts[i];
-      const cx = sourceX + deflection(z, params.plumeWind, { w0: params.w0 }) * pxPerIn;
-      const hw = plumeRadius(z) * pxPerIn;
+      const cx = sourceX + deflection(z, params.plumeWind, params.src) * pxPerIn;
+      const hw = halfWidthAt(z) * pxPerIn;
       const y = sourceY - z * pxPerIn;
       dr += `L${(cx + hw).toFixed(1)} ${y.toFixed(1)}`;
     }
@@ -294,7 +290,7 @@ export function createSmokeField(svgGroup, geom) {
     params = deriveParams(state);
     // refresh capture flag on live particles so tint stays truthful as the
     // aperture/geometry changes without waiting for them to recycle
-    for (const p of particles) p.captured = particleCaptured({ depthOff: p.depthOff, widthOff: p.widthOff }, params);
+    for (const p of particles) p.captured = particleCaptured({ windOff: p.windOff }, params);
     if (reduced) renderSilhouette();
   }
 
@@ -303,6 +299,7 @@ export function createSmokeField(svgGroup, geom) {
     const dt = lastNow ? Math.min(64, now - lastNow) : 16;
     lastNow = now;
     const k = riseK();
+    if (!(params.riseIn > 0)) { clearParticles(); return; } // i08 indoor collapse: nothing to draw
     // spawn at a steady rate up to the cap — dense enough to read as smoke
     // (~55 ms → ~55 live at a ~3 s lifetime), far under the 120 hard cap.
     spawnAccum += dt;
@@ -310,7 +307,7 @@ export function createSmokeField(svgGroup, geom) {
     while (spawnAccum >= SPAWN_MS) { spawnAccum -= SPAWN_MS; spawn(); }
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
-      advect(p, dt, { plumeWind: params.plumeWind, w0: params.w0, k });
+      advect(p, dt, { plumeWind: params.plumeWind, src: params.src, k });
       if (p.z >= params.riseIn * 1.02) { recycle(i); continue; }
       draw(p, now);
     }

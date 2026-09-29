@@ -44,6 +44,12 @@
 {{- $preset := .preset | default "" }}
 {{- $caption := .caption }}
 {{- $fallback := .fallback }}
+{{- /* data-page: the host page's path ("home" for /, "tools/x" for /tools/x/),
+       the hook assets/ovs/css/components.css uses to give a page its own
+       pre-mount CLS reserve when the same instrument mounts at a different
+       height there (the homepage i01 hero, i10 on the grease page). Generated
+       by scripts/measure-instrument-reserves.mjs; nothing else reads it. */}}
+{{- $pageKey := strings.Trim page.RelPermalink "/" | default "home" }}
 {{- $svgMap := dict
   "i03" "wind-deflection-trajectory"
   "i04" "plume-width-by-height"
@@ -54,7 +60,7 @@
   "i09" "heat-release-rate-comparison"
   "i10" "failure-mode-taxonomy"
 }}
-<figure class="ovs-instrument" data-instrument="{{ $id }}" data-preset="{{ $preset }}">
+<figure class="ovs-instrument" data-instrument="{{ $id }}" data-preset="{{ $preset }}" data-page="{{ $pageKey }}">
   <noscript>{{- with $fallback | default (index $svgMap $id) }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="/tools/">Browse all instruments</a>.</p>{{- end }}</noscript>
   {{- with $caption }}
   <figcaption>{{ . | safeHTML }}</figcaption>

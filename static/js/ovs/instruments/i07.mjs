@@ -30,14 +30,20 @@
 //     were added to solve).
 
 import { createInstrument, gradeCapture } from '../viz.mjs';
-import { captureFraction, WIND_COUPLING } from '../physics/capture.mjs';
-import { plumeRadius } from '../physics/plume.mjs';
+import { captureFraction } from '../physics/capture.mjs';
+import { captureDiameter } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
 import { effectiveWind } from '../physics/sidepanels.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
 const RISE_IN = 30; // fixed hood mounting height, matching i01's canonical rise
 const SAMPLE_STEP_IN = 2;
+const SRC = SOURCES.gasMedium; // the papers' single-source reference case (RB-009 Table 3.1a rows)
+// This instrument's wind is a SIDE wind — the lateral row of RB-009 Table
+// 3.1a (rb-009:242-247), the direction side panels are built to shelter.
+const WIND_DIR = 'side';
+const shelter = (mph, panels) => effectiveWind(mph, { panels: panels === 'both' ? 'both' : 'none', dir: WIND_DIR });
 
 const STATUS_FILL = {
   ok: null, // fall back to the .ovs-i-plume-fill CSS default
@@ -168,14 +174,15 @@ export function mount(figureEl) {
     const panels = state['i07-panels'];
     panelsNow = panels;
 
-    const effWind = effectiveWind(windMph, panels);
-    const plumeWind = WIND_COUPLING * effWind;
+    // The sheltered wind (RB-009 R_panel, lateral). deflection() carries
+    // the RB-006 §3.1 coupling itself — nothing is pre-multiplied here.
+    const effWind = shelter(windMph, panels);
 
     const capWithPanels = captureFraction({
-      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels,
+      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, windDir: WIND_DIR, panels: panels === 'both' ? 'both' : 'none', src: SRC,
     });
     const capWithoutPanels = captureFraction({
-      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, panels: 'none',
+      widthIn: widthCtl, depthIn, mount: mountVal, riseIn: RISE_IN, windMph, windDir: WIND_DIR, panels: 'none', src: SRC,
     });
 
     // expose physics to the engine's verdict stamp (spec.verdict)
@@ -190,9 +197,9 @@ export function mount(figureEl) {
     for (let z = 0; z <= RISE_IN; z += SAMPLE_STEP_IN) samples.push(z);
     if (samples[samples.length - 1] !== RISE_IN) samples.push(RISE_IN);
 
-    const centerXAt = (zIn) => GX + deflection(zIn, plumeWind) * pxPerIn;
+    const centerXAt = (zIn) => GX + deflection(zIn, effWind, SRC) * pxPerIn;
     const yAt = (zIn) => GY - zIn * pxPerIn;
-    const halfWAt = (zIn) => plumeRadius(zIn) * pxPerIn;
+    const halfWAt = (zIn) => (captureDiameter(zIn, SRC) / 2) * pxPerIn; // RB-002 d_capture (rb-002:983)
 
     let dl = '', dr = '';
     for (let i = 0; i < samples.length; i++) {
@@ -229,7 +236,7 @@ export function mount(figureEl) {
     refs.panelL.setAttribute('x', (lx - 6).toFixed(1));
     refs.panelR.setAttribute('x', rx.toFixed(1));
     const showLeft = panels === 'both';
-    const showRight = panels === 'one' || panels === 'both';
+    const showRight = panels === 'both';
     refs.panelL.setAttribute('opacity', showLeft ? 1 : 0);
     refs.panelR.setAttribute('opacity', showRight ? 1 : 0);
 
@@ -240,7 +247,7 @@ export function mount(figureEl) {
     refs.windArrow.setAttribute('d', `M${shaftX.toFixed(1)} 48 l-7 -4 m7 4 l-7 4`);
     // wind drag strip spans the shaft's full travel at the CURRENT panel
     // attenuation (max raw wind 16 mph -> max effective = 16 * factor).
-    const maxEff = effectiveWind(16, panels);
+    const maxEff = shelter(16, panels);
     refs.dragWind.setAttribute('width', (90 + maxEff * 1.5 + 12 - 36).toFixed(1));
 
     // --- escape wisps, keyed to the WITH-panels capture number --------
@@ -268,11 +275,13 @@ export function mount(figureEl) {
     id: 'i07',
     title: 'Side Panel Effectiveness',
     controls: [
+      // 'one' panel is not offered: RB-009 has no row for a single panel
+      // and §3.5.1 warns a lone windward panel can worsen escape (rb-009:369).
       {
         id: 'i07-panels', type: 'segmented', label: 'SIDE PANELS', value: 'none',
-        options: [{ value: 'none', label: 'NONE' }, { value: 'one', label: 'ONE' }, { value: 'both', label: 'BOTH' }],
+        options: [{ value: 'none', label: 'NONE' }, { value: 'both', label: 'BOTH' }],
       },
-      { id: 'i07-wind', type: 'range', label: 'WIND SPEED', min: 0, max: 16, step: 1, value: 8, unit: 'mph' },
+      { id: 'i07-wind', type: 'range', label: 'SIDE WIND SPEED', min: 0, max: 16, step: 1, value: 8, unit: 'mph' },
       { id: 'i07-width', type: 'range', label: 'HOOD WIDTH', min: 42, max: 72, step: 6, value: widthIn, unit: 'in', detents: MODEL_WIDTHS },
     ],
     readouts: [
@@ -295,8 +304,9 @@ export function mount(figureEl) {
       mount: mountVal,
       riseIn: RISE_IN,
       windMph: state['i07-wind'],
-      panels: state['i07-panels'],
-      w0: 400,
+      windDir: WIND_DIR,
+      panels: state['i07-panels'] === 'both' ? 'both' : 'none',
+      src: SRC,
     }),
 
     // --- direct manipulation: hood edge (6" snap) and the wind arrow
@@ -309,13 +319,13 @@ export function mount(figureEl) {
       {
         target: 'wind-arrow', control: 'i07-wind', axis: 'x', cursor: 'ew-resize',
         toValue: (x) => {
-          const factor = effectiveWind(1, panelsNow) || 1;
+          const factor = shelter(1, panelsNow) || 1;
           const eff = Math.max(0, (x - 90) / 1.5);
           return Math.max(0, Math.min(16, Math.round(eff / factor)));
         },
         // W5-T3 visible grip: this scene's arrow is drawn at the EFFECTIVE
         // (post-panel) wind — ride that tip, exactly as update() draws it.
-        grip: (st) => ({ x: 90 + effectiveWind(Math.max(0, Math.min(16, st['i07-wind'])), st['i07-panels']) * 1.5 + 14, y: 48 }),
+        grip: (st) => ({ x: 90 + shelter(Math.max(0, Math.min(16, st['i07-wind'])), st['i07-panels']) * 1.5 + 14, y: 48 }),
       },
     ],
 
@@ -323,20 +333,19 @@ export function mount(figureEl) {
     presets: [
       { id: 'calm-evening-no-panels', label: 'Calm evening, no panels', state: { 'i07-panels': 'none', 'i07-wind': 0, 'i07-width': 48 } },
       { id: 'breezy-unshielded', label: 'Breezy, unshielded', state: { 'i07-panels': 'none', 'i07-wind': 10, 'i07-width': 48 } },
-      { id: 'windy-corner-one-panel', label: 'Windy corner, one panel', state: { 'i07-panels': 'one', 'i07-wind': 14, 'i07-width': 54 } },
+      { id: 'windy-corner-both-panels', label: 'Windy corner, both panels', state: { 'i07-panels': 'both', 'i07-wind': 14, 'i07-width': 54 } },
       { id: 'exposed-island-both-panels', label: 'Exposed island, both panels', state: { 'i07-panels': 'both', 'i07-wind': 16, 'i07-width': 60 } },
     ],
 
     // --- verdict stamp: capture-fraction thresholds, graded on the
     //     WITH-PANELS capture — the scenario the panels exist to fix. The
     //     0.85/0.60 bands are this instrument's MODEL CRITERIA (no research
-    //     bulletin or on-site clause defines PASS/MARGINAL bands; the old
-    //     "OVS-H1 §2.4" resolved to nothing — F2 review F-3). The RB
-    //     citation is the side-panel paper this instrument's physics is
-    //     built from: RB-009 §3.1 "Panel Wind Reduction: Comprehensive
-    //     Results" (content/research/rb-009-side-panel-effectiveness.md),
-    //     the U_eff = U_w · (1 − R_panel) attenuation that effectiveWind()
-    //     implements — apter than the previous RB-006 (F2 review F-4). ------
+    //     bulletin defines PASS/MARGINAL bands). The stamp cites the
+    //     papers for the DATA — RB-009 §3.1 "Panel Wind Reduction" (the
+    //     U_eff = U_w · (1 − R_panel) attenuation effectiveWind() implements)
+    //     and RB-006 §3.4 (the capture thresholds) — and labels the cut as
+    //     the OVS model criterion, never attributing it to a section that
+    //     does not define it. -------------------------------------------------
     //     W5-T3 (UX P1-3): explanation on-surface (`plain` + threshold
     //     line); engine adds the model-configuration footnote. ---------------
     verdict: (state, physics) => {
@@ -346,8 +355,8 @@ export function mount(figureEl) {
       return {
         grade,
         plain: `${pct}% captured with panels in this modeled scene`,
-        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-009 §3.1',
-        detail: `Plume capture with panels ${pct}% — model-criterion thresholds 85% PASS / 60% MARGINAL (panel attenuation data: RB-009).`,
+        clauseRef: 'OVS model criterion ≥85% · ≥60% — data: RB-009 §3.1',
+        detail: `Plume capture with panels ${pct}% — panel attenuation data: RB-009 §3.1; capture model: RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`,
       };
     },
   };

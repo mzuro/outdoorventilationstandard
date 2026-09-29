@@ -2,16 +2,21 @@
 //
 // Same module contract as i01.mjs/i02.mjs: a single `mount(figureEl)`
 // export, re-mount guarded. Physics only from ../physics/plume.mjs
-// (centerlineVelocity) — w0=400/z0=12 calibration is never recomputed here.
+// (centerlineVelocity — the Heskestad u_0 = 1.03·Q_c^(1/3)·(z − z_0)^(−1/3),
+// rb-001:135) and ../physics/heat.mjs (SOURCES) — nothing is recomputed
+// here.
 //
 // No mount/width control on this instrument, so it does not read
-// `data-preset`.
+// `data-preset`. A SOURCE control (physics Stage B) picks the RB-001 row;
+// the default is Gas Grill Medium, whose column is RB-003 Table 3.1b.
 //
 // Scene: a velocity-vs-height chart (height on x, centerline velocity on
-// y) sampled every 2in from 0 to 60in; a tracer dot slides along the curve
-// to the DISTANCE control; two dashed capture-plane-style reference lines
-// mark the wall (100 fpm) and island (150 fpm) minimum capture-velocity
-// thresholds — scene lines only, per the brief, not readouts.
+// y) sampled every 2in from 6 to 72in; a tracer dot slides along the curve
+// to the DISTANCE control; one dashed reference line marks the ASHRAE
+// heavy-duty face velocity of 100 fpm, which RB-003 §2.5 explains is NOT
+// the outdoor capture criterion (every source clears it at every height,
+// rb-003:287) — a scene line only, not a readout. The old 150 fpm
+// "island threshold" line had no paper basis and is gone.
 //
 // v2.1 (F2) adoption:
 //   - drag: the tracer dot itself, along its curve's x-axis (distance).
@@ -27,12 +32,26 @@
 
 import { createInstrument } from '../viz.mjs';
 import { centerlineVelocity } from '../physics/plume.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 
 const SAMPLE_STEP_IN = 2;
-const MAX_Z_IN = 60; // matches the DISTANCE control's max
-const MAX_VEL_FPM = 450; // y-axis ceiling — clears the z=0 plateau (400 fpm) with headroom
-const WALL_THRESHOLD_FPM = 100;
-const ISLAND_THRESHOLD_FPM = 150;
+const MIN_Z_IN = 6; // RB-003 Table 3.1b starts at 6 in (rb-003:277)
+const MAX_Z_IN = 72; // matches the DISTANCE control's max and the table's last row
+const MAX_VEL_FPM = 700; // y-axis ceiling — clears Gas High-Output at 6 in (615 fpm, rb-003:277)
+const ASHRAE_FACE_FPM = 100; // reference only (rb-003:287, RB-003 §2.5)
+
+/** SOURCE menu — RB-001 Table 3.1 rows, the RB-003 Table 3.1b columns. */
+const SOURCE_MENU = [
+  { value: 'gasSmall', label: 'GAS 25K' },
+  { value: 'gasMedium', label: 'GAS 40K' },
+  { value: 'gasLarge', label: 'GAS 60K' },
+  { value: 'gasHigh', label: 'GAS 80K' },
+  { value: 'charcoalKettle', label: 'CHARCOAL' },
+  { value: 'woodFired', label: 'WOOD-FIRED' },
+  { value: 'pelletHigh', label: 'PELLET' },
+];
+const sourceFor = (v) => SOURCES[v] || SOURCES.gasMedium;
+const shortLabel = (src) => (SOURCE_MENU.find((o) => o.value === src.id) || { label: src.id }).label;
 
 export function mount(figureEl) {
   if (!figureEl || figureEl.dataset.i06Mounted === '1') return;
@@ -81,17 +100,14 @@ export function mount(figureEl) {
     axis.appendChild(H.el('text', { x: X1, y: Y_BOTTOM + 34, 'text-anchor': 'end', text: 'height above source, in' }));
     svg.appendChild(axis);
 
-    // capture-velocity threshold lines (fixed — do not depend on state)
-    const wallY = yFor(WALL_THRESHOLD_FPM);
-    const islandY = yFor(ISLAND_THRESHOLD_FPM);
-    const wall = H.el('line', { class: 'ovs-i-cap-plane', x1: X0, y1: wallY, x2: X1, y2: wallY });
-    const wallLabel = H.el('text', { x: X1, y: wallY - 5, 'text-anchor': 'end', text: `wall capture — ${WALL_THRESHOLD_FPM} fpm` });
-    const island = H.el('line', { class: 'ovs-i-cap-plane', x1: X0, y1: islandY, x2: X1, y2: islandY });
-    const islandLabel = H.el('text', { x: X1, y: islandY - 5, 'text-anchor': 'end', text: `island capture — ${ISLAND_THRESHOLD_FPM} fpm` });
-    svg.appendChild(wall);
-    svg.appendChild(wallLabel);
-    svg.appendChild(island);
-    svg.appendChild(islandLabel);
+    // ASHRAE face-velocity reference line (fixed — does not depend on state)
+    const refY = yFor(ASHRAE_FACE_FPM);
+    svg.appendChild(H.el('line', { class: 'ovs-i-cap-plane', x1: X0, y1: refY, x2: X1, y2: refY }));
+    svg.appendChild(H.el('text', { x: X1, y: refY - 5, 'text-anchor': 'end', text: `ASHRAE face velocity ${ASHRAE_FACE_FPM} fpm — not the outdoor criterion (RB-003 §2.5)` }));
+
+    // source note (rebuilt per update)
+    refs.sourceNote = H.el('g');
+    svg.appendChild(refs.sourceNote);
 
     // decay curve (rebuilt each update only if calibration ever moved; here
     // it is static, but built in update() alongside the tracer for symmetry
@@ -123,19 +139,26 @@ export function mount(figureEl) {
   function update(state, ctx) {
     const { setReadout } = ctx;
     const distanceIn = state['i06-distance'];
-    const velocity = centerlineVelocity(distanceIn);
+    const src = sourceFor(state['i06-source']);
+    const velocity = centerlineVelocity(distanceIn, src);
 
     setReadout('velocity', velocity);
+    setReadout('qc', src.qcKw);
+    // Local formatter (brief: extend fmt ONLY here): Q_c wants one decimal.
+    const qcEl = container.querySelector('output[aria-labelledby="qc-label"]');
+    if (qcEl) qcEl.textContent = `${src.qcKw.toFixed(1)} kW`;
+
+    replaceChildren(refs.sourceNote, H.noteBox(X0 + 10, Y_TOP - 24, `${shortLabel(src)} · Q_c ${src.qcKw.toFixed(1)} kW · z_0 ${src.z0M.toFixed(2)} m`));
 
     // --- decay curve, sampled every 2in --------------------------------
     const samples = [];
-    for (let z = 0; z <= MAX_Z_IN; z += SAMPLE_STEP_IN) samples.push(z);
+    for (let z = MIN_Z_IN; z <= MAX_Z_IN; z += SAMPLE_STEP_IN) samples.push(z);
 
     let d = '';
     for (let i = 0; i < samples.length; i++) {
       const z = samples[i];
       const x = xFor(z);
-      const y = yFor(centerlineVelocity(z));
+      const y = yFor(centerlineVelocity(z, src));
       d += `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
     }
     refs.curve.setAttribute('d', d);
@@ -161,10 +184,12 @@ export function mount(figureEl) {
     id: 'i06',
     title: 'Velocity Decay',
     controls: [
-      { id: 'i06-distance', type: 'range', label: 'DISTANCE ABOVE SOURCE', min: 6, max: 60, step: 2, value: 24, unit: 'in' },
+      { id: 'i06-distance', type: 'range', label: 'DISTANCE ABOVE SOURCE', min: MIN_Z_IN, max: MAX_Z_IN, step: 2, value: 30, unit: 'in' },
+      { id: 'i06-source', type: 'segmented', label: 'SOURCE', value: 'gasMedium', options: SOURCE_MENU },
     ],
     readouts: [
-      { id: 'velocity', label: 'CENTERLINE VELOCITY', format: 'fpm', hero: true },
+      { id: 'velocity', label: 'CENTERLINE VELOCITY u_0', format: 'fpm', hero: true },
+      { id: 'qc', label: 'CONVECTIVE HEAT Q_c' },
     ],
     scene: buildScene,
     update,
@@ -174,22 +199,22 @@ export function mount(figureEl) {
     drag: [
       {
         target: '.ovs-i-drag-tracer', control: 'i06-distance', axis: 'x', cursor: 'ew-resize',
-        toValue: (x) => Math.max(6, Math.min(MAX_Z_IN, Math.round((((x - X0) / (X1 - X0)) * MAX_Z_IN) / 2) * 2)),
+        toValue: (x) => Math.max(MIN_Z_IN, Math.min(MAX_Z_IN, Math.round((((x - X0) / (X1 - X0)) * MAX_Z_IN) / 2) * 2)),
         // W5-T3 visible grip: ride the tracer dot on the curve (same xFor/
         // yFor/centerlineVelocity update() positions the dot with).
         grip: (st) => {
-          const z = Math.max(6, Math.min(MAX_Z_IN, st['i06-distance']));
-          return { x: xFor(z), y: yFor(centerlineVelocity(z)) };
+          const z = Math.max(MIN_Z_IN, Math.min(MAX_Z_IN, st['i06-distance']));
+          return { x: xFor(z), y: yFor(centerlineVelocity(z, sourceFor(st['i06-source']))) };
         },
       },
     ],
 
     // --- story presets: four site-voice distances. --------------------------
     presets: [
-      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i06-distance': 6 } },
-      { id: 'mid-plume', label: 'Mid-plume', state: { 'i06-distance': 24 } },
-      { id: 'near-a-wall-hood', label: 'Near a wall hood', state: { 'i06-distance': 42 } },
-      { id: 'near-a-tall-island-hood', label: 'Near a tall island hood', state: { 'i06-distance': 60 } },
+      { id: 'right-at-the-grate', label: 'Right at the grate', state: { 'i06-distance': 6, 'i06-source': 'gasMedium' } },
+      { id: 'standard-hood-height', label: 'RB-003 row: 30 in, 40k gas', state: { 'i06-distance': 30, 'i06-source': 'gasMedium' } },
+      { id: 'charcoal-kettle', label: 'Charcoal kettle at 30 in', state: { 'i06-distance': 30, 'i06-source': 'charcoalKettle' } },
+      { id: 'near-a-tall-island-hood', label: 'Tall hood, 60k gas', state: { 'i06-distance': 48, 'i06-source': 'gasLarge' } },
     ],
 
     // No spec.verdict — see the header comment.

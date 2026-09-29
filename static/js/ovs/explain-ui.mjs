@@ -6,10 +6,15 @@
 // `figureEl.ovsInstrument` (see static/js/ovs/instruments/i01.mjs / i02.mjs).
 //
 // Per-instrument param key -> plain param name, matching src/lib/params.mjs
-// SCHEMAS server-side.
+// SCHEMAS server-side. An entry may be a plain name or { name, num: true }
+// for a control whose committed value is a radio string ("30") but whose
+// server field is numeric (i02 height: RB-008's 18/24/30/36/48 in grid).
 const PARAM_MAP = {
-  i01: { 'i01-wind': 'wind', 'i01-width': 'width', 'i01-mount': 'mount', 'i01-panels': 'panels' },
-  i02: { 'i02-width': 'width', 'i02-mount': 'mount', 'i02-exposure': 'exposure', 'i02-btu': 'btu' },
+  i01: { 'i01-wind': 'wind', 'i01-width': 'width', 'i01-mount': 'mount', 'i01-panels': 'panels', 'i01-dir': 'dir' },
+  i02: {
+    'i02-source': 'source', 'i02-height': { name: 'height', num: true }, 'i02-mount': 'mount',
+    'i02-exposure': 'exposure', 'i02-panels': 'panels', 'i02-width': 'width',
+  },
 };
 
 const TURNSTILE_SITEKEY = '0x4AAAAAACcaq_joFScewE6d';
@@ -29,8 +34,10 @@ function extractParams(instrument, figureEl) {
   const state = inst.get();
   const map = PARAM_MAP[instrument];
   const params = {};
-  for (const [stateKey, paramName] of Object.entries(map)) {
-    params[paramName] = state[stateKey];
+  for (const [stateKey, entry] of Object.entries(map)) {
+    const name = typeof entry === 'string' ? entry : entry.name;
+    const value = state[stateKey];
+    params[name] = typeof entry !== 'string' && entry.num ? Number(value) : value;
   }
   return params;
 }
@@ -48,8 +55,14 @@ function escapeHtml(s) {
 // viz.mjs + components.css) — so the correct numbers are ALWAYS on
 // screen in the site's own voice, regardless of what the narration says.
 // Labels mirror the instruments' own readout labels (i01.mjs / i02.mjs).
+// A row's fmt receives (value, outputs, inputs); a row may instead carry
+// `fallback(outputs)` for the case its key is absent from the sheet.
 const nfmt = (v) => (typeof v === 'number' ? v.toLocaleString('en-US') : String(v));
-const STATE_READOUTS = {
+// i02 wind class as the copy-spec line names it ("exposed + panels" /
+// "exposed" / "moderate" / "sheltered"): panels enter K_CFM only in the
+// exposed class (rb-008:144-145), so they are named only there.
+const i02WindClass = (i) => (i && i.exposure === 'exposed' ? (i.panels === 'both' ? 'exposed + panels' : 'exposed') : (i && i.exposure) || '');
+export const STATE_READOUTS = {
   i01: [
     { key: 'capturePct', label: 'PLUME CAPTURE', fmt: (v) => nfmt(v) + '%', hero: true },
     { key: 'deflectionIn', label: 'DEFLECTION AT HOOD', fmt: (v) => nfmt(v) + '″' },
@@ -57,21 +70,36 @@ const STATE_READOUTS = {
     { key: 'plumeWidthAtHoodIn', label: 'PLUME WIDTH AT HOOD', fmt: (v) => nfmt(v) + '″' },
   ],
   i02: [
-    { key: 'recommendedCfm', label: 'RECOMMENDED', fmt: (v) => nfmt(v) + ' CFM', hero: true },
-    { key: 'minimumCfm', label: 'MINIMUM', fmt: (v) => nfmt(v) + ' CFM' },
-    { key: 'highWindCfm', label: 'HIGH-WIND', fmt: (v) => nfmt(v) + ' CFM' },
+    { key: 'minimumCfm', label: 'MINIMUM', fmt: (v) => nfmt(v) + ' CFM', hero: true },
+    // Above the standard-size ladder the sheet has no blowerCfm (never the
+    // minimum relabelled): show the ladder top the way the instrument's own
+    // readout does ("> 3,000 CFM", i02.mjs ABOVE_LADDER_READOUT).
+    {
+      key: 'blowerCfm', label: 'BLOWER', fmt: (v) => nfmt(v) + ' CFM',
+      fallback: (o) => (typeof o.blowerLadderTopCfm === 'number' ? '> ' + nfmt(o.blowerLadderTopCfm) + ' CFM' : null),
+    },
+    { key: 'kCfm', label: 'K_CFM', fmt: (v, o, i) => Number(v).toFixed(2) + '×' + (i02WindClass(i) ? ' · ' + i02WindClass(i) : '') },
+    { key: 'plumeCfm', label: 'PLUME FLOW', fmt: (v) => nfmt(v) + ' CFM' },
   ],
 };
+
+/** The text a STATE_READOUTS row shows for this sheet, or null to omit the row. Pure. */
+export function stateReadoutText(row, state) {
+  const o = (state && state.outputs) || {};
+  if (o[row.key] != null) return row.fmt(o[row.key], o, state.inputs || {});
+  return row.fallback ? row.fallback(o) : null;
+}
 
 function renderStateReadout(state) {
   if (!state || !state.outputs) return '';
   const rows = STATE_READOUTS[state.instrument] || [];
   const rowsHtml = rows
-    .filter((r) => state.outputs[r.key] != null)
-    .map((r) =>
+    .map((r) => [r, stateReadoutText(r, state)])
+    .filter(([, text]) => text != null)
+    .map(([r, text]) =>
       '<div class="' + (r.hero ? 'ovs-i-readout ovs-i-readout--hero' : 'ovs-i-readout') + '">' +
         '<span class="ovs-i-readout-label">' + escapeHtml(r.label) + '</span>' +
-        '<span class="ovs-i-readout-value">' + escapeHtml(r.fmt(state.outputs[r.key])) + '</span>' +
+        '<span class="ovs-i-readout-value">' + escapeHtml(text) + '</span>' +
       '</div>')
     .join('');
   if (!rowsHtml) return '';

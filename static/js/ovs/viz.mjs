@@ -50,6 +50,17 @@ export function gradeCapture(capFrac, { pass = 0.85, marginal = 0.6 } = {}) {
  * compared so segmented literals and numeric ranges compare uniformly).
  * Pure. Returns the preset id or null.
  */
+/**
+ * Label for a readout's cell in the sticky mobile strip: the readout's
+ * optional short `stripLabel`, else its full `label`. The strip is one
+ * line at <=760px with a grade badge on graded instruments, so long labels
+ * ("RECOMMENDED") ellipsized at 375px; values are never abbreviated.
+ */
+export function stripLabelFor(readout) {
+  if (!readout) return '';
+  return readout.stripLabel || readout.label || '';
+}
+
 export function presetActiveId(presets, state) {
   for (const p of presets || []) {
     let match = true;
@@ -340,6 +351,21 @@ export function createInstrument(rootEl, spec) {
 
   rootEl.innerHTML = '';
   rootEl.classList.add('ovs-i');
+  // Release the CLS reserve. components.css holds each instrument's
+  // pre-mount footprint with `.ovs-instrument:not(.ovs-i) { min-height }`
+  // on the OUTER <figure class="ovs-instrument"> (instrument-figure.html),
+  // but every instrument's mount() hands this factory an inner
+  // div.ovs-instrument-mount, not the figure — so the class above never
+  // reached the figure and the reserve was never released: every mounted
+  // figure kept its 715-1080px min-height, and at 641-1100px widths
+  // (content shorter than the reserve) the pre-mount `justify-content:
+  // flex-end` pushed the instrument down, leaving up to 262px of blank
+  // space above it (i04 worst) and a ~400px gap in print. Stamp the figure
+  // too; the mount-div class stays for anything keyed on it.
+  if (typeof rootEl.closest === 'function') {
+    const figure = rootEl.closest('figure.ovs-instrument');
+    if (figure) figure.classList.add('ovs-i');
+  }
 
   const article = document.createElement('div');
   article.className = 'ovs-i-instrument';
@@ -532,7 +558,7 @@ export function createInstrument(rootEl, spec) {
       cell.className = 'ovs-i-strip-cell';
       const lab = document.createElement('span');
       lab.className = 'ovs-i-strip-label';
-      lab.textContent = r.label;
+      lab.textContent = stripLabelFor(r);
       const val = document.createElement('span');
       val.className = 'ovs-i-strip-value';
       cell.appendChild(lab);
@@ -560,12 +586,20 @@ export function createInstrument(rootEl, spec) {
     else if (stripMq.addListener) stripMq.addListener(stripMqHandler);
   }
 
-  function setReadout(id, value) {
+  // setReadout(id, value[, display]): `display`, when a string, is shown
+  // VERBATIM in place of fmt(value) — for readouts whose formatting the
+  // engine's fmt() cannot express (K_CFM "3.68×"; a blower above the
+  // standard-size ladder, "> 3,000 CFM"). It is the instrument's own
+  // string and is mirrored unchanged into the sticky strip below, so a
+  // readout and its strip cell can never show different text (the
+  // Stage-B review caught i02 overriding only the <output>, leaving the
+  // strip at "0 CFM").
+  function setReadout(id, value, display) {
     const r = readoutEls.get(id);
     if (!r) return;
-    r.el.textContent = fmt(value, r.format);
-    // Mirror the SAME formatted string into the sticky strip (W5-T2) —
-    // never a recomputation, so the strip cannot disagree with the readout.
+    r.el.textContent = typeof display === 'string' ? display : fmt(value, r.format);
+    // Mirror the SAME string into the sticky strip (W5-T2) — never a
+    // recomputation, so the strip cannot disagree with the readout.
     const cell = stripCells.get(id);
     if (cell) cell.textContent = r.el.textContent;
   }

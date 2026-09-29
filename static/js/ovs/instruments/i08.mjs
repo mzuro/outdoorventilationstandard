@@ -32,16 +32,13 @@
 //     (the engine only exposes create/update/frame internally; there is
 //     no per-instrument pause() reachable from spec.smoke), this collapses
 //     the geom to a degenerate, physically-inert state when indoor:
-//     riseIn: 0 and w0: 1 (a tiny NONZERO velocity scale — w0: 0 would
-//     make centerlineVelocity()===0 everywhere, and riseK() in smoke.mjs
-//     divides by centerlineVelocity(...), so an exact 0 produces a 0/0
-//     NaN that corrupts every live particle's z permanently; w0: 1 keeps
-//     that denominator finite while still making the rise speed ~0). With
-//     riseIn: 0, every spawned particle's retirement test
-//     (z >= riseIn*1.02 === 0) is already true at spawn (z starts > 0),
-//     so it is recycled the same frame it is created — no particles ever
-//     draw indoors, verified in the F2 puppeteer sweep (0 `.ovs-i-smoke`
-//     nodes indoors, particles resume immediately on returning outdoor).
+//     riseIn: 0. Every spawned particle's retirement test (z >= riseIn·1.02
+//     === 0) is already true at spawn (z starts > 0), so it is recycled
+//     the same frame it is created — no particles ever draw indoors
+//     (verified in the F2 puppeteer sweep: 0 `.ovs-i-smoke` nodes indoors,
+//     particles resume immediately on returning outdoor). The old `w0`
+//     velocity-scale key is gone with the physics re-base (smoke.mjs rides
+//     the Heskestad centerline velocity of the source itself).
 //   - presets: four site-voice scenarios (three outdoor wind levels, one
 //     indoor) — the indoor preset sets `i08-wind: 0` explicitly so it
 //     matches what the environment switch would force anyway, rather than
@@ -55,9 +52,9 @@
 
 import { createInstrument, gradeCapture } from '../viz.mjs';
 import { captureFraction } from '../physics/capture.mjs';
-import { plumeRadius } from '../physics/plume.mjs';
+import { captureDiameter } from '../physics/plume.mjs';
 import { deflection } from '../physics/wind.mjs';
-import { WIND_COUPLING } from '../physics/capture.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 import { MOUNT } from '../hood-presets.mjs';
 
 const RISE_IN = 30;
@@ -65,6 +62,8 @@ const SAMPLE_STEP_IN = 2;
 const WIDTH_IN = 48; // fixed geometry — no width/mount control on this instrument
 const MOUNT_VAL = 'island';
 const DEPTH_IN = MOUNT[MOUNT_VAL].depthIn;
+const SRC = SOURCES.gasMedium; // the papers' single-source reference case
+const WIND_DIR = 'side'; // a SIDE wind on an island hood — no panels, no wall: ambient = effective
 
 const ASSUMPTIONS = {
   indoor: [
@@ -231,7 +230,7 @@ export function mount(figureEl) {
 
     const windMph = env === 'indoor' ? 0 : state['i08-wind'];
     const capFrac = captureFraction({
-      widthIn: WIDTH_IN, depthIn: DEPTH_IN, mount: MOUNT_VAL, riseIn: RISE_IN, windMph, panels: 'none',
+      widthIn: WIDTH_IN, depthIn: DEPTH_IN, mount: MOUNT_VAL, riseIn: RISE_IN, windMph, windDir: WIND_DIR, panels: 'none', src: SRC,
     });
     setReadout('capture', capFrac);
     setReadout('assumptionCount', ASSUMPTIONS[env].length);
@@ -244,15 +243,16 @@ export function mount(figureEl) {
     refs.sky.setAttribute('opacity', env === 'outdoor' ? 1 : 0.18);
     refs.windGroup.setAttribute('opacity', env === 'outdoor' ? 1 : 0.15);
 
-    // --- shared plume, bends only when outdoor + wind ------------------
-    const plumeWind = WIND_COUPLING * windMph;
+    // --- shared plume, bends only when outdoor + wind. deflection()
+    //     carries the RB-006 §3.1 coupling itself; with no panels and no
+    //     wall the ambient wind IS the sheltered wind captureFraction uses.
     const samples = [];
     for (let z = 0; z <= RISE_IN; z += SAMPLE_STEP_IN) samples.push(z);
     if (samples[samples.length - 1] !== RISE_IN) samples.push(RISE_IN);
 
-    const centerXAt = (zIn) => GX + deflection(zIn, plumeWind) * pxPerIn;
+    const centerXAt = (zIn) => GX + deflection(zIn, windMph, SRC) * pxPerIn;
     const yAt = (zIn) => GY - zIn * pxPerIn;
-    const halfWAt = (zIn) => plumeRadius(zIn) * pxPerIn;
+    const halfWAt = (zIn) => (captureDiameter(zIn, SRC) / 2) * pxPerIn; // RB-002 d_capture (rb-002:983)
 
     let dl = '', dr = '';
     for (let i = 0; i < samples.length; i++) {
@@ -317,7 +317,7 @@ export function mount(figureEl) {
         id: 'i08-environment', type: 'segmented', label: 'ENVIRONMENT', value: 'outdoor',
         options: [{ value: 'indoor', label: 'INDOOR' }, { value: 'outdoor', label: 'OUTDOOR' }],
       },
-      { id: 'i08-wind', type: 'range', label: 'WIND SPEED', min: 0, max: 12, step: 1, value: 5, unit: 'mph' },
+      { id: 'i08-wind', type: 'range', label: 'SIDE WIND SPEED', min: 0, max: 12, step: 1, value: 5, unit: 'mph' },
     ],
     readouts: [
       { id: 'capture', label: 'CAPTURE', format: 'pct', hero: true },
@@ -329,8 +329,8 @@ export function mount(figureEl) {
     scene: buildScene,
     update,
 
-    // --- living smoke: outdoor-only (see header note for the riseIn:0/
-    //     w0:1 indoor-collapse mechanism). -----------------------------------
+    // --- living smoke: outdoor-only (see header note for the riseIn:0
+    //     indoor-collapse mechanism). ---------------------------------------
     smoke: (state) => {
       const outdoor = state['i08-environment'] === 'outdoor';
       return {
@@ -338,8 +338,9 @@ export function mount(figureEl) {
         widthIn: WIDTH_IN, depthIn: DEPTH_IN, mount: MOUNT_VAL,
         riseIn: outdoor ? RISE_IN : 0,
         windMph: outdoor ? state['i08-wind'] : 0,
+        windDir: WIND_DIR,
         panels: 'none',
-        w0: outdoor ? 400 : 1,
+        src: SRC,
       };
     },
 
@@ -354,13 +355,13 @@ export function mount(figureEl) {
     // --- verdict stamp: capture-fraction thresholds, same rubric as i01,
     //     honest in both environments (see header note). The 0.85/0.60
     //     bands are this instrument's MODEL CRITERIA (no research bulletin
-    //     or on-site clause defines PASS/MARGINAL bands; the old
-    //     "OVS-H1 §2.4" resolved to nothing — F2 review F-3). The RB
-    //     citation is where the capture reasoning lives: RB-004 §2.3
-    //     "Capture Efficiency: Indoor Versus Outdoor Definition"
-    //     (content/research/rb-004-indoor-vs-outdoor-assumptions.md) —
-    //     first-pass capture is the only capture outdoors, exactly what
-    //     this instrument grades in both environments. ----------------------
+    //     defines PASS/MARGINAL bands). The stamp cites the papers for the
+    //     DATA — RB-004 §2.3 "Capture Efficiency: Indoor Versus Outdoor
+    //     Definition" (first-pass capture is the only capture outdoors,
+    //     exactly what this instrument grades) and RB-006 §3.4 (the
+    //     capture thresholds the model reproduces) — and labels the cut as
+    //     the OVS model criterion, never attributing it to a section that
+    //     does not define it. -------------------------------------------------
     //     W5-T3 (UX P1-3): explanation on-surface (`plain` + threshold
     //     line); engine adds the model-configuration footnote. ---------------
     verdict: (state, physics) => {
@@ -371,8 +372,8 @@ export function mount(figureEl) {
       return {
         grade,
         plain: `${pct}% captured in this modeled ${env} scene`,
-        clauseRef: 'model criterion: ≥85% PASS · ≥60% MARGINAL — RB-004 §2.3',
-        detail: `Plume capture ${pct}% (${env}) — model-criterion thresholds 85% PASS / 60% MARGINAL (capture data: RB-004).`,
+        clauseRef: 'OVS model criterion ≥85% · ≥60% — data: RB-004 §2.3',
+        detail: `Plume capture ${pct}% (${env}) — capture data: RB-004 §2.3 / RB-006 §3.4; the 85% PASS / 60% MARGINAL thresholds are the OVS model criterion, not a paper rubric.`,
       };
     },
   };

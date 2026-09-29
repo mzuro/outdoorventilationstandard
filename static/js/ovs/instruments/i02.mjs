@@ -1,122 +1,178 @@
-// i02.mjs — CFM Requirement (Task 14).
+// i02.mjs — CFM Requirement (Task 14; rebuilt on RB-008 in physics Stage B).
 //
 // Same module contract as i01.mjs (the canonical pattern): a single
 // `mount(figureEl)` export that reads `data-preset`, builds a container,
 // and hands a spec to createInstrument. Physics comes exclusively from
-// ../physics/cfm.mjs (requiredCfm) — the three bands are never recomputed
-// here.
+// ../physics/cfm.mjs (requiredCfm, coverageAdvisory) and ../physics/
+// heat.mjs (SOURCES) — no number on this instrument is computed here.
 //
-// Scene: three horizontal bars (minimum / recommended / high-wind) on a
-// fixed 0-3500 CFM axis, each annotated with a live dimension line. The
-// bars animate for free: the engine tweens the width/BTU range values and
-// calls update() every frame, so the bars re-derive from the tweened
-// state.
+// Inputs are RB-008's own (App A steps 1–8): the cooking SOURCE (an RB-001
+// Table 3.1 row), the MOUNTING HEIGHT (the paper's 18/24/30/36/48 in table
+// columns), the MOUNT (wall / peninsula / island multipliers, §3.9), the
+// wind EXPOSURE class and, for the exposed class only, whether SIDE PANELS
+// are fitted (K_CFM 4.14 with, 5.75 without; rb-008:142-145). Hood WIDTH
+// is deliberately NOT a CFM input: RB-008 §3.4.3 sizes CFM from Q_c and
+// mounting height alone (rb-008:381-395), and width is the site's
+// separate COVERAGE advisory (plan §2) — so the width control lives in
+// its own "COVERAGE CHECK" group whose only output is the RB-008 Table
+// 3.10 coverage band from coverageAdvisory() (rb-008:580-591; that table
+// rates a NARROWER hood as needing more CFM, not less: 900 at 42 in vs
+// 609 at 57 in). It never touches the CFM readouts.
 //
-// v2.1 (F2) adoption, per the plan's per-instrument assignment:
-//   - drag: this instrument has no side-view hood elevation (it is a bar
-//     chart), so there is no literal hood-edge glyph to grab. A small
-//     "HOOD WIDTH" ruler-gauge is added to the scene purely to host the
-//     6"-snapping drag affordance (mirrors i01's hood-edge drag pattern,
-//     same `hood-edge` -> `.ovs-i-drag-hood-edge` engine target); it does
-//     not duplicate or disagree with any bar — width still drives the
-//     bands exclusively through requiredCfm().
-//   - presets: four site-voice scenarios landing exactly on their control
-//     values.
-//   - verdict: ADDED (this task; was previously SKIPPED — see git history
-//     for the original deferral note). This instrument still has no
-//     "installed/actual CFM" reading of its own — only the three physics
-//     bands (minimum, recommended, high-wind) computed FOR the configured
-//     hood. That's still true, and it's still why the verdict is NOT
-//     wired against the tool's own output: grading requiredCfm()'s
-//     recommended figure against its own recommended band would be a
-//     tautology (always PASS), and assuming a blower value the user never
-//     supplied would fabricate an input. Neither is honest. What changed:
-//     an optional "HOOD'S RATED CFM" control (its own "CHECK A HOOD"
-//     section, separate from the WIDTH/MOUNT/EXPOSURE/BTU spec inputs)
-//     lets a visitor type their candidate hood's own rated CFM — a real
-//     number they supplied, not one this tool invented — and spec.verdict
-//     grades THAT number against the already-computed bands. Left empty
-//     (the default), the field commits nothing and the stamp stays
-//     hidden: the instrument behaves exactly as it always has, three bars
-//     and no stamp. See the comment above spec.verdict below for why the
-//     PASS/MARGINAL/FAIL cut itself is this instrument's own comparison
-//     convention, not an RB-008 grading rubric.
-//   - smoke: not assigned to this instrument by the plan (it has no plume
-//     elevation to visualize).
+// Readouts: MINIMUM (hero; RB-008 required CFM = CFM_plume × K_CFM × mount)
+// and BLOWER (App A step 8: smallest standard size ≥ 1.1 × minimum), plus
+// K_CFM and PLUME FLOW as the two factors the minimum is built from.
+//
+// Scene: three horizontal bars on a fixed 0–4,000 CFM axis — minimum,
+// blower, and an "IF EXPOSED" reference (this source/height/mount in the
+// exposed-without-panels class, i.e. what the same hood would need with
+// no wind screening) — each annotated with a live dimension line. The
+// layout (viewBox starting at y=-64, 52px row pitch, top-left stamp band)
+// is the fix/instrument-layout geometry and is unchanged.
+//
+// v2.1 (F2) adoption:
+//   - drag: a small "HOOD WIDTH" ruler-gauge hosts the 6"-snapping drag
+//     affordance (same `hood-edge` -> `.ovs-i-drag-hood-edge` engine
+//     target as i01) for the coverage-check width.
+//   - presets: five site-voice scenarios, keyed to source/height/mount/
+//     exposure/panels (+ a coverage width), landing exactly.
+//   - verdict: the optional "CHECK A HOOD" rated-CFM entry (a real number
+//     the visitor supplied, never one this tool invented) is graded
+//     against the already-computed bands: ≥ blower PASS, ≥ minimum
+//     MARGINAL, else FAIL. Left empty, no stamp. See spec.verdict for why
+//     the cut itself is an OVS model criterion while both numbers it
+//     compares against are RB-008's.
+//   - smoke: not assigned (bar chart, no plume elevation).
 
 import { createInstrument } from '../viz.mjs';
-import { requiredCfm } from '../physics/cfm.mjs';
+import { requiredCfm, coverageAdvisory, BLOWER_MARGIN, BLOWER_SIZES } from '../physics/cfm.mjs';
+import { SOURCES } from '../physics/heat.mjs';
 import { MOUNT, MODEL_WIDTHS, parsePreset, snapWidth } from '../hood-presets.mjs';
 
-const AXIS_MAX_CFM = 3500;
+const AXIS_MAX_CFM = 4000; // fits Gas High-Output @48 in, island, exposed (3,731 CFM)
 
-// Local formatter (brief: extend fmt ONLY here, not in the engine):
-// 60000 -> "60k BTU".
-const fmtBtu = (btu) => `${Math.round(btu / 1000)}k BTU`;
+/** The SOURCE control's menu: the plan's seven (pellet low omitted). */
+const SOURCE_MENU = [
+  { value: 'gasSmall', label: 'GAS 25K' },
+  { value: 'gasMedium', label: 'GAS 40K' },
+  { value: 'gasLarge', label: 'GAS 60K' },
+  { value: 'gasHigh', label: 'GAS 80K' },
+  { value: 'charcoalKettle', label: 'CHARCOAL' },
+  { value: 'woodFired', label: 'WOOD-FIRED' },
+  { value: 'pelletHigh', label: 'PELLET' },
+];
+/** RB-008 Table 3.1 / 3.2 mounting-height columns (rb-008:198). */
+const HEIGHTS_IN = [18, 24, 30, 36, 48];
+const FUEL_WORD = { gas: 'gas', charcoal: 'charcoal', wood: 'wood-fired', pellet: 'pellet' };
+
+/** Resolve a control value to an RB-001 SOURCES row (default Gas Large — the RB-008 §3.3 flagship). */
+export function sourceFor(value) {
+  return SOURCES[value] || SOURCES.gasLarge;
+}
+/** Resolve a control value to a paper-grid mounting height (default 30 in). */
+export function heightFor(value) {
+  const n = Number(value);
+  return HEIGHTS_IN.includes(n) ? n : 30;
+}
+/** Resolve a control value to an RB-008 §3.9 mount key (default island). */
+export function mountFor(value) {
+  return value === 'wall' || value === 'peninsula' || value === 'island' ? value : 'island';
+}
+
+/** "60k gas", "15k charcoal", "40k wood-fired", "30k pellet". */
+export const fmtSource = (src) => `${Math.round(src.btu / 1000)}k ${FUEL_WORD[src.fuel] || src.fuel}`;
+const fmtCfm = (cfm) => Math.round(cfm).toLocaleString('en-US');
+
+/**
+ * The BLOWER readout when no standard size on the cfm.mjs ladder clears
+ * 1.1 × minimum (blowerFor() === null): "> 3,000 CFM" — the ladder's top
+ * rung (rb-008:614 lists 600–1,500; the site extends to 3,000, cfm.mjs),
+ * never the minimum relabelled as a blower. Shown verbatim in BOTH the
+ * <output> and the sticky-strip cell via the engine's display override.
+ */
+export const ABOVE_LADDER_READOUT = `> ${fmtCfm(BLOWER_SIZES[BLOWER_SIZES.length - 1])} CFM`;
+
+/**
+ * The COVERAGE CHECK group's note. RB-008 §3.4.3 (rb-008:381-395) sets CFM
+ * from Q_c and mounting height — width is not an input; the narrower-hood
+ * statement is RB-008 Table 3.10 (rb-008:580-591: 900 CFM at 42 in vs 609
+ * at 57 in), and treating width as a separate coverage check is the site's
+ * decision (plan §2).
+ */
+export const COVERAGE_NOTE = 'CFM is set by the source and mounting height (RB-008 §3.4.3); width is checked separately as coverage — RB-008 Table 3.10 rates a narrower hood as needing more, not less. Compare the hood with the RB-002 recommended width here.';
 
 /**
  * Grade a user-entered "rated CFM" against this instrument's own computed
- * bands. Pure — no DOM, mirrors viz.mjs's gradeCapture (tested directly,
- * see tests/i02.test.mjs). Boundaries inclusive on the upper side, same
- * convention as gradeCapture: >= recommended -> PASS, >= minimum ->
- * MARGINAL, else FAIL. `bands` is exactly what requiredCfm() returns —
- * this function does no physics of its own, only compares.
+ * bands. Pure — no DOM (tested directly, see tests/i02.test.mjs).
+ * Boundaries inclusive on the upper side, same convention as gradeCapture:
+ * >= blower -> PASS, >= minimum -> MARGINAL, else FAIL. `bands` is exactly
+ * what requiredCfm() returns — this function does no physics of its own,
+ * only compares. When the minimum is so high that no standard size on the
+ * cfm.mjs BLOWER_SIZES ladder clears 1.1× it (blower === null), PASS is
+ * the paper's own rule applied directly: rated >= BLOWER_MARGIN × minimum
+ * (rb-008:870) — the same test blowerFor() runs, using its exported
+ * constant, not a re-derived one.
  */
 export function gradeRatedCfm(ratedCfm, bands) {
-  if (ratedCfm >= bands.recommended) return { grade: 'PASS' };
+  const passAt = bands.blower != null ? bands.blower : bands.minimum * BLOWER_MARGIN;
+  if (ratedCfm >= passAt) return { grade: 'PASS' };
   if (ratedCfm >= bands.minimum) return { grade: 'MARGINAL' };
   return { grade: 'FAIL' };
 }
 
-// This instrument's basis paper (RB-008, "Required Exhaust Airflow") — the
-// citation appended to the copy-spec-line output below. Not derived from
-// `bands`; it names the paper the whole instrument is built on, same as
-// every other RB-008 reference in this file's comments.
-const CITATION = 'RB-008';
+// This instrument's basis: RB-008 §3.3 (the worked minimum / blower table,
+// rb-008:307-319) and Appendix A (the step-by-step method whose step 8 is
+// the blower rule, rb-008:829-880). Appended to the copy-spec-line output
+// and named on the verdict stamp.
+const CITATION = 'RB-008 §3.3 / App A';
 
 /**
- * W5-T6 (UX P1-6, "carry-away"): build the one-line, physics-honest spec
- * summary for the copy-spec-line button — e.g. "48 in island · 60k BTU ·
- * moderate wind → min 1,450 / rec 1,800 CFM — outdoorventilationstandard.
- * com/questions/what-cfm-do-i-need/ (RB-008)".
+ * W5-T6 (UX P1-6, "carry-away"): the one-line, physics-honest spec summary
+ * for the copy-spec-line button — e.g. "60k gas · 30 in · wall · moderate →
+ * min 892 / blower 1,200 CFM — outdoorventilationstandard.com/questions/
+ * what-cfm-do-i-need/ (RB-008 §3.3 / App A)".
  *
  * Pure and DOM-free (no `location` read here — the caller passes `href`)
  * so it stays unit-testable under plain node. `bands` must be the SAME
- * object requiredCfm() returned for `state` (update() below hands it
- * through via ctx.physics.bands) — this function only formats numbers, it
- * never computes them, so the copied line can never disagree with what's
- * on screen. Returns null if `bands` is missing (e.g. called before the
- * first update()).
- *
- * The mount fallback below is deliberately the exact same expression
- * update() uses to derive `mountKey` (`MOUNT[state['i02-mount']] ? ... :
- * 'island'`) — not the instrument's own inverted guess — so the two can
- * never disagree about which mount a given `state['i02-mount']` value
- * means. `MOUNT` (hood-presets.mjs) only defines 'wall' and 'island'; there
- * is no 'peninsula' entry, matching every other MOUNT[...] fallback in this
- * codebase (i01.mjs, i05.mjs) and this instrument's own segmented control
- * (WALL/ISLAND only, no peninsula option — see the `controls` array below).
- * requiredCfm()/MOUNT_MULT (cfm.mjs) DO carry a peninsula multiplier, but
- * purely for the physics module's own direct-call API (see tests/cfm.test
- * .mjs) — no instrument, including this one's update(), ever resolves
- * 'peninsula' as a mountKey today, so labeling one here without update()
- * also computing island-vs-peninsula bands would just recreate the exact
- * label/numbers mismatch this fix removes. If a future task adds a
- * peninsula option to MOUNT and this control, update() and buildSpecLine()
- * must gain their peninsula handling together, in the same change.
+ * object requiredCfm() returned for `state` (update() hands it through via
+ * ctx.physics.bands) — this function only formats numbers, it never
+ * computes them, so the copied line can never disagree with the screen.
+ * Returns null if `bands` is missing (called before the first update()).
+ * The source/height/mount fallbacks are the exact helpers update() uses,
+ * so the label and the numbers can never describe different inputs.
  */
 export function buildSpecLine(state, bands, href) {
   if (!bands) return null;
-  const width = Math.round(Number(state['i02-width']));
-  const mount = MOUNT[state['i02-mount']] ? state['i02-mount'] : 'island';
+  const src = sourceFor(state['i02-source']);
+  const height = heightFor(state['i02-height']);
+  const mount = mountFor(state['i02-mount']);
   const exposure = state['i02-exposure'] || 'moderate';
-  const min = Math.round(bands.minimum).toLocaleString('en-US');
-  const rec = Math.round(bands.recommended).toLocaleString('en-US');
-  // The report's own example drops the scheme ("outdoorventilationstandard
-  // .com/..." not "https://outdoorventilationstandard.com/...") — a spec
-  // line meant to be texted or read aloud doesn't need it.
+  const panels = state['i02-panels'] === 'both' ? 'both' : 'none';
+  const exposureStr = exposure === 'exposed' ? (panels === 'both' ? 'exposed + panels' : 'exposed') : exposure;
+  const blowerStr = bands.blower != null ? fmtCfm(bands.blower) : `above ${fmtCfm(BLOWER_SIZES[BLOWER_SIZES.length - 1])}`;
+  // The report's own example drops the scheme — a spec line meant to be
+  // texted or read aloud doesn't need it.
   const shownHref = String(href || '').replace(/^https?:\/\//, '');
-  return `${width} in ${mount} · ${fmtBtu(state['i02-btu'])} · ${exposure} wind → min ${min} / rec ${rec} CFM — ${shownHref} (${CITATION})`;
+  return `${fmtSource(src)} · ${height} in · ${mount} · ${exposureStr} → min ${fmtCfm(bands.minimum)} / blower ${blowerStr} CFM — ${shownHref} (${CITATION})`;
+}
+
+/**
+ * The COVERAGE CHECK sentence for a coverageAdvisory() result, e.g.
+ * "48 in is 77% of the 62 in RB-002 width — plume overflows the hood
+ * (65–75% capture at best): upgrade width rather than CFM." Pure; formats
+ * the advisory only (RB-008 Table 3.10 bands, rb-008:584-591).
+ */
+export function coverageSentence(cov) {
+  const pct = Math.round(cov.pctOfRecommended);
+  const rec = Math.round(cov.recommendedWidthIn);
+  const [lo, hi] = cov.captureBand;
+  const verdict = {
+    overflow: `plume overflows the hood (${lo}–${hi}% capture at best): upgrade width rather than CFM`,
+    marginal: `marginal coverage (${lo}–${hi}% capture at best): upgrade width rather than CFM`,
+    acceptable: `near-adequate coverage (${lo}–${hi}% capture): a slight CFM increase compensates`,
+    full: `full coverage (${lo}%+ capture): the CFM bands above hold`,
+  }[cov.band] || cov.band;
+  return `${Math.round(cov.widthIn)} in is ${pct}% of the ${rec} in RB-002 width — ${verdict}.`;
 }
 
 export function mount(figureEl) {
@@ -138,20 +194,27 @@ export function mount(figureEl) {
 
   // --- band-chart geometry (viewBox px) --------------------------------
   const X0 = 150; // bar origin (after row labels)
-  const X1 = 690; // 3500 CFM
+  const X1 = 690; // AXIS_MAX_CFM
+  // Rows sit on a 52px pitch and the viewBox starts at y=-64, so the chart
+  // carries a state-independent empty band across its top-left — the
+  // row-label column x<140 down to y=85 and the x<510 band above the
+  // gridlines (GRID_TOP) — where the verdict stamp lives (components.css,
+  // `[data-instrument="i02"] .ovs-i-stamp`). Physics and every plotted
+  // value are untouched by that geometry — only where the bars are drawn.
+  const VIEWBOX = '0 -64 720 334';
   const ROWS = [
-    { key: 'minimum', label: 'MINIMUM', y: 64 },
-    { key: 'recommended', label: 'RECOMMENDED', y: 124 },
-    { key: 'highWind', label: 'HIGH-WIND', y: 184 },
+    { key: 'minimum', label: 'MINIMUM', y: 90 },
+    { key: 'blower', label: 'BLOWER', y: 142 },
+    { key: 'exposedRef', label: 'IF EXPOSED', y: 194 },
   ];
   const BAR_H = 22;
+  const GRID_TOP = 56; // gridlines start 34px above the first bar
   const AXIS_Y = 236;
   const xFor = (cfm) => X0 + (Math.min(cfm, AXIS_MAX_CFM) / AXIS_MAX_CFM) * (X1 - X0);
 
   // --- HOOD WIDTH drag gauge (top-right, above the bands) ---------------
   // A small ruler, not a hood elevation: fixed 42-72in scale, drag target
-  // is its right edge, exactly like i01's hood-edge except linear instead
-  // of centered-on-a-hood.
+  // is its right edge, exactly like i01's hood-edge except linear.
   const WIDTH_X0 = 520, WIDTH_X1 = 690; // 42in .. 72in
   const WIDTH_Y = 16, WIDTH_H = 14;
   const widthX = (w) => WIDTH_X0 + ((w - 42) / 30) * (WIDTH_X1 - WIDTH_X0);
@@ -161,17 +224,17 @@ export function mount(figureEl) {
 
   function buildScene(svg, helpers) {
     H = helpers;
-    svg.setAttribute('viewBox', '0 0 720 270');
+    svg.setAttribute('viewBox', VIEWBOX);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', 'Bar chart of the three airflow bands — minimum, recommended, and high-wind CFM — on a 0 to 3,500 CFM axis.');
+    svg.setAttribute('aria-label', 'Bar chart of the required exhaust airflow — RB-008 minimum, the blower to specify, and the exposed-site reference — on a 0 to 4,000 CFM axis.');
 
     // axis + gridlines at every 500 CFM
     const axis = H.el('g');
     axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: X0, y1: AXIS_Y, x2: X1, y2: AXIS_Y }));
     for (let cfm = 0; cfm <= AXIS_MAX_CFM; cfm += 500) {
       const x = xFor(cfm);
-      axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: 30, x2: x, y2: AXIS_Y, opacity: 0.25 }));
+      axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: GRID_TOP, x2: x, y2: AXIS_Y, opacity: 0.25 }));
       axis.appendChild(H.el('line', { class: 'ovs-i-fl-thin', x1: x, y1: AXIS_Y, x2: x, y2: AXIS_Y + 6 }));
       axis.appendChild(H.el('text', {
         x, y: AXIS_Y + 20, 'text-anchor': 'middle',
@@ -199,7 +262,7 @@ export function mount(figureEl) {
 
     // --- HOOD WIDTH gauge + drag handle --------------------------------
     const gauge = H.el('g');
-    gauge.appendChild(H.el('text', { x: WIDTH_X0, y: WIDTH_Y - 6, text: 'HOOD WIDTH' }));
+    gauge.appendChild(H.el('text', { x: WIDTH_X0, y: WIDTH_Y - 6, text: 'COVERAGE WIDTH' }));
     gauge.appendChild(H.el('line', {
       class: 'ovs-i-fl-thin', x1: WIDTH_X0, y1: WIDTH_Y + WIDTH_H / 2, x2: WIDTH_X1, y2: WIDTH_Y + WIDTH_H / 2,
     }));
@@ -212,9 +275,8 @@ export function mount(figureEl) {
     // Transparent hit strip re-measured live (in update()) to sit centered
     // on the current right edge — same ≥44px-tall convention as i01.
     refs.dragWidth = H.el('rect', {
-      // --square modifier: this strip is 44x44 (not 44x92 like the hood
-      // elevations), so the mobile hit-area scale-up in components.css
-      // must grow BOTH axes for it (F3 QA F-6).
+      // --square modifier: 44x44 (not 44x92 like the hood elevations), so
+      // the mobile hit-area scale-up in components.css grows BOTH axes.
       class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
     });
     svg.appendChild(refs.dragWidth);
@@ -227,47 +289,73 @@ export function mount(figureEl) {
 
   function update(state, ctx) {
     const { setReadout } = ctx;
-    const mountKey = MOUNT[state['i02-mount']] ? state['i02-mount'] : 'island';
-    // Depth is not a CFM driver (RB-008 §3.4.3); mount carries the island premium.
-    const bands = requiredCfm({
-      widthIn: state['i02-width'],
-      mount: mountKey,
-      btu: state['i02-btu'],
-      exposure: state['i02-exposure'],
-    });
+    const src = sourceFor(state['i02-source']);
+    const riseIn = heightFor(state['i02-height']);
+    const mountKey = mountFor(state['i02-mount']);
+    const exposure = state['i02-exposure'] || 'moderate';
+    const panels = state['i02-panels'] === 'both' ? 'both' : 'none';
 
-    setReadout('recommended', bands.recommended);
+    const bands = requiredCfm({ src, riseIn, mount: mountKey, exposure, panels });
+    // The exposed-without-panels reference for the same source/height/
+    // mount: asked of the module (not tables.exposed × mountMult here),
+    // so the bar is a requiredCfm() output like the other two.
+    const exposedRef = requiredCfm({ src, riseIn, mount: mountKey, exposure: 'exposed', panels: 'none' }).minimum;
+    const cov = coverageAdvisory(Number(state['i02-width']), riseIn, src);
+
     setReadout('minimum', bands.minimum);
-    setReadout('highWind', bands.highWind);
+    // Local formatting via the engine's display override (brief: extend
+    // fmt ONLY here, not in the engine). The default formatter rounds to an
+    // integer, which would turn K_CFM 3.68 into "4"; and a blower above the
+    // ladder has no size, so the readout says so ("> 3,000 CFM") — the
+    // override reaches the sticky strip too, so the strip can never show
+    // "0 CFM" or the minimum in the blower cell.
+    setReadout('blower', bands.blower != null ? bands.blower : 0, bands.blower == null ? ABOVE_LADDER_READOUT : undefined);
+    setReadout('kCfm', bands.kCfm, `${bands.kCfm.toFixed(2)}×`);
+    setReadout('plumeCfm', bands.plumeCfm);
 
-    // Expose the exact requiredCfm() output on the shared ctx channel (same
-    // object shape as i01/i07/i08) so both the verdict stamp (spec.verdict)
-    // and the copy-spec-line button (spec.copyLine) read these numbers
-    // verbatim instead of recomputing them.
-    ctx.physics = { bands };
+    // Expose the exact requiredCfm()/coverageAdvisory() output on the
+    // shared ctx channel so the verdict stamp (spec.verdict) and the
+    // copy-spec-line button (spec.copyLine) read these numbers verbatim.
+    ctx.physics = { bands, exposedRef, cov };
 
+    const values = { minimum: bands.minimum, blower: bands.blower, exposedRef };
     for (const [key, row] of Object.entries(refs.rows)) {
-      const cfm = bands[key];
+      const cfm = values[key];
+      if (cfm == null) {
+        row.bar.setAttribute('width', '0');
+        replaceChildren(row.dim, H.noteBox(X0, row.y - 24, `no standard size ≥ 1.1 × ${fmtCfm(bands.minimum)} CFM`));
+        continue;
+      }
       const x = xFor(cfm);
       row.bar.setAttribute('width', Math.max(0, x - X0).toFixed(1));
       // Dimension line re-measures the bar live, annotated with its value.
-      replaceChildren(row.dim, H.dimensionLine(
-        X0, row.y - 10, x, row.y - 10,
-        `${Math.round(cfm).toLocaleString('en-US')} CFM`,
-      ));
+      replaceChildren(row.dim, H.dimensionLine(X0, row.y - 10, x, row.y - 10, `${fmtCfm(cfm)} CFM`));
     }
 
-    // BTU control bubble: engine writes the raw number; restyle it with the
-    // local formatter. update() always runs after the engine's bubble
-    // refresh, so this wins in every code path (init, tween tick, reduced).
-    const btuBubble = container.querySelector('output[for="i02-btu"]');
-    if (btuBubble) btuBubble.textContent = fmtBtu(state['i02-btu']);
+    // --- SIDE PANELS only enter K_CFM in the exposed class (rb-008:144-
+    //     145): grey the control otherwise, the way i08 disables WIND
+    //     indoors. The engine has no disable hook, so reach into the DOM. --
+    if (!refs.panelsCtl) {
+      const radio = container.querySelector('input[name="i02-panels"]');
+      refs.panelsCtl = radio ? radio.closest('.ovs-i-control') : null;
+      refs.panelRadios = Array.from(container.querySelectorAll('input[name="i02-panels"]'));
+    }
+    const panelsOff = exposure !== 'exposed';
+    if (refs.panelsCtl) {
+      refs.panelsCtl.classList.toggle('ovs-i-control--disabled', panelsOff);
+      refs.panelsCtl.setAttribute('aria-disabled', panelsOff ? 'true' : 'false');
+    }
+    for (const r of refs.panelRadios || []) r.disabled = panelsOff;
+
+    // --- COVERAGE CHECK sentence (RB-008 Table 3.10) --------------------
+    refs.lastCov = cov;
+    if (refs.coverageNote) refs.coverageNote.textContent = coverageSentence(cov);
 
     // --- HOOD WIDTH gauge + drag handle ---------------------------------
-    const widthCtl = state['i02-width'];
+    const widthCtl = Number(state['i02-width']);
     const wx = widthX(widthCtl);
     refs.widthBar.setAttribute('width', Math.max(0, wx - WIDTH_X0).toFixed(1));
-    refs.widthLabel.textContent = `${Math.round(widthCtl)}″`;
+    refs.widthLabel.textContent = `${Math.round(widthCtl)}″ · ${Math.round(cov.pctOfRecommended)}% of ${Math.round(cov.recommendedWidthIn)}″`;
     refs.dragWidth.setAttribute('x', (wx - 22).toFixed(1));
   }
 
@@ -275,10 +363,17 @@ export function mount(figureEl) {
     id: 'i02',
     title: 'CFM Requirement',
     controls: [
-      { id: 'i02-width', type: 'range', label: 'HOOD WIDTH', min: 42, max: 72, step: 6, value: widthIn, unit: 'in', detents: MODEL_WIDTHS },
+      {
+        id: 'i02-source', type: 'segmented', label: 'SOURCE', value: 'gasLarge',
+        options: SOURCE_MENU,
+      },
+      {
+        id: 'i02-height', type: 'segmented', label: 'MOUNTING HEIGHT', value: 30,
+        options: HEIGHTS_IN.map((h) => ({ value: h, label: `${h}″` })),
+      },
       {
         id: 'i02-mount', type: 'segmented', label: 'MOUNT', value: mountVal,
-        options: [{ value: 'wall', label: 'WALL' }, { value: 'island', label: 'ISLAND' }],
+        options: [{ value: 'wall', label: 'WALL' }, { value: 'peninsula', label: 'PENINSULA' }, { value: 'island', label: 'ISLAND' }],
       },
       {
         id: 'i02-exposure', type: 'segmented', label: 'WIND EXPOSURE', value: 'moderate',
@@ -288,33 +383,39 @@ export function mount(figureEl) {
           { value: 'exposed', label: 'EXPOSED' },
         ],
       },
-      { id: 'i02-btu', type: 'range', label: 'BURNER RATING', min: 30000, max: 150000, step: 10000, value: 60000 },
-      // Optional, separate from the four spec inputs above: does not drive
-      // requiredCfm() at all (it isn't read anywhere in update()'s bands
-      // computation) — it is only compared against the bands once typed.
+      {
+        id: 'i02-panels', type: 'segmented', label: 'SIDE PANELS (exposed only)', value: 'none',
+        options: [{ value: 'none', label: 'NONE' }, { value: 'both', label: 'BOTH' }],
+      },
+      // Coverage check only — never read by the CFM computation. Pulled
+      // into its own "COVERAGE CHECK" <fieldset> post-mount below.
+      { id: 'i02-width', type: 'range', label: 'HOOD WIDTH', min: 42, max: 72, step: 6, value: widthIn, unit: 'in', detents: MODEL_WIDTHS },
+      // Optional, separate from the spec inputs above: does not drive
+      // requiredCfm() at all — only compared against the bands once typed.
       // value: null so the instrument opens with the field empty and no
-      // stamp, matching this instrument's pre-existing behavior exactly.
-      // Pulled into its own "CHECK A HOOD" <fieldset> post-mount below so
-      // it never reads as a fifth required spec control.
+      // stamp. Pulled into its own "CHECK A HOOD" <fieldset> post-mount.
+      // step: 'any' — a real nameplate figure such as 1,437 CFM is graded
+      // exactly like any other (gradeRatedCfm never rounds).
       {
         id: 'i02-rated', type: 'number', label: "HOOD'S RATED CFM", value: null,
-        min: 0, step: 25, placeholder: 'e.g. 1500',
+        min: 0, step: 'any', placeholder: 'e.g. 1500',
       },
     ],
+    // stripLabel: the <=760px sticky strip shows both cells plus the
+    // verdict grade badge on one line; values are copied verbatim, only
+    // the label text is abbreviated.
     readouts: [
-      { id: 'recommended', label: 'RECOMMENDED', format: 'cfm', hero: true },
-      { id: 'minimum', label: 'MINIMUM', format: 'cfm' },
-      { id: 'highWind', label: 'HIGH-WIND', format: 'cfm' },
+      { id: 'minimum', label: 'MINIMUM', stripLabel: 'MIN', format: 'cfm', hero: true },
+      { id: 'blower', label: 'BLOWER', stripLabel: 'BLW', format: 'cfm' },
+      { id: 'kCfm', label: 'K_CFM' },
+      { id: 'plumeCfm', label: 'PLUME FLOW', format: 'cfm' },
     ],
-    // W5-T2 sticky strip: hero + minimum, plus the verdict grade (added
-    // automatically by the engine whenever spec.verdict is a function).
-    // Engine copies values verbatim.
-    stickyReadout: ['recommended', 'minimum'],
+    stickyReadout: ['minimum', 'blower'],
     scene: buildScene,
     update,
 
     // --- direct manipulation: grab the width gauge's right edge, 6" snap,
-    //     matching i01's hood-edge drag exactly (same conversion shape). ----
+    //     matching i01's hood-edge drag exactly. ---------------------------
     drag: [
       {
         target: 'hood-edge', control: 'i02-width', axis: 'x', cursor: 'ew-resize',
@@ -322,67 +423,63 @@ export function mount(figureEl) {
       },
     ],
 
-    // --- story presets: four site-voice scenarios landing exactly on their
-    //     control values. ---------------------------------------------------
+    // --- story presets: keyed to source/height/mount/exposure/panels. The
+    //     first is RB-008 §3.3's worked case (892 / 1,200; rb-008:310). ---
     presets: [
-      { id: 'compact-wall', label: 'Compact wall kitchen', state: { 'i02-width': 42, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-btu': 40000 } },
-      { id: 'standard-island', label: 'Standard island', state: { 'i02-width': 48, 'i02-mount': 'island', 'i02-exposure': 'moderate', 'i02-btu': 60000 } },
-      { id: 'big-island-exposed', label: 'Big island, exposed', state: { 'i02-width': 60, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 90000 } },
-      { id: 'pro-outdoor-kitchen', label: 'Pro outdoor kitchen', state: { 'i02-width': 72, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-btu': 120000 } },
+      { id: 'paper-flagship', label: 'RB-008 worked case (60k, wall)', state: { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 60 } },
+      { id: 'compact-wall', label: 'Compact wall kitchen', state: { 'i02-source': 'gasMedium', 'i02-height': 30, 'i02-mount': 'wall', 'i02-exposure': 'sheltered', 'i02-panels': 'none', 'i02-width': 54 } },
+      { id: 'standard-island', label: 'Standard island', state: { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'island', 'i02-exposure': 'moderate', 'i02-panels': 'none', 'i02-width': 60 } },
+      { id: 'exposed-panels', label: 'Exposed island, panels', state: { 'i02-source': 'gasLarge', 'i02-height': 30, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-panels': 'both', 'i02-width': 60 } },
+      { id: 'pro-outdoor-kitchen', label: 'Pro outdoor kitchen', state: { 'i02-source': 'gasHigh', 'i02-height': 36, 'i02-mount': 'island', 'i02-exposure': 'exposed', 'i02-panels': 'none', 'i02-width': 72 } },
     ],
 
     // --- verdict stamp: grades the visitor's OWN typed "rated CFM" against
-    //     this instrument's already-computed bands (>= recommended PASS,
-    //     >= minimum MARGINAL, else FAIL — see gradeRatedCfm above). This
-    //     PASS/MARGINAL/FAIL cut is this instrument's MODEL CRITERION, not
-    //     an RB-008 grading rubric: RB-008 defines the minimum/recommended/
-    //     high-wind CFM figures themselves (requiredCfm(), content/research/
-    //     rb-008-*.md), but the paper does not define a scale for comparing
-    //     an arbitrary rated-CFM number against those figures — that
-    //     recommended-met/minimum-met split is this site's own comparison
-    //     convention, exactly the same "model criterion, cite the data not
-    //     a nonexistent rubric" pattern i01.mjs uses for its capture
-    //     thresholds (see the comment above i01's own verdict field). The
-    //     stamp never validates, certifies, or recommends a product — it
-    //     only compares the number the visitor typed to the bands already
-    //     on screen, and the engine's standard "Grades apply to the model
-    //     configuration, not to any product." footnote applies here too.
-    //     Returns { grade: null } (stamp hidden — see updateVerdict() in
-    //     viz.mjs) whenever the optional field is empty or not a finite,
-    //     positive number, so with the field untouched the three bars and
-    //     their readouts are computed exactly as before and no PASS/
-    //     MARGINAL/FAIL stamp ever appears. (The "CHECK A HOOD" input box
-    //     and the engine's standard grading footnote DO now render on the
-    //     page at all times once spec.verdict exists — that's the visible
-    //     surface of this feature, not a regression in the bars/readouts.)
+    //     this configuration's bands (>= blower PASS, >= minimum MARGINAL,
+    //     else FAIL — gradeRatedCfm above). Both numbers compared against
+    //     are RB-008's: the minimum is App A steps 4–7 (rb-008:834-880) and
+    //     the blower is App A step 8's 1.1× standard-size rule (rb-008:870;
+    //     §3.3 rb-008:307-319). The PASS/MARGINAL split itself is an OVS
+    //     model criterion: RB-008 does not define a scale for comparing an
+    //     arbitrary nameplate figure against those two numbers, so the
+    //     stamp labels the cut as ours and the data as the paper's — the
+    //     same "cite the data, not a nonexistent rubric" pattern i01 uses.
+    //     The stamp never validates, certifies, or recommends a product;
+    //     the engine's standard "Grades apply to the model configuration,
+    //     not to any product." footnote applies. Returns { grade: null }
+    //     (stamp hidden) whenever the optional field is empty or not a
+    //     finite, positive number.
     verdict: (state, physics) => {
       const rated = state['i02-rated'];
       if (rated == null || !Number.isFinite(rated) || rated <= 0) return { grade: null };
-      const bands = (physics && physics.bands) || { minimum: 0, recommended: 0, highWind: 0 };
+      const bands = (physics && physics.bands) || { minimum: 0, blower: 0 };
       const { grade } = gradeRatedCfm(rated, bands);
-      const ratedStr = Math.round(rated).toLocaleString('en-US');
-      const recStr = Math.round(bands.recommended).toLocaleString('en-US');
-      const minStr = Math.round(bands.minimum).toLocaleString('en-US');
+      const ratedStr = fmtCfm(rated);
+      const blowerStr = bands.blower != null ? fmtCfm(bands.blower) : `${BLOWER_MARGIN}× the minimum`;
+      const minStr = fmtCfm(bands.minimum);
       let plain;
       if (grade === 'PASS') {
-        plain = `${ratedStr} CFM meets the recommended target for this configuration.`;
+        // Above the ladder there is no blower size to "meet": say what was
+        // checked — the paper's 1.1 × minimum rule itself (rb-008:870).
+        plain = bands.blower != null
+          ? `${ratedStr} CFM meets the RB-008 blower for this configuration.`
+          : `${ratedStr} CFM meets ${BLOWER_MARGIN} × the ${minStr} CFM RB-008 minimum; no standard blower size covers this configuration.`;
       } else if (grade === 'MARGINAL') {
-        plain = `${ratedStr} CFM clears the minimum but falls short of the ${recStr} CFM recommended target.`;
+        plain = `${ratedStr} CFM clears the ${minStr} CFM minimum but is under the ${blowerStr} CFM blower.`;
       } else {
-        plain = `${ratedStr} CFM is below the ${minStr} CFM minimum for this configuration.`;
+        plain = `${ratedStr} CFM is below the ${minStr} CFM RB-008 minimum for this configuration.`;
       }
       return {
         grade,
         plain,
-        clauseRef: 'model criterion: ≥ recommended PASS · ≥ minimum MARGINAL — RB-008',
-        detail: `Rated CFM ${ratedStr} vs. this configuration's bands (minimum ${minStr}, recommended ${recStr}) — model-criterion thresholds; minimum from RB-008, recommended layers this site's own exposure-multiplier assumption on top.`,
+        clauseRef: 'OVS model criterion ≥ blower · ≥ minimum — RB-008 §3.3',
+        detail: `Rated CFM ${ratedStr} vs. this configuration's RB-008 minimum (${minStr}) and blower (${blowerStr}) — both from RB-008 §3.3 / App A; the PASS/MARGINAL split is an OVS model criterion.`,
       };
     },
 
     // --- W5-T6 (UX P1-6): "carry-away" copy-spec-line button --------------
-    // The engine calls this with its own get()/ctx.physics — see viz.mjs's
-    // copyLine block. `href` is read from `location` right here (the one
-    // DOM touch), then handed to the pure, node-testable buildSpecLine().
+    // The engine calls this with the paired ctx.state/ctx.physics snapshot.
+    // `href` is read from `location` right here (the one DOM touch), then
+    // handed to the pure, node-testable buildSpecLine().
     copyLine: (state, physics) => buildSpecLine(
       state,
       physics && physics.bands,
@@ -396,33 +493,48 @@ export function mount(figureEl) {
   // .get() without this module knowing anything about that feature.
   figureEl.ovsInstrument = createInstrument(container, spec);
 
-  // --- "CHECK A HOOD" section --------------------------------------------
-  // The engine (createInstrument) renders every spec.controls entry into
-  // one shared fieldset, so 'i02-rated' lands there like a fifth spec
-  // input. It isn't one: it doesn't drive requiredCfm() and is entirely
-  // optional. The engine has no grouping hook for this (same situation
-  // i08.mjs is in for its disabled-control styling), so — same established
-  // pattern — reach into the DOM post-mount and move that one control's
-  // wrap into its own labeled <fieldset>, positioned after the readouts so
-  // it reads as "now check a candidate hood against the numbers above."
+  // --- post-mount regrouping ---------------------------------------------
+  // The engine renders every spec.controls entry into one shared fieldset.
+  // Two of them are not CFM inputs and must not read as such: the coverage
+  // width and the rated-CFM check. The engine has no grouping hook (same
+  // situation i08 is in for its disabled-control styling), so — same
+  // established pattern — move each control's wrap into its own labeled
+  // <fieldset> after the readouts.
   const article = container.querySelector('.ovs-i-instrument');
-  const ratedLabel = article && article.querySelector('label[for="i02-rated"]');
-  const ratedWrap = ratedLabel && ratedLabel.closest('.ovs-i-control');
-  if (article && ratedWrap) {
+  const foot = article && article.querySelector('.ovs-i-verdict-foot');
+  function regroup(controlId, className, legendText, noteText) {
+    const label = article && article.querySelector(`label[for="${controlId}"]`);
+    const wrap = label && label.closest('.ovs-i-control');
+    if (!article || !wrap) return null;
     const section = document.createElement('fieldset');
-    section.className = 'ovs-i-check-hood';
+    section.className = className;
     const legend = document.createElement('legend');
-    legend.className = 'ovs-i-check-hood-legend';
-    legend.textContent = 'CHECK A HOOD';
+    legend.className = `${className}-legend`;
+    legend.textContent = legendText;
     section.appendChild(legend);
     const note = document.createElement('p');
-    note.className = 'ovs-i-check-hood-note';
-    note.textContent = "Optional — enter a candidate hood's rated CFM to see how it compares to the bands above. Doesn't change them.";
+    note.className = `${className}-note`;
+    note.textContent = noteText;
     section.appendChild(note);
-    ratedWrap.classList.add('ovs-i-check-hood-control');
-    section.appendChild(ratedWrap); // moves it out of the main controls fieldset
-    const foot = article.querySelector('.ovs-i-verdict-foot');
+    wrap.classList.add(`${className}-control`);
+    section.appendChild(wrap); // moves it out of the main controls fieldset
     if (foot) article.insertBefore(section, foot);
     else article.appendChild(section);
+    return section;
   }
+  const coverage = regroup('i02-width', 'ovs-i-coverage', 'COVERAGE CHECK', COVERAGE_NOTE);
+  if (coverage) {
+    refs.coverageNote = document.createElement('p');
+    refs.coverageNote.className = 'ovs-i-coverage-readout';
+    refs.coverageNote.setAttribute('aria-live', 'polite');
+    coverage.appendChild(refs.coverageNote);
+    // The engine's mount-time update() ran before this element existed —
+    // fill it once now from the coverageAdvisory() result that update()
+    // cached (no re-derivation).
+    if (refs.lastCov) refs.coverageNote.textContent = coverageSentence(refs.lastCov);
+  }
+  regroup(
+    'i02-rated', 'ovs-i-check-hood', 'CHECK A HOOD',
+    "Optional — enter a candidate hood's rated CFM to see how it compares to the bands above. Doesn't change them.",
+  );
 }

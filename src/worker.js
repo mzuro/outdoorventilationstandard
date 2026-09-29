@@ -9,6 +9,7 @@ import { validateNarration, templateNarration } from './lib/narration.mjs';
 import { verifyTurnstile } from './lib/turnstile.mjs';
 import { validateTrackBody, CUSTOM_TTL } from './lib/track.mjs';
 import { hashIp } from './lib/iphash.mjs';
+import { PHYSICS_VERSION } from '../static/js/ovs/physics/version.mjs';
 
 const ASK_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const ASK_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -468,8 +469,10 @@ async function handleFetch(request, env) {
 
         // Quantized-param cache: the validated params ARE already
         // quantized (every field is an enum or a discrete slider step),
-        // so the canonical key is just their sorted key=value join.
-        const cacheKey = `explain:${paramsCacheKey(instrument, clamp.params)}`;
+        // so the canonical key is just their sorted key=value join,
+        // prefixed with PHYSICS_VERSION so a physics re-base can never serve
+        // a narration computed by the previous model (30-day TTL).
+        const cacheKey = `explain:${PHYSICS_VERSION}:${paramsCacheKey(instrument, clamp.params)}`;
         if (env.QUESTION_CLICKS) {
           const cached = await env.QUESTION_CLICKS.get(cacheKey);
           if (cached) {

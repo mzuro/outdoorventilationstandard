@@ -1,7 +1,7 @@
 ---
 title: "RB-012: Thermal Radiation and Plume Interaction at Hood Surfaces"
 date: 2026-02-05
-lastmod: 2026-07-11
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -9,7 +9,7 @@ series: "Outdoor Ventilation Standard"
 research_id: "RB-012"
 priority: "P3 — Frontier"
 status: "Complete"
-version: "1.0"
+version: "1.1"
 charter_version: "2.6"
 glossary_version: "1.1"
 diagram_standard_version: "2.1"
@@ -28,6 +28,18 @@ categories: ["P3 — Frontier"]
 **Author Role:** Physics Research Agent
 **Date:** 2026-02-08
 **Depends On:** RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources; RB-003: Velocity Decay and Near-Field vs. Far-Field Capture
+
+---
+
+## Revision history
+
+**v1.1 — 2026-09-26.** Errata:
+
+- Section 4.2 (corrected 2026-07-15 in the web edition; carried into the PDF by this revision): 304 stainless steel and copper were described as the "only" unconditionally safe hood materials; 430 stainless steel is included, matching Section 3.4.3 and Table 3.11.
+- Section 3.6.1 comparison table: centerline velocity at 30" for the charcoal kettle and large gas grill 1.25/2.25 → 1.17/2.26 m/s (ratio 0.56 → 0.52), following RB-001 Table 3.5 v1.1.
+- Section 3.3.2: plume centerline velocity quoted for the medium gas grill at 30 inches 392 → 393 fpm (RB-003 Table 3.1b v1.1). (revised 2026-09-29)
+
+Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
 
@@ -509,7 +521,7 @@ For a typical case (hood center at 88 deg C above ambient, edge at 11 deg C abov
 
 > u_updraft = 6.4 * 20 / (1.20 * 1000 * 10) = 0.011 m/s = 2.1 fpm
 
-This is negligible compared to the plume centerline velocity (392 fpm for the medium gas grill at 30 inches) and even compared to the edge capture velocity (33 fpm from RB-003 Table 3.4a). The thermal updraft from the heated hood outer surface has no meaningful aerodynamic effect on plume capture.
+This is negligible compared to the plume centerline velocity (393 fpm for the medium gas grill at 30 inches) and even compared to the edge capture velocity (33 fpm from RB-003 Table 3.4a). The thermal updraft from the heated hood outer surface has no meaningful aerodynamic effect on plume capture.
 
 **Mechanism 2 — Weak "air curtain" effect at the hood perimeter.**
 
@@ -739,7 +751,7 @@ The data in Tables 3.1, 3.3, and 3.4 quantify what RB-001 described qualitativel
 | Radiant power | 4.40 kW | 4.40 kW | 1.00 |
 | Convective power | 3.52 kW (Q_c at chi_c=0.40) | 12.3 kW (Q_c at chi_c=0.70) | 0.29 |
 | Radiant flux at hood (30") | 1,540 W/m^2 | 1,440 W/m^2 | 1.07 |
-| Plume centerline velocity (30") | 1.25 m/s | 2.25 m/s | 0.56 |
+| Plume centerline velocity (30") | 1.17 m/s | 2.26 m/s | 0.52 |
 | Plume centerline temp (30") | 17 K excess | 64 K excess | 0.27 |
 | Hood peak temp (30") | 154 deg C | 145 deg C | 1.06 |
 | CFM required (30") | 335 | 727 | 0.46 |
