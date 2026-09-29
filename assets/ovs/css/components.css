@@ -1191,18 +1191,20 @@ a.ovs-chip:hover {
    value PLUS the measured W5 delta at the same widths (1280 / 390, tool
    pages, baseline 7ba3549 vs this build), preserving F3's calibration —
    same residual settle, no new whitespace at tablet widths. */
-.ovs-instrument[data-instrument="i01"] { --i-reserve: 780px; }
-/* +65px (W5-T6, 2026-08-31): the copy-spec-line button row added to i02
-   only (.ovs-i-copyline: ~44px button + ~19px vertical padding + 1px
-   border) — same "F3 value plus the measured delta" calibration as the
-   W5-T3 note above, just a second delta stacked on i02's alone. */
-.ovs-instrument[data-instrument="i02"] { --i-reserve: 780px; }
+/* >=1101px values re-measured 2026-09-26 (review round 1) with the same
+   minimum-mounted-height-minus-15px rule as the width bands below; i02's
+   taller chart viewBox (0 -64 720 334, the verdict-stamp band) is what
+   moved its numbers. i04/i09 already sat below their measured minima. */
+.ovs-instrument[data-instrument="i01"] { --i-reserve: 835px; }
+.ovs-instrument[data-instrument="i02"] { --i-reserve: 1095px; }
+.ovs-instrument[data-instrument="i03"] { --i-reserve: 800px; }
 .ovs-instrument[data-instrument="i04"] { --i-reserve: 1080px; }
-.ovs-instrument[data-instrument="i05"] { --i-reserve: 780px; }
-.ovs-instrument[data-instrument="i07"] { --i-reserve: 780px; }
-.ovs-instrument[data-instrument="i08"] { --i-reserve: 930px; }
+.ovs-instrument[data-instrument="i05"] { --i-reserve: 805px; }
+.ovs-instrument[data-instrument="i06"] { --i-reserve: 775px; }
+.ovs-instrument[data-instrument="i07"] { --i-reserve: 835px; }
+.ovs-instrument[data-instrument="i08"] { --i-reserve: 955px; }
 .ovs-instrument[data-instrument="i09"] { --i-reserve: 1070px; }
-.ovs-instrument[data-instrument="i10"] { --i-reserve: 500px; }
+.ovs-instrument[data-instrument="i10"] { --i-reserve: 550px; }
 
 /* Width bands (2026-09-26): the 1280/390 values above and below were the
    only calibration, and until the figure actually released its reserve
@@ -1268,7 +1270,7 @@ a.ovs-chip:hover {
     min-height: var(--i-reserve-m, 760px);
   }
   .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 905px; }
-  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 965px; } /* +65px, W5-T6 copy-spec-line row */
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1310px; } /* re-measured 2026-09-26: taller chart viewBox */
   .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 810px; }
   .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 660px; }
   .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 1065px; }
@@ -1282,16 +1284,49 @@ a.ovs-chip:hover {
 /* 391-640px: same measured-minimum calibration as the tablet bands above
    (see that comment). The 390-measured values just above stay for
    320-390; here the wider column shortens most instruments by 100-300px. */
-@media (min-width: 391px) and (max-width: 480px) {
+/* 391-430 split from 431-480 (review round 1): the mounted height steps
+   down ~100-300px across 391-480 as control rows stop wrapping, so one
+   band calibrated to its wide end settled 391-430 down by up to +344px.
+   Measured every few px from 391 to 480 (2026-09-26): the steps sit at
+   ~392-394 and ~406-409, so 391-430 is itself two bands. Each value is
+   the minimum mounted height sampled in the band (home hero + tool page
+   for i01, taxonomy + grease pages for i10) minus 15px, floored to 5. */
+@media (min-width: 391px) and (max-width: 405px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 795px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1200px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 795px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 745px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 970px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 620px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 885px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 920px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 705px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 750px; }
+}
+
+@media (min-width: 406px) and (max-width: 430px) {
+  .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 760px; }
+  .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1105px; }
+  .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 725px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 665px; }
+  .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 915px; }
+  .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 580px; }
+  .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 855px; }
+  .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 865px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 725px; }
+  .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 760px; }
+}
+
+@media (min-width: 431px) and (max-width: 480px) {
   .ovs-instrument[data-instrument="i01"] { --i-reserve-m: 745px; }
   .ovs-instrument[data-instrument="i02"] { --i-reserve-m: 1090px; }
   .ovs-instrument[data-instrument="i03"] { --i-reserve-m: 685px; }
-  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 670px; }
+  .ovs-instrument[data-instrument="i04"] { --i-reserve-m: 665px; }
   .ovs-instrument[data-instrument="i05"] { --i-reserve-m: 900px; }
   .ovs-instrument[data-instrument="i06"] { --i-reserve-m: 580px; }
   .ovs-instrument[data-instrument="i07"] { --i-reserve-m: 800px; }
   .ovs-instrument[data-instrument="i08"] { --i-reserve-m: 790px; }
-  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 705px; }
+  .ovs-instrument[data-instrument="i09"] { --i-reserve-m: 740px; }
   .ovs-instrument[data-instrument="i10"] { --i-reserve-m: 665px; }
 }
 
@@ -2380,11 +2415,22 @@ a.ovs-chip:hover {
     padding: 0.12rem 0.45rem;
   }
 
+  /* visually hidden, NOT display:none: the plain/clause lines stay in the
+     accessibility tree so the aria-live stamp announces the same text at
+     every width (review round 1). */
   .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-plain,
   .ovs-instrument[data-instrument="i02"] .ovs-i-stamp .ovs-i-stamp-clause,
   .ovs-instrument[data-instrument="i05"] .ovs-i-stamp .ovs-i-stamp-plain,
   .ovs-instrument[data-instrument="i05"] .ovs-i-stamp .ovs-i-stamp-clause {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .ovs-instrument[data-instrument="i02"] .ovs-i-stamp {
@@ -2525,6 +2571,24 @@ a.ovs-chip:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* values are flex-shrink:0 below, so at 320px the labels are what
+     gives way — floor them at the 3-char short labels (REC/MIN, plus
+     their 0.08em letter-spacing) so they never collapse to a single
+     clipped glyph */
+  min-width: calc(3ch + 0.24em);
+}
+
+/* 320-359px: two cells + the grade badge no longer fit at the default
+   gaps once the labels stop shrinking; tighten the gaps instead of
+   letting the badge run into the strip's overflow clip. */
+@media (max-width: 359px) {
+  .ovs-i-strip {
+    gap: 0.5rem 0.7rem;
+  }
+
+  .ovs-i-strip-cell {
+    gap: 0.3rem;
+  }
 }
 
 .ovs-i-strip-value {
