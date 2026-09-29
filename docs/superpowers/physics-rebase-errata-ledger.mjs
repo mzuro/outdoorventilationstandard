@@ -371,6 +371,8 @@ function roundTwoProse() {
   const dcapAll = ['gasSmall', 'gasMedium', 'gasLarge', 'gasHigh', 'charcoalKettle', 'woodFired', 'pelletLow'].flatMap((id) => H.map((h) => Math.round(captureDiameter(h, SOURCES[id]))));
   const perMphAll = [[24, 'gasMedium'], [30, 'gasMedium'], [36, 'gasMedium'], [48, 'gasMedium'], [30, 'charcoalKettle'], [30, 'pelletLow']].map(([h, id]) => deflection(h, 1, SOURCES[id]));
   const perMph = { min: f1(Math.min(...perMphAll)), max: f1(Math.max(...perMphAll)) };
+  const rng = (h) => { const v = COLS.map(([id]) => ms(h, id)); return [Math.min(...v).toFixed(1), Math.max(...v).toFixed(1)]; };
+  const fpmRange = () => `${Math.round(Math.min(...COLS.map(([id]) => fpm(48, id))) / 5) * 5}-${Math.round(Math.max(...COLS.map(([id]) => fpm(18, id))) / 5) * 5} ft/min`;
   const foot = "† Fr = U_w / u_0 > 2.7 at this condition (Section 3.3): disrupted regime (Table 3.8). The linear formula's deflection is shown for completeness only and is not a design value.";
   return [
     // RB-001
@@ -434,6 +436,12 @@ function roundTwoProse() {
     { paper: 'rb007', old: 'ranging from 31 to 61 inches at standard mounting heights for common cooking sources.', new: `ranging from ${Math.min(...dcapAll)} to ${Math.max(...dcapAll)} inches at standard mounting heights for common cooking sources.`, call: 'min/max captureDiameter over RB-001 Table 3.6 (7 columns × 5 heights)' },
     { paper: 'rb007', old: 'this can improve the critical wind speed by 30 to 55%.', new: `this can improve the critical wind speed by 30 to ${rect}%.`, call: 'RB-006 §3.9.4 66" x 55" case' },
     { paper: 'rb009', old: 'this requires 2.3 to 4.0 inches of additional overhang per mph of wind speed', new: `this requires ${perMph.min} to ${perMph.max} inches of additional overhang per mph of wind speed`, call: 'RB-006 §3.9.5 table min/max' },
+    { paper: 'rb006', old: 'Using the plume velocities from RB-001 Table 3.5 (1.0 to 2.8 m/s at 18 inches; 1.0 to 2.1 m/s at 48 inches)', new: `Using the plume velocities from RB-001 Table 3.5 (${rng(18).join(' to ')} m/s at 18 inches; ${rng(48).join(' to ')} m/s at 48 inches)`, call: 'min/max centerlineVelocityMs over all sources at 18 and 48 in' },
+    { paper: 'rb007', old: 'ranging from 1.0 to 2.8 m/s (200 to 560 ft/min) at standard mounting heights.', new: `ranging from ${rng(48)[0]} to ${rng(18)[1]} m/s (${Math.round(Math.min(...COLS.map(([id]) => fpm(48, id))) / 5) * 5} to ${Math.round(Math.max(...COLS.map(([id]) => fpm(18, id))) / 5) * 5} ft/min) at standard mounting heights.`, call: 'min/max centerlineVelocity over all sources, 18-48 in (rounded to 5 fpm)' },
+    { paper: 'rb006', old: 'At 30 inches: U_w_CVP = 0.5 * 1.0 to 0.5 * 2.4 = 0.5 to 1.2 m/s (1.1 to 2.7 mph)', new: (() => { const v = COLS.map(([id]) => ms(30, id)); const lo = Math.min(...v), hi = Math.max(...v); return `At 30 inches: U_w_CVP = 0.5 * ${lo.toFixed(1)} to 0.5 * ${hi.toFixed(1)} = ${(0.5 * lo).toFixed(1)} to ${(0.5 * hi).toFixed(1)} m/s (${(0.5 * lo / 0.44704).toFixed(1)} to ${(0.5 * hi / 0.44704).toFixed(1)} mph)`; })(), call: '0.5 × min/max centerlineVelocityMs at 30 in (pelletLow 1.13, gasHigh 2.46)' },
+    { paper: 'rb003', old: 'plume centerline velocities (200-560 ft/min) far exceed minimum ASHRAE face velocities', new: `plume centerline velocities (${fpmRange()}) far exceed minimum ASHRAE face velocities`, call: 'min/max centerlineVelocity over all sources, 18-48 in (rounded to 5 fpm)' },
+    { paper: 'rb003', old: 'centerline velocities of 200-560 ft/min (1.0-2.8 m/s) at typical hood heights.', new: `centerline velocities of ${fpmRange()} (${rng(48)[0]}-${rng(18)[1]} m/s) at typical hood heights.`, call: 'min/max centerlineVelocity / centerlineVelocityMs over all sources, 18-48 in' },
+    { paper: 'rb011', old: 'The vertical transport velocity of the plume (1.0 to 2.8 m/s at standard hood heights, per RB-001 Table 3.5)', new: `The vertical transport velocity of the plume (${rng(48)[0]} to ${rng(18)[1]} m/s at standard hood heights, per RB-001 Table 3.5)`, call: 'min/max centerlineVelocityMs over all sources, 18-48 in' },
     // RB-012
     { paper: 'rb012', old: '(392 fpm for the medium gas grill at 30 inches)', new: `(${fpm(30)} fpm for the medium gas grill at 30 inches)`, call: 'centerlineVelocity(30, gasMedium)' },
   ];

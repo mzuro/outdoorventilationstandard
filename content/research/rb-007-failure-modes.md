@@ -101,7 +101,7 @@ A failure mode is activated when one or more of these conditions is not met. In 
 
 At the **Plume Interception Plane** (the horizontal plane at the hood's lower face), the **Buoyant Cooking Plume** has the following properties, as established in RB-001 and RB-003:
 
-- **Centerline velocity** u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3), ranging from 1.0 to 2.8 m/s (200 to 560 ft/min) at standard mounting heights. This velocity decays as z^(-1/3) — slowly relative to other plume parameters.
+- **Centerline velocity** u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3), ranging from 1.0 to 2.7 m/s (200 to 535 ft/min) at standard mounting heights. This velocity decays as z^(-1/3) — slowly relative to other plume parameters.
 
 - **Plume capture diameter** d_capture = 0.48 * (z - z_0) + D_eff, ranging from 31 to 57 inches at standard mounting heights for common cooking sources. This grows linearly with height.
 
