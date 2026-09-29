@@ -12,7 +12,8 @@
 // grep them against the paper, not asserted here.
 //
 //   node scripts/physics-claims-ledger.mjs          # write the ledger
-//   node scripts/physics-claims-ledger.mjs --check  # exit 1 on any ✗
+//   node scripts/physics-claims-ledger.mjs --check  # read-only: exit 1 on any ✗ or if the
+//                                                   # committed ledger is out of date
 //
 // The generated "Reference readings" tables are not re-listed: they are
 // produced by scripts/generate-reference-tables.mjs, whose --check mode is
@@ -89,7 +90,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'an 80,000 BTU grill needs {0} CFM', [v(() => cfmMin(GH, 30), n, 'requiredCfm(gasHigh, 30, moderate).minimum')], 'RB-008 Table 3.2b');
   claim(p, 'is {0} inches wide (RB-002 Table 3.7)', [v(() => recommendedWidth(30, GL), r, 'recommendedWidth(30, gasLarge)')], 'RB-002 Table 3.7');
   claim(p, 'is {0}% of that', [v(() => coverageAdvisory(48, 30, GL).pctOfRecommended, r, 'coverageAdvisory(48, 30, gasLarge).pctOfRecommended')], 'RB-008 Table 3.10');
-  paper(p, 'Table 3.10 rates at 65–75% capture at best', 'RB-008 Table 3.10 (42″ row)', 'printed band');
+  paper(p, 'RB-008 Table 3.10 rates capture at 65–75% at best', 'RB-008 Table 3.10 (42″ row, Gas Medium basis; coverageAdvisory applies the band to Gas Large)', 'printed band');
   paper(p, '1 CFM per 100 BTU gives 600 CFM for this grill', 'RB-008 §2.3', '60,000 / 100');
   paper(p, 'arriving at the hood at 200–560 fpm', 'RB-003 §4.1', 'printed range');
   paper(p, 'can run a face velocity of 29 fpm', 'RB-003 §4.1', 'printed example');
@@ -119,27 +120,28 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'by δ = {0} · U_w · z / u_0(z)', [v(() => C_D, f2, 'C_D')], 'RB-006 §3.1');
   claim(p, 'deflects the centerline about {0} inches (RB-006 Table 3.2b prints 12)', [v(() => deflection(30, 5, GM), f1, 'deflection(30, 5, gasMedium)')], 'RB-006 Table 3.2b');
   claim(p, 'by exactly {0} inches per side', [v(() => (48 - GM.cookWIn) / 2, r, '(48 − cookWIn 24)/2')], 'RB-002 App. A.4');
-  claim(p, 'By 10 mph the deflection is {0} inches', [v(() => deflection(30, 10, GM), f1, 'deflection(30, 10, gasMedium)')], 'RB-006 Table 3.2b');
+  claim(p, 'By 10 mph the deflection is {0} inches (RB-006 Table 3.2b prints 23)', [v(() => deflection(30, 10, GM), f1, 'deflection(30, 10, gasMedium) (Table 3.2b v1.1 prints 0.60 m / 23 in; v1.0 printed 0.63 m / 25 in)')], 'RB-006 Table 3.2b');
   claim(p, 'reads {0}% at 18 inches against {1}% at 30', [v(() => isl(48, 5, { riseIn: 18 }), pct, 'captureFraction(… rise 18, 5 mph)'), v(() => isl(48, 5), pct, '… rise 30')], 'model');
   claim(p, 'cut the wind the plume feels by {0}% — it experiences {1}% of the ambient speed', [v(() => panelReduction({ panels: 'both', f: 0.67, dir: 'side' }) * 100, r, "panelReduction({panels:'both', f:0.67, dir:'side'})"), v(() => (1 - panelReduction({ panels: 'both', f: 0.67, dir: 'side' })) * 100, r, '1 − R')], 'RB-009 Table 3.1a');
   claim(p, 'from {0}% to {1}% and the 8 mph reading from {2}% to {3}%', [v(() => isl(48, 5), pct, 'capture 5 mph'), v(() => isl(48, 5, { panels: 'both' }), pct, '… panels both'), v(() => isl(48, 8), pct, 'capture 8 mph'), v(() => isl(48, 8, { panels: 'both' }), pct, '… panels both')], 'RB-009 Table 3.1a + RB-006 §3.4');
   claim(p, 'recommended {0}-inch width for this grill reads {1}% at 5 mph, and {2}% with panels', [v(() => recommendedWidth(30, GM), r, 'recommendedWidth(30, gasMedium)'), v(() => isl(57, 5), pct, 'captureFraction(57 island, side, 5)'), v(() => isl(57, 5, { panels: 'both' }), pct, '… panels both')], 'RB-006 Table 3.10 (prints 70–75 / 88–92)');
   paper(p, 'cuts that wind by 60–80%', 'RB-006 §3.9.2', 'printed range');
-  claim(p, 'description: "Yes — capture at a 48-inch island hood falls from {0}% in still air to {1}% at 5 mph and {2}% at 10 mph', [v(() => isl(48, 0), pct, 'capture 0'), v(() => isl(48, 5), pct, 'capture 5'), v(() => isl(48, 10), pct, 'capture 10')], 'RB-006 §3.4 model');
+  claim(p, 'description: "Yes — modeled capture at a 48-inch island hood falls from {0}% in still air to {1}% at 5 mph and {2}% at 10 mph', [v(() => isl(48, 0), pct, 'capture 0'), v(() => isl(48, 5), pct, 'capture 5'), v(() => isl(48, 10), pct, 'capture 10')], 'RB-006 §3.4 model');
 }
 // ======================================================= island-vs-wall-hood
 {
   const p = Q + 'island-vs-wall-hood.md';
-  claim(p, 'captures about {0}% and a same-width island hood about {1}%', [v(() => wallRear(48, 0), pct, 'captureFraction(48×36 wall, rear, 0)'), v(() => islRear(48, 0), pct, 'captureFraction(48×40 island, rear, 0)')], 'RB-006 §3.4, §3.9.2');
+  claim(p, 'gives a 48-inch wall hood about {0}% in calm air and a same-width island hood about {1}%', [v(() => wallRear(48, 0), pct, 'captureFraction(48×36 wall, rear, 0)'), v(() => islRear(48, 0), pct, 'captureFraction(48×40 island, rear, 0)')], 'RB-006 §3.4, §3.9.2 (rear-wind axis)');
   claim(p, 'still holds roughly **{0}%** while the island hood falls to roughly **{1}%**', [v(() => wallRear(48, 8), pct, 'wall rear 8 mph'), v(() => islRear(48, 8), pct, 'island rear 8 mph')], 'RB-006 §3.9.2; RB-005 §3.4.4');
   claim(p, 'both mounts read about {0}% in still air and {1}% at 8 mph', [v(() => isl(48, 0), pct, 'side wind 0'), v(() => isl(48, 8), pct, 'side wind 8')], 'model');
   claim(p, 'applies the {0}% midpoint', [v(() => R_WALL * 100, r, 'R_WALL')], 'RB-006 §3.9.2');
   claim(p, 'only {0} inches of front-to-back overhang', [v(() => (ID - GM.cookDIn) / 2, f1, '(40 − cookDIn 21)/2')], 'RB-002 App. A.4');
   paper(p, 'recommended depth for this grill at 30 inches is 53 inches', 'RB-002 Table 3.6b (D_min)', 'printed cell');
   claim(p, 'reads about {0}% in calm air and {1}% in a 5 mph rear wind in the model, against {2}% and {3}%', [v(() => cap({ widthIn: 57, depthIn: 53, mount: 'island', windMph: 0, windDir: 'rear' }), pct, 'captureFraction(57×53 island, rear, 0)'), v(() => cap({ widthIn: 57, depthIn: 53, mount: 'island', windMph: 5, windDir: 'rear' }), pct, '… 5 mph'), v(() => islRear(48, 0), pct, '48×40 island rear 0'), v(() => islRear(48, 5), pct, '… 5 mph')], 'model');
+  claim(p, 'the same 57 × 53 hood reads about {0}% in still air along its side-wind axis', [v(() => isl(57, 0), pct, 'captureFraction(57×40 island, side, 0) — width-only aperture, depth irrelevant on this axis')], 'model (side-wind axis)');
   claim(p, '({0}% reduction at two-thirds depth) but do little against wind from the front or rear ({1}%', [v(() => panelReduction({ panels: 'both', f: 0.67, dir: 'side' }) * 100, r, 'panelReduction side f=0.67'), v(() => panelReduction({ panels: 'both', f: 0.67, dir: 'rear' }) * 100, r, 'panelReduction rear f=0.67')], 'RB-009 Table 3.1a');
   claim(p, 'needs {0} CFM on a wall needs {1} on an island', [v(() => cfmGL('moderate').minimum, n, 'minimum wall'), v(() => cfmGL('moderate', 'none', 'island').minimum, n, 'minimum island')], 'RB-008 §3.9');
-  claim(p, 'description: "In an 8 mph wind from behind, a 48-inch wall hood holds {0}% capture; the same hood on an island drops to {1}%', [v(() => wallRear(48, 8), pct, 'wall rear 8'), v(() => islRear(48, 8), pct, 'island rear 8')], 'model');
+  claim(p, 'description: "In an 8 mph wind from behind, a 48-inch wall hood holds {0}% modeled capture; the same hood on an island drops to {1}%', [v(() => wallRear(48, 8), pct, 'wall rear 8'), v(() => islRear(48, 8), pct, 'island rear 8')], 'model');
 }
 // ======================================================= hood-depth-and-overhang
 {
@@ -205,6 +207,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'is {0} inches wide by 53 inches deep', [v(() => recommendedWidth(30, GM), r, 'recommendedWidth(30) (53 in depth = RB-002 Table 3.6b, paper)')], 'RB-002 Tables 3.6b, 3.7');
   claim(p, 'the 48-inch preset is {0}% of that width', [v(() => coverageAdvisory(48, 30, GM).pctOfRecommended, r, 'coverageAdvisory(48,30).pctOfRecommended')], 'RB-008 Table 3.10');
   claim(p, 'about {0}% in still air and {1}% at 5 mph', [v(() => isl(57, 0), pct, 'captureFraction(57 island, side, 0)'), v(() => isl(57, 5), pct, '… 5')], 'RB-006 Table 3.10 (>95 / 70–75)');
+  claim(p, 'leaves {0} inches of overhang front and back, the same island hood reads about {1}% in still air', [v(() => (53 - GM.cookDIn) / 2, r, '(53 − 21)/2'), v(() => cap({ widthIn: 57, depthIn: 53, mount: 'island', windMph: 0, windDir: 'rear' }), pct, 'captureFraction(57×53 island, rear, 0)')], 'model (rear-wind axis)');
 }
 {
   const p = T + 'cfm-calculator.md';
@@ -228,6 +231,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'about {0} inches (Table 3.2b: 19)', [v(() => deflection(30, 8, GM), f1, 'deflection(30, 8)')], 'RB-006 Table 3.2b');
   claim(p, 'roughly {0}× farther at a 48-inch mounting height than at 30 inches ({1} versus {2} inches at 5 mph)', [v(() => deflection(48, 5, GM) / deflection(30, 5, GM), f1, 'deflection(48,5)/deflection(30,5)'), v(() => deflection(48, 5, GM), f1, 'deflection(48, 5)'), v(() => deflection(30, 5, GM), f1, 'deflection(30, 5)')], 'RB-006 §3.1');
   claim(p, 'the 12 mph deflection ({0} inches) is four times the 3 mph deflection ({1} inches)', [v(() => deflection(30, 12, GM), f1, 'deflection(30, 12)'), v(() => deflection(30, 3, GM), f1, 'deflection(30, 3)')], 'RB-006 §3.1');
+  claim(p, 'RB-006 Table 3.4a v1.1 prints {0}, {1} and {2} mph for this row', (() => { const c = () => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }); return [v(() => c().u25, f1, 'criticalWinds(57 island).u25'), v(() => c().uCenterline, f1, '… .uCenterline'), v(() => c().u50, f1, '… .u50')]; })(), 'RB-006 Table 3.4a (v1.1, Revision history)');
   claim(p, '({0}, {1} and {2} inches) are the RB-003 benchmark', [v(() => deflection(18, 3, GM), f1, 'deflection(18, 3)'), v(() => deflection(30, 3, GM), f1, 'deflection(30, 3)'), v(() => deflection(48, 3, GM), f1, 'deflection(48, 3)')], 'RB-006 §3.1 (benchmark 4/7/12)');
   claim(p, 'the 25%-escape wind at about {0} mph and centerline exit at about {1} mph', [v(() => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }).u25, f1, 'criticalWinds(57 island).u25'), v(() => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }).uCenterline, f1, '… .uCenterline')], 'RB-006 §3.4 identities (Table 3.4a prints 6.7/9.7)');
   claim(p, 'Fr > {0} at every standard height by 15 mph', [v(() => FR_DISRUPTED, f1, 'FR_DISRUPTED; min froude(18..48, 15) = ' + froude(18, 15, GM).toFixed(2))], 'RB-006 §3.8, Table 4.1');
@@ -339,6 +343,18 @@ Claims: ${claims.length}; verified ✓: ${claims.length - bad}; ✗: ${bad}.
 |---|---|---|---|---|---|
 ${rows.join('\n')}
 `;
-writeFileSync(OUT, md);
-console.log(`${claims.length} claims, ${bad} not found → ${OUT}`);
-if (CHECK && bad) process.exit(1);
+if (CHECK) {
+  // Read-only: never rewrite the ledger (or its date line) in check mode. Compare
+  // the freshly computed table with the committed one, ignoring the "Generated"
+  // date line, so a claim/module change without a regenerated ledger also fails.
+  const strip = (s) => s.replace(/^Generated \d{4}-\d{2}-\d{2} /m, 'Generated ');
+  let prev = null;
+  try { prev = readFileSync(OUT, 'utf8'); } catch { /* missing */ }
+  const stale = prev === null || strip(prev) !== strip(md);
+  console.log(`${claims.length} claims, ${bad} not found; ledger ${stale ? 'OUT OF DATE' : 'up to date'} (${OUT})`);
+  if (stale) console.error('ledger out of date — run node scripts/physics-claims-ledger.mjs');
+  if (bad || stale) process.exit(1);
+} else {
+  writeFileSync(OUT, md);
+  console.log(`${claims.length} claims, ${bad} not found → ${OUT}`);
+}

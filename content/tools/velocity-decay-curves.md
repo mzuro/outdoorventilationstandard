@@ -2,7 +2,7 @@
 title: "Velocity Decay Curves"
 description: "Centerline velocity decay of the cooking plume from the cooking surface to hood height, computed from the Heskestad relation with RB-001 source inputs."
 date: 2025-11-01
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 tags: ["velocity decay", "plume physics", "visualization"]
 categories: ["Tools"]
@@ -46,7 +46,7 @@ This diagram visualizes centerline velocity decay from the cooking surface up to
 | 72″ | 314 fpm | 187 fpm |
 <!-- generated:end -->
 
-Centerline velocity over the medium gas grill falls from about 508 fpm at 6 inches to 393 fpm by a 30-inch mounting height and 350 fpm by 48 inches — an inverse cube-root decay, not a linear one [RB-003 §2.1]. At the non-standard heights (6, 12, 42, 54, 60, 72 inches) these are the cells RB-003 Table 3.1b prints; at the standard heights (18–48 inches) RB-003 carries RB-001 Table 3.5's hand-rounded values (453/417/392/370/337 fpm), which the paper itself notes sit 1–4% off its own formula [RB-003 §3.1]. The values here are recomputed from the Heskestad relation with RB-001 Table 3.2 inputs — 435/412/393/377/350 fpm — and the papers' revision history records the change. Even at 72 inches, well beyond any standard mounting height, this plume's centerline velocity (314 fpm) is three times the 100 fpm face-velocity figure indoor practice treats as a minimum [RB-003 §3.1]. The velocity loss from 24 to 48 inches (412 to 350 fpm, a 15% drop) is small next to the growth of plume mass flow over the same interval — the RB-008 exhaust requirement climbs as z^(5/3), from 550 to 1,518 CFM for this source under moderate exposure — which is why CFM, not centerline velocity, governs hood sizing at greater mounting heights [RB-003 §4.1; RB-008 §2.4, Table 3.2b].
+Centerline velocity over the medium gas grill falls from about 508 fpm at 6 inches to 393 fpm by a 30-inch mounting height and 350 fpm by 48 inches — an inverse cube-root decay, not a linear one [RB-003 §2.1]. At the non-standard heights (6, 12, 42, 54, 60, 72 inches) these are the cells RB-003 Table 3.1b prints; at the standard heights (18–48 inches) RB-003 v1.0 carried RB-001 Table 3.5's hand-rounded values (453/417/392/370/337 fpm), which the paper itself noted sat 1–4% off its own formula; its Revision history (v1.1, 2026-09-26) regenerates those rows from the formula, as RB-001's does for Table 3.5 [RB-003 §3.1]. The values here are the same recomputation from the Heskestad relation with RB-001 Table 3.2 inputs — 435/412/393/377/350 fpm — and match the printed v1.1 cells. Even at 72 inches, well beyond any standard mounting height, this plume's centerline velocity (314 fpm) is three times the 100 fpm face-velocity figure indoor practice treats as a minimum [RB-003 §3.1]. The velocity loss from 24 to 48 inches (412 to 350 fpm, a 15% drop) is small next to the growth of plume mass flow over the same interval — the RB-008 exhaust requirement climbs as z^(5/3), from 550 to 1,518 CFM for this source under moderate exposure — which is why CFM, not centerline velocity, governs hood sizing at greater mounting heights [RB-003 §4.1; RB-008 §2.4, Table 3.2b].
 
 ## Key Findings
 

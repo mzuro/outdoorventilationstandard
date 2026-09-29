@@ -3,7 +3,7 @@ title: "What CFM does my outdoor kitchen hood need?"
 description: "A 60,000 BTU grill at a 30-inch wall mount needs 892 CFM minimum in moderate wind and a 1,200 CFM blower; on an island, 1,070 CFM (RB-008 §3.3, §3.9)."
 summary: "A 60,000 BTU gas grill at a 30-inch wall mount needs a minimum of 892 CFM under moderate wind exposure, served by a 1,200 CFM blower — 727 CFM sheltered, 1,004 CFM exposed with side panels, 1,394 CFM exposed without. An island mount multiplies the minimum by 1.20, to 1,070 CFM, because it loses the back wall's free confinement. The figure comes from the plume's mass flow at the hood — source strength and mounting height — not from hood width."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 1
 instruments: true
@@ -12,7 +12,7 @@ instrument_preset: "wall-48"
 citations: ["rb-008", "rb-001", "rb-006"]
 ---
 
-A 60,000 BTU gas grill under a wall-mounted hood at a 30-inch mounting height needs at least **892 CFM** under moderate wind exposure, and a **1,200 CFM blower** — the smallest standard size that clears the minimum by the 10% margin RB-008 requires (RB-008 §3.3, App. A step 8). Across the four wind exposure classes the minimums are 727 CFM sheltered, 892 CFM moderate, 1,004 CFM exposed with side panels, and 1,394 CFM exposed without — with blowers of 900, 1,200, 1,200 and 1,800 CFM (RB-008 §3.3; the paper prints 1,003 for the third case, a 1 CFM rounding difference, and a 1,500 CFM blower for the fourth, which is only 8% above the minimum — the 1,800 here applies the paper's own Appendix A step 8 rule). These are minimums for ingesting the whole plume, not comfort margins; too little exhaust is the most common *correctable* cause of smoke escape (RB-007 §3.3).
+A 60,000 BTU gas grill under a wall-mounted hood at a 30-inch mounting height needs at least **892 CFM** under moderate wind exposure, and a **1,200 CFM blower** — the smallest standard size that clears the minimum by the 10% margin RB-008 requires (RB-008 §3.3, App. A step 8). Across the four wind exposure classes the minimums are 727 CFM sheltered, 892 CFM moderate, 1,004 CFM exposed with side panels, and 1,394 CFM exposed without — with blowers of 900, 1,200, 1,200 and 1,800 CFM (RB-008 §3.3; the paper prints 1,003 for the third case, a 1 CFM rounding difference, and a 1,500 CFM blower for the fourth, which is only 8% above the minimum — the 1,800 here applies the paper's own Appendix A step 8 rule). These are minimums for ingesting the whole plume, not comfort margins; too little exhaust — FM-3, third of RB-007's six failure modes by frequency — is the most *readily correctable* cause of smoke escape (RB-007 Table 3.1, §3.4.5).
 
 ## Why island installs need more
 
@@ -26,7 +26,7 @@ Two things follow from the formula. **Mounting height dominates**: the z^(5/3) t
 
 ## A wider hood does not need more CFM — but an undersized hood cannot be fixed with CFM
 
-Hood width is not an input to the exhaust rate at all. RB-008 §3.4.3 is explicit that the plume, the mounting height and the open-sides penalty set the requirement, and its Table 3.10 shows the effect of width running the other way: a hood *wider* than the recommended width needs slightly less airflow, not more, because the extra overhang adds capture margin (RB-008 §3.10). The catch is the other direction. Below about 80% of the recommended width, "increasing CFM cannot compensate for the geometric deficiency" — the plume simply overflows the hood (RB-008 §3.10). The papers' recommended hood for this 60,000 BTU grill at 30 inches is 62 inches wide (RB-002 Table 3.7); the 48-inch hood the instrument opens with is 77% of that, inside the band RB-008 Table 3.10 rates at 65–75% capture at best. Size the width first — [what size hood your grill needs](/questions/what-size-hood-for-my-grill/) — then the airflow.
+Hood width is not an input to the exhaust rate at all. RB-008 §3.4.3 is explicit that the source's convective output and the mounting height set the requirement (the mount multiplier of §3.9 is applied on top), and its Table 3.10 shows the effect of width running the other way: a hood *wider* than the recommended width needs slightly less airflow, not more, because the extra overhang adds capture margin (RB-008 §3.10). The catch is the other direction. Below about 80% of the recommended width, "increasing CFM cannot compensate for the geometric deficiency" — the plume simply overflows the hood (RB-008 §3.10). The papers' recommended hood for this 60,000 BTU grill at 30 inches is 62 inches wide (RB-002 Table 3.7); the 48-inch hood the instrument opens with is 77% of that — below the 80% line at which RB-008 Table 3.10 rates capture at 65–75% at best; the table's worked case is the medium gas grill's 57-inch hood, and the OVS model's coverage advisory applies the same band to this 62-inch case. Size the width first — [what size hood your grill needs](/questions/what-size-hood-for-my-grill/) — then the airflow.
 
 ## Why this is lower than the numbers you may have seen
 

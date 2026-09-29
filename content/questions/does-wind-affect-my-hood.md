@@ -1,9 +1,9 @@
 ---
 title: "Does wind really affect an outdoor range hood?"
-description: "Yes — capture at a 48-inch island hood falls from 87% in still air to 51% at 5 mph and 8% at 10 mph in a side wind. Wind matters more than CFM or width."
+description: "Yes — modeled capture at a 48-inch island hood falls from 87% in still air to 51% at 5 mph and 8% at 10 mph in a side wind. Wind outweighs CFM or width."
 summary: "Yes — at a 48-inch island hood in a side wind, modeled capture drops from about 87% in still air to 51% at 5 mph and to roughly 8% at 10 mph. Wind is the single largest variable in outdoor hood performance, larger than CFM or hood size, because it moves the plume out from under the hood before the exhaust can act on it."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 2
 instruments: true
@@ -11,11 +11,11 @@ instrument_id: "i03"
 citations: ["rb-006", "rb-009"]
 ---
 
-A 48-inch island hood at a standard 30-inch mounting height over a medium gas grill captures about **87% of the plume in still air**, **51% at 5 mph**, and roughly **8% at 10 mph** with the wind blowing across the hood face — the capture model's reading against RB-006's escape thresholds (RB-006 §3.4). No amount of extra CFM fixes this on its own: RB-008 sizes an unshielded exposed site at 5.75 times the bare plume flow and still expects only about 60% capture, because wind doesn't just dilute the plume, it physically pushes it out from under the hood before the exhaust can act on it (RB-008 §3.3).
+A 48-inch island hood at a standard 30-inch mounting height over a medium gas grill captures, in the OVS model, about **87% of the plume in still air**, **51% at 5 mph**, and roughly **8% at 10 mph** with the wind blowing across the hood face — all three along the side-wind axis, the model's reading against RB-006's escape thresholds (RB-006 §3.4; the model is one-dimensional along the wind axis, so the still-air figure is the plume fraction inside the hood's 12-inch end overhangs, not a two-dimensional capture). No amount of extra CFM fixes this on its own: RB-008 sizes an unshielded exposed site at 5.75 times the bare plume flow and still expects only about 60% capture, because wind doesn't just dilute the plume, it physically pushes it out from under the hood before the exhaust can act on it (RB-008 §3.3).
 
 ## What's actually happening
 
-A buoyant plume rises straight up only in calm air. Any crosswind bends its path sideways as it climbs, by δ = 0.35 · U_w · z / u_0(z) — proportional to wind speed and to the height it has to rise, inversely to its own velocity (RB-006 §3.1). At a 30-inch rise a 5 mph breeze deflects the centerline about 11.7 inches (RB-006 Table 3.2b prints 12). The 48-inch hood overhangs the 24-inch cooking surface by exactly 12 inches per side, so at 5 mph the plume centerline is sitting on the hood's edge — RB-006's "centerline exits hood" threshold, at which about half the plume is outside (RB-006 §3.4). By 10 mph the deflection is 23.5 inches, twice the overhang, which is why capture collapses between 5 and 10 mph rather than declining gently.
+A buoyant plume rises straight up only in calm air. Any crosswind bends its path sideways as it climbs, by δ = 0.35 · U_w · z / u_0(z) — proportional to wind speed and to the height it has to rise, inversely to its own velocity (RB-006 §3.1). At a 30-inch rise a 5 mph breeze deflects the centerline about 11.7 inches (RB-006 Table 3.2b prints 12). The 48-inch hood overhangs the 24-inch cooking surface by exactly 12 inches per side, so at 5 mph the plume centerline is sitting on the hood's edge — RB-006's "centerline exits hood" threshold, at which about half the plume is outside (RB-006 §3.4). By 10 mph the deflection is 23.5 inches (RB-006 Table 3.2b prints 23), twice the overhang, which is why capture collapses between 5 and 10 mph rather than declining gently.
 
 ## Why smoke escapes on a breezy day
 

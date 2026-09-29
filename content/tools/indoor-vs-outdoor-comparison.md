@@ -2,7 +2,7 @@
 title: "Indoor vs. Outdoor Ventilation Comparison"
 description: "Why indoor ventilation assumptions fail outdoors: wall confinement, pressure-assisted capture and ceiling redirection are gone, and wind moves the plume."
 date: 2025-11-01
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 tags: ["indoor vs outdoor", "open-boundary dilution", "visualization"]
 categories: ["Tools"]
@@ -47,7 +47,7 @@ This diagram contrasts plume capture in enclosed indoor environments versus open
 | 12 mph | 2% |
 <!-- generated:end -->
 
-In still air this 48-inch island hood models at about 87% capture — short of the near-100% indoor baseline RB-004 describes, but for a geometric reason rather than an environmental one: 48 inches is 84% of the 57-inch width RB-002 recommends for this grill, the band RB-008 Table 3.10 calls marginal, "80–85% at best" [RB-008 §3.10]. Still air is the one indoor advantage this instrument grants the outdoor hood: an environment free of crosswind and ambient turbulence [RB-004 §2.1]. Introducing a 5 mph side wind, with no other change to the hood, drops modeled capture to about 51% — the bottom of the 50–65% first-pass capture RB-004 estimates for a UL 710-rated hood operated outdoors [RB-004 §3.3.2] — and 8 mph takes it to about 20%. By 12 mph — the top of the wind band RB-008 classifies as Exposed — modeled capture is about 2%; for that class RB-008 sets the CFM multiplier over bare plume mass flow at 5.75× without panels, versus 3.0× for a sheltered installation, a 92% increase in required exhaust for the same hood [RB-008 §2.2, §3.6].
+In still air this 48-inch island hood models at about 87% capture along the side-wind axis — short of the near-100% indoor baseline RB-004 describes, but for a geometric reason rather than an environmental one: 48 inches is 84% of the 57-inch width RB-002 recommends for this grill, the band RB-008 Table 3.10 calls marginal, "80–85% at best" [RB-008 §3.10]. Still air is the one indoor advantage this instrument grants the outdoor hood: an environment free of crosswind and ambient turbulence [RB-004 §2.1]. Introducing a 5 mph side wind, with no other change to the hood, drops modeled capture to about 51% — the bottom of the 50–65% first-pass capture RB-004 estimates for a UL 710-rated hood operated outdoors [RB-004 §3.3.2] — and 8 mph takes it to about 20%. By 12 mph — the top of the wind band RB-008 classifies as Exposed — modeled capture is about 2%; for that class RB-008 sets the CFM multiplier over bare plume mass flow at 5.75× without panels, versus 3.0× for a sheltered installation, a 92% increase in required exhaust for the same hood [RB-008 §2.2, §3.6].
 
 ## The Four Indoor Advantages
 

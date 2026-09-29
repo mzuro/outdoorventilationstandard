@@ -2,7 +2,7 @@
 title: "Outdoor Range Hood CFM Calculator"
 description: "Physics-based calculator for the exhaust airflow (CFM) an outdoor range hood needs, from cooking source, mounting height, mount type and wind exposure."
 date: 2025-12-15
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 tags: ["CFM sizing", "interactive tool", "hood design"]
 categories: ["Tools"]
@@ -67,7 +67,7 @@ The calculator follows RB-008 Appendix A:
 
 4. **Mount multiplier.** Wall 1.00, peninsula 1.10, island 1.20, applied to the table value [RB-008 §3.9] — the open-sides infiltration, omnidirectional wind exposure, and loss of wall attachment an island hood must make up with airflow instead of a wall [RB-005 §3.4.3].
 
-5. **Blower selection.** The smallest standard size at least 1.1× the minimum [RB-008 App. A step 8, §3.11]. RB-008 lists 600/900/1200/1500 CFM as common residential ratings; the calculator extends that ladder upward (1800/2100/2400/3000) so the rule can be applied honestly above 1,364 CFM.
+5. **Blower selection.** The smallest standard size at least 1.1× the minimum for the selected exposure class [RB-008 App. A step 8, §3.3]. RB-008 §3.11 goes one step further, recommending that even a Sheltered installation take a blower sized to the Moderate-exposure value to allow for occasional breezes; the calculator does not apply that stricter rule — it sizes to the class you select — and records it here as the paper's recommendation. RB-008 lists 600/900/1200/1500 CFM as common residential ratings; the calculator extends that ladder upward (1800/2100/2400/3000) so the rule can be applied honestly above 1,364 CFM.
 
 6. **Width check (advisory only).** Hood width is compared with the RB-002 recommended width for the source and height (W_rec = 1.38 × capture diameter) and reported as an RB-008 Table 3.10 coverage band; it never changes the CFM readout [RB-008 §3.10; RB-002 §3.6].
 

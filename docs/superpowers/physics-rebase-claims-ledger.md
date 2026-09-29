@@ -1,6 +1,6 @@
 # Physics re-base — claims ledger (Stage B content)
 
-Generated 2026-09-26 by `node scripts/physics-claims-ledger.mjs`. Every hand-written numeric
+Generated 2026-09-29 by `node scripts/physics-claims-ledger.mjs`. Every hand-written numeric
 claim on the 9 live question pages and 11 tool pages, recomputed from
 `static/js/ovs/physics/*.mjs` and checked for presence in the page text. The generated
 "Reference readings" tables and the three CSVs are verified separately by
@@ -8,7 +8,7 @@ claim on the 9 live question pages and 11 tool pages, recomputed from
 "paper: …" quote a printed paper cell that no module computes; verify them against the
 paper line, not here.
 
-Claims: 164; verified ✓: 164; ✗: 0.
+Claims: 167; verified ✓: 167; ✗: 0.
 
 | page | claim text | module call | value | citation | status |
 |---|---|---|---|---|---|
@@ -27,7 +27,7 @@ Claims: 164; verified ✓: 164; ✗: 0.
 | questions/what-cfm-do-i-need.md | an 80,000 BTU grill needs 1,019 CFM | requiredCfm(gasHigh, 30, moderate).minimum | 1,019 | RB-008 Table 3.2b | ✓ |
 | questions/what-cfm-do-i-need.md | is 62 inches wide (RB-002 Table 3.7) | recommendedWidth(30, gasLarge) | 62 | RB-002 Table 3.7 | ✓ |
 | questions/what-cfm-do-i-need.md | is 77% of that | coverageAdvisory(48, 30, gasLarge).pctOfRecommended | 77 | RB-008 Table 3.10 | ✓ |
-| questions/what-cfm-do-i-need.md | Table 3.10 rates at 65–75% capture at best | paper: printed band | — | RB-008 Table 3.10 (42″ row) | ✓ |
+| questions/what-cfm-do-i-need.md | RB-008 Table 3.10 rates capture at 65–75% at best | paper: printed band | — | RB-008 Table 3.10 (42″ row, Gas Medium basis; coverageAdvisory applies the band to Gas Large) | ✓ |
 | questions/what-cfm-do-i-need.md | 1 CFM per 100 BTU gives 600 CFM for this grill | paper: 60,000 / 100 | — | RB-008 §2.3 | ✓ |
 | questions/what-cfm-do-i-need.md | arriving at the hood at 200–560 fpm | paper: printed range | — | RB-003 §4.1 | ✓ |
 | questions/what-cfm-do-i-need.md | can run a face velocity of 29 fpm | paper: printed example | — | RB-003 §4.1 | ✓ |
@@ -49,23 +49,24 @@ Claims: 164; verified ✓: 164; ✗: 0.
 | questions/does-wind-affect-my-hood.md | by δ = 0.35 · U_w · z / u_0(z) | C_D | 0.35 | RB-006 §3.1 | ✓ |
 | questions/does-wind-affect-my-hood.md | deflects the centerline about 11.7 inches (RB-006 Table 3.2b prints 12) | deflection(30, 5, gasMedium) | 11.7 | RB-006 Table 3.2b | ✓ |
 | questions/does-wind-affect-my-hood.md | by exactly 12 inches per side | (48 − cookWIn 24)/2 | 12 | RB-002 App. A.4 | ✓ |
-| questions/does-wind-affect-my-hood.md | By 10 mph the deflection is 23.5 inches | deflection(30, 10, gasMedium) | 23.5 | RB-006 Table 3.2b | ✓ |
+| questions/does-wind-affect-my-hood.md | By 10 mph the deflection is 23.5 inches (RB-006 Table 3.2b prints 23) | deflection(30, 10, gasMedium) (Table 3.2b v1.1 prints 0.60 m / 23 in; v1.0 printed 0.63 m / 25 in) | 23.5 | RB-006 Table 3.2b | ✓ |
 | questions/does-wind-affect-my-hood.md | reads 83% at 18 inches against 51% at 30 | captureFraction(… rise 18, 5 mph); … rise 30 | 83 / 51 | model | ✓ |
 | questions/does-wind-affect-my-hood.md | cut the wind the plume feels by 60% — it experiences 40% of the ambient speed | panelReduction({panels:'both', f:0.67, dir:'side'}); 1 − R | 60 / 40 | RB-009 Table 3.1a | ✓ |
 | questions/does-wind-affect-my-hood.md | from 51% to 80% and the 8 mph reading from 20% to 70% | capture 5 mph; … panels both; capture 8 mph; … panels both | 51 / 80 / 20 / 70 | RB-009 Table 3.1a + RB-006 §3.4 | ✓ |
 | questions/does-wind-affect-my-hood.md | recommended 57-inch width for this grill reads 72% at 5 mph, and 93% with panels | recommendedWidth(30, gasMedium); captureFraction(57 island, side, 5); … panels both | 57 / 72 / 93 | RB-006 Table 3.10 (prints 70–75 / 88–92) | ✓ |
 | questions/does-wind-affect-my-hood.md | cuts that wind by 60–80% | paper: printed range | — | RB-006 §3.9.2 | ✓ |
-| questions/does-wind-affect-my-hood.md | description: "Yes — capture at a 48-inch island hood falls from 87% in still air to 51% at 5 mph and 8% at 10 mph | capture 0; capture 5; capture 10 | 87 / 51 / 8 | RB-006 §3.4 model | ✓ |
-| questions/island-vs-wall-hood.md | captures about 97% and a same-width island hood about 76% | captureFraction(48×36 wall, rear, 0); captureFraction(48×40 island, rear, 0) | 97 / 76 | RB-006 §3.4, §3.9.2 | ✓ |
+| questions/does-wind-affect-my-hood.md | description: "Yes — modeled capture at a 48-inch island hood falls from 87% in still air to 51% at 5 mph and 8% at 10 mph | capture 0; capture 5; capture 10 | 87 / 51 / 8 | RB-006 §3.4 model | ✓ |
+| questions/island-vs-wall-hood.md | gives a 48-inch wall hood about 97% in calm air and a same-width island hood about 76% | captureFraction(48×36 wall, rear, 0); captureFraction(48×40 island, rear, 0) | 97 / 76 | RB-006 §3.4, §3.9.2 (rear-wind axis) | ✓ |
 | questions/island-vs-wall-hood.md | still holds roughly **88%** while the island hood falls to roughly **12%** | wall rear 8 mph; island rear 8 mph | 88 / 12 | RB-006 §3.9.2; RB-005 §3.4.4 | ✓ |
 | questions/island-vs-wall-hood.md | both mounts read about 87% in still air and 20% at 8 mph | side wind 0; side wind 8 | 87 / 20 | model | ✓ |
 | questions/island-vs-wall-hood.md | applies the 70% midpoint | R_WALL | 70 | RB-006 §3.9.2 | ✓ |
 | questions/island-vs-wall-hood.md | only 9.5 inches of front-to-back overhang | (40 − cookDIn 21)/2 | 9.5 | RB-002 App. A.4 | ✓ |
 | questions/island-vs-wall-hood.md | recommended depth for this grill at 30 inches is 53 inches | paper: printed cell | — | RB-002 Table 3.6b (D_min) | ✓ |
 | questions/island-vs-wall-hood.md | reads about 95% in calm air and 70% in a 5 mph rear wind in the model, against 76% and 39% | captureFraction(57×53 island, rear, 0); … 5 mph; 48×40 island rear 0; … 5 mph | 95 / 70 / 76 / 39 | model | ✓ |
+| questions/island-vs-wall-hood.md | the same 57 × 53 hood reads about 96% in still air along its side-wind axis | captureFraction(57×40 island, side, 0) — width-only aperture, depth irrelevant on this axis | 96 | model (side-wind axis) | ✓ |
 | questions/island-vs-wall-hood.md | (60% reduction at two-thirds depth) but do little against wind from the front or rear (15% | panelReduction side f=0.67; panelReduction rear f=0.67 | 60 / 15 | RB-009 Table 3.1a | ✓ |
 | questions/island-vs-wall-hood.md | needs 892 CFM on a wall needs 1,070 on an island | minimum wall; minimum island | 892 / 1,070 | RB-008 §3.9 | ✓ |
-| questions/island-vs-wall-hood.md | description: "In an 8 mph wind from behind, a 48-inch wall hood holds 88% capture; the same hood on an island drops to 12% | wall rear 8; island rear 8 | 88 / 12 | model | ✓ |
+| questions/island-vs-wall-hood.md | description: "In an 8 mph wind from behind, a 48-inch wall hood holds 88% modeled capture; the same hood on an island drops to 12% | wall rear 8; island rear 8 | 88 / 12 | model | ✓ |
 | questions/hood-depth-and-overhang.md | is about **27 inches** at the surface | captureDiameter(0, gasMedium) | 27 | RB-002 App. A.3 | ✓ |
 | questions/hood-depth-and-overhang.md | grown to about **41 inches**; by 48 inches, about **50 inches** | captureDiameter(30); captureDiameter(48) | 41 / 50 | RB-002 Table 3.3a | ✓ |
 | questions/hood-depth-and-overhang.md | 17 inches for this grill, which is how RB-002 arrives at its 57-inch recommended width | (recommendedWidth(30) − 24)/2; recommendedWidth(30) | 17 / 57 | RB-002 Table 3.7; RB-005 §3.1 | ✓ |
@@ -107,6 +108,7 @@ Claims: 164; verified ✓: 164; ✗: 0.
 | tools/capture-demonstrator.md | is 57 inches wide by 53 inches deep | recommendedWidth(30) (53 in depth = RB-002 Table 3.6b, paper) | 57 | RB-002 Tables 3.6b, 3.7 | ✓ |
 | tools/capture-demonstrator.md | the 48-inch preset is 84% of that width | coverageAdvisory(48,30).pctOfRecommended | 84 | RB-008 Table 3.10 | ✓ |
 | tools/capture-demonstrator.md | about 96% in still air and 72% at 5 mph | captureFraction(57 island, side, 0); … 5 | 96 / 72 | RB-006 Table 3.10 (>95 / 70–75) | ✓ |
+| tools/capture-demonstrator.md | leaves 16 inches of overhang front and back, the same island hood reads about 95% in still air | (53 − 21)/2; captureFraction(57×53 island, rear, 0) | 16 / 95 | model (rear-wind axis) | ✓ |
 | tools/cfm-calculator.md | needs a minimum of 892 CFM under moderate wind exposure and a 1,200 CFM blower | minimum; blower | 892 / 1,200 | RB-008 §3.3 | ✓ |
 | tools/cfm-calculator.md | Sheltered sites need 727 CFM (900 CFM blower); an exposed site with side panels needs 1,004 CFM | sheltered min; sheltered blower; exposed+panels min (paper 1,003) | 727 / 900 / 1,004 | RB-008 §3.3 | ✓ |
 | tools/cfm-calculator.md | without panels 1,394 CFM | exposed min | 1,394 | RB-008 §3.3 | ✓ |
@@ -124,6 +126,7 @@ Claims: 164; verified ✓: 164; ✗: 0.
 | tools/wind-deflection-trajectory.md | about 18.8 inches (Table 3.2b: 19) | deflection(30, 8) | 18.8 | RB-006 Table 3.2b | ✓ |
 | tools/wind-deflection-trajectory.md | roughly 1.8× farther at a 48-inch mounting height than at 30 inches (21.1 versus 11.7 inches at 5 mph) | deflection(48,5)/deflection(30,5); deflection(48, 5); deflection(30, 5) | 1.8 / 21.1 / 11.7 | RB-006 §3.1 | ✓ |
 | tools/wind-deflection-trajectory.md | the 12 mph deflection (28.2 inches) is four times the 3 mph deflection (7.0 inches) | deflection(30, 12); deflection(30, 3) | 28.2 / 7.0 | RB-006 §3.1 | ✓ |
+| tools/wind-deflection-trajectory.md | RB-006 Table 3.4a v1.1 prints 4.8, 7.0 and 9.3 mph for this row | criticalWinds(57 island).u25; … .uCenterline; … .u50 | 4.8 / 7.0 / 9.3 | RB-006 Table 3.4a (v1.1, Revision history) | ✓ |
 | tools/wind-deflection-trajectory.md | (3.8, 7.0 and 12.7 inches) are the RB-003 benchmark | deflection(18, 3); deflection(30, 3); deflection(48, 3) | 3.8 / 7.0 / 12.7 | RB-006 §3.1 (benchmark 4/7/12) | ✓ |
 | tools/wind-deflection-trajectory.md | the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph | criticalWinds(57 island).u25; … .uCenterline | 4.8 / 7.0 | RB-006 §3.4 identities (Table 3.4a prints 6.7/9.7) | ✓ |
 | tools/wind-deflection-trajectory.md | Fr > 2.7 at every standard height by 15 mph | FR_DISRUPTED; min froude(18..48, 15) = 3.03 | 2.7 | RB-006 §3.8, Table 4.1 | ✓ |

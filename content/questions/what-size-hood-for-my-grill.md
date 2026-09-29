@@ -3,7 +3,7 @@ title: "What size outdoor range hood do I need for my grill?"
 description: "Size to the plume, not the grill: over a medium gas grill at a 30-inch mount the capture diameter is 41 inches and the recommended hood 57 (RB-002)."
 summary: "The plume sets the width, not the grill. Over a medium gas grill the capture diameter is about 27 inches at the cooking surface and 41 inches by a 30-inch mounting height, before any wind; the papers apply a 1.38 margin for turbulence and puffing and recommend a 57-inch hood (RB-002). A hood sized by the familiar '+6 inches per side' retail rule only just covers the still-air plume; the papers' outdoor tables run wider — on the order of twice the cooking surface width for reliable open-air capture."
 date: 2026-07-15
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 11
 instruments: true
@@ -28,7 +28,7 @@ RB-002's engineering tables apply the base outdoor width-sizing margin (K ≈ 1.
 
 ## What an undersized hood costs
 
-The 48-inch preset above is 84% of the 57-inch recommendation. RB-008 rates that band *marginal* — "80–85% at best" in still air — and says to upgrade the width rather than the airflow, because below about 80% of the recommended width no exhaust rate can recover plume that overflows the hood (RB-008 Table 3.10, §3.10). The capture model agrees: in still air the 48-inch hood reads about 87%; in a 5 mph side wind it reads about 51%, against 72% for the 57-inch hood and 94% for a 72-inch one over the same grill. Get the width right first, then turn to [mount choice](/questions/island-vs-wall-hood/), [wind mitigation](/questions/do-side-panels-work/), and [CFM](/questions/what-cfm-do-i-need/), in that order — and note that a wider hood does not raise the CFM requirement (RB-008 §3.4.3).
+The 48-inch preset above is 84% of the 57-inch recommendation. RB-008 rates that band *marginal* — "80–85% at best" in still air — and says to upgrade the width rather than the airflow, because below about 80% of the recommended width no exhaust rate can recover plume that overflows the hood (RB-008 Table 3.10, §3.10). The capture model agrees: in still air, along the side-wind axis, the 48-inch hood reads about 87%; in a 5 mph side wind it reads about 51%, against 72% for the 57-inch hood and 94% for a 72-inch one over the same grill. Get the width right first, then turn to [mount choice](/questions/island-vs-wall-hood/), [wind mitigation](/questions/do-side-panels-work/), and [CFM](/questions/what-cfm-do-i-need/), in that order — and note that a wider hood does not raise the CFM requirement (RB-008 §3.4.3).
 
 ## Practical takeaway
 

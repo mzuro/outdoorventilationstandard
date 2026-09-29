@@ -3,7 +3,7 @@ title: "How high should an outdoor range hood be above the grill?"
 description: "Plume velocity falls only from 412 fpm at 24 inches to 377 fpm at 36, but the airflow a hood must move grows as height^(5/3). 30 inches is a sound default."
 summary: "Centerline plume velocity over a medium gas grill drops from about 412 fpm at 24 inches to 393 fpm at 30 and 377 fpm at 36 — the plume never runs out of velocity at any standard height. What height changes is how much plume the hood must swallow (550, 747 and 972 CFM at those three heights under moderate exposure), how wide the plume has grown, and how far wind can push it before capture."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 6
 instruments: true
@@ -29,7 +29,7 @@ Mounting lower keeps the blower small, the hood narrow and the wind's leverage s
 
 ## Why 30 inches
 
-Thirty inches is the reference height throughout the papers and the maximum RB-003 recommends for general-purpose residential installations: below it (18–24 inches) airflow needs are moderate and standard 600–900 CFM blowers serve most sources; at it a 900 CFM blower covers every source but the high-output gas grill; above it (36–48 inches) requirements escalate to 417–1,623 CFM across the source range, hoods approach 72 inches wide, and wind susceptibility rises substantially (RB-003 §4.2). It holds usable clearance for tall cookware while keeping all three penalties in check.
+Thirty inches is the reference height throughout the papers and the maximum RB-003 recommends for general-purpose residential installations: below it (18–24 inches) airflow needs are moderate and standard 600–900 CFM blowers serve most sources; at it a 900 CFM blower covers every source but the high-output gas grill — on RB-003's standard-outdoor basis (K_CFM = 3.0, which RB-008 carries forward as its Sheltered class; under Moderate exposure the 60,000 BTU grill already needs 892 CFM and a 1,200 CFM blower, RB-008 §3.3); above it (36–48 inches) requirements escalate to 417–1,623 CFM across the source range, hoods approach 72 inches wide, and wind susceptibility rises substantially (RB-003 §4.2). It holds usable clearance for tall cookware while keeping all three penalties in check.
 
 ## Practical guidance
 

@@ -3,7 +3,7 @@ title: "Do side panels actually help an outdoor hood?"
 description: "Yes — on a 48-inch island hood in an 8 mph side wind, panels on both sides lift modeled capture from about 20% to 70%. A panel blocks wind, not plume."
 summary: "Yes, substantially. On a 48-inch island hood in an 8 mph side wind, modeled capture rises from about 20% with no panels to about 70% with panels on both sides, because two panels reaching two-thirds of the way to the cooking surface cut the wind the plume feels to 40% of ambient (RB-009 Table 3.1a) — the single largest performance gain available from any post-installation change."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 5
 instruments: true
@@ -12,7 +12,7 @@ instrument_preset: "island-48"
 citations: ["rb-009", "rb-006", "rb-008"]
 ---
 
-On a 48-inch island hood at a 30-inch mounting height in an 8 mph side wind, capture goes from about **20% with no side panels** to about **70% with panels on both sides**; at 5 mph, from 51% to 80%. That is a bigger swing than any change of exhaust rate can produce at those wind speeds, and it's achievable without touching the blower at all.
+On a 48-inch island hood at a 30-inch mounting height in an 8 mph side wind, modeled capture goes from about **20% with no side panels** to about **70% with panels on both sides**; at 5 mph, from 51% to 80%. That is a bigger swing than any change of exhaust rate can produce at those wind speeds, and it's achievable without touching the blower at all.
 
 ## Why panels are so effective
 

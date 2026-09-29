@@ -2,7 +2,7 @@
 title: "Hood Geometry Comparison"
 description: "Side-by-side capture comparison of hood widths and mount types over the same grill in wind, showing when width helps and when only a wall or panels do."
 date: 2025-12-01
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 tags: ["hood design", "capture envelope", "visualization"]
 categories: ["Tools"]
@@ -51,9 +51,9 @@ The no-JS fallback diagram for this instrument compares three hood widths over t
 
 **No overhang.** A hood the same width as the cooking surface (24 inches) sits 17 inches inside the 41-inch plume — escape on both sides is guaranteed by geometry alone. Inadequate overhang is failure mode FM-1, which RB-010 finds present from the day of installation in consumer hoods paired with medium or larger sources [RB-010 Gap S-5].
 
-**Minimum geometry (9-inch overhang per side).** Hood width equal to the plume capture diameter (W_min = d_capture, 41 inches here) covers the 98% time-averaged flux contour in quiescent conditions — but provides no margin for turbulence, wind, or instantaneous plume fluctuation [RB-005 §3.1, Table 3.1a; RB-002 §3.6]. In the capture model, a 42-inch hood in still air reads about 74%, RB-008 Table 3.10's "65–75% max" [RB-008 §3.10].
+**Minimum geometry (9-inch overhang per side).** Hood width equal to the plume capture diameter (W_min = d_capture, 41 inches here) covers the 98% time-averaged flux contour in quiescent conditions — but provides no margin for turbulence, wind, or instantaneous plume fluctuation [RB-005 §3.1, Table 3.1a; RB-002 §3.6]. In the capture model, a 42-inch hood in still air reads about 74% along the side-wind axis, RB-008 Table 3.10's "65–75% max" [RB-008 §3.10].
 
-**Recommended outdoor (17-inch overhang per side).** The base width-sizing margin K ≈ 1.38 from RB-002 (turbulent intermittency × puffing oscillations) yields a 57-inch recommended hood width for this source and height, which the model reads at about 96% in still air; wind-exposed and open sites scale up toward the wind-inclusive margin K = 1.70 per RB-002 §3.5 [RB-002 Table 3.7; RB-005 Table 3.1b].
+**Recommended outdoor (17-inch overhang per side).** The base width-sizing margin K ≈ 1.38 from RB-002 (turbulent intermittency × puffing oscillations) yields a 57-inch recommended hood width for this source and height, which the model reads at about 96% in still air along the side-wind axis; wind-exposed and open sites scale up toward the wind-inclusive margin K = 1.70 per RB-002 §3.5 [RB-002 Table 3.7; RB-005 Table 3.1b].
 
 ## Design Priority
 

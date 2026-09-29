@@ -1,9 +1,9 @@
 ---
 title: "Island or wall-mounted outdoor range hood — which works better?"
-description: "In an 8 mph wind from behind, a 48-inch wall hood holds 88% capture; the same hood on an island drops to 12%. In a side wind the two are identical."
-summary: "It depends on where the wind comes from. With the wind blowing from behind the grill, a 48-inch wall hood holds about 88% capture at 8 mph while an island hood over the same grill drops to about 12% — the wall shelters the plume and reflects it back into the capture zone. With the wind blowing across the hood face, the wall is parallel to the flow and the two mounts read the same."
+description: "In an 8 mph wind from behind, a 48-inch wall hood holds 88% modeled capture; the same hood on an island drops to 12%. In a side wind the two are identical."
+summary: "It depends on where the wind comes from. With the wind blowing from behind the grill, a 48-inch wall hood holds about 88% modeled capture at 8 mph while an island hood over the same grill drops to about 12% — the wall shelters the plume and reflects it back into the capture zone. With the wind blowing across the hood face, the wall is parallel to the flow and the two mounts read the same."
 date: 2026-07-11
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 weight: 3
 instruments: true
@@ -11,7 +11,7 @@ instrument_id: "i05"
 citations: ["rb-005", "rb-002", "rb-006"]
 ---
 
-With the wind from behind the grill the difference is the whole story. In calm air a 48-inch wall hood captures about 97% and a same-width island hood about 76%; in an 8 mph rear wind the wall hood still holds roughly **88%** while the island hood falls to roughly **12%**. Turn the wind to blow across the hood face and the gap vanishes — both mounts read about 87% in still air and 20% at 8 mph, because a wall parallel to the flow shelters nothing. The mount question is really a wind-direction question.
+With the wind from behind the grill the difference is the whole story. Along the rear-wind axis the OVS model gives a 48-inch wall hood about 97% in calm air and a same-width island hood about 76%; in an 8 mph rear wind the wall hood still holds roughly **88%** while the island hood falls to roughly **12%**. Turn the wind to blow across the hood face and the gap vanishes — along the side-wind axis both mounts read about 87% in still air and 20% at 8 mph, because a wall parallel to the flow shelters nothing. (The RB-006 §3.4 capture model is one-dimensional along the wind axis, so its still-air figure is the plume fraction inside the hood's overhang along that axis — front to back for a rear wind, end to end for a side wind — not a two-dimensional capture; that is why the two calm-air readings differ.) The mount question is really a wind-direction question.
 
 ## Why the wall matters so much
 
@@ -19,7 +19,7 @@ A wall behind the grill does two things. It shelters: within the recirculation z
 
 ## Depth is the island's lever, not width
 
-Wall hoods in a standard outdoor lineup run 36 inches deep; island hoods run 40 inches. Over a 21-inch-deep cooking surface that gives the island hood only 9.5 inches of front-to-back overhang on each side, and against a rear wind that overhang is the entire defense — width adds nothing, since a wind blowing front-to-back never reaches the hood's ends. The papers' recommended depth for this grill at 30 inches is 53 inches (RB-002 Table 3.6b, D_min); a 57 × 53-inch island hood reads about 95% in calm air and 70% in a 5 mph rear wind in the model, against 76% and 39% for the 48 × 40-inch preset. An island hood earns its keep front-to-back.
+Wall hoods in a standard outdoor lineup run 36 inches deep; island hoods run 40 inches. Over a 21-inch-deep cooking surface that gives the island hood only 9.5 inches of front-to-back overhang on each side, and against a rear wind that overhang is the entire defense — width adds nothing, since a wind blowing front-to-back never reaches the hood's ends. The papers' recommended depth for this grill at 30 inches is 53 inches (RB-002 Table 3.6b, D_min); a 57 × 53-inch island hood reads about 95% in calm air and 70% in a 5 mph rear wind in the model, against 76% and 39% for the 48 × 40-inch preset — all four along the rear-wind axis (the same 57 × 53 hood reads about 96% in still air along its side-wind axis, as the [Capture Demonstrator](/tools/capture-demonstrator/) notes). An island hood earns its keep front-to-back.
 
 ## When island still makes sense
 

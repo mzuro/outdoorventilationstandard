@@ -2,7 +2,7 @@
 title: "Wind Deflection Trajectories"
 description: "Side-view diagram of how crosswind bends the buoyant cooking plume at each mounting height, from still air to 20 mph, with the RB-006 escape thresholds."
 date: 2025-11-20
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 tags: ["wind effects", "plume deflection", "visualization"]
 categories: ["Tools"]
@@ -48,7 +48,7 @@ At a 30-inch mounting height, a 5 mph crosswind deflects the plume centerline ab
 
 **3 mph is manageable.** At light breezes the plume deflects about 7 inches at a 30-inch mounting height — well within the 17-inch recommended overhang.
 
-**5 mph is marginal.** For the paper's recommended 57-inch hood over this grill, RB-006 §3.4's thresholds put the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph (computed from the same `physics/capture.mjs` identities; RB-006 Table 3.4a prints higher figures because it was evaluated with a wider, wind-margin hood — see the paper's revision notes). Gusts beyond 5 mph intermittently push the plume outside the hood boundary, producing the gust-correlated smoke escape of FM-4 [RB-006 §4.2; RB-007 §3.5].
+**5 mph is marginal.** For the paper's recommended 57-inch hood over this grill, RB-006 §3.4's thresholds put the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph (computed from the same `physics/capture.mjs` identities; RB-006 Table 3.4a v1.1 prints 4.8, 7.0 and 9.3 mph for this row — its v1.0 columns had been evaluated with the wider K = 1.70 hood while labelled with the base-margin overhang, as the paper's Revision history records). Gusts beyond 5 mph intermittently push the plume outside the hood boundary, producing the gust-correlated smoke escape of FM-4 [RB-006 §4.2; RB-007 §3.5].
 
 **8 mph and above cause failure.** The roughly 19-inch deflection at 30 inches exceeds the recommended overhang; RB-006 puts unmitigated capture at 45–55% here [RB-006 §4.2]. Side panels or wind baffles become mandatory at this exposure level.
 
