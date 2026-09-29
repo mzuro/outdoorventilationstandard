@@ -38,8 +38,8 @@
   <rect x="190.0" y="200" width="220.0" height="200" fill="url(#wdt-hatch)" opacity="0.7"/>
   <line x1="190.0" y1="200" x2="190.0" y2="400" stroke="#5A9A5A" stroke-width="1" stroke-dasharray="3,3"/>
   <line x1="410.0" y1="200" x2="410.0" y2="400" stroke="#5A9A5A" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="193.0" y="213" font-size="8.5" fill="#3a7a3a" font-weight="600">Capture aperture</text>
-  <text x="193.0" y="224" font-size="8.5" fill="#3a7a3a" font-weight="600">±OH = ±16.5″ (OVS model)</text>
+  <text x="185.0" y="213" text-anchor="end" font-size="8.5" fill="#3a7a3a" font-weight="600">Capture aperture</text>
+  <text x="185.0" y="224" text-anchor="end" font-size="8.5" fill="#3a7a3a" font-weight="600">±OH = ±16.5″ (OVS model)</text>
 
   <!-- Still-air ±2σ Gaussian envelope (σ = 1.5·b_T, rb-002:392): just fits the aperture (96%) -->
   <polygon points="265.0,400.0 260.2,386.7 255.4,373.3 250.9,360.0 245.8,346.7 241.0,333.3 236.7,320.0 231.4,306.7 226.6,293.3 221.6,280.0 217.0,266.7 212.2,253.3 207.4,240.0 202.6,226.7 197.8,213.3 193.2,200.0 406.8,200.0 402.2,213.3 397.4,226.7 392.6,240.0 387.8,253.3 383.0,266.7 378.4,280.0 373.4,293.3 368.6,306.7 363.3,320.0 359.0,333.3 354.2,346.7 349.1,360.0 344.6,373.3 339.8,386.7 335.0,400.0" fill="#999" opacity="0.18"/>
@@ -60,7 +60,7 @@
   <line x1="100" y1="200" x2="500" y2="200" stroke="#444" stroke-width="2" stroke-dasharray="8,4"/>
   <line x1="110" y1="200" x2="110" y2="210" stroke="#444" stroke-width="1.5"/>
   <line x1="490" y1="200" x2="490" y2="210" stroke="#444" stroke-width="1.5"/>
-  <text x="100" y="168" font-size="9.5" fill="#444" font-weight="500">Hood 57″ (W_rec) — OH = 16.5″ each side</text>
+  <text x="290" y="168" text-anchor="end" font-size="9.5" fill="#444" font-weight="500">Hood 57″ (W_rec), OH = 16.5″ each side</text>
 
   <!-- Wind arrows -->
   <text x="60" y="280" text-anchor="middle" font-size="11" fill="#555" font-weight="600">Wind</text>

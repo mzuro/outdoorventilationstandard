@@ -92,7 +92,7 @@
 
   <!-- No side panels — open sides -->
   <text x="115.8" y="202" font-size="8" fill="#999" font-style="italic">Open side</text>
-  <text x="364.3" y="202" text-anchor="end" font-size="8" fill="#999" font-style="italic">Open side</text>
+  <text x="364.3" y="319" text-anchor="end" font-size="8" fill="#999" font-style="italic">Open side</text>
   <text x="320.3" y="230" font-size="8" fill="#CC3333" font-weight="600">Missed Plume</text>
   <text x="320.3" y="240" font-size="8" fill="#CC3333" font-weight="600">Region</text>
 

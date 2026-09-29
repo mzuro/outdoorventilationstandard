@@ -322,8 +322,8 @@ const out = {};
   <rect x="${f1(apL)}" y="${YH}" width="${f1(apR - apL)}" height="${Y0 - YH}" fill="url(#wdt-hatch)" opacity="0.7"/>
   <line x1="${f1(apL)}" y1="${YH}" x2="${f1(apL)}" y2="${Y0}" stroke="#5A9A5A" stroke-width="1" stroke-dasharray="3,3"/>
   <line x1="${f1(apR)}" y1="${YH}" x2="${f1(apR)}" y2="${Y0}" stroke="#5A9A5A" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="${f1(apL + 3)}" y="${YH + 13}" font-size="8.5" fill="#3a7a3a" font-weight="600">Capture aperture</text>
-  <text x="${f1(apL + 3)}" y="${YH + 24}" font-size="8.5" fill="#3a7a3a" font-weight="600">±OH = ±${f1(OH)}${IN} (OVS model)</text>
+  <text x="${f1(apL - 5)}" y="${YH + 13}" text-anchor="end" font-size="8.5" fill="#3a7a3a" font-weight="600">Capture aperture</text>
+  <text x="${f1(apL - 5)}" y="${YH + 24}" text-anchor="end" font-size="8.5" fill="#3a7a3a" font-weight="600">±OH = ±${f1(OH)}${IN} (OVS model)</text>
 
   <!-- Still-air ±2σ Gaussian envelope (σ = 1.5·b_T, rb-002:392): just fits the aperture (${pct(w0.cap)}%) -->
   <polygon points="${stillPoly}" fill="#999" opacity="0.18"/>
@@ -344,7 +344,7 @@ const out = {};
   <line x1="${hl - 10}" y1="${YH}" x2="${hr + 10}" y2="${YH}" stroke="#444" stroke-width="2" stroke-dasharray="8,4"/>
   <line x1="${hl}" y1="${YH}" x2="${hl}" y2="210" stroke="#444" stroke-width="1.5"/>
   <line x1="${hr}" y1="${YH}" x2="${hr}" y2="210" stroke="#444" stroke-width="1.5"/>
-  <text x="${hl - 10}" y="168" font-size="9.5" fill="#444" font-weight="500">Hood ${W}${IN} (W_rec) — OH = ${f1(OH)}${IN} each side</text>
+  <text x="${X0 - 10}" y="168" text-anchor="end" font-size="9.5" fill="#444" font-weight="500">Hood ${W}${IN} (W_rec), OH = ${f1(OH)}${IN} each side</text>
 
   <!-- Wind arrows -->
   <text x="60" y="280" text-anchor="middle" font-size="11" fill="#555" font-weight="600">Wind</text>
@@ -646,7 +646,7 @@ const out = {};
       p += `
   <!-- No side panels — open sides -->
   <text x="${f1(hoodL + 4)}" y="${YH + 12}" font-size="8" fill="#999" font-style="italic">Open side</text>
-  <text x="${f1(hoodR - 4)}" y="${YH + 12}" text-anchor="end" font-size="8" fill="#999" font-style="italic">Open side</text>
+  <text x="${f1(hoodR - 4)}" y="${YC - 6}" text-anchor="end" font-size="8" fill="#999" font-style="italic">Open side</text>
   <text x="${f1(apR + 6)}" y="${YH + 40}" font-size="8" fill="#CC3333" font-weight="600">Missed Plume</text>
   <text x="${f1(apR + 6)}" y="${YH + 50}" font-size="8" fill="#CC3333" font-weight="600">Region</text>
 `;
@@ -692,13 +692,14 @@ const out = {};
   const d99 = (z) => (0.72 * ((z === 30 ? 0.76 : z * 0.0254) - src.z0M) + src.dEffM) * IN_PER_M; // rb-002:396; paper grid at 30 in
   const d99In = d99(30); // 52.1
   const cap = (w, u) => captureFraction({ widthIn: w, depthIn: HOOD_DEPTH_IN, mount: 'island', riseIn: 30, windMph: u, windDir: 'side', src });
-  const min0 = cap(Wmin, 0), min5 = cap(Wmin, 5), rec0 = cap(W, 0), rec5 = cap(W, 5), none0 = cap(cook, 0);
+  const min0 = cap(Wmin, 0), min5 = cap(Wmin, 5), rec0 = cap(W, 0), rec5 = cap(W, 5);
+  // A hood no wider than the cooking surface has OH = 0, where the ±OH aperture model degenerates (RB-006 §3.4 states its thresholds relative to OH) — no capture number is printed for it.
   const ohMin = apertureAlongWind({ widthIn: Wmin, depthIn: HOOD_DEPTH_IN, mount: 'island', windDir: 'side', src }).ohDown; // 8.5
   const ohRec = apertureAlongWind({ widthIn: W, depthIn: HOOD_DEPTH_IN, mount: 'island', windDir: 'side', src }).ohDown; // 16.5
   const S = 4.5, YC = 395, YH = YC - 30 * S; // cooking surface top, hood lip (y=260)
   const zs = Array.from({ length: 16 }, (_, i) => i * 2);
   const title = 'Hood overhang comparison for a Gas Grill Medium at 30 inches: no overhang, minimum width W_min = d_capture, recommended width W_rec';
-  const desc = `Three side-by-side front-view diagrams drawn to one scale (${S} pixels per inch) of a ${cook} inch cooking surface under a hood mounted 30 inches above it, with the same plume in each: the time-averaged capture diameter d_capture = 0.48 (z − z0) + D_eff = ${R(dcapIn)} inches at the hood plane and the intermittent envelope d_99_instant = 0.72 (z − z0) + D_eff = ${R(d99In)} inches (RB-002 Table 3.3a). Left, a ${cook} inch hood with no overhang: both envelopes overflow on both sides and the OVS model gives ${pct(none0)}% capture. Centre, a ${Wmin} inch hood (W_min = d_capture, overhang ${f1(ohMin)} inches per side): the ${R(dcapIn)} inch time-averaged plume just fits but the ${R(d99In)} inch intermittent envelope overflows by ${f1((d99In - Wmin) / 2)} inches per side; the OVS model gives ${pct(min0)}% capture in still air and ${pct(min5)}% in a 5 mph side wind. Right, the recommended ${W} inch hood (W_rec = ${K_BASE} × d_capture, overhang ${f1(ohRec)} inches per side, 0.42 m, which RB-002 Table 3.6b prints as 17 inches): the intermittent envelope fits with ${f1((W - d99In) / 2)} inches to spare and the OVS model gives ${pct(rec0)}% in still air and ${pct(rec5)}% at 5 mph. Capture percentages are the OVS model criterion (RB-006 §3.4 aperture ±OH about the centerline, Gaussian σ = 1.5 b_T), not paper-printed values: RB-008 Table 3.10 prints 65 to 75% for a 42 inch hood and over 95% for 57 inches in still air; RB-006 Table 3.10 prints 70 to 75% for 57 inches at 5 mph.`;
+  const desc = `Three side-by-side front-view diagrams drawn to one scale (${S} pixels per inch) of a ${cook} inch cooking surface under a hood mounted 30 inches above it, with the same plume in each: the time-averaged capture diameter d_capture = 0.48 (z − z0) + D_eff = ${R(dcapIn)} inches at the hood plane and the intermittent envelope d_99_instant = 0.72 (z − z0) + D_eff = ${R(d99In)} inches (RB-002 Table 3.3a). Left, a ${cook} inch hood with no overhang: both envelopes overflow on both sides; the ±OH aperture model is not defined at OH = 0 (RB-006 §3.4 states its thresholds relative to OH), so no capture percentage is given. Centre, a ${Wmin} inch hood (W_min = d_capture, overhang ${f1(ohMin)} inches per side): the ${R(dcapIn)} inch time-averaged plume just fits but the ${R(d99In)} inch intermittent envelope overflows by ${f1((d99In - Wmin) / 2)} inches per side; the OVS model gives ${pct(min0)}% capture in still air and ${pct(min5)}% in a 5 mph side wind. Right, the recommended ${W} inch hood (W_rec = ${K_BASE} × d_capture, overhang ${f1(ohRec)} inches per side, 0.42 m, which RB-002 Table 3.6b prints as 17 inches): the intermittent envelope fits with ${f1((W - d99In) / 2)} inches to spare and the OVS model gives ${pct(rec0)}% in still air and ${pct(rec5)}% at 5 mph. Capture percentages are the OVS model criterion (RB-006 §3.4 aperture ±OH about the centerline, Gaussian σ = 1.5 b_T), not paper-printed values: RB-008 Table 3.10 prints 65 to 75% for a 42 inch hood and over 95% for 57 inches in still air; RB-006 Table 3.10 prints 70 to 75% for 57 inches at 5 mph.`;
   let s = open({ id: 'hgc', w: 960, h: 520, title, desc, cite: 'RB-002 §3.4 d_capture/d_99_instant (rb-002:394-396), Table 3.3a (rb-002:402), Table 3.6b W_min 41 in / W_rec 57 in / OH 0.42 m (rb-002:535); RB-006 §3.4 capture aperture (rb-006:600-614); RB-008 Table 3.10 bands (rb-008:584-587); RB-006 Table 3.10 (rb-006:952)' });
   s += `  <defs>
     <linearGradient id="hgc-plume" x1="0" y1="1" x2="0" y2="0">
@@ -730,9 +731,9 @@ const out = {};
   <line x1="640" y1="60" x2="640" y2="472" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="6,4"/>
 
   <!-- Geometry: ${S} px/in; cooking surface ${cook} in = ${cook * S} px (top y=${YC}); hood lip y=${YH} (30 in); d_capture(30) = ${f1(dcapIn)} in = ${f1(dcapIn * S)} px; d_99(30) = ${f1(d99In)} in = ${f1(d99In * S)} px; hoods ${cook}/${Wmin}/${W} in = ${cook * S}/${Wmin * S}/${W * S} px.
-       Capture (OVS model, side wind): ${cook} in ${pct(none0)}%; ${Wmin} in ${(100 * min0).toFixed(1)}% still / ${(100 * min5).toFixed(1)}% at 5 mph; ${W} in ${(100 * rec0).toFixed(1)}% / ${(100 * rec5).toFixed(1)}%. -->
+       Capture (OVS model, side wind): ${cook} in — aperture model not defined at OH = 0; ${Wmin} in ${(100 * min0).toFixed(1)}% still / ${(100 * min5).toFixed(1)}% at 5 mph; ${W} in ${(100 * rec0).toFixed(1)}% / ${(100 * rec5).toFixed(1)}%. -->
 `;
-  const panel = ({ cx, hood, heading, headColor, fill, stroke, textColor, outcome, ohLabel, oh, widthLabel, sideNote }) => {
+  const panel = ({ cx, hood, heading, headColor, fill, stroke, textColor, outcome, outcome2, ohLabel, oh, widthLabel, sideNote }) => {
     const hl = cx - hood * S / 2, hr = cx + hood * S / 2;
     const capPoly = pts([...zs.map((z) => [cx - captureDiameter(z, src) * S / 2, YC - z * S]), ...zs.slice().reverse().map((z) => [cx + captureDiameter(z, src) * S / 2, YC - z * S])]);
     const d99Poly = pts([...zs.map((z) => [cx - d99(z) * S / 2, YC - z * S]), ...zs.slice().reverse().map((z) => [cx + d99(z) * S / 2, YC - z * S])]);
@@ -752,12 +753,13 @@ const out = {};
   <text x="${cx}" y="78" text-anchor="middle" font-size="12" font-weight="600" fill="${headColor}">${heading}</text>
 
   <!-- Outcome (OVS model) -->
-  <rect x="${cx - 120}" y="100" width="240" height="26" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="1"/>
-  <text x="${cx}" y="117" text-anchor="middle" font-size="10" fill="${textColor}" font-weight="700">${outcome}</text>
+  <rect x="${cx - 128}" y="100" width="256" height="${outcome2 ? 48 : 26}" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="1"/>
+  <text x="${cx}" y="${outcome2 ? 114 : 117}" text-anchor="middle" font-size="10" fill="${textColor}" font-weight="700">${outcome}</text>${outcome2 ? outcome2.map((l, i) => `
+  <text x="${cx}" y="${128 + 11 * i}" text-anchor="middle" font-size="7.5" fill="${textColor}">${l}</text>`).join('') : ''}
 
   <!-- Overhang label -->
-  <rect x="${cx - 75}" y="148" width="150" height="18" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="0.8"/>
-  <text x="${cx}" y="160" text-anchor="middle" font-size="9" fill="${textColor}" font-weight="600">${ohLabel}</text>
+  <rect x="${cx - 75}" y="158" width="150" height="18" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="0.8"/>
+  <text x="${cx}" y="170" text-anchor="middle" font-size="9" fill="${textColor}" font-weight="600">${ohLabel}</text>
 
   <!-- Intermittent envelope d_99_instant (dashed) and time-averaged d_capture body -->
   <polygon points="${d99Poly}" fill="#FFD9A0" opacity="0.35" stroke="#CC8800" stroke-width="1" stroke-dasharray="4,3"/>
@@ -805,7 +807,7 @@ ${sideNote}
   };
   s += panel({
     cx: 160, hood: cook, heading: 'No Overhang (Hood = Cooking Surface)', headColor: '#CC3333', fill: '#FEE8E8', stroke: '#CC3333', textColor: '#CC2222',
-    outcome: `Plume escapes both sides · OVS model ${pct(none0)}%`, ohLabel: `0${IN} overhang (OH = 0)`, oh: 0, widthLabel: `${cook}${IN} hood`,
+    outcome: 'Plume escapes both sides', outcome2: ['aperture model not defined at OH = 0', '(RB-006 §3.4 thresholds are relative to OH)'], ohLabel: `0${IN} overhang (OH = 0)`, oh: 0, widthLabel: `${cook}${IN} hood`,
     sideNote: `  <text x="${160 - cook * S / 2 - 6}" y="${YH + 60}" text-anchor="end" font-size="7" fill="#CC3333" font-weight="600">Missed Plume</text>\n  <text x="${160 + cook * S / 2 + 6}" y="${YH + 60}" text-anchor="start" font-size="7" fill="#CC3333" font-weight="600">Missed Plume</text>\n`,
   });
   s += panel({
