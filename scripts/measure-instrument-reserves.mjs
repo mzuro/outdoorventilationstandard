@@ -46,7 +46,7 @@
 //                  default would settle beyond tolerance on that page.
 //
 // Usage
-//   node scripts/measure-instrument-reserves.mjs --public <dir> [--port 8828]
+//   node scripts/measure-instrument-reserves.mjs --public <dir> [--port <n>]   (default: a free port)
 //        [--widths 320,375,...] [--pages /,/tools/cfm-calculator/]
 //        [--out <json>] [--concurrency 6] [--check]
 //   node scripts/measure-instrument-reserves.mjs --public <dir> --scan [--scan-step 1] --out scan.json
@@ -126,7 +126,8 @@ export function serve(publicDir, port) {
     res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream', 'cache-control': 'no-store' });
     fs.createReadStream(file).pipe(res);
   });
-  return new Promise((resolve) => server.listen(port, '127.0.0.1', () => resolve({ server, base: `http://127.0.0.1:${port}` })));
+  // port 0 (the default) lets the OS pick a free port; the bound port is read back from the socket.
+  return new Promise((resolve) => server.listen(port, '127.0.0.1', () => resolve({ server, base: `http://127.0.0.1:${server.address().port}` })));
 }
 
 // ---------------------------------------------------------------- browser
@@ -460,7 +461,7 @@ async function main() {
   const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
   if (!isMain) return;
   const contentDir = path.resolve(opt('content', path.join(ROOT, 'content')));
-  const port = Number(opt('port', 8828));
+  const port = Number(opt('port', 0));  // 0 = OS-assigned free port
   const scratch = process.env.CLAUDE_SCRATCHPAD || path.join(ROOT, '.scratch');
   const commit = opt('commit', (() => { try { return execSync('git rev-parse --short HEAD', { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; } })());
 

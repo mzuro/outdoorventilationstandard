@@ -8,7 +8,7 @@ claim on the 9 live question pages and 11 tool pages, recomputed from
 "paper: …" quote a printed paper cell that no module computes; verify them against the
 paper line, not here.
 
-Claims: 171; verified ✓: 171; ✗: 0.
+Claims: 172; verified ✓: 172; ✗: 0.
 
 | page | claim text | module call | value | citation | status |
 |---|---|---|---|---|---|
@@ -29,7 +29,7 @@ Claims: 171; verified ✓: 171; ✗: 0.
 | questions/what-cfm-do-i-need.md | is 77% of that | coverageAdvisory(48, 30, gasLarge).pctOfRecommended | 77 | RB-008 Table 3.10 | ✓ |
 | questions/what-cfm-do-i-need.md | RB-008 Table 3.10 rates capture at 65–75% at best | paper: printed band | — | RB-008 Table 3.10 (42″ row, Gas Medium basis; coverageAdvisory applies the band to Gas Large) | ✓ |
 | questions/what-cfm-do-i-need.md | 1 CFM per 100 BTU gives 600 CFM for this grill | paper: 60,000 / 100 | — | RB-008 §2.3 | ✓ |
-| questions/what-cfm-do-i-need.md | arriving at the hood at 200–560 fpm | paper: printed range | — | RB-003 §4.1 | ✓ |
+| questions/what-cfm-do-i-need.md | arriving at the hood at 200–535 fpm | paper: printed range (v1.1: 200-535 fpm; RB-001 Table 3.5) | — | RB-003 §4.1 | ✓ |
 | questions/what-cfm-do-i-need.md | can run a face velocity of 29 fpm | paper: printed example | — | RB-003 §4.1 | ✓ |
 | questions/what-cfm-do-i-need.md | multiplier rises to 5.75 — 1,394 CFM here | K_CFM.exposed; minimum exposed | 5.75 / 1,394 | RB-008 §2.2, §3.3 | ✓ |
 | questions/what-cfm-do-i-need.md | cut the multiplier to 4.14, a 28% reduction, and bring the minimum to 1,004 CFM | K_CFM.exposedPanels; 1 − 4.14/5.75; minimum exposed+panels | 4.14 / 28 / 1,004 | RB-008 §2.2 | ✓ |
@@ -124,6 +124,7 @@ Claims: 171; verified ✓: 171; ✗: 0.
 | tools/cfm-calculator.md | Wall 1.00, peninsula 1.10, island 1.20 | MOUNT_MULT | 1.00 / 1.10 / 1.20 | RB-008 §3.9 | ✓ |
 | tools/cfm-calculator.md | honestly above 1,364 CFM | BLOWER_SIZES[3] / BLOWER_MARGIN | 1,364 | RB-008 §3.11 + App. A step 8 | ✓ |
 | tools/cfm-calculator.md | W_rec = 1.38 × capture diameter | K_BASE | 1.38 | RB-002 §3.6 | ✓ |
+| tools/cfm-calculator.md | delivers itself at 200–535 fpm | paper: printed range (v1.1: 200-535 fpm; RB-001 Table 3.5) | — | RB-003 §4.1 | ✓ |
 | tools/cfm-calculator.md | face velocity of about 29 fpm | paper: printed example | — | RB-003 §4.1 | ✓ |
 | tools/wind-deflection-trajectory.md | about 11.7 inches (RB-006 Table 3.2b prints 12) | deflection(30, 5) | 11.7 | RB-006 Table 3.2b | ✓ |
 | tools/wind-deflection-trajectory.md | RB-002 Table 3.6b prints 17, footnoting the exact 16.5 | paper: printed cell; footnote = (W_rec − 24)/2 | — | RB-002 Table 3.6b v1.1 (30″ OH cell 0.42 / 17″ + footnote; RB-005 Table 3.1b prints 17) | ✓ |
@@ -133,7 +134,7 @@ Claims: 171; verified ✓: 171; ✗: 0.
 | tools/wind-deflection-trajectory.md | RB-006 Table 3.4a v1.1 prints 4.8, 7.0 and 9.3 mph for this row | criticalWinds(57 island).u25; … .uCenterline; … .u50 | 4.8 / 7.0 / 9.3 | RB-006 Table 3.4a (v1.1, Revision history) | ✓ |
 | tools/wind-deflection-trajectory.md | (3.8, 7.0 and 12.7 inches) are the RB-003 benchmark | deflection(18, 3); deflection(30, 3); deflection(48, 3) | 3.8 / 7.0 / 12.7 | RB-006 §3.1 (benchmark 4/7/12) | ✓ |
 | tools/wind-deflection-trajectory.md | the 25%-escape wind at about 4.8 mph and centerline exit at about 7.0 mph | criticalWinds(57 island).u25; … .uCenterline | 4.8 / 7.0 | RB-006 §3.4 identities (Table 3.4a v1.0 printed 6.7/9.7; v1.1 prints 4.8/7.0) | ✓ |
-| tools/wind-deflection-trajectory.md | Fr > 2.7 at every standard height by 15 mph | FR_DISRUPTED; min froude(18..48, 15) = 3.03 | 2.7 | RB-006 §3.8, Table 4.1 | ✓ |
+| tools/wind-deflection-trajectory.md | Fr > 2.7 at every standard height by 15 mph | FR_DISRUPTED; min froude(18..48, 15) = 3.03 | 2.7 | RB-006 §3.8, Table 3.8 | ✓ |
 | tools/plume-width-by-height.md | already about 27 inches at the cooking surface | captureDiameter(0) | 27 | RB-002 App. A.3 | ✓ |
 | tools/plume-width-by-height.md | grows to about 41.4 inches by a 30-inch mounting height (RB-002 Table 3.3a prints 1.05 m, 41 inches) and 50.1 inches by 48 inches | captureDiameter(30); captureDiameter(48) | 41.4 / 50.1 | RB-002 Table 3.3a | ✓ |
 | tools/plume-width-by-height.md | linear at 0.48 inch of diameter per inch of rise | (captureDiameter(48) − captureDiameter(24))/24 | 0.48 | RB-002 App. A.3 | ✓ |

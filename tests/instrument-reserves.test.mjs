@@ -20,7 +20,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SCRIPT = path.join(ROOT, 'scripts', 'measure-instrument-reserves.mjs');
 const WIDTHS = [375, 391, 406, 431, 641, 768, 1280];
-const PORT = 8829;
+// The measure script serves on an OS-assigned free port unless OVS_RESERVES_PORT is set.
+const PORT = process.env.OVS_RESERVES_PORT ? Number(process.env.OVS_RESERVES_PORT) : 0;
 
 let puppeteer = null;
 try { puppeteer = (await import('puppeteer')).default; } catch { /* reported below */ }
@@ -39,7 +40,7 @@ test(`instrument reserves: --check passes at ${WIDTHS.join('/')} on every host p
     assert.ok(fs.existsSync(path.join(tmp, 'index.html')), 'hugo build produced no index.html');
 
     const run = spawnSync(process.execPath, [
-      SCRIPT, '--public', tmp, '--port', String(PORT), '--widths', WIDTHS.join(','),
+      SCRIPT, '--public', tmp, ...(PORT ? ['--port', String(PORT)] : []), '--widths', WIDTHS.join(','),
       '--out', path.join(tmp, 'reserves.json'), '--check', '--concurrency', '6',
     ], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     const tail = (run.stdout || '').split('\n').slice(-60).join('\n');

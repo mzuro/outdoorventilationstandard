@@ -92,7 +92,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'is {0}% of that', [v(() => coverageAdvisory(48, 30, GL).pctOfRecommended, r, 'coverageAdvisory(48, 30, gasLarge).pctOfRecommended')], 'RB-008 Table 3.10');
   paper(p, 'RB-008 Table 3.10 rates capture at 65–75% at best', 'RB-008 Table 3.10 (42″ row, Gas Medium basis; coverageAdvisory applies the band to Gas Large)', 'printed band');
   paper(p, '1 CFM per 100 BTU gives 600 CFM for this grill', 'RB-008 §2.3', '60,000 / 100');
-  paper(p, 'arriving at the hood at 200–560 fpm', 'RB-003 §4.1', 'printed range');
+  paper(p, 'arriving at the hood at 200–535 fpm', 'RB-003 §4.1', 'printed range (v1.1: 200-535 fpm; RB-001 Table 3.5)');
   paper(p, 'can run a face velocity of 29 fpm', 'RB-003 §4.1', 'printed example');
   claim(p, 'multiplier rises to {0} — {1} CFM here', [v(() => K_CFM.exposed, f2, 'K_CFM.exposed'), v(() => cfmGL('exposed').minimum, n, 'minimum exposed')], 'RB-008 §2.2, §3.3');
   claim(p, 'cut the multiplier to {0}, a {1}% reduction, and bring the minimum to {2} CFM', [v(() => K_CFM.exposedPanels, f2, 'K_CFM.exposedPanels'), v(() => (1 - K_CFM.exposedPanels / K_CFM.exposed) * 100, r, '1 − 4.14/5.75'), v(() => cfmGL('exposed', 'both').minimum, n, 'minimum exposed+panels')], 'RB-008 §2.2');
@@ -226,6 +226,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'Wall {0}, peninsula {1}, island {2}', [v(() => MOUNT_MULT.wall, f2, 'MOUNT_MULT'), v(() => MOUNT_MULT.peninsula, f2, ''), v(() => MOUNT_MULT.island, f2, '')], 'RB-008 §3.9');
   claim(p, 'honestly above {0} CFM', [v(() => BLOWER_SIZES[3] / BLOWER_MARGIN, n, 'BLOWER_SIZES[3] / BLOWER_MARGIN')], 'RB-008 §3.11 + App. A step 8');
   claim(p, 'W_rec = {0} × capture diameter', [v(() => K_BASE, f2, 'K_BASE')], 'RB-002 §3.6');
+  paper(p, 'delivers itself at 200–535 fpm', 'RB-003 §4.1', 'printed range (v1.1: 200-535 fpm; RB-001 Table 3.5)');
   paper(p, 'face velocity of about 29 fpm', 'RB-003 §4.1', 'printed example');
 }
 {
@@ -238,7 +239,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
   claim(p, 'RB-006 Table 3.4a v1.1 prints {0}, {1} and {2} mph for this row', (() => { const c = () => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }); return [v(() => c().u25, f1, 'criticalWinds(57 island).u25'), v(() => c().uCenterline, f1, '… .uCenterline'), v(() => c().u50, f1, '… .u50')]; })(), 'RB-006 Table 3.4a (v1.1, Revision history)');
   claim(p, '({0}, {1} and {2} inches) are the RB-003 benchmark', [v(() => deflection(18, 3, GM), f1, 'deflection(18, 3)'), v(() => deflection(30, 3, GM), f1, 'deflection(30, 3)'), v(() => deflection(48, 3, GM), f1, 'deflection(48, 3)')], 'RB-006 §3.1 (benchmark 4/7/12)');
   claim(p, 'the 25%-escape wind at about {0} mph and centerline exit at about {1} mph', [v(() => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }).u25, f1, 'criticalWinds(57 island).u25'), v(() => criticalWinds({ widthIn: 57, depthIn: 53, mount: 'island', riseIn: 30, windDir: 'side', src: GM }).uCenterline, f1, '… .uCenterline')], 'RB-006 §3.4 identities (Table 3.4a v1.0 printed 6.7/9.7; v1.1 prints 4.8/7.0)');
-  claim(p, 'Fr > {0} at every standard height by 15 mph', [v(() => FR_DISRUPTED, f1, 'FR_DISRUPTED; min froude(18..48, 15) = ' + froude(18, 15, GM).toFixed(2))], 'RB-006 §3.8, Table 4.1');
+  claim(p, 'Fr > {0} at every standard height by 15 mph', [v(() => FR_DISRUPTED, f1, 'FR_DISRUPTED; min froude(18..48, 15) = ' + froude(18, 15, GM).toFixed(2))], 'RB-006 §3.8, Table 3.8');
 }
 {
   const p = T + 'plume-width-by-height.md';

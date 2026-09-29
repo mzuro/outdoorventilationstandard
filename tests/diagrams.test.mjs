@@ -58,7 +58,7 @@ test('wind-deflection-trajectory: δ, Fr, capture, grades and critical winds com
   has(t, `±OH = ±${OH.toFixed(1)}″`, 'aperture is ±OH, not the full hood');
   has(t, 'RB-002 Table 3.6b prints 17″', 'paper rounding disclosed');
   for (const u of [3, 5, 8, 10]) {
-    has(t, `δ ${deflection(30, u, GM).toFixed(1)}″`, `deflection at ${u} mph`);  // rb-006:452: 12/19/25 in at 5/8/10 mph
+    has(t, `δ ${deflection(30, u, GM).toFixed(1)}″`, `deflection at ${u} mph`);  // rb-006:462: 12/19/23 in at 5/8/10 mph
     has(d, `${froude(30, u, GM).toFixed(2)}`, `Fr at ${u} mph in desc`);          // rb-006:534
   }
   const caps = [0, 3, 5, 8, 10].map((u) => pct(captureFraction({ ...geo, windMph: u })));
@@ -124,6 +124,8 @@ test('grease-aerosol-deposition: RB-011 practical zones primary, Table 3.3a form
   assert.equal(x5, '4.8');                                                     // rb-011:309
   has(t, `5 µm droplets: formula ${x5} km @ 5 mph`, '5 µm note');
   has(d, `${x5} km`, '5 µm note in desc');
+  has(t, 'Model values from physics/grease.mjs (U_w = 0.447 m/s per mph); RB-011 Table 3.3a prints 50 / 122 / 308 / 615 m', 'paper-vs-model disclosure in the secondary row'); // rb-011:322-323
+  has(d, 'RB-011 Table 3.3a prints 50, 122, 308 and 615 m', 'disclosure in desc');
   has(d, '2 mph', '2 mph row in desc'); has(d, '10 mph', '10 mph row in desc');
   has(t, `v_s ${Number(stokesSettling(50).toPrecision(2))}–${Number(stokesSettling(100).toPrecision(2))} m/s (50–100 µm)`, 'v_s 50–100 µm'); // rb-011:311-312 6.78e-2 / 0.271 m/s
   // the drawn zones (visible text between the title and the secondary row) carry only RB-011 §3.3 distances

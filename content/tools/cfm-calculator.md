@@ -9,6 +9,7 @@ categories: ["Tools"]
 ShowToc: false
 weight: 1
 instrument_id: "i02"
+instrument_preset: "wall-48"
 aliases: ["/tools/cfm-calculator.html"]
 related_questions:
   - "/questions/what-cfm-do-i-need/"
@@ -71,7 +72,7 @@ The calculator follows RB-008 Appendix A:
 
 6. **Width check (advisory only).** Hood width is compared with the RB-002 recommended width for the source and height (W_rec = 1.38 × capture diameter) and reported as an RB-008 Table 3.10 coverage band; it never changes the CFM readout [RB-008 §3.10; RB-002 §3.6].
 
-Why the answer is lower than the familiar rules of thumb: the "1 CFM per 100 BTU" and face-velocity methods treat the hood as something that must reach out and pull a passive contaminant in. A buoyant plume delivers itself at 200–560 fpm; the hood's job is volumetric ingestion, and RB-003 §4.1 shows a properly sized outdoor hood can run a face velocity of about 29 fpm — "grossly inadequate" by the indoor criterion — while capturing correctly [RB-003 §2.5, §4.1].
+Why the answer is lower than the familiar rules of thumb: the "1 CFM per 100 BTU" and face-velocity methods treat the hood as something that must reach out and pull a passive contaminant in. A buoyant plume delivers itself at 200–535 fpm; the hood's job is volumetric ingestion, and RB-003 §4.1 shows a properly sized outdoor hood can run a face velocity of about 29 fpm — "grossly inadequate" by the indoor criterion — while capturing correctly [RB-003 §2.5, §4.1].
 
 ## Source Papers
 

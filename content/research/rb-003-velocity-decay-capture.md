@@ -56,7 +56,7 @@ dataset:
 - Section 3.2 / Table 3.2 (radial velocity at 24", 30" and 48"): the u(r) columns regenerated from u(r) = u_0 * exp(-(r / b_u)^2) with the v1.1 u_0 (24": u_0 2.12 → 2.09 m/s, 417 → 412 fpm, e.g. r = b_T 1.06/209 → 1.04/206; 30": 392 → 393 fpm, r = b_T 0.99/195 → 1.00/196; 48": u_0 1.71 → 1.78 m/s, 337 → 350 fpm, r = b_T 0.86/169 → 0.89/175); the fraction column is unchanged. (revised 2026-09-29)
 - Tables 3.5, 3.6a/b and 3.8a/b (mass flow and required CFM): regenerated from the stated formulas so that every cell matches RB-008 v1.1 (±1-2 CFM rounding differences only, e.g. Charcoal 30" at K = 3.68 411 → 410, Wood 724 → 723 CFM; the kg/s values are unchanged). (revised 2026-09-29)
 - Section 4.2: centerline-velocity decrease from 18" to 48" 26% → 19%. Section 6 Figure 3.1 note: 30-inch range 234-481 → 222-485 fpm. (revised 2026-09-29)
-- Sections 1.2 and 2.5: centerline-velocity range at standard hood heights 200-560 ft/min (1.0-2.8 m/s) → 200-535 ft/min (1.0-2.7 m/s) (RB-001 Table 3.5 v1.1). (revised 2026-09-29)
+- Sections 1.2, 2.5 and 4.1: centerline-velocity range at standard hood heights 200-560 ft/min (1.0-2.8 m/s) → 200-535 ft/min (1.0-2.7 m/s), including the Section 2.5 numbered point 1 and the Section 4.1 summary (RB-001 Table 3.5 v1.1). (revised 2026-09-29)
 - Table 3.1b key observation 2: 55 ft/min (508 to 453) → 73 ft/min (508 to 435); 6 ft/min (337 to 331) → 19 ft/min (350 to 331).
 - Table 3.10: u_0 2.30/1.71 → 2.21/1.78 m/s and 453/337 → 435/350 fpm (ratio 0.74 → 0.81); capture diameter 39/53 → 36/50" (ratio 1.36 → 1.39), following RB-001 Table 3.6 v1.1. The Section 6 diagram note follows.
 - Appendix A.4: F_wind rows "refined in RB-006" → class values consolidated in RB-008 Section 2.2 (speed-resolved values remain in RB-006 Table 4.3).
@@ -232,7 +232,7 @@ The recommended capture velocities from ACGIH (Industrial Ventilation Manual, 30
 
 Outdoor cooking plumes violate all of the assumptions underlying these categories:
 
-1. **The plume is not stationary.** It has centerline velocities of 200-560 fpm at hood heights — comparable to or exceeding the highest ACGIH "capture velocity" categories.
+1. **The plume is not stationary.** It has centerline velocities of 200-535 fpm at hood heights — comparable to or exceeding the highest ACGIH "capture velocity" categories.
 
 2. **The contaminant is self-delivering.** The plume naturally rises toward the hood. The hood does not need to "reach out" and pull the contaminant from its release point. Instead, the hood must intercept a rising column of gas.
 
@@ -750,7 +750,7 @@ However, this apparent advantage of greater heights (slower velocity decay rate)
 
 ### 4.1 CFM Is the Dominant Specification, Not Face Velocity
 
-The analysis in Section 3 demonstrates conclusively that for outdoor buoyant plume capture, the critical specification is the total exhaust flow rate (CFM), not the face velocity at the hood opening. The plume delivers itself to the hood with ample velocity (200-560 fpm at standard heights, far exceeding ASHRAE face velocity minimums). The hood must simply have sufficient exhaust capacity to ingest the total plume volume — which is dominated by entrained ambient air, not by the original combustion gas.
+The analysis in Section 3 demonstrates conclusively that for outdoor buoyant plume capture, the critical specification is the total exhaust flow rate (CFM), not the face velocity at the hood opening. The plume delivers itself to the hood with ample velocity (200-535 fpm at standard heights, far exceeding ASHRAE face velocity minimums). The hood must simply have sufficient exhaust capacity to ingest the total plume volume — which is dominated by entrained ambient air, not by the original combustion gas.
 
 The face velocity at the hood opening is a derived quantity, not a design input:
 
