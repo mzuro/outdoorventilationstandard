@@ -14,8 +14,9 @@
     - questions: full plain text of every /questions/ page. These are
       short, answer-first, and already contain the site's canonical
       published numbers (e.g. content/questions/what-cfm-do-i-need.md's
-      "1,450 CFM minimum ... 1,800 CFM recommended" for a 48in island
-      hood) — the single best grounding source on the site.
+      "892 CFM" minimum / "1,200 CFM blower" for a 60,000 BTU grill at a
+      30in wall mount, 1,070 CFM on an island) — the single best
+      grounding source on the site.
     - papers: per research brief, up to $maxFactsPerPaper short numeric
       facts pulled from rendered bold list items (the papers' own
       "Answer:" / numbered-findings callouts), each tagged with the
