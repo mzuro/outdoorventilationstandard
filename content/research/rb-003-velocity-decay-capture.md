@@ -52,10 +52,11 @@ dataset:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.1 / Tables 3.1a and 3.1b, all twelve height rows: regenerated from u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) (Gas Medium 453/417/392/370/337 → 435/412/393/377/350 fpm; Charcoal 286/262/246/233/211 → 253/240/230/222/207 fpm; Pellet Low 272/250/234/223/201 → 246/233/222/213/198 fpm; all eight columns likewise at 18-48"); v1.0 transcribed RB-001's hand-rounded Table 3.5, corrected in the same revision. The table note about 1-4% transcription differences is replaced. The 6-72" rows outside the standard heights move by at most 1 fpm (0.01 m/s), so that Table 3.1b is identical to the site's rb-003 dataset CSV; the 72-inch floor quoted under the table and in the Figure 3.1 caption is 179 → 178 fpm.
-- Section 3.2 / Table 3.2 (radial velocity at 24", 30" and 48"): the u(r) columns regenerated from u(r) = u_0 * exp(-(r / b_u)^2) with the v1.1 u_0 (24": u_0 2.12 → 2.09 m/s, 417 → 412 fpm, e.g. r = b_T 1.06/209 → 1.04/206; 30": 392 → 393 fpm, r = b_T 0.99/195 → 1.00/196; 48": u_0 1.71 → 1.78 m/s, 337 → 350 fpm, r = b_T 0.86/169 → 0.89/175); the fraction column is unchanged.
-- Tables 3.5, 3.6a/b and 3.8a/b (mass flow and required CFM): regenerated from the stated formulas so that every cell matches RB-008 v1.1 (±1-2 CFM rounding differences only, e.g. Charcoal 30" at K = 3.68 411 → 410, Wood 724 → 723 CFM; the kg/s values are unchanged).
-- Section 4.2: centerline-velocity decrease from 18" to 48" 26% → 19%. Section 6 Figure 3.1 note: 30-inch range 234-481 → 222-485 fpm.
+- Section 3.1 / Tables 3.1a and 3.1b, all twelve height rows: regenerated from u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) (Gas Medium 453/417/392/370/337 → 435/412/393/377/350 fpm; Charcoal 286/262/246/233/211 → 253/240/230/222/207 fpm; Pellet Low 272/250/234/223/201 → 246/233/222/213/198 fpm; all eight columns likewise at 18-48"); v1.0 transcribed RB-001's hand-rounded Table 3.5, corrected in the same revision. The table note about 1-4% transcription differences is replaced. The 6-72" rows outside the standard heights move by at most 2 fpm (0.01 m/s), so that Table 3.1b is identical to the site's rb-003 dataset CSV; the 72-inch floor quoted under the table and in the Figure 3.1 caption is 179 → 178 fpm. (revised 2026-09-29)
+- Section 3.2 / Table 3.2 (radial velocity at 24", 30" and 48"): the u(r) columns regenerated from u(r) = u_0 * exp(-(r / b_u)^2) with the v1.1 u_0 (24": u_0 2.12 → 2.09 m/s, 417 → 412 fpm, e.g. r = b_T 1.06/209 → 1.04/206; 30": 392 → 393 fpm, r = b_T 0.99/195 → 1.00/196; 48": u_0 1.71 → 1.78 m/s, 337 → 350 fpm, r = b_T 0.86/169 → 0.89/175); the fraction column is unchanged. (revised 2026-09-29)
+- Tables 3.5, 3.6a/b and 3.8a/b (mass flow and required CFM): regenerated from the stated formulas so that every cell matches RB-008 v1.1 (±1-2 CFM rounding differences only, e.g. Charcoal 30" at K = 3.68 411 → 410, Wood 724 → 723 CFM; the kg/s values are unchanged). (revised 2026-09-29)
+- Section 4.2: centerline-velocity decrease from 18" to 48" 26% → 19%. Section 6 Figure 3.1 note: 30-inch range 234-481 → 222-485 fpm. (revised 2026-09-29)
+- Sections 1.2 and 2.5: centerline-velocity range at standard hood heights 200-560 ft/min (1.0-2.8 m/s) → 200-535 ft/min (1.0-2.7 m/s) (RB-001 Table 3.5 v1.1). (revised 2026-09-29)
 - Table 3.1b key observation 2: 55 ft/min (508 to 453) → 73 ft/min (508 to 435); 6 ft/min (337 to 331) → 19 ft/min (350 to 331).
 - Table 3.10: u_0 2.30/1.71 → 2.21/1.78 m/s and 453/337 → 435/350 fpm (ratio 0.74 → 0.81); capture diameter 39/53 → 36/50" (ratio 1.36 → 1.39), following RB-001 Table 3.6 v1.1. The Section 6 diagram note follows.
 - Appendix A.4: F_wind rows "refined in RB-006" → class values consolidated in RB-008 Section 2.2 (speed-resolved values remain in RB-006 Table 4.3).
@@ -86,7 +87,7 @@ The scope encompasses:
 
 ### Relationship to RB-001 and RB-002
 
-RB-001 established the fundamental plume properties: heat release rates (Table 3.1), virtual origins (Table 3.2), centerline temperatures (Table 3.4), centerline velocities (Table 3.5), plume diameters (Table 3.6), and mass flow rates (Table 3.7). RB-001's key finding was that all hood heights are in the far-field and that plume centerline velocities (200-560 ft/min) far exceed minimum ASHRAE face velocities (50-100 fpm), meaning the challenge is not velocity magnitude but area coverage.
+RB-001 established the fundamental plume properties: heat release rates (Table 3.1), virtual origins (Table 3.2), centerline temperatures (Table 3.4), centerline velocities (Table 3.5), plume diameters (Table 3.6), and mass flow rates (Table 3.7). RB-001's key finding was that all hood heights are in the far-field and that plume centerline velocities (200-535 ft/min) far exceed minimum ASHRAE face velocities (50-100 fpm), meaning the challenge is not velocity magnitude but area coverage.
 
 RB-002 extended this with detailed entrainment analysis, plume spread quantification, turbulent intermittency margins, and recommended hood sizing with a base width-sizing margin K ≈ 1.38 (rising toward 1.70 for wind-exposed sites per RB-002 Section 3.5). RB-002 delivered hood width lookup tables and the recommended hood dimensions for all source/height combinations.
 
@@ -193,7 +194,7 @@ This growing momentum flux has a critical ventilation implication: even though t
 
 Traditional indoor capture velocity specifications (ASHRAE/ACGIH) define a minimum face velocity at the hood opening — typically 50-100 fpm (0.25-0.50 m/s) for commercial kitchen hoods. The implicit assumption is that the contaminant source is passively convecting or drifting, and the hood's suction field must generate sufficient inward velocity to draw the contaminant into the hood.
 
-**This model is fundamentally inappropriate for outdoor buoyant plumes.** The cooking plume is not passively drifting; it is actively moving upward with centerline velocities of 200-560 ft/min (1.0-2.8 m/s) at typical hood heights. The plume carries significant upward momentum directed into the hood.
+**This model is fundamentally inappropriate for outdoor buoyant plumes.** The cooking plume is not passively drifting; it is actively moving upward with centerline velocities of 200-535 ft/min (1.0-2.7 m/s) at typical hood heights. The plume carries significant upward momentum directed into the hood.
 
 **The canopy hood alignment advantage.** For an overhead canopy hood, the plume's upward momentum actually assists capture. The plume rises directly into the hood opening, self-delivering the contaminant-laden gas. The hood's exhaust suction and the plume's buoyancy work in the same direction (upward, into the hood). This is fundamentally different from a lateral exhaust hood that must oppose or redirect the plume.
 

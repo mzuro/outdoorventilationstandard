@@ -37,8 +37,8 @@ downstream_topics:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.1.3 item 2 and Section 4.2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height; hoods 30-52 → 22-52 inches wider than the cooking surface) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2.
-- Section 3.9 comparison table, Section 3.9 observation 4 and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1.
+- Section 3.1.3 item 2 and Section 4.2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height; hoods 30-52 → 22-52 inches wider than the cooking surface) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2. (revised 2026-09-29)
+- Section 3.9 comparison table, Section 3.9 observation 4 and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1; the centerline-velocity range quoted in Sections 2.2, 3.4 and 4.3 is 200-560 → 200-535 fpm. (revised 2026-09-29)
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
@@ -203,7 +203,7 @@ ASHRAE 154 Section 6 specifies hood construction requirements, including minimum
 
 **Enclosure-dependent assumptions:**
 
-1. **Minimum face velocity of 50-100 fpm assumes the hood's suction field is the dominant air movement.** RB-003 Section 4.1 demonstrated that for outdoor buoyant plumes, the plume's self-delivered velocity (200-560 fpm centerline) overwhelms the hood's face velocity. The ASHRAE face velocity specification is meaningful in an indoor quiescent environment where the hood's suction must actively draw in slowly drifting contaminants. Outdoors, the plume delivers itself, and the challenge is volumetric ingestion rather than suction-driven capture. Face velocity is not the relevant metric for outdoor hood performance.
+1. **Minimum face velocity of 50-100 fpm assumes the hood's suction field is the dominant air movement.** RB-003 Section 4.1 demonstrated that for outdoor buoyant plumes, the plume's self-delivered velocity (200-535 fpm centerline) overwhelms the hood's face velocity. The ASHRAE face velocity specification is meaningful in an indoor quiescent environment where the hood's suction must actively draw in slowly drifting contaminants. Outdoors, the plume delivers itself, and the challenge is volumetric ingestion rather than suction-driven capture. Face velocity is not the relevant metric for outdoor hood performance.
 
 2. **Overhang specifications assume wall-assisted containment.** ASHRAE 154 specifies minimum overhang of 6 inches per side for island canopy hoods. This overhang is adequate indoors because wall-guided airflow, ceiling jet recovery, and room pressurization compensate for the modest geometric margin. RB-002 and RB-005 established that outdoor overhang requirements are 11-26 inches per side (15-20 inches at a 30-inch mounting height) — two to four times the ASHRAE 154 minimum — because all compensating mechanisms are absent.
 
@@ -344,7 +344,7 @@ The loss of room pressurization eliminates the gentle, room-scale drift of air t
 
 **Indoor pressurization effect:**
 
-At the ASHRAE 154-recommended negative pressure of 0.02-0.05 inches WG, the resulting air velocity through typical building envelope leakage paths and controlled openings is approximately 50-150 fpm. Within the kitchen space, this translates to a general drift velocity toward the hood of approximately 10-30 fpm (0.05-0.15 m/s). While this drift velocity is small compared to the plume centerline velocity (200-560 fpm), it is significant at the plume periphery where the local plume velocity is only 20-30 fpm (RB-003 Section 3.2 established that plume edge velocity is only 6% of centerline). The pressure-assisted drift is comparable to or greater than the plume edge velocity, effectively doubling the inward velocity at the plume periphery and preventing edge escape.
+At the ASHRAE 154-recommended negative pressure of 0.02-0.05 inches WG, the resulting air velocity through typical building envelope leakage paths and controlled openings is approximately 50-150 fpm. Within the kitchen space, this translates to a general drift velocity toward the hood of approximately 10-30 fpm (0.05-0.15 m/s). While this drift velocity is small compared to the plume centerline velocity (200-535 fpm), it is significant at the plume periphery where the local plume velocity is only 20-30 fpm (RB-003 Section 3.2 established that plume edge velocity is only 6% of centerline). The pressure-assisted drift is comparable to or greater than the plume edge velocity, effectively doubling the inward velocity at the plume periphery and preventing edge escape.
 
 **Outdoor equivalent:**
 
@@ -498,7 +498,7 @@ Until a UL standard is developed that tests hoods under open-air conditions with
 
 Indoor ventilation practice emphasizes face velocity (fpm at the hood opening) as a primary performance metric. ASHRAE 154 specifies minimum face velocities of 50-100 fpm depending on duty class. This metric is meaningful indoors where the hood's suction must actively pull slowly drifting contaminants from the surrounding quiescent air.
 
-Outdoors, face velocity is not the relevant metric. RB-003 Section 4.1 demonstrated that the plume delivers itself at 200-560 fpm centerline velocity — far exceeding any reasonable face velocity specification. The outdoor hood's face velocity is typically 25-35 fpm (calculated as total CFM divided by hood area), which would be classified as "grossly inadequate" by indoor standards. Yet the physics analysis confirms these low face velocities are correct: the outdoor hood's function is volumetric ingestion of a self-delivering plume, not suction capture of a passively dispersing contaminant.
+Outdoors, face velocity is not the relevant metric. RB-003 Section 4.1 demonstrated that the plume delivers itself at 200-535 fpm centerline velocity — far exceeding any reasonable face velocity specification. The outdoor hood's face velocity is typically 25-35 fpm (calculated as total CFM divided by hood area), which would be classified as "grossly inadequate" by indoor standards. Yet the physics analysis confirms these low face velocities are correct: the outdoor hood's function is volumetric ingestion of a self-delivering plume, not suction capture of a passively dispersing contaminant.
 
 Consumers and designers who evaluate outdoor hoods by face velocity will systematically mis-specify the system. A high face velocity (achieved by using a small hood with a powerful blower) does not improve outdoor capture — it may actually degrade it, because the small hood cannot cover the plume's lateral extent regardless of how fast it pulls air through its undersized opening. This is the geometry-limited failure described in RB-002 Section 4.1: no amount of exhaust velocity compensates for insufficient hood area.
 
