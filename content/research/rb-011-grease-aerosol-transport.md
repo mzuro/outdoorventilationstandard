@@ -37,7 +37,7 @@ categories: ["P3 — Frontier"]
 
 - Section 2.3: v_s = 0.0271 * d_p^2 [d_p in micrometers] → 2.71 x 10^(-5) * d_p^2; units erratum (0.0271 * 100^2 would give 271 m/s). The SI form and Table 3.3a were already correct.
 - Appendix B: Charcoal Kettle centerline velocity at 48" 1.07 → 1.05 m/s (RB-001 Table 3.5 v1.1); critical wind for 25% escape, Gas Medium at 30", 6.7 → 4.8 mph (RB-006 Table 3.4a v1.1).
-- Section 2.3 worked calculation: d_p_crit = sqrt(0.01 * 1.0 / 0.0271) = 610 micrometers → sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = 19 micrometers (the v1.0 arithmetic used the units-erratum constant). The stated conclusion changes: particles below approximately 20 micrometers rise with negligible gravitational separation, while the coarse tail (v_s / u_0 of approximately 0.07 at 50 micrometers and 0.27 at 100 micrometers for the weakest plume, Table 3.3a) is partially depleted before hood height; v1.0 concluded that no particle size class is filtered. The Section 6 Figure note follows (u_0 at 48" 1.07 → 1.05 m/s; "no particle size settles out of the plume" → modal sizes two to seven orders of magnitude below the plume velocity, coarse tail above 50 micrometers a few percent to a quarter of it).
+- Section 2.3 worked calculation: d_p_crit = sqrt(0.01 * 1.0 / 0.0271) = 610 micrometers → sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = 19 micrometers (the v1.0 arithmetic used the units-erratum constant). The stated conclusion changes: particles below approximately 20 micrometers rise with negligible gravitational separation, while the coarse tail (v_s / u_0 of approximately 0.07 at 50 micrometers and 0.27 at 100 micrometers for the weakest plume, Table 3.3a) is partially depleted before hood height; v1.0 concluded that no particle size class is filtered. The Section 6 Figure note follows (u_0 at 48" 1.07 → 1.05 m/s; "no particle size settles out of the plume" → modal sizes two to seven orders of magnitude below the plume velocity, coarse tail above 50 micrometers a few percent to a quarter of it). Section 3.4 and the Figure 11.1 caption follow (sub-20-micrometer fraction not separated; coarsest droplets, v_s / u_0 of approximately 0.26 at 100 micrometers, partially depleted); the plume-velocity range quoted in Sections 2.3 and 3.4 is 1.0-2.8 → 1.0-2.7 m/s (RB-001 Table 3.5 v1.1). (revised 2026-09-29)
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
@@ -180,7 +180,7 @@ where C_c = 1 + (2 * lambda / d_p) * [1.257 + 0.4 * exp(-0.55 * d_p / lambda)], 
 | 50 | 6.8 x 10^(-2) | 67.8 | 1.00 | 67.8 | Near-immediate; deposits within centimeters to 1 meter |
 | 100 | 0.271 | 271 | 1.00 | 271 | Ballistic; deposits within centimeters |
 
-**Critical interpretation for plume transport.** The centerline velocity of the **Buoyant Cooking Plume** at standard hood heights ranges from 1.0 to 2.8 m/s (RB-001 Table 3.5). Particles with settling velocities substantially less than the plume velocity (v_s << u_0) are carried upward with the plume gas and arrive at the **Plume Interception Plane** at essentially the same concentration as at the source. Particles with settling velocities comparable to or exceeding the plume velocity (v_s approaching or exceeding u_0) separate from the plume before reaching hood height.
+**Critical interpretation for plume transport.** The centerline velocity of the **Buoyant Cooking Plume** at standard hood heights ranges from 1.0 to 2.7 m/s (RB-001 Table 3.5). Particles with settling velocities substantially less than the plume velocity (v_s << u_0) are carried upward with the plume gas and arrive at the **Plume Interception Plane** at essentially the same concentration as at the source. Particles with settling velocities comparable to or exceeding the plume velocity (v_s approaching or exceeding u_0) separate from the plume before reaching hood height.
 
 The critical particle diameter at which the settling velocity equals 1% of the weakest plume centerline velocity (approximately 1.0 m/s at 48 inches for the charcoal kettle) is:
 
@@ -264,7 +264,7 @@ Of this total aerosol mass, the size distribution is approximately:
 
 ### 3.1 Grease Aerosol Fate in the Captured Plume
 
-When the **Buoyant Cooking Plume** is fully captured by the hood, grease aerosol is transported vertically from the cooking surface to the **Plume Interception Plane** by the plume's upward velocity. As established in Section 2.3, gravitational settling does not separate any significant particle size fraction from the plume during this vertical transport, because the plume velocity (1.0 to 2.8 m/s) vastly exceeds the settling velocity of even the coarsest aerosol particles (0.27 m/s for 100-micrometer droplets).
+When the **Buoyant Cooking Plume** is fully captured by the hood, grease aerosol is transported vertically from the cooking surface to the **Plume Interception Plane** by the plume's upward velocity. As established in Section 2.3, gravitational settling does not separate the sub-20-micrometer fraction from the plume during this vertical transport, because the plume velocity (1.0 to 2.7 m/s) vastly exceeds its settling velocity; the coarsest droplets (v_s / u_0 of approximately 0.26 at 100 micrometers for the weakest plume) are partially depleted.
 
 The hood's grease filtration system then separates the captured aerosol from the airstream. Standard baffle-type grease filters used in outdoor hoods have the following capture efficiency by particle size:
 
@@ -617,7 +617,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 - Vertical reference line at d_p = 2.5 micrometers labeled "PM2.5 boundary"
 - Vertical reference line at d_p = 10 micrometers labeled "PM10 boundary"
 - Annotations for each mode: ultrafine ("Dominates particle number; negligible mass; passive tracer"), accumulation ("20-40% of mass; PM2.5 fraction; longest atmospheric residence time"), coarse ("50-80% of mass; settles rapidly; deposits within meters of source").
-- Figure caption: "Figure 11.1: Grease aerosol particle size distribution (mass-weighted) from outdoor barbecue cooking, overlaid with the Stokes gravitational settling velocity. All settling velocities are orders of magnitude below the Buoyant Cooking Plume velocity at standard hood heights, confirming that all particle sizes are transported to the Plume Interception Plane without gravitational separation."
+- Figure caption: "Figure 11.1: Grease aerosol particle size distribution (mass-weighted) from outdoor barbecue cooking, overlaid with the Stokes gravitational settling velocity. The settling velocities of the three modal sizes are orders of magnitude below the Buoyant Cooking Plume velocity at standard hood heights; only the coarse tail above approximately 50 micrometers reaches a few percent to a quarter of the weakest plume velocity."
 
 ### Diagram 6.2: Grease Deposition Footprint in Plan View (Diagram Type 3 — Spatial Layout)
 

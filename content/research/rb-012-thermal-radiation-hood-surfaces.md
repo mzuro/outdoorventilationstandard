@@ -37,7 +37,7 @@ categories: ["P3 — Frontier"]
 
 - Section 4.2 (corrected 2026-07-15 in the web edition; carried into the PDF by this revision): 304 stainless steel and copper were described as the "only" unconditionally safe hood materials; 430 stainless steel is included, matching Section 3.4.3 and Table 3.11.
 - Section 3.6.1 comparison table: centerline velocity at 30" for the charcoal kettle and large gas grill 1.25/2.25 → 1.17/2.26 m/s (ratio 0.56 → 0.52), following RB-001 Table 3.5 v1.1.
-- Section 3.3.2: plume centerline velocity quoted for the medium gas grill at 30 inches 392 → 393 fpm (RB-003 Table 3.1b v1.1).
+- Section 3.3.2: plume centerline velocity quoted for the medium gas grill at 30 inches 392 → 393 fpm (RB-003 Table 3.1b v1.1). (revised 2026-09-29)
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 

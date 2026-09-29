@@ -36,6 +36,7 @@ const P = {
   rb006: R + 'rb-006-wind-interaction-crossflow.md',
   rb007: R + 'rb-007-failure-modes.md',
   rb008: R + 'rb-008-cfm-requirements.md',
+  rb009: R + 'rb-009-side-panel-effectiveness.md',
   rb011: R + 'rb-011-grease-aerosol-transport.md',
   rb012: R + 'rb-012-thermal-radiation-hood-surfaces.md',
 };
@@ -208,13 +209,8 @@ for (const [table, groups] of Object.entries(T34)) for (const [group, id] of gro
   }
 }
 
-// RB-002 Table 3.6b (Gas Medium) 30" overhang: (W_rec − cooking width)/2 = (57 − 24)/2 = 16.5", carried exactly
-// rather than rounded to 17" because RB-006 §3.4 and the site's instruments use 0.42 m = 16.5" (round 2, coordinator).
-{
-  const wrecIn = Math.round(recommendedWidth(30, SOURCES.gasMedium)), ohIn = (wrecIn - SOURCES.gasMedium.cookWIn) / 2;
-  const ohM = (Math.round(recommendedWidth(30, SOURCES.gasMedium) / IN_PER_M * 100) / 100 - Math.round(SOURCES.gasMedium.cookWIn / IN_PER_M * 100) / 100) / 2;
-  cell({ paper: 'rb002', table: 'Table 3.6b:', col: 'OH each side', row: '30"', value: `${f2(ohM)} / ${ohIn}"`, call: `(round(recommendedWidth(30, gasMedium)) = ${wrecIn}" − 24") / 2; (1.45 − 0.61) / 2 m` });
-}
+// RB-002 Table 3.6b 30" overhang: left at the printed whole-inch 17" (round 3); the exact 16.5" is recorded in a
+// footnote under the table instead (see the prose list).
 
 // RB-008 sizing tables regenerated in full from the paper's formulas with the same inputs the site's reference-table
 // generator uses (round 2, A10 + B8 + B11): Tables 3.1, 3.2a–d, 3.4a/b, 3.5, 3.6, 3.8a–f, 3.11 and the §3.3 table.
@@ -370,6 +366,11 @@ function roundTwoProse() {
   assert(Math.abs(kStokes - 2.71e-5) < 0.01e-5 && Math.round(dCrit) === 19, `d_p_crit ${dCrit} µm, k ${kStokes}`);
   const vsRatio = (dp) => kStokes * dp * dp / 1.0; // against the paragraph's own u_0 ≈ 1.0 m/s (weakest plume, 48")
   assert(Math.abs(vsRatio(50) - 0.07) < 0.005 && Math.abs(vsRatio(100) - 0.27) < 0.005, `v_s/u_0 ${vsRatio(50)} ${vsRatio(100)}`);
+  const perSixAll = ['gasSmall', 'gasMedium', 'gasLarge', 'gasHigh', 'charcoalKettle', 'woodFired', 'pelletLow', 'pelletHigh'].map((id) => (cw(id, 18).uCenterline - cw(id, 48).uCenterline) / 5);
+  const perSix = { min: f1(Math.min(...perSixAll)), max: f1(Math.max(...perSixAll)) };
+  const dcapAll = ['gasSmall', 'gasMedium', 'gasLarge', 'gasHigh', 'charcoalKettle', 'woodFired', 'pelletLow'].flatMap((id) => H.map((h) => Math.round(captureDiameter(h, SOURCES[id]))));
+  const perMphAll = [[24, 'gasMedium'], [30, 'gasMedium'], [36, 'gasMedium'], [48, 'gasMedium'], [30, 'charcoalKettle'], [30, 'pelletLow']].map(([h, id]) => deflection(h, 1, SOURCES[id]));
+  const perMph = { min: f1(Math.min(...perMphAll)), max: f1(Math.max(...perMphAll)) };
   const foot = "† Fr = U_w / u_0 > 2.7 at this condition (Section 3.3): disrupted regime (Table 3.8). The linear formula's deflection is shown for completeness only and is not a design value.";
   return [
     // RB-001
@@ -379,7 +380,7 @@ function roundTwoProse() {
     { paper: 'rb001', old: '- At 36": plume diameter (47") approaches hood width', new: `- At 36": plume diameter (${dcapIn(36)}") approaches hood width`, call: 'captureDiameter(36, gasMedium)' },
     { paper: 'rb001', old: 'For large gas grills and high-output sources, the plume at 36 inches already exceeds 50 inches in diameter.', new: `For large gas grills and high-output sources, the plume at 36 inches already approaches or exceeds 50 inches in diameter (${dcapIn(36, 'gasLarge')} and ${dcapIn(36, 'gasHigh')} inches).`, call: 'captureDiameter(36, gasLarge|gasHigh)' },
     // RB-002 Table 3.6b footnote (overhang rounding convention)
-    { paper: 'rb002', old: '#### Table 3.6c:', new: 'Overhang is (W_rec − cooking-surface width) / 2. The 30" row carries its exact 16.5" (0.42 m) because RB-006 Section 3.4 and the site\'s instruments use that value; the other rows round the half inch up to the whole inch.\n\n#### Table 3.6c:', call: 'footnote (round 2)' },
+    { paper: 'rb002', old: '#### Table 3.6c:', new: 'Overhang is (W_rec − cooking-surface width)/2 rounded to the whole inch; the exact 30" Gas Medium value is 16.5" (0.42 m), which RB-006 Section 3.4 and the site\'s instruments use.\n\n#### Table 3.6c:', call: 'footnote (rounds 2-3)' },
     // RB-003
     { paper: 'rb003', old: '**At 24" (0.61 m) mounting height:** z - z_0 = 0.98 m; b_u = 0.141 m; u_0 = 2.12 m/s (417 fpm)', new: `**At 24" (0.61 m) mounting height:** z - z_0 = 0.98 m; b_u = 0.141 m; u_0 = ${f2(gm(24))} m/s (${fpm(24)} fpm)`, call: 'centerlineVelocity(24, gasMedium)' },
     { paper: 'rb003', old: '**At 30" (0.76 m) mounting height:** z - z_0 = 1.13 m; b_u = 0.163 m; u_0 = 1.99 m/s (392 fpm)', new: `**At 30" (0.76 m) mounting height:** z - z_0 = 1.13 m; b_u = 0.163 m; u_0 = ${f2(gm(30))} m/s (${fpm(30)} fpm)`, call: 'centerlineVelocity(30, gasMedium)' },
@@ -424,6 +425,15 @@ function roundTwoProse() {
     { paper: 'rb011', old: '> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / 0.0271) = sqrt(0.369) = 0.61 mm = 610 micrometers\n\nThis means that all grease aerosol particles below approximately 600 micrometers in diameter — which encompasses the entire aerosol distribution including the coarsest spray droplets — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. Gravitational settling does not meaningfully filter any particle size class from the plume during the vertical transport from cooking surface to hood.\n\nThe practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface. All particle sizes are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.', new: `> d_p_crit (1% of u_0) = sqrt(0.01 * 1.0 / (2.71 x 10^(-5))) = sqrt(${Math.round(0.01 / 2.71e-5)}) = ${Math.round(dCrit)} micrometers\n\nThis means that grease aerosol particles below approximately 20 micrometers in diameter — the ultrafine and accumulation modes and most of the coarse mode, which together carry the large majority of the aerosol mass (Section 2.2) — are carried upward by the plume with negligible gravitational separation over the 18- to 48-inch vertical distance to the hood. The coarse tail behaves differently: for the weakest plume, v_s / u_0 is approximately ${vsRatio(50).toFixed(2)} at 50 micrometers and ${vsRatio(100).toFixed(2)} at 100 micrometers (Table 2.3, Table 3.3a), so the largest spray droplets rise measurably more slowly than the plume gas and are partially depleted — by settling within the plume and by fallout at the plume edge — before reaching hood height. Gravitational settling therefore does not filter the sub-20-micrometer aerosol from the plume during vertical transport, but it does begin to thin the coarsest droplets.\n\nThe practical consequence is that the grease aerosol arriving at the **Plume Interception Plane** has essentially the same size distribution as the aerosol generated at the cooking surface below approximately 20 micrometers, with a coarse tail that is somewhat depleted relative to the source. All particle sizes that reach the hood are available for capture by the hood grease filters, or for escape into the **Missed Plume Region** if capture fails.`, call: `d_p_crit = sqrt(0.01 · u_0 / k), k = (ρ_p − ρ_a) g / (18 μ) = ${kStokes.toExponential(3)} m/s per µm²; v_s/u_0 at 50/100 µm vs the paragraph's u_0 ≈ 1.0 m/s (u_0(48", charcoalKettle) = ${f2(ms(48, 'charcoalKettle'))} m/s)` },
     { paper: 'rb011', old: 'u_0 at 48 inches for charcoal kettle (1.07 m/s) — "Weakest plume at 48 inches".', new: `u_0 at 48 inches for charcoal kettle (${f2(ms(48, 'charcoalKettle'))} m/s) — "Weakest plume at 48 inches".`, call: 'centerlineVelocityMs(heightM(48), charcoalKettle)' },
     { paper: 'rb011', old: '- All settling velocities fall well below both plume velocity references, confirming that no particle size settles out of the plume.', new: '- The settling velocities of the three modal sizes fall two to seven orders of magnitude below both plume velocity references; only the coarse tail above approximately 50 micrometers reaches a few percent to a quarter of the weakest plume velocity (Section 2.3).', call: 'v_s(0.03|0.4|12 µm) / u_0(48", charcoalKettle); v_s/u_0 at 50/100 µm' },
+    // Round 3: missed restatements
+    { paper: 'rb011', old: 'at standard hood heights ranges from 1.0 to 2.8 m/s (RB-001 Table 3.5).', new: `at standard hood heights ranges from 1.0 to ${(Math.max(...COLS.map(([id]) => ms(18, id)))).toFixed(1)} m/s (RB-001 Table 3.5).`, call: 'max centerlineVelocityMs(heightM(18), all sources) = gasHigh 2.71' },
+    { paper: 'rb011', old: 'As established in Section 2.3, gravitational settling does not separate any significant particle size fraction from the plume during this vertical transport, because the plume velocity (1.0 to 2.8 m/s) vastly exceeds the settling velocity of even the coarsest aerosol particles (0.27 m/s for 100-micrometer droplets).', new: `As established in Section 2.3, gravitational settling does not separate the sub-20-micrometer fraction from the plume during this vertical transport, because the plume velocity (1.0 to ${(Math.max(...COLS.map(([id]) => ms(18, id)))).toFixed(1)} m/s) vastly exceeds its settling velocity; the coarsest droplets (v_s / u_0 of approximately ${(kStokes * 1e4 / ms(48, 'charcoalKettle')).toFixed(2)} at 100 micrometers for the weakest plume) are partially depleted.`, call: 'v_s(100 µm) = k·10^4 / u_0(48", charcoalKettle)' },
+    { paper: 'rb011', old: 'All settling velocities are orders of magnitude below the Buoyant Cooking Plume velocity at standard hood heights, confirming that all particle sizes are transported to the Plume Interception Plane without gravitational separation."', new: 'The settling velocities of the three modal sizes are orders of magnitude below the Buoyant Cooking Plume velocity at standard hood heights; only the coarse tail above approximately 50 micrometers reaches a few percent to a quarter of the weakest plume velocity."', call: 'v_s/u_0 at 50/100 µm (Section 2.3)' },
+    { paper: 'rb006', old: 'peak gusts reach 11.9 mph (Fr = 2.68 at peak)', new: `peak gusts reach 11.9 mph (Fr = ${f2(froude(30, 11.9, SOURCES.gasMedium))} at peak)`, call: 'froude(30, 11.9, gasMedium)' },
+    { paper: 'rb006', old: 'Every 6 inches lower improves critical wind speed by 0.5-0.8 mph', new: `Every 6 inches lower improves critical wind speed by ${perSix.min}-${perSix.max} mph`, call: '(u_cl(18) − u_cl(48))/5 per source, Tables 3.4a/b' },
+    { paper: 'rb007', old: 'ranging from 31 to 61 inches at standard mounting heights for common cooking sources.', new: `ranging from ${Math.min(...dcapAll)} to ${Math.max(...dcapAll)} inches at standard mounting heights for common cooking sources.`, call: 'min/max captureDiameter over RB-001 Table 3.6 (7 columns × 5 heights)' },
+    { paper: 'rb007', old: 'this can improve the critical wind speed by 30 to 55%.', new: `this can improve the critical wind speed by 30 to ${rect}%.`, call: 'RB-006 §3.9.4 66" x 55" case' },
+    { paper: 'rb009', old: 'this requires 2.3 to 4.0 inches of additional overhang per mph of wind speed', new: `this requires ${perMph.min} to ${perMph.max} inches of additional overhang per mph of wind speed`, call: 'RB-006 §3.9.5 table min/max' },
     // RB-012
     { paper: 'rb012', old: '(392 fpm for the medium gas grill at 30 inches)', new: `(${fpm(30)} fpm for the medium gas grill at 30 inches)`, call: 'centerlineVelocity(30, gasMedium)' },
   ];

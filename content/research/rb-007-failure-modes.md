@@ -38,7 +38,8 @@ categories: ["P2 — Applied"]
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.5.2 and Appendix C: critical wind speeds quoted from RB-006 Tables 3.4a/b updated to RB-006 v1.1 (Gas Medium 30": 6.7/9.7/12.6 → 4.8/7.0/9.3 mph; Charcoal Kettle 30": 5.0/6.7/8.4 → 3.7/5.1/6.6 mph; Pellet Smoker Low 30": 4.2/5.8/7.3 → 2.6/3.9/5.2 mph). No other content changes.
+- Section 3.5.2 and Appendix C: critical wind speeds quoted from RB-006 Tables 3.4a/b updated to RB-006 v1.1 (Gas Medium 30": 6.7/9.7/12.6 → 4.8/7.0/9.3 mph; Charcoal Kettle 30": 5.0/6.7/8.4 → 3.7/5.1/6.6 mph; Pellet Smoker Low 30": 4.2/5.8/7.3 → 2.6/3.9/5.2 mph).
+- Section 2.1 capture-diameter range 31-61 → 31-57 inches (RB-001 Table 3.6 v1.1) and Section 3.5.4 orientation gain 30-55% → 30-50% (RB-006 Section 3.9.4 v1.1). (revised 2026-09-29)
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
@@ -102,7 +103,7 @@ At the **Plume Interception Plane** (the horizontal plane at the hood's lower fa
 
 - **Centerline velocity** u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3), ranging from 1.0 to 2.8 m/s (200 to 560 ft/min) at standard mounting heights. This velocity decays as z^(-1/3) — slowly relative to other plume parameters.
 
-- **Plume capture diameter** d_capture = 0.48 * (z - z_0) + D_eff, ranging from 31 to 61 inches at standard mounting heights for common cooking sources. This grows linearly with height.
+- **Plume capture diameter** d_capture = 0.48 * (z - z_0) + D_eff, ranging from 31 to 57 inches at standard mounting heights for common cooking sources. This grows linearly with height.
 
 - **Mass flow rate** m_dot_p = 0.071 * Q_c^(1/3) * z^(5/3) + 0.0018 * Q_c, growing as z^(5/3) — the most consequential scaling relationship for hood design.
 
@@ -346,7 +347,7 @@ With the gust factor of G = 1.7, a site with a mean wind of 5 mph experiences pe
 
 3. **Increase CFM.** Partial compensation is available by increasing CFM (from K_CFM = 3.0 to K_CFM = 5.4 at 5 mph per RB-006 Section 3.9.3), providing approximately 80 to 85% capture. However, CFM alone cannot fully compensate above approximately 5 mph.
 
-4. **Reorient the grill.** Place the grill so that the hood's longest dimension is parallel to the prevailing wind direction, maximizing the available downwind overhang (RB-006 Section 3.9.4). For rectangular hoods where width exceeds depth by more than 20%, this can improve the critical wind speed by 30 to 55%.
+4. **Reorient the grill.** Place the grill so that the hood's longest dimension is parallel to the prevailing wind direction, maximizing the available downwind overhang (RB-006 Section 3.9.4). For rectangular hoods where width exceeds depth by more than 20%, this can improve the critical wind speed by 30 to 50%.
 
 5. **Reduce mounting height.** Each 6-inch reduction in mounting height reduces wind deflection by approximately 25% (RB-006 Tables 3.2a through 3.2h).
 

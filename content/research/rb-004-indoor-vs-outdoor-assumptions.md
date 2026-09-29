@@ -37,8 +37,8 @@ downstream_topics:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.1.3 item 2 and Section 4.2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height; hoods 30-52 → 22-52 inches wider than the cooking surface) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2.
-- Section 3.9 comparison table, Section 3.9 observation 4 and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1.
+- Section 3.1.3 item 2 and Section 4.2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height; hoods 30-52 → 22-52 inches wider than the cooking surface) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2. (revised 2026-09-29)
+- Section 3.9 comparison table, Section 3.9 observation 4 and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1. (revised 2026-09-29)
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 

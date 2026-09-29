@@ -40,6 +40,8 @@ categories: ["P2 — Applied"]
 
 - Section 2.4: the infiltration fraction Q_inf / Q_exhaust, printed as F_inf, is renamed phi_inf — it collided with the infiltration factor F_inf = Q_exhaust / Q_plume of RB-003 Appendix D and RB-008 Section 2.2. The identity F_inf = 1 / (1 - phi_inf) is added (phi_inf = 0.50 corresponds to F_inf = 2.0). No numbers change.
 
+- Section 2.1: overhang required per mph of wind 2.3-4.0 → 1.8-4.2 inches (RB-006 Section 3.9.5 v1.1). (revised 2026-09-29)
+
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
 ---
@@ -78,7 +80,7 @@ The fundamental challenge of outdoor barbecue ventilation is that the **Buoyant 
 
 There are three approaches to closing this gap:
 
-1. **Increase the hood size** to accommodate the deflected plume. RB-006 Section 3.9.5 showed this requires 2.3 to 4.0 inches of additional overhang per mph of wind speed — impractical above 5 mph.
+1. **Increase the hood size** to accommodate the deflected plume. RB-006 Section 3.9.5 showed this requires 1.8 to 4.2 inches of additional overhang per mph of wind speed — impractical above 5 mph.
 
 2. **Increase the exhaust rate** to strengthen edge capture. RB-006 Section 3.9.3 showed this provides only partial compensation (approximately 80% capture at 5 mph with 1.8 times baseline CFM) and cannot address the geometric displacement problem.
 
