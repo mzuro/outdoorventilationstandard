@@ -231,7 +231,7 @@ const paper = (page, text, cite, note) => claims.push({ page, text, values: [], 
 {
   const p = T + 'wind-deflection-trajectory.md';
   claim(p, 'about {0} inches (RB-006 Table 3.2b prints 12)', [v(() => deflection(30, 5, GM), f1, 'deflection(30, 5)')], 'RB-006 Table 3.2b');
-  paper(p, 'RB-002 Table 3.6b carries the exact 16.5', 'RB-002 Table 3.6b v1.1 (30″ OH; RB-005 Table 3.1b prints 17)', 'printed cell = (W_rec − 24)/2');
+  paper(p, 'RB-002 Table 3.6b prints 17, footnoting the exact 16.5', 'RB-002 Table 3.6b v1.1 (30″ OH cell 0.42 / 17″ + footnote; RB-005 Table 3.1b prints 17)', 'printed cell; footnote = (W_rec − 24)/2');
   claim(p, 'about {0} inches (Table 3.2b: 19)', [v(() => deflection(30, 8, GM), f1, 'deflection(30, 8)')], 'RB-006 Table 3.2b');
   claim(p, 'roughly {0}× farther at a 48-inch mounting height than at 30 inches ({1} versus {2} inches at 5 mph)', [v(() => deflection(48, 5, GM) / deflection(30, 5, GM), f1, 'deflection(48,5)/deflection(30,5)'), v(() => deflection(48, 5, GM), f1, 'deflection(48, 5)'), v(() => deflection(30, 5, GM), f1, 'deflection(30, 5)')], 'RB-006 §3.1');
   claim(p, 'the 12 mph deflection ({0} inches) is four times the 3 mph deflection ({1} inches)', [v(() => deflection(30, 12, GM), f1, 'deflection(30, 12)'), v(() => deflection(30, 3, GM), f1, 'deflection(30, 3)')], 'RB-006 §3.1');

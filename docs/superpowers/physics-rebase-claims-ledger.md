@@ -126,7 +126,7 @@ Claims: 171; verified ✓: 171; ✗: 0.
 | tools/cfm-calculator.md | W_rec = 1.38 × capture diameter | K_BASE | 1.38 | RB-002 §3.6 | ✓ |
 | tools/cfm-calculator.md | face velocity of about 29 fpm | paper: printed example | — | RB-003 §4.1 | ✓ |
 | tools/wind-deflection-trajectory.md | about 11.7 inches (RB-006 Table 3.2b prints 12) | deflection(30, 5) | 11.7 | RB-006 Table 3.2b | ✓ |
-| tools/wind-deflection-trajectory.md | RB-002 Table 3.6b carries the exact 16.5 | paper: printed cell = (W_rec − 24)/2 | — | RB-002 Table 3.6b v1.1 (30″ OH; RB-005 Table 3.1b prints 17) | ✓ |
+| tools/wind-deflection-trajectory.md | RB-002 Table 3.6b prints 17, footnoting the exact 16.5 | paper: printed cell; footnote = (W_rec − 24)/2 | — | RB-002 Table 3.6b v1.1 (30″ OH cell 0.42 / 17″ + footnote; RB-005 Table 3.1b prints 17) | ✓ |
 | tools/wind-deflection-trajectory.md | about 18.8 inches (Table 3.2b: 19) | deflection(30, 8) | 18.8 | RB-006 Table 3.2b | ✓ |
 | tools/wind-deflection-trajectory.md | roughly 1.8× farther at a 48-inch mounting height than at 30 inches (21.1 versus 11.7 inches at 5 mph) | deflection(48,5)/deflection(30,5); deflection(48, 5); deflection(30, 5) | 1.8 / 21.1 / 11.7 | RB-006 §3.1 | ✓ |
 | tools/wind-deflection-trajectory.md | the 12 mph deflection (28.2 inches) is four times the 3 mph deflection (7.0 inches) | deflection(30, 12); deflection(30, 3) | 28.2 / 7.0 | RB-006 §3.1 | ✓ |
