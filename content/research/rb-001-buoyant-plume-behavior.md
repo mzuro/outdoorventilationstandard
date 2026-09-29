@@ -1,7 +1,7 @@
 ---
 title: "RB-001: Buoyant Plume Behavior from Barbecue and High-Heat Cooking Sources"
 date: 2025-08-14
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -41,9 +41,11 @@ downstream_topics:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.5 / Table 3.5: all 40 centerline-velocity cells regenerated from u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) with the Table 3.2 virtual origins (Gas Medium 18"/24"/30"/36"/48": 2.30/2.12/1.99/1.88/1.71 → 2.21/2.09/1.99/1.91/1.78 m/s; Gas Large 2.60/2.39/2.25/2.12/1.93 → 2.49/2.36/2.26/2.17/2.02; Charcoal Kettle 1.45/1.33/1.25/1.18/1.07 → 1.28/1.22/1.17/1.13/1.05; other columns likewise); the printed v1.0 rows were hand-rounded up to 13% off the formula. The ft/min conversion table (Gas Medium 453/417/392/370/337 → 435/412/393/377/350; Gas Large 512/470/443/417/380 → 490/465/444/427/398), the worked example (2.25 → 2.26 m/s) and the sentences quoting these cells (18"-to-48" reduction 26% → 20%; 337 → 350 ft/min; charcoal and pellet-low range 1.0-1.5 m/s (200-295 ft/min) → 1.0-1.3 m/s (200-255 ft/min)) follow.
+- Section 3.5 / Table 3.5: all 40 centerline-velocity cells regenerated from u_0 = 1.03 * Q_c^(1/3) * (z - z_0)^(-1/3) with the Table 3.2 virtual origins (Gas Medium 18"/24"/30"/36"/48": 2.30/2.12/1.99/1.88/1.71 → 2.21/2.09/1.99/1.91/1.78 m/s; Gas Large 2.60/2.39/2.25/2.12/1.93 → 2.49/2.36/2.26/2.17/2.02; Charcoal Kettle 1.45/1.33/1.25/1.18/1.07 → 1.28/1.22/1.17/1.13/1.05; other columns likewise); the printed v1.0 rows were hand-rounded up to 13% off the formula. The ft/min conversion table (Gas Medium 453/417/392/370/337 → 435/412/393/377/350; Gas Large 512/470/443/417/380 → 490/465/444/427/398), the worked example (2.25 → 2.26 m/s) and the sentences quoting these cells (18"-to-48" reduction 26% → 19%; 337 → 350 ft/min; charcoal and pellet-low range 1.0-1.5 m/s (200-295 ft/min) → 1.0-1.3 m/s (200-255 ft/min)) follow.
 - Section 3.6 / Table 3.6, Gas Medium column: 0.98/1.06/1.13/1.20/1.35 m (39/42/44/47/53") → 0.91/0.98/1.05/1.12/1.27 m (36/39/41/44/50"); regenerated from d_capture = 0.48 (z - z_0) + D_eff with the tabulated z_0 = -0.37 m, which RB-002 Table 3.3a and every downstream paper already use. The prose (44 → 41" at 30"; 53 → 50" at 48") and the Section 6 diagram note follow.
 - Section 3.2 / Table 3.2: note added that the tabulated z_0 values are the normative program parameters; the printed formula with the Table 3.1 D_eff gives values 0.04-0.08 m less negative.
+- Section 3.6 / Table 3.6, Gas Large and Gas High columns: 1.05/1.13/1.20/1.27/1.42 m (41/44/47/50/56") → 1.00/1.07/1.14/1.21/1.36 m (39/42/45/48/54") and 1.17/1.26/1.34/1.41/1.56 m (46/50/53/56/61") → 1.08/1.15/1.23/1.30/1.45 m (43/45/48/51/57"); regenerated from d_capture = 0.48 (z - z_0) + D_eff with each source's own tabulated z_0 (-0.41 and -0.44 m), identical to the W_min columns of RB-002 Tables 3.6c and 3.6d. The sentence under the table follows (36-inch plume "exceeds 50 inches" → "approaches or exceeds 50 inches (48 and 51 inches)").
+- Section 4.1 summary: velocity reduction when height doubles 26% → 21% (2^(-1/3) = 0.79). Section 6 diagram notes: d_capture at 48 inches 1.35 → 1.27 m; Figure 3.1 plume diameters at 24 and 36 inches 42/47 → 39/44 inches, following Table 3.6 v1.1.
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
@@ -413,11 +415,11 @@ This additive term D_eff accounts for the finite source width.
 
 | Height | Gas Small (D=0.43m) | Gas Medium (D=0.51m) | Gas Large (D=0.58m) | Gas High (D=0.65m) | Charcoal Kettle (D=0.56m) | Wood-Fired (D=0.50m) | Pellet Smoker (D=0.45m) |
 |---|---|---|---|---|---|---|---|
-| 18" (0.46 m) | 0.79 m (31") | 0.91 m (36") | 1.05 m (41") | 1.17 m (46") | 1.00 m (39") | 0.91 m (36") | 0.85 m (33") |
-| 24" (0.61 m) | 0.86 m (34") | 0.98 m (39") | 1.13 m (44") | 1.26 m (50") | 1.07 m (42") | 0.97 m (38") | 0.91 m (36") |
-| 30" (0.76 m) | 0.94 m (37") | 1.05 m (41") | 1.20 m (47") | 1.34 m (53") | 1.14 m (45") | 1.04 m (41") | 0.97 m (38") |
-| 36" (0.91 m) | 1.01 m (40") | 1.12 m (44") | 1.27 m (50") | 1.41 m (56") | 1.21 m (48") | 1.11 m (44") | 1.04 m (41") |
-| 48" (1.22 m) | 1.16 m (46") | 1.27 m (50") | 1.42 m (56") | 1.56 m (61") | 1.36 m (54") | 1.26 m (50") | 1.19 m (47") |
+| 18" (0.46 m) | 0.79 m (31") | 0.91 m (36") | 1.00 m (39") | 1.08 m (43") | 1.00 m (39") | 0.91 m (36") | 0.85 m (33") |
+| 24" (0.61 m) | 0.86 m (34") | 0.98 m (39") | 1.07 m (42") | 1.15 m (45") | 1.07 m (42") | 0.97 m (38") | 0.91 m (36") |
+| 30" (0.76 m) | 0.94 m (37") | 1.05 m (41") | 1.14 m (45") | 1.23 m (48") | 1.14 m (45") | 1.04 m (41") | 0.97 m (38") |
+| 36" (0.91 m) | 1.01 m (40") | 1.12 m (44") | 1.21 m (48") | 1.30 m (51") | 1.21 m (48") | 1.11 m (44") | 1.04 m (41") |
+| 48" (1.22 m) | 1.16 m (46") | 1.27 m (50") | 1.36 m (54") | 1.45 m (57") | 1.36 m (54") | 1.26 m (50") | 1.19 m (47") |
 
 **Physical Interpretation:**
 
@@ -425,7 +427,7 @@ At 30 inches — a commonly specified mounting height — the plume from a mediu
 
 At 48 inches, the same plume has expanded to 50 inches in capture diameter. The rapid increase in plume diameter with height is the primary geometric driver of the hood sizing problem. Each additional 6 inches of mounting height adds approximately 3 inches to the required capture diameter.
 
-For large gas grills and high-output sources, the plume at 36 inches already exceeds 50 inches in diameter. This establishes a physical basis for minimum hood widths in the 54 to 66 inch range for these source types at this mounting height.
+For large gas grills and high-output sources, the plume at 36 inches already approaches or exceeds 50 inches in diameter (48 and 51 inches). This establishes a physical basis for minimum hood widths in the 54 to 66 inch range for these source types at this mounting height.
 
 The charcoal kettle, despite having a lower total heat release rate, produces a capture diameter comparable to the medium gas grill because the charcoal grill's effective source diameter D_eff = 0.56 m contributes significantly to the initial plume width. The plume starts wider and grows at the same rate, compensating for the lower thermal driving force.
 
@@ -468,7 +470,7 @@ The z^(5/3) dependence of mass flow rate on height is the most consequential sca
 The calculations in Section 3 demonstrate that mounting height affects every plume parameter relevant to capture:
 
 - **Centerline temperature excess** drops as (z - z_0)^(-5/3) — reducing by a factor of approximately 3.2 when height doubles
-- **Centerline velocity** drops as (z - z_0)^(-1/3) — reducing by approximately 26% when height doubles
+- **Centerline velocity** drops as (z - z_0)^(-1/3) — reducing by approximately 21% when height doubles
 - **Plume diameter** grows linearly with height — adding approximately 3 inches of capture diameter per 6 inches of height
 - **Mass flow rate** grows as z^(5/3) — approximately tripling when height doubles
 
@@ -569,7 +571,7 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 **Content:**
 - Cooking surface shown as a horizontal bar at z = 0, width = 0.51 m
 - **Near-Field Plume Region** shaded in darker warm gradient, extending from z = 0 to approximately z = 0.05 m (2 inches), labeled with note "L_f approximately 0; transition to far-field is immediate for this source"
-- Far-field plume body in lighter warm gradient (amber to pale yellow), expanding linearly from D_eff = 0.51 m at z = 0 to d_capture = 1.35 m at z = 1.22 m (48 inches)
+- Far-field plume body in lighter warm gradient (amber to pale yellow), expanding linearly from D_eff = 0.51 m at z = 0 to d_capture = 1.27 m at z = 1.22 m (48 inches)
 - Plume centerline shown as dashed vertical line
 - Plume boundary edges at half-angle of approximately 7 degrees from centerline
 - Entrainment arrows (gray, horizontal, pointing inward) at heights of 0.25 m, 0.50 m, 0.75 m, and 1.0 m, with arrow length proportional to local entrainment velocity (U_e = alpha * u_0)
@@ -604,8 +606,8 @@ The following diagram descriptions are aligned with the Diagram Standard v2.1 ca
 - A single medium gas grill source (Q_c = 8.2 kW) shown at center bottom
 - Plume expanding upward with labeled diameter at 24", 30", 36", and 48"
 - Hood outlines shown at each height, drawn to scale (e.g., 48-inch hood width)
-- At 24": plume diameter (42") fits within hood (48") with margin — label "Capture Success"
-- At 36": plume diameter (47") approaches hood width — label "Marginal Capture"
+- At 24": plume diameter (39") fits within hood (48") with margin — label "Capture Success"
+- At 36": plume diameter (44") approaches hood width — label "Marginal Capture"
 - At 48": plume diameter (50") exceeds hood width — label "Capture Failure: **Missed Plume Region** extends beyond hood boundaries"
 - **Plume Interception Plane** shown as horizontal dashed line at each hood height
 - **Effective Capture Area** highlighted in blue on the hood faces where it is smaller than total hood area

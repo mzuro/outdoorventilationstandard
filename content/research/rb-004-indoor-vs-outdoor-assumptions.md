@@ -1,7 +1,7 @@
 ---
 title: "RB-004: Why Indoor Ventilation Assumptions Fail Outdoors"
 date: 2025-10-07
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -37,8 +37,8 @@ downstream_topics:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.1.3 item 2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2.
-- Section 3.9 comparison table and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1.
+- Section 3.1.3 item 2 and Section 4.2: outdoor overhang requirement 15-26 → 11-26 inches per side (15-20 inches at a 30-inch mounting height; hoods 30-52 → 22-52 inches wider than the cooking surface) and "three to four times" → "two to four times" the ASHRAE 154 minimum, matching RB-002 Section 4.2 and RB-005 Section 3.2.
+- Section 3.9 comparison table, Section 3.9 observation 4 and Appendix B: Gas Large centerline velocity at 30" 2.25 m/s (443 fpm) → 2.26 m/s (444 fpm), following RB-001 Table 3.5 v1.1.
 
 Every regenerated value is the output of the paper's printed formula with its printed inputs; the cell-by-cell ledger (old → new, with the computation behind each) is kept with the site source.
 
@@ -429,7 +429,7 @@ The following table provides a side-by-side quantitative comparison for a refere
 
 3. **The hood dimension difference is 1.2-1.8x.** The outdoor hood must be substantially wider and deeper than the indoor hood. The depth dimension shows the largest increase (1.5-1.8x) because the indoor back wall provides significant depth-dimension capture assistance that is entirely lost outdoors.
 
-4. **The face velocity is lower outdoors — by design.** The outdoor hood's face velocity (27 fpm) would be "failing" by indoor ASHRAE standards (50 fpm minimum). But this low face velocity is correct for the outdoor physics: the plume self-delivers at 443 fpm centerline velocity, and the hood's purpose is volumetric ingestion, not suction capture (per RB-003 Section 4.1).
+4. **The face velocity is lower outdoors — by design.** The outdoor hood's face velocity (27 fpm) would be "failing" by indoor ASHRAE standards (50 fpm minimum). But this low face velocity is correct for the outdoor physics: the plume self-delivers at 444 fpm centerline velocity, and the hood's purpose is volumetric ingestion, not suction capture (per RB-003 Section 4.1).
 
 5. **The first-pass capture requirement increases by 29%.** The indoor hood achieves 90% total capture with only 70% first-pass capture because recirculation recovers most of the escaped 30%. The outdoor hood must achieve 90% first-pass capture with no recovery assistance. This 29% increase in required first-pass efficiency drives the larger hood dimensions and higher CFM.
 
@@ -470,7 +470,7 @@ The consumer who selects a 600 CFM hood for a large gas grill at 30 inches — a
 
 ### 4.2 Indoor Hood Sizes Are Systematically Undersized for Outdoor Use
 
-The same analysis applies to hood dimensions. Indoor practice specifies hood overhang of 6-9 inches per side, resulting in hoods that are 12-18 inches wider than the cooking surface. Outdoor practice requires 15-26 inches per side (RB-002), resulting in hoods that are 30-52 inches wider than the cooking surface.
+The same analysis applies to hood dimensions. Indoor practice specifies hood overhang of 6-9 inches per side, resulting in hoods that are 12-18 inches wider than the cooking surface. Outdoor practice requires 11-26 inches per side (RB-002), resulting in hoods that are 22-52 inches wider than the cooking surface.
 
 A 48-inch outdoor hood — a common consumer product — is adequate for:
 - A small gas grill (18-inch cooking surface) at 18-24 inches mounting height

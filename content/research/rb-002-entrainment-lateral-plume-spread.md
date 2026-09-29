@@ -1,7 +1,7 @@
 ---
 title: "RB-002: Entrainment and Lateral Plume Spread in Open-Air Environments"
 date: 2025-09-02
-lastmod: 2026-09-26
+lastmod: 2026-09-29
 reviewed: true
 draft: false
 type: "research"
@@ -38,7 +38,8 @@ downstream_topics:
 
 **v1.1 — 2026-09-26.** Errata:
 
-- Section 3.7 / Table 3.7, Pellet Smoker High at 30": 54" → 52"; regenerated from W_rec = 1.38 * d_capture with Pellet High's own z_0 = -0.30 m (RB-001 Table 3.2) — v1.0 evaluated the cell with Pellet Low's z_0 = -0.38 m.
+- Section 3.7 / Table 3.7, pellet rows: no cell changes. The three pellet rows share the paper's single pellet envelope, evaluated with Pellet Low's z_0 = -0.38 m (RB-001 Table 3.2); evaluated per variant, W_rec = 1.38 * d_capture would give 48/52/56" (High, z_0 = -0.30 m) and 49/53/57" (Medium, z_0 = -0.32 m) at 24/30/36" instead of the printed 50/54/58".
+- Section 3.6 / Table 3.6b, 30" overhang: 0.42 / 17" → 0.42 / 16.5" — the exact (W_rec - 24") / 2 that RB-006 Section 3.4 and the site's instruments use; a note under the table records that the other rows round the half inch up to the whole inch.
 - Section 3.5 margin-factor table: quiescent K 1.40 → 1.38, the derived M_1 * M_2 value the Section 3.6 tables already use; light-outdoor 1.70 annotated as 1.72 derived and retained as the wind-inclusive K_inf of RB-003 Appendix D and RB-008 Section 2.2. No table values change.
 - Section 3.4 item 3: note added that the 98% capture-diameter figure is the radial mean-profile contour without intermittency margin, and that wind-analysis capture thresholds are those of RB-006 Section 3.4.
 - Section 4.2: required overhang 12-26 → 11-26 inches per side, matching this paper's own height table and RB-005.
@@ -546,9 +547,11 @@ All values are provided in both metric and imperial units.
 |---|---|---|---|---|
 | 18" (0.46 m) | 0.91 / 36" | 1.25 / 49" | 1.14 / 45" | 0.32 / 13" |
 | 24" (0.61 m) | 0.98 / 39" | 1.35 / 53" | 1.24 / 49" | 0.37 / 15" |
-| 30" (0.76 m) | 1.05 / 41" | 1.45 / 57" | 1.34 / 53" | 0.42 / 17" |
+| 30" (0.76 m) | 1.05 / 41" | 1.45 / 57" | 1.34 / 53" | 0.42 / 16.5" |
 | 36" (0.91 m) | 1.12 / 44" | 1.55 / 61" | 1.44 / 57" | 0.47 / 19" |
 | 48" (1.22 m) | 1.27 / 50" | 1.76 / 69" | 1.65 / 65" | 0.58 / 23" |
+
+Overhang is (W_rec − cooking-surface width) / 2. The 30" row carries its exact 16.5" (0.42 m) because RB-006 Section 3.4 and the site's instruments use that value; the other rows round the half inch up to the whole inch.
 
 #### Table 3.6c: Hood Sizing — Gas Grill Large (Q_c = 12.3 kW, Cooking Surface: 650 sq in, approx. 30" x 22")
 
@@ -662,7 +665,7 @@ For rapid engineering reference, the following consolidated table presents the r
 | Wood-Fired Large | 67" | 71" | 74" |
 | Pellet Smoker Low | 50" | 54" | 58" |
 | Pellet Smoker Medium | 50" | 54" | 58" |
-| Pellet Smoker High | 50" | 52" | 58" |
+| Pellet Smoker High | 50" | 54" | 58" |
 
 **How to use this table:** Select the source type and mounting height. The recommended width is the minimum hood width dimension (side to side, parallel to the long axis of the grill) for reliable plume capture in typical installations (the K ≈ 1.38 base margin covering turbulent intermittency and puffing). For open or wind-exposed sites, increase the width using the additional wind margin from Section 3.5. The hood depth (front to back) should be at least 6 inches less than the width for rectangular cooking surfaces, or equal to the width for circular sources (kettle grills).
 
