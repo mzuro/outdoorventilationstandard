@@ -1,4 +1,4 @@
-// explain-ui.test.mjs — the "Explain this configuration" state-readout rows
+// explain-ui.test.mjs — the "Explain these readings" state-readout rows
 // (static/js/ovs/explain-ui.mjs STATE_READOUTS / stateReadoutText). The
 // module imports cleanly under node (DOM is touched only inside wireExplain).
 //

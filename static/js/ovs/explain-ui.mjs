@@ -1,4 +1,4 @@
-// explain-ui.mjs — client wiring for the "Explain this configuration"
+// explain-ui.mjs — client wiring for the "Explain these readings"
 // button (AI #7). Mounted per-instrument by partials/instrument-figure.html
 // for id "i01"/"i02" only. No free text ever leaves the browser: the only
 // payload is {instrument, params} read straight from the instrument's own
@@ -134,10 +134,11 @@ export function wireExplain(instrument) {
     const turnstileContainer = block.querySelector('.ovs-explain-turnstile');
     if (!btn || !resultEl) return;
 
-    // Figure element carrying data-instrument="i01"/"i02" is the previous
-    // sibling in the DOM (instrument-figure.html renders <figure> then
-    // this block immediately after it).
-    const figureEl = block.previousElementSibling;
+    // Figure element carrying data-instrument="i01"/"i02" is this block's
+    // ancestor (UX P1-7: instrument-figure.html now renders this block
+    // INSIDE <figure>, as a footer row after <figcaption>, so it reads as
+    // part of the instrument's own chrome instead of a detached sibling).
+    const figureEl = block.closest('figure.ovs-instrument');
 
     let turnstileToken = null;
     let turnstileWidgetId = null;
