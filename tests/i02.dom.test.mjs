@@ -30,8 +30,9 @@ const aboveSheet = computeState('i02', { source: 'gasHigh', height: 48, mount: '
 
 const PAGE = `<!doctype html><html><head><meta charset="utf-8"><title>i02 mount</title></head><body>
 <div style="height:1200px"></div>
-<figure data-instrument="i02" data-preset="wall-48"><noscript>needs JS</noscript><figcaption>cap</figcaption></figure>
-<div data-explain-for="i02"><button class="ovs-explain-btn" type="button">Explain</button><input class="ovs-explain-honey" value=""><div class="ovs-explain-turnstile"></div><div class="ovs-explain-result" hidden></div></div>
+<figure class="ovs-instrument" data-instrument="i02" data-preset="wall-48"><noscript>needs JS</noscript><figcaption>cap</figcaption>
+<div class="ovs-explain" data-explain-for="i02"><button class="ovs-explain-btn" type="button">Explain</button><input class="ovs-explain-honey" value=""><div class="ovs-explain-turnstile"></div><div class="ovs-explain-result" hidden></div></div>
+</figure>
 <script type="module">
   import { mount } from '/js/ovs/instruments/i02.mjs';
   import { wireExplain } from '/js/ovs/explain-ui.mjs';
