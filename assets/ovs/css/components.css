@@ -858,7 +858,7 @@ a.ovs-chip:hover {
 .ovs-igrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
+  gap: 0;
   background: var(--ground);
   border: 1px solid var(--line);
 }
