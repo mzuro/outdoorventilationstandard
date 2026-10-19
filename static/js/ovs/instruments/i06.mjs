@@ -126,7 +126,7 @@ export function mount(figureEl) {
     // drag hit strip, re-measured live around the tracer — full chart
     // height so the whole vertical curve stays grabbable at any distance.
     refs.dragTracer = H.el('rect', {
-      class: 'ovs-i-drag-tracer', x: 0, y: Y_TOP, width: 44, height: Y_BOTTOM - Y_TOP, fill: 'transparent',
+      class: 'ovs-i-drag-tracer', x: 0, y: Y_TOP, width: 44, height: Y_BOTTOM - Y_TOP, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragTracer);
   }

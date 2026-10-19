@@ -153,10 +153,10 @@ export function mount(figureEl) {
 
     // --- direct-manipulation hit strips (drawn last, on top) ---------------
     refs.dragHood = H.el('rect', {
-      class: 'ovs-i-drag-hood-edge', x: 0, y: HY - 40, width: 44, height: 92, fill: 'transparent',
+      class: 'ovs-i-drag-hood-edge', x: 0, y: HY - 40, width: 44, height: 92, fill: 'transparent', 'aria-hidden': 'true',
     });
     refs.dragWind = H.el('rect', {
-      class: 'ovs-i-drag-wind', x: 36, y: 24, width: 90, height: 48, fill: 'transparent',
+      class: 'ovs-i-drag-wind', x: 36, y: 24, width: 90, height: 48, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragHood);
     svg.appendChild(refs.dragWind);

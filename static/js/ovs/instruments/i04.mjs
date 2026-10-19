@@ -107,7 +107,7 @@ export function mount(figureEl) {
     // drag hit strip, re-measured live onto the current measuring line —
     // wide enough to grab regardless of the envelope's width at that height.
     refs.dragHeight = H.el('rect', {
-      class: 'ovs-i-drag-height', x: GX - 80, y: 0, width: 160, height: 44, fill: 'transparent',
+      class: 'ovs-i-drag-height', x: GX - 80, y: 0, width: 160, height: 44, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragHeight);
   }

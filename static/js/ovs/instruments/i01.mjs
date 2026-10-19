@@ -163,11 +163,11 @@ export function mount(figureEl) {
     //     here and re-measured live in update(). ------------------------------
     refs.dragHood = H.el('rect', {
       class: 'ovs-i-drag-hood-edge', x: 0, y: HY - 40, width: 44, height: 92,
-      fill: 'transparent',
+      fill: 'transparent', 'aria-hidden': 'true',
     });
     refs.dragWind = H.el('rect', {
       class: 'ovs-i-drag-wind', x: 36, y: 112, width: 90, height: 48,
-      fill: 'transparent',
+      fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragHood);
     svg.appendChild(refs.dragWind);
