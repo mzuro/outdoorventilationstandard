@@ -177,7 +177,7 @@ export function mount(figureEl) {
     // drag hit strip: this side's own width, centered on the right hood
     // lip (the envelope here is symmetric/undeflected, unlike i01).
     const dragHood = H.el('rect', {
-      class: `ovs-i-drag-hood-edge-${sideKey}`, x: 0, y: TOP_Y - 40, width: 44, height: 92, fill: 'transparent',
+      class: `ovs-i-drag-hood-edge-${sideKey}`, x: 0, y: TOP_Y - 40, width: 44, height: 92, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(dragHood);
 

@@ -277,7 +277,7 @@ export function mount(figureEl) {
     refs.dragWidth = H.el('rect', {
       // --square modifier: 44x44 (not 44x92 like the hood elevations), so
       // the mobile hit-area scale-up in components.css grows BOTH axes.
-      class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
+      class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragWidth);
   }
