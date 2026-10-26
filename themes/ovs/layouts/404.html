@@ -1,7 +1,41 @@
+{{- /*
+  404.html — rendered with a real 404 status (PR #13). Gives the visitor
+  two real ways forward instead of a dead end: a keyword-search entry
+  point that GETs straight into /search/?q=... (reusing, not duplicating,
+  the Fuse.js keyword search already wired up on search.html — see the
+  `q` param handling added there), and a plain list of the question pages,
+  built the same way the homepage's §2.0 "Start with your question"
+  section does (themes/ovs/layouts/index.html).
+*/ -}}
 {{- define "main" }}
 <div class="ovs-note" style="margin-top:3rem">
   <span class="ovs-note-label">NOTE &mdash; 404</span>
   This clause does not exist in the standard. The page you requested could not be found.
 </div>
+
+<div class="ovs-askbox" style="margin-top:1.5rem">
+  <div class="ovs-askbox-head">
+    <h2 id="ovs-404-search-label" style="margin:0">Search the standard</h2>
+  </div>
+  <form class="ovs-askform" action="{{ "/search/" | absURL }}" method="get">
+    <input type="text" name="q" aria-labelledby="ovs-404-search-label"
+           placeholder="e.g. CFM, wind, island hood" autocomplete="off" maxlength="64">
+    <button type="submit">Search</button>
+  </form>
+  <p class="ovs-askmeta">Looks up matching clauses by keyword across the published standard.</p>
+</div>
+
+{{- $questionPages := where .Site.RegularPages "Section" "questions" }}
+{{- if $questionPages }}
+<section style="margin-top:1rem">
+  <h2>Or start with a question:</h2>
+  <ul>
+    {{- range $questionPages.ByWeight }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+</section>
+{{- end }}
+
 <p style="margin-top:1rem"><a href="{{ "/" | absURL }}">Return to the standard&rsquo;s home page</a>.</p>
 {{- end }}
