@@ -8,6 +8,7 @@ reviewed: true
 weight: 2
 instruments: true
 instrument_id: "i03"
+predict_prompt: "Before you drag: does wind help or hurt capture?"
 citations: ["rb-006", "rb-009"]
 ---
 

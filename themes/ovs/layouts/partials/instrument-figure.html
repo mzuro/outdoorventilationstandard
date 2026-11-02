@@ -61,7 +61,7 @@
   "i10" "failure-mode-taxonomy"
 }}
 <figure class="ovs-instrument" data-instrument="{{ $id }}" data-preset="{{ $preset }}" data-page="{{ $pageKey }}">
-  <noscript>{{- with $fallback | default (index $svgMap $id) }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="/tools/">Browse all instruments</a>.</p>{{- end }}</noscript>
+  <noscript>{{- with $fallback | default (index $svgMap $id) }}{{ readFile (printf "static/diagrams/%s.svg" .) | safeHTML }}{{- else }}<p>Instrument I-{{ upper (strings.TrimPrefix "i" $id) }} requires JavaScript to render. <a href="{{ "/tools/" | relURL }}">Browse all instruments</a>.</p>{{- end }}</noscript>
   {{- with $caption }}
   <figcaption>{{ . | safeHTML }}</figcaption>
   {{- end }}

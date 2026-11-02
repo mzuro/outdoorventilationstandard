@@ -9,6 +9,7 @@ weight: 5
 instruments: true
 instrument_id: "i07"
 instrument_preset: "island-48"
+predict_prompt: "Before you toggle: do side panels raise or lower modeled capture in a side wind?"
 citations: ["rb-009", "rb-006", "rb-008"]
 ---
 
