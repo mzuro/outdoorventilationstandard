@@ -78,19 +78,19 @@
   {{- /* content/questions/ does not exist yet (Task 17). Static sample
          cards, linking to the section index — these 404 until then. */}}
   <div class="ovs-card-grid">
-    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+    <a class="ovs-card" href="{{ "/questions/" | relURL }}">
       <span class="ovs-card-num">2.1</span>
       <h3>What CFM do I need?</h3>
       <p>Not a rule of thumb. Airflow only matters once the hood face can geometrically intercept the plume &mdash; width and height come first, CFM is derived after.</p>
       <span class="ovs-card-refs"><b>RB-008</b> &middot; Instrument <b>I-01</b></span>
     </a>
-    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+    <a class="ovs-card" href="{{ "/questions/" | relURL }}">
       <span class="ovs-card-num">2.2</span>
       <h3>Does wind matter?</h3>
       <p>More than any other variable. A steady 5 mph breeze can displace the plume by half a hood-width before it reaches the capture plane.</p>
       <span class="ovs-card-refs"><b>RB-006</b> &middot; Instrument <b>I-03</b></span>
     </a>
-    <a class="ovs-card" href="{{ "/questions/" | absURL }}">
+    <a class="ovs-card" href="{{ "/questions/" | relURL }}">
       <span class="ovs-card-num">2.3</span>
       <h3>Island or wall hood?</h3>
       <p>A wall behind the grill is a free side panel: it blocks one entrainment path and one wind direction. Islands need wider hoods, mounted lower, to match.</p>
@@ -184,19 +184,19 @@
       <span class="ovs-clause">5.1</span>
       <h3>Methodology</h3>
       <p>Every quantitative claim traces to a derivation from published fluid dynamics or a cited measurement. Simplifications are declared where they are made.</p>
-      <a href="{{ "/methodology/" | absURL }}">Read the methodology &rarr;</a>
+      <a href="{{ "/methodology/" | relURL }}">Read the methodology &rarr;</a>
     </div>
     <div class="ovs-trust-cell">
       <span class="ovs-clause">5.2</span>
       <h3>Governance</h3>
       <p>Versioned like a standard: numbered clauses, a published change log, an errata process, and open comment periods on every Frontier-tier brief before it advances.</p>
-      <a href="{{ "/governance/" | absURL }}">Governance &amp; change log &rarr;</a>
+      <a href="{{ "/governance/" | relURL }}">Governance &amp; change log &rarr;</a>
     </div>
     <div class="ovs-trust-cell">
       <span class="ovs-clause">5.3</span>
       <h3>References</h3>
       <p>No manufacturer funding. No affiliate links. No sponsored placement. Every source cited is traceable to a published reference.</p>
-      <a href="{{ "/references/" | absURL }}">View references &rarr;</a>
+      <a href="{{ "/references/" | relURL }}">View references &rarr;</a>
     </div>
   </div>
 
