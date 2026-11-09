@@ -2,13 +2,18 @@
 [
 {{- range $i, $p := $pages -}}
   {{- if $i }},{{ end }}
+  {{- /* substr, NOT truncate: truncate HTML-escapes plain strings, which
+         would double-encode entities .Plain may already contain before
+         jsonify gets to them (see list.aicontext.json for the same gotcha). */}}
+  {{- $content := $p.Plain }}
+  {{- if gt (len $content) 2000 }}{{ $content = printf "%s …" (substr $content 0 2000 | strings.TrimSpace) }}{{ end }}
   {
     "title": {{ $p.Title | jsonify }},
     "url": {{ $p.RelPermalink | jsonify }},
     "section": {{ $p.Section | jsonify }},
     "description": {{ $p.Description | jsonify }},
     "summary": {{ $p.Params.summary | jsonify }},
-    "content": {{ $p.Plain | jsonify }}
+    "content": {{ $content | jsonify }}
   }
 {{- end }}
 ]
