@@ -600,6 +600,44 @@ a.ovs-chip:hover {
   max-width: 52ch;
 }
 
+/* ---------- P2-5: narrow-width "skip to questions" jump ----------
+   Fig. 1 (instrument i01) runs tall on a phone-width single column,
+   costing ~1.5 screens of scroll between the ask box and the 2.0
+   Questions cards. This anchor gives mobile visitors a way past it.
+   Hidden by default (display:none = zero footprint, no reserved
+   space) and shown at <=980px — the same breakpoint at which
+   .ovs-hero-grid (above) collapses to a single column, which is the
+   actual trigger for the tall scroll, not the narrower 760px P0-2
+   sticky readout strip breakpoint. Layout at >=981px (tablet
+   landscape and up, where the hero stays two-column) is untouched. */
+.ovs-hero-jump {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .ovs-hero-jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.55rem 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    text-decoration: none;
+  }
+
+  .ovs-hero-jump:hover,
+  .ovs-hero-jump:focus-visible {
+    border-color: var(--accent);
+    background: var(--accent-wash);
+  }
+}
+
 /* ---------- ask box ---------- */
 
 .ovs-askbox {

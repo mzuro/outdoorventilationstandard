@@ -53,6 +53,14 @@
            instrument mount on the site; not worked around. */}}
     {{ partial "instrument-figure.html" (dict "id" "i01" "preset" "island-48" "caption" "<strong>Fig. 1</strong> &mdash; Simplified plume-capture model over a 3-burner grill, 30&#8243; mounting height. Model per RB-001, RB-002 &amp; RB-006. Illustrative; not a design tool.") }}
   </div>
+
+  {{- /* Narrow-width only (P2-5): Fig. 1 runs tall on a phone-width column,
+         pushing roughly 1.5 screens between the ask box and the 2.0
+         Questions cards. This anchor jumps straight past it. display:none
+         by default; shown only at <=980px, the breakpoint at which
+         .ovs-hero-grid collapses to a single column, since that collapse
+         is what drives the scroll distance. Plain anchor, no JS. */}}
+  <a class="ovs-hero-jump" href="#questions"><span aria-hidden="true">&darr;</span> Skip to 2.0 &mdash; Start with your question</a>
 </div>
 
 {{- /* ================= 2.0 QUESTIONS ================= */}}

@@ -409,12 +409,21 @@
     keys: {{ .Site.Params.fuseOpts.keys | default (slice "title" "url" "summary" "content") | jsonify | safeJS }}
   };
 
+  {{- /* Deep link from elsewhere on the site (e.g. the 404 page's search
+     box, which GETs to /search/?q=...) — pre-fill the input and, once the
+     index has loaded, fire the same 'input' event the box already
+     listens for below, so the query runs through the one real keyword
+     search implementation instead of a second copy of it. */}}
+  var initialQuery = new URLSearchParams(window.location.search).get('q');
+  if (initialQuery) { searchInput.value = initialQuery; }
+
   {{- /* relURL, not absURL: the fetch must be same-origin on every host
      (workers.dev branch previews included) or CORS kills keyword search. */}}
   fetch('{{ "index.json" | relURL }}')
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data) { fuse = new Fuse(data, fuseOptions); }
+      if (initialQuery) { searchInput.dispatchEvent(new Event('input')); }
     })
     .catch(function(err) {
       console.error('Keyword search unavailable:', err);
