@@ -1,6 +1,6 @@
 <header class="ovs-header">
   <div class="ovs-wrap ovs-header-inner">
-    <a class="ovs-wordmark" href="{{ "/" | absURL }}" aria-label="{{ .Site.Title }} — home">
+    <a class="ovs-wordmark" href="{{ "/" | relURL }}" aria-label="{{ .Site.Title }} — home">
       <span class="ovs-wordmark-text">{{ .Site.Title }}<small>INDEPENDENT RESEARCH BODY</small></span>
     </a>
     {{- $menu := .Site.Menus.main }}
@@ -19,7 +19,7 @@
     <div class="ovs-nav-wrap" id="ovs-nav-wrap">
       <nav class="ovs-nav" id="ovs-primary-nav" aria-label="Primary">
         {{- range $i, $item := $menu }}
-        <a href="{{ $item.URL | absURL }}"><span class="ovs-clause">{{ add $i 2 }}.0</span>{{ $item.Name }}</a>
+        <a href="{{ $item.URL | relURL }}"><span class="ovs-clause">{{ add $i 2 }}.0</span>{{ $item.Name }}</a>
         {{- end }}
       </nav>
     </div>

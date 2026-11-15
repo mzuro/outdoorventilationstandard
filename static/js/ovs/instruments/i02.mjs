@@ -181,16 +181,26 @@ export function mount(figureEl) {
 
   const { mount: mountVal, widthIn } = parsePreset(figureEl.dataset.preset);
 
-  // Clear placeholder content; keep <noscript> and any authored <figcaption>.
+  // Clear placeholder content; keep <noscript>, any authored <figcaption>,
+  // and the explain-button footer (UX P1-7: now a child of the figure,
+  // after the figcaption, instead of a sibling after </figure>).
   const keep = new Set(['NOSCRIPT', 'FIGCAPTION']);
   for (const node of Array.from(figureEl.childNodes)) {
-    if (node.nodeType === 1 && keep.has(node.tagName)) continue;
+    if (node.nodeType === 1 && (keep.has(node.tagName) || node.classList.contains('ovs-explain'))) continue;
     figureEl.removeChild(node);
   }
   const container = document.createElement('div');
   container.className = 'ovs-instrument-mount';
-  const figcaption = figureEl.querySelector('figcaption');
-  figureEl.insertBefore(container, figcaption || null);
+  // Insert before whichever of <figcaption> / .ovs-explain comes first in
+  // the DOM (instrument-figure.html always renders figcaption, if any,
+  // before .ovs-explain) — on the many pages with no authored figcaption
+  // (every /tools/ and /questions/ page; only the homepage hero passes
+  // one), anchoring on figcaption alone resolves to null, which
+  // insertBefore treats as "append", landing the container AFTER
+  // .ovs-explain instead of before it (UX P1-7 regression: the explain
+  // footer rendered above the instrument instead of below it).
+  const anchor = figureEl.querySelector('figcaption') || figureEl.querySelector('.ovs-explain');
+  figureEl.insertBefore(container, anchor || null);
 
   // --- band-chart geometry (viewBox px) --------------------------------
   const X0 = 150; // bar origin (after row labels)
@@ -277,7 +287,7 @@ export function mount(figureEl) {
     refs.dragWidth = H.el('rect', {
       // --square modifier: 44x44 (not 44x92 like the hood elevations), so
       // the mobile hit-area scale-up in components.css grows BOTH axes.
-      class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent',
+      class: 'ovs-i-drag-hood-edge ovs-i-drag-hood-edge--square', x: 0, y: WIDTH_Y - 15, width: 44, height: 44, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragWidth);
   }

@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SCRIPT = path.join(ROOT, 'scripts', 'measure-instrument-reserves.mjs');
-const WIDTHS = [375, 391, 406, 431, 641, 768, 1280];
+const WIDTHS = [320, 340, 375, 391, 406, 431, 641, 768, 1280];
 // The measure script serves on an OS-assigned free port unless OVS_RESERVES_PORT is set.
 const PORT = process.env.OVS_RESERVES_PORT ? Number(process.env.OVS_RESERVES_PORT) : 0;
 

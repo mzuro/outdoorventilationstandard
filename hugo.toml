@@ -22,6 +22,10 @@ enableGitInfo = false
   images = ["/og-image.png"]
 
 # Search configuration (Fuse.js) — read by _default/search.html (Task 13).
+# Weighted keys (UX P1-8): flat/equal-weighted keys let body `content`
+# matches outrank a page whose title/summary are the real match (e.g.
+# "island hood cfm" surfaced island-vs-wall ahead of what-cfm-do-i-need).
+# title + summary now dominate over body content; url stays modest.
 [params.fuseOpts]
   isCaseSensitive = false
   shouldSort = true
@@ -29,7 +33,12 @@ enableGitInfo = false
   distance = 1000
   threshold = 0.4
   minMatchCharLength = 0
-  keys = ["title", "url", "summary", "content"]
+  keys = [
+    { name = "title", weight = 10 },
+    { name = "summary", weight = 10 },
+    { name = "content", weight = 3 },
+    { name = "url", weight = 1 },
+  ]
 
 [[menu.main]]
   name = "Questions"

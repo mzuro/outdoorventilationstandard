@@ -142,7 +142,7 @@ export function mount(figureEl) {
 
     // drag hit strip over the wind arrow — same geometry as i01's.
     refs.dragWind = H.el('rect', {
-      class: 'ovs-i-drag-wind', x: 36, y: 112, width: 90, height: 48, fill: 'transparent',
+      class: 'ovs-i-drag-wind', x: 36, y: 112, width: 90, height: 48, fill: 'transparent', 'aria-hidden': 'true',
     });
     svg.appendChild(refs.dragWind);
 
