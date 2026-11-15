@@ -10,8 +10,14 @@
 <title>{{ .Title }} · {{ $siteTitle }}</title>
 {{- end }}
 
-{{- /* ---------- description ---------- */}}
-{{- $description := .Description | default (.Params.summary) | default .Site.Params.description }}
+{{- /* ---------- description ----------
+   Truncated to a safe meta-description length (155 chars, house style:
+   same `truncate` filter used in tools/list.html and index.html) at a
+   word boundary, with "…" appended only when actually cut. Only the
+   rendered <meta>/og:/twitter: description is shortened — the underlying
+   .Description/.Params.summary front matter (and schema.html's separate
+   TechArticle JSON-LD description) are left untouched. */}}
+{{- $description := (.Description | default (.Params.summary) | default .Site.Params.description) | truncate 155 }}
 <meta name="description" content="{{ $description }}">
 
 {{- /* ---------- robots (thin taxonomy pages) ----------
