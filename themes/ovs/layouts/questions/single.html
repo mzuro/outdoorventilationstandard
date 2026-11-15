@@ -30,6 +30,9 @@
   {{ partial "byline.html" . }}
 
   {{- with .Params.instrument_id }}
+  {{- with $.Params.predict_prompt }}
+  <p class="ovs-predict">{{ . }}</p>
+  {{- end }}
   {{ partial "instrument-figure.html" (dict "id" . "preset" ($.Params.instrument_preset | default "") "fallback" $.Params.fallback_svg) }}
   {{- end }}
 

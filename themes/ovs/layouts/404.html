@@ -17,7 +17,7 @@
   <div class="ovs-askbox-head">
     <h2 id="ovs-404-search-label" style="margin:0">Search the standard</h2>
   </div>
-  <form class="ovs-askform" action="{{ "/search/" | absURL }}" method="get">
+  <form class="ovs-askform" action="{{ "/search/" | relURL }}" method="get">
     <input type="text" name="q" aria-labelledby="ovs-404-search-label"
            placeholder="e.g. CFM, wind, island hood" autocomplete="off" maxlength="64">
     <button type="submit">Search</button>
@@ -37,5 +37,5 @@
 </section>
 {{- end }}
 
-<p style="margin-top:1rem"><a href="{{ "/" | absURL }}">Return to the standard&rsquo;s home page</a>.</p>
+<p style="margin-top:1rem"><a href="{{ "/" | relURL }}">Return to the standard&rsquo;s home page</a>.</p>
 {{- end }}
