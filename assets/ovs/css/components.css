@@ -1281,7 +1281,8 @@ a.ovs-chip:hover {
 @media (min-width: 1091px) { .ovs-instrument[data-instrument="i01"] { --i-reserve: 930px; } } /* mounted 916.2-945px */
 
 /* i01 on home: / — overrides 1121 of 1121 widths */
-@media (max-width: 394px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1320px; } } /* mounted 1337.8-1337.8px */
+@media (max-width: 338px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1375px; } } /* mounted 1394.5px @320 */
+@media (min-width: 339px) and (max-width: 394px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1335px; } } /* mounted 1337.8-1354.1px */
 @media (min-width: 395px) and (max-width: 406px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1120px; } } /* mounted 1136.1-1136.1px */
 @media (min-width: 407px) and (max-width: 462px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1085px; } } /* mounted 1085.5-1100.8px */
 @media (min-width: 463px) and (max-width: 463px) { .ovs-instrument[data-instrument="i01"][data-page="home"] { --i-reserve: 1030px; } } /* mounted 1045.1-1045.1px */

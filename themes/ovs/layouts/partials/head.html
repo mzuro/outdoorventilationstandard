@@ -17,7 +17,7 @@
    rendered <meta>/og:/twitter: description is shortened — the underlying
    .Description/.Params.summary front matter (and schema.html's separate
    TechArticle JSON-LD description) are left untouched. */}}
-{{- $description := (.Description | default (.Params.summary) | default .Site.Params.description) | truncate 155 }}
+{{- $description := (.Description | default (.Params.summary) | default .Site.Params.description) | truncate 152 }}
 <meta name="description" content="{{ $description }}">
 
 {{- /* ---------- robots (thin taxonomy pages) ----------
