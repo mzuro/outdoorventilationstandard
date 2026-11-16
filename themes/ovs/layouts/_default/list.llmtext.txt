@@ -1,0 +1,65 @@
+{{- /*
+  llms.txt — generated replacement for the old hand-maintained
+  static/llms.txt (BACKLOG P2 "llms.txt is hand-maintained and stale").
+  Same mechanism as ai-context.json (see hugo.toml [outputFormats.LLMText]
+  and list.aicontext.json alongside this file): a custom Hugo output
+  format attached to the home page, so the research/tools/questions
+  listing can never drift out of sync with the site again — it is built
+  from site.RegularPages, not typed by hand.
+
+  Sections, in the original hand-written file's order: Research,
+  Interactive tools, Questions. The header blurb below is carried over
+  verbatim from the old static/llms.txt — it's a hand-tuned disclaimer
+  (no brand affiliation, no product recommendations, physics-model
+  output vs. field measurement) that isn't equivalent to any single
+  front-matter field, so it stays literal text here rather than being
+  derived.
+
+  Per-item one-liners come from front matter (.Params.summary, falling
+  back to .Description — the same preference order list.aicontext.json
+  uses for papers/tools), cut to one line at a word boundary with
+  replaceRE (NOT Hugo's `truncate`, which HTML-escapes plain strings on
+  the way out — see list.aicontext.json's longer note on this; Hugo's
+  `strings` namespace also has no LastIndex, so the cut is a regex
+  capture of "everything up to maxSummaryLen chars, then back to the
+  previous whitespace" rather than an index lookup).
+  Drafts are excluded automatically: site.RegularPages already omits
+  draft: true pages unless buildDrafts is set, and this repo does not
+  set it (checked hugo.toml / config for `buildDrafts`).
+*/ -}}
+{{- $maxSummaryLen := 170 -}}
+# {{ .Site.Title }}
+
+> Independent, physics-grounded research on outdoor cooking ventilation — buoyant plume behavior, entrainment, hood capture, wind interaction, and CFM sizing. No brand affiliation, no product recommendations. Values are physics-model outputs (Heskestad plume correlations, Morton-Taylor-Turner entrainment, Briggs crosswind theory), clearly labeled as such, not field measurements.
+
+{{- $research := sort (where site.RegularPages "Section" "research") "Params.research_id" }}
+
+## Research ({{ len $research }} papers)
+
+{{ range $research -}}
+{{- $s := .Params.summary | default .Description | strings.TrimSpace -}}
+{{- if gt (len $s) $maxSummaryLen -}}
+  {{- $s = replaceRE (printf "^(.{0,%d})\\s[\\s\\S]*$" $maxSummaryLen) "$1 …" $s -}}
+{{- end -}}
+- [{{ .Title }}]({{ .Permalink }}) — {{ $s }}
+{{ end }}
+{{- $tools := sort (where site.RegularPages "Section" "tools") "Weight" }}
+## Interactive tools ({{ len $tools }})
+
+{{ range $tools -}}
+{{- $s := .Params.summary | default .Description | strings.TrimSpace -}}
+{{- if gt (len $s) $maxSummaryLen -}}
+  {{- $s = replaceRE (printf "^(.{0,%d})\\s[\\s\\S]*$" $maxSummaryLen) "$1 …" $s -}}
+{{- end -}}
+- [{{ .Title }}]({{ .Permalink }}) — {{ $s }}
+{{ end }}
+{{- $questions := sort (where site.RegularPages "Section" "questions") "Weight" }}
+## Questions ({{ len $questions }})
+
+{{ range $questions -}}
+{{- $s := .Params.summary | default .Description | strings.TrimSpace -}}
+{{- if gt (len $s) $maxSummaryLen -}}
+  {{- $s = replaceRE (printf "^(.{0,%d})\\s[\\s\\S]*$" $maxSummaryLen) "$1 …" $s -}}
+{{- end -}}
+- [{{ .Title }}]({{ .Permalink }}) — {{ $s }}
+{{ end -}}

@@ -87,7 +87,17 @@ enableGitInfo = false
   isPlainText = true
   notAlternative = true
 
+# llms.txt (BACKLOG P2 "llms.txt is hand-maintained and stale") — generated the
+# same way as ai-context.json instead of hand-edited in static/. mediaType
+# "text/plain" + baseName "llms" gives /llms.txt; see
+# themes/ovs/layouts/_default/list.llmtext.txt for the template.
+[outputFormats.LLMText]
+  mediaType = "text/plain"
+  baseName = "llms"
+  isPlainText = true
+  notAlternative = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON", "AIContext"]
+  home = ["HTML", "RSS", "JSON", "AIContext", "LLMText"]
   section = ["HTML", "RSS"]
   page = ["HTML"]
