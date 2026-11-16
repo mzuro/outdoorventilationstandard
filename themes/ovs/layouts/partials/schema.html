@@ -65,12 +65,17 @@
 {{- if and (eq $section "research") .IsPage }}
 {{- $published := .Date.Format "2006-01-02" }}
 {{- $updated := (.Lastmod | default .Date).Format "2006-01-02" }}
+{{- /* Reuses head.html's exact og:image fallback so the structured-data
+   image stays the same sitewide asset as the social-card meta tags. */}}
+{{- $ogImage := .Site.Params.images | default (slice "/og-image.png") }}
+{{- $ogImageURL := index $ogImage 0 | absURL }}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": {{ .Title | jsonify | safeJS }},
   "description": {{ (.Params.summary | default .Description | default "") | jsonify | safeJS }},
+  "image": {{ $ogImageURL | jsonify | safeJS }},
   "datePublished": {{ $published | jsonify | safeJS }},
   "dateModified": {{ $updated | jsonify | safeJS }},
   "url": {{ .Permalink | jsonify | safeJS }},
