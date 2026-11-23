@@ -48,7 +48,7 @@ Living work queue for the automated improvement loop. Sources: `docs/superpowers
 - [ ] **llms.txt is hand-maintained and stale** — lists 6 questions, site has 9; emit it as a Hugo output format like `ai-context.json`. (S) — PARTLY DONE: rewritten to 9 questions in the physics re-base (PR #18); still hand-maintained, not a Hugo output format.
 - [x] **Search index is 1.14 MB** — `/index.json` ships full `content` for 44 pages; index summary + headings, or truncate content to ~2 KB. (S) — DONE weekly/20261109 (PR #24): content field truncated to 2000 runes (index now ~118 KB), merged via PR #25.
 - [ ] **TechArticle JSON-LD lacks `image`** on all 12 papers (Article rich result requires it) — add `og-image.png`. (S)
-- [ ] **Downloads page**: list the 3 Dataset CSVs with a license line; fix P1/P2 paper grouping to match the research index. (S)
+- [ ] **Downloads page**: list the 3 Dataset CSVs with a license line (STILL OPEN — gated on Mark's license choice, see "Gated on Mark" section); fix P1/P2 paper grouping to match the research index — **DONE** weekly/20261123 (commit `657c19c`): downloads.html's priority-tier sections now mirror content/research/_index.md exactly (P0=RB-001/002/003, P1=RB-004/005/006 "Core", P2=RB-007/008/009 "Applied", new P3=RB-010/011/012 "Frontier" section added). Card content (hrefs, sizes, titles) untouched. (S)
 
 ## Resolved 2026-09-26 → 2026-09-29 (history only)
 
